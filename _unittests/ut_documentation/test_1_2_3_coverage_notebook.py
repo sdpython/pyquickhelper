@@ -6,26 +6,12 @@
 import sys
 import os
 import unittest
-
-
-try:
-    import src.pyquickhelper as thismodule
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src.pyquickhelper as thismodule
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut, get_additional_paths
-from src.pyquickhelper.filehelper import synchronize_folder
-from src.pyquickhelper.pycode import add_missing_development_version
+import pyquickhelper as thismodule
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut, get_additional_paths
+from pyquickhelper.filehelper import synchronize_folder
+from pyquickhelper.pycode import add_missing_development_version
 
 
 class TestNotebook123Coverage(unittest.TestCase):

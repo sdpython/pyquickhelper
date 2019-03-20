@@ -7,30 +7,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.markdown_helper import parse_markdown, yield_sphinx_only_markup_for_pipy
-from src.pyquickhelper.helpgen import rst2html
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.helpgen.markdown_helper import parse_markdown, yield_sphinx_only_markup_for_pipy
+from pyquickhelper.helpgen import rst2html
 
 
 class TestHelperMarkdown(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_parse_markdown(self):
         fLOG(

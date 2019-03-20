@@ -208,9 +208,8 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
             fLOG("[sphinxerror]-9 unable to retrieve log from " + source)
             raise HelpGenException(
                 "unable to retrieve log in " + source + "\n" + str(eee)) from eee
-        else:
-            logs = [("none", 0, datetime.datetime.now(), "-")]
-            fLOG("[sphinxerror]-8", eee)
+        logs = [("none", 0, datetime.datetime.now(), "-")]
+        fLOG("[sphinxerror]-8", eee)
 
     if len(logs) == 0:
         fLOG("[sphinxerror]-7 unable to retrieve log from " + source)

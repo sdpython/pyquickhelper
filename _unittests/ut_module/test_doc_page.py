@@ -3,27 +3,12 @@
 @brief      test log(time=38s)
 """
 
-import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_travis, skipif_appveyor
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_travis, skipif_appveyor
 
 
 class TestDocPage(ExtTestCase):
@@ -57,10 +42,6 @@ class TestDocPage(ExtTestCase):
             \\usepackage[all]{xy}
             \\newcommand{\\norm}[1]{\\left\\Vert#1\\right\\Vert}
             """.replace("            ", "")
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     @skipif_travis("latex is not installed")
     @skipif_appveyor("latex is not installed")

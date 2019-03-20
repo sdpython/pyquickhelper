@@ -238,9 +238,8 @@ class MockSphinxApp:
             except ExtensionError as e:
                 if exc:
                     raise
-                else:
-                    logger = logging.getLogger("MockSphinxApp")
-                    logger.warning('[MockSphinxApp] {0}'.format(e))
+                logger = logging.getLogger("MockSphinxApp")
+                logger.warning('[MockSphinxApp] {0}'.format(e))
 
     def disconnect_env_collector(self, clname):
         """

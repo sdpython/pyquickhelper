@@ -121,13 +121,11 @@ class BlogPost:
             if raise_exception:
                 raise BlogPostParseError("unable to parse a blogpost:\n[sphinxerror]-F\n{0}\nFILE\n{1}\nCONTENT\n{2}".format(
                     all_err, self._filename, content))
-            else:
-                # we assume we just need the content, raising a warnings
-                # might make some process fail later
-                # warnings.warn("Raw rst was caught but unable to fully parse
-                # a blogpost:\n[sphinxerror]-H\n{0}\nFILE\n{1}\nCONTENT\n{2}".format(
-                #     all_err, self._filename, content))
-                pass
+            # we assume we just need the content, raising a warnings
+            # might make some process fail later
+            # warnings.warn("Raw rst was caught but unable to fully parse
+            # a blogpost:\n[sphinxerror]-H\n{0}\nFILE\n{1}\nCONTENT\n{2}".format(
+            #     all_err, self._filename, content))
 
         # document = pub.writer.document
         objects = pub.settings.out_blogpostlist

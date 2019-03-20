@@ -6,22 +6,9 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import skipif_travis, skipif_azure
-from src.pyquickhelper.pycode.venv_helper import run_base_script, is_virtual_environment
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import skipif_travis, skipif_azure
+from pyquickhelper.pycode.venv_helper import run_base_script, is_virtual_environment
 
 
 class TestVenvBase(unittest.TestCase):

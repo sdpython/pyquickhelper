@@ -7,31 +7,13 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.filehelper import EncryptedBackup, FileTreeNode, TransferAPIFile
-from src.pyquickhelper.filehelper.transfer_api import MockTransferAPI
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.filehelper import EncryptedBackup, FileTreeNode, TransferAPIFile
+from pyquickhelper.filehelper.transfer_api import MockTransferAPI
 
 
 class TestBackupFiles(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_backup(self):
         fLOG(

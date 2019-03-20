@@ -8,24 +8,12 @@ import unittest
 import time
 from io import StringIO
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.loghelper import git_clone
-from src.pyquickhelper import __file__ as pyq_location
+import pyquickhelper
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.loghelper import git_clone
+from pyquickhelper import __file__ as pyq_location
 
 
 class TestUnitTestFullModuleTemplate(ExtTestCase):
@@ -54,7 +42,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                 "temp2_full_unit_test", "python3_module_template"))
         root = temp
         setup = os.path.join(root, "setup.py")
-        pyq = os.path.join(os.path.dirname(src.pyquickhelper.__file__), "..")
+        pyq = os.path.join(os.path.dirname(pyquickhelper.__file__), "..")
 
         if "src" in sys.modules:
             memo = sys.modules["src"]

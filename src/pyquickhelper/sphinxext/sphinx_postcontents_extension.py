@@ -169,12 +169,11 @@ def transform_postcontents(app, doctree, fromdocname):
                 nid = subnode["ids"][0]
                 if nid in memo:
                     raise KeyError("node was already added '{0}'".format(nid))
-                else:
-                    memo[nid] = subnode
-                    bli = nodes.bullet_list()
-                    roots[-1] += bli
-                    roots.append(bli)
-                    sections.append(subnode)
+                memo[nid] = subnode
+                bli = nodes.bullet_list()
+                roots[-1] += bli
+                roots.append(bli)
+                sections.append(subnode)
             elif isinstance(subnode, NodeLeave):
                 parent = subnode.parent
                 if isinstance(parent, nodes.section):

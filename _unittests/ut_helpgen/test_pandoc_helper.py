@@ -7,30 +7,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
-from src.pyquickhelper.helpgen import latex2rst
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
+from pyquickhelper.helpgen import latex2rst
 
 
 class TestPandocHelper(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_latex2rst(self):
         fLOG(

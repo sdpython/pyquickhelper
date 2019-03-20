@@ -1,34 +1,15 @@
 """
 @brief      test tree node (time=7s)
 """
-
-
 import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.cli import create_cli_parser, call_cli_function
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.cli import create_cli_parser, call_cli_function
 
 
 class TestParserFromFunction(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_parser_from_function(self):
         fLOG(

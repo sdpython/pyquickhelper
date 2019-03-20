@@ -6,33 +6,14 @@
 import sys
 import os
 import unittest
-
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+import pyquickhelper
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
+from pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestRunNotebooks(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_run_notebook(self):
         fLOG(
@@ -84,7 +65,7 @@ class TestRunNotebooks(unittest.TestCase):
         res = execute_notebook_list(
             temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
         execute_notebook_list_finalize_ut(
-            res, fLOG=fLOG, dump=src.pyquickhelper)
+            res, fLOG=fLOG, dump=pyquickhelper)
 
 
 if __name__ == "__main__":

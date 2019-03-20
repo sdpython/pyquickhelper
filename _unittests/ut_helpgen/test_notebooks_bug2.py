@@ -2,36 +2,18 @@
 @brief      test log(time=65s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
 import shutil
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
-from src.pyquickhelper.ipythonhelper import upgrade_notebook
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.helpgen.sphinx_main import process_notebooks
+from pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
+from pyquickhelper.ipythonhelper import upgrade_notebook
 
 
 class TestNoteBooksBug2(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_notebook(self):
         fLOG(

@@ -8,31 +8,13 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor, skipif_circleci, skipif_azure
-from src.pyquickhelper.imghelper.js_helper import run_js_fct, install_node_js_modules
-from src.pyquickhelper.imghelper.js_helper import nodejs_version, require, run_js_with_nodejs
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor, skipif_circleci, skipif_azure
+from pyquickhelper.imghelper.js_helper import run_js_fct, install_node_js_modules
+from pyquickhelper.imghelper.js_helper import nodejs_version, require, run_js_with_nodejs
 
 
 class TestJs2Image(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_js2fct(self):
         fLOG(

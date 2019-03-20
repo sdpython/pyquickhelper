@@ -7,23 +7,10 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import coverage_combine, get_temp_folder, ExtTestCase
-from src.pyquickhelper.pycode.coverage_helper import find_coverage_report
-from src.pyquickhelper.loghelper.repositories.pygit_helper import clone
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import coverage_combine, get_temp_folder, ExtTestCase
+from pyquickhelper.pycode.coverage_helper import find_coverage_report
+from pyquickhelper.loghelper.repositories.pygit_helper import clone
 
 
 class TestLONGCoverageCombine(ExtTestCase):

@@ -9,30 +9,12 @@ import unittest
 import warnings
 import pandas
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.sphinx_main_helper import produce_code_graph_changes
-from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.helpgen.sphinx_main_helper import produce_code_graph_changes
+from pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 
 
 class TestGraphChanges (unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_graph_changes(self):
         fLOG(

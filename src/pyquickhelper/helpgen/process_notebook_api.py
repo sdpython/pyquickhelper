@@ -123,7 +123,7 @@ def _nbpresent_export(ipynb=None, outfile=None, out_format=None, verbose=None):
     if out_format in ["pdf"]:
         raise NotImplementedError(
             "format {0} is not allowed".format(out_format))
-    elif out_format in ["html"]:
+    if out_format in ["html"]:
         from nbpresent.exporters.html import PresentExporter as Exporter
 
     from nbpresent.exporters import APP_ROOT

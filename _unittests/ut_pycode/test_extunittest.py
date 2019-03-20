@@ -7,22 +7,9 @@ import unittest
 import warnings
 import pandas
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.pandashelper import df2rst
-from src.pyquickhelper import __file__ as rootfile
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pandashelper import df2rst
+from pyquickhelper import __file__ as rootfile
 
 
 class TestExtTestCase(ExtTestCase):

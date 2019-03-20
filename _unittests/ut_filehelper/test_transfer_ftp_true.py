@@ -9,30 +9,13 @@ import unittest
 import warnings
 import datetime
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
-from src.pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
-from src.pyquickhelper.loghelper.os_helper import get_machine, get_user
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
+from pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
+from pyquickhelper.loghelper.os_helper import get_machine, get_user
 
 
 class TestTransferFTPTrue(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     @unittest.skipIf(sys.version_info[0] == 2, "issue with strings")
     def test_transfer_ftp_true(self):
@@ -58,8 +41,7 @@ class TestTransferFTPTrue(ExtTestCase):
                     zoo.append("{0}={1}".format(k, v))
                 raise Exception("user password is empty, prefix='{0}', username='{1}'\n{2}".format(
                     prefix, get_user(), "\n".join(zoo)))
-            else:
-                return
+            return
 
         web = TransferFTP("ftp.xavierdupre.fr", user, pwd, fLOG=fLOG)
         r = web.ls(".")
@@ -88,8 +70,7 @@ class TestTransferFTPTrue(ExtTestCase):
             if not is_travis_or_appveyor():
                 raise Exception("user password is empty, prefix='{0}', username='{1}'".format(
                     prefix, get_user()))
-            else:
-                return
+            return
 
         # Transfering
         now = datetime.datetime.now()

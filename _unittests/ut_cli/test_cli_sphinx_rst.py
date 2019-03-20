@@ -7,29 +7,12 @@ import os
 import unittest
 from io import StringIO
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_travis, skipif_appveyor
-from src.pyquickhelper.__main__ import main
-from src.pyquickhelper.loghelper import BufferedPrint
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_travis, skipif_appveyor
+from pyquickhelper.__main__ import main
+from pyquickhelper.loghelper import BufferedPrint
 
 
 class TestCliSphinxRst(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_sphinx_rst(self):
         "sphinx rst"

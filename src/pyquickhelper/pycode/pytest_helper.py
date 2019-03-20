@@ -84,8 +84,7 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
                 exc = TestExecutionError(module, name, e)
                 if stop_first:
                     raise exc
-                else:
-                    excs.append(exc)
+                excs.append(exc)
         dt = time.perf_counter() - t0
         if verbose:
             fLOG("[run_test_function] {}/{}: {} '{}' in {:0.000}s".format(

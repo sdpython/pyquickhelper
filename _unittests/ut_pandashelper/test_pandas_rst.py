@@ -2,34 +2,15 @@
 @brief      test log(time=2s)
 """
 
-import sys
 import os
 import unittest
 import pandas
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.pandashelper import df2rst
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pandashelper import df2rst
 
 
 class TestPandasRst(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_pandas_rst(self):
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},

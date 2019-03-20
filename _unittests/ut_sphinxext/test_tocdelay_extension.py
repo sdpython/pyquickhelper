@@ -9,23 +9,10 @@ import unittest
 import warnings
 from docutils.parsers.rst import directives
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.helpgen import rst2html, rst2rst_folder
-from src.pyquickhelper.sphinxext import TocDelayDirective
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.helpgen import rst2html, rst2rst_folder
+from pyquickhelper.sphinxext import TocDelayDirective
 
 
 class TestTocDelayExtension(unittest.TestCase):

@@ -2,29 +2,14 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import CmdRef
-from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
-from src.pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
+import sys
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.sphinxext import CmdRef
+from pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
+from pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
 
 
 class TestRstBuilder(ExtTestCase):
@@ -42,7 +27,7 @@ class TestRstBuilder(ExtTestCase):
                         :title: first cmd
                         :tag: crypt
                         :lid: idcmd3
-                        :cmd: src.pyquickhelper.cli.encryption_cli:encrypt
+                        :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
                         this code shoud appear___
 
@@ -102,7 +87,7 @@ class TestRstBuilder(ExtTestCase):
                         :title: first cmd
                         :tag: freg
                         :lid: id3
-                        :cmd: src.pyquickhelper.cli.encryption_cli:encrypt
+                        :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
                         this code shoud appear___
 
@@ -261,9 +246,9 @@ class TestRstBuilder(ExtTestCase):
                     test a directive
                     ================
 
-                    :py:class:`src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder`
+                    :py:class:`pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder`
 
-                    :py:class:`Renamed <src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder>`
+                    :py:class:`Renamed <pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder>`
                     """.replace("                    ", "")
         if sys.version_info[0] >= 3:
             content = content.replace('u"', '"')
@@ -279,7 +264,7 @@ class TestRstBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
             f.write(text)
 
-        t1 = "src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
+        t1 = "pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
         if t1 not in text:
             raise Exception(text)
         t1 = ":py:class:`Renamed"
@@ -294,7 +279,7 @@ class TestRstBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
             f.write(text)
 
-        t1 = "src.pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
+        t1 = "pyquickhelper.sphinxext.sphinx_rst_builder.RstBuilder"
         if t1 not in text:
             raise Exception(text)
         t1 = "<p>Renamed</p>"

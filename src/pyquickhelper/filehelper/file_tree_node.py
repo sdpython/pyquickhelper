@@ -522,8 +522,7 @@ class FileTreeNode:
                     t1, full, t2, cop)
                 if t1 > t2 and exc:
                     raise PQHException(mes)
-                else:
-                    warnings.warn(mes, RuntimeWarning)
+                warnings.warn(mes, RuntimeWarning)
         except OSError as e:
             # else :
             self.fLOG("unable to copy file ", full, " to ", path)

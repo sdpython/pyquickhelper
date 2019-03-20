@@ -7,22 +7,9 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import is_travis_or_appveyor
-from src.pyquickhelper.loghelper.github_api import call_github_api, GitHubApiException
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.loghelper.github_api import call_github_api, GitHubApiException
 
 
 class TestGitHub(unittest.TestCase):

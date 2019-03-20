@@ -8,24 +8,11 @@ import os
 import unittest
 import warnings
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
-from src.pyquickhelper.pycode.clean_helper import clean_exts
-from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode.code_helper import remove_extra_spaces_and_pep8, remove_extra_spaces_folder
+from pyquickhelper.pycode.clean_helper import clean_exts
+from pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
 class TestClean(ExtTestCase):

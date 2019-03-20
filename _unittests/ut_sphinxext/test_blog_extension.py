@@ -8,24 +8,11 @@ import os
 import unittest
 from docutils.parsers.rst import directives
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-from src.pyquickhelper.sphinxext.sphinx_blog_extension import blogpost_node, visit_blogpost_node, depart_blogpost_node
-from src.pyquickhelper.sphinxext.sphinx_blog_extension import blogpostagg_node, visit_blogpostagg_node, depart_blogpostagg_node
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
+from pyquickhelper.sphinxext.sphinx_blog_extension import blogpost_node, visit_blogpost_node, depart_blogpost_node
+from pyquickhelper.sphinxext.sphinx_blog_extension import blogpostagg_node, visit_blogpostagg_node, depart_blogpostagg_node
 
 
 class TestBlogExtension(unittest.TestCase):

@@ -8,30 +8,17 @@ import os
 import unittest
 import shutil
 from contextlib import redirect_stdout
+
 try:
     from io import StringIO
 except ImportError:
     from StringIO import StringIO
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.pycode import process_standard_options_for_setup_help, get_temp_folder
-from src.pyquickhelper.texthelper import compare_module_version
-from src.pyquickhelper.texthelper.version_helper import numeric_module_version
-from src.pyquickhelper.pycode.setup_helper import clean_notebooks_for_numbers
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import process_standard_options_for_setup_help, get_temp_folder
+from pyquickhelper.texthelper import compare_module_version
+from pyquickhelper.texthelper.version_helper import numeric_module_version
+from pyquickhelper.pycode.setup_helper import clean_notebooks_for_numbers
 
 
 class TestMissingFunctionsPycode(ExtTestCase):

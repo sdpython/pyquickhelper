@@ -7,30 +7,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
-from src.pyquickhelper.helpgen import rst2html
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from pyquickhelper.helpgen import rst2html
 
 
 class TestRst2HtmlToc(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_rst2html_toc(self):
         fLOG(
@@ -95,7 +77,7 @@ class TestRst2HtmlToc(unittest.TestCase):
                     title1
                     ======
 
-                    .. autoclass:: src.pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
+                    .. autoclass:: pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective
                         :members:
 
         """.replace("                    ", "")

@@ -7,36 +7,22 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.sphinxext.revealjs.directives import heading
-from src.pyquickhelper.sphinxext.revealjs.directives import RevealjsDirective
-from src.pyquickhelper.sphinxext.revealjs.directives import RvNoteDirective
-from src.pyquickhelper.sphinxext.revealjs.directives import RvSmallDirective
-from src.pyquickhelper.sphinxext.revealjs.directives import RvCodeDirective
-from src.pyquickhelper.sphinxext.revealjs.directives import visit_revealjs
-from src.pyquickhelper.sphinxext.revealjs import compat
-from src.pyquickhelper.sphinxext.revealjs.directives import depart_revealjs
-from src.pyquickhelper.sphinxext.revealjs.directives import visit_rv_code
-from src.pyquickhelper.sphinxext.revealjs.directives import depart_rv_code
-from src.pyquickhelper.sphinxext.revealjs.directives import visit_rv_small
-from src.pyquickhelper.sphinxext.revealjs.directives import depart_rv_small
-from src.pyquickhelper.sphinxext.revealjs.directives import visit_rv_note
-from src.pyquickhelper.sphinxext.revealjs.directives import depart_rv_note
-from src.pyquickhelper.sphinxext.revealjs.directives import setup
-from src.pyquickhelper.sphinxext.revealjs import directives as d
+from pyquickhelper.sphinxext.revealjs.directives import heading
+from pyquickhelper.sphinxext.revealjs.directives import RevealjsDirective
+from pyquickhelper.sphinxext.revealjs.directives import RvNoteDirective
+from pyquickhelper.sphinxext.revealjs.directives import RvSmallDirective
+from pyquickhelper.sphinxext.revealjs.directives import RvCodeDirective
+from pyquickhelper.sphinxext.revealjs.directives import visit_revealjs
+from pyquickhelper.sphinxext.revealjs import compat
+from pyquickhelper.sphinxext.revealjs.directives import depart_revealjs
+from pyquickhelper.sphinxext.revealjs.directives import visit_rv_code
+from pyquickhelper.sphinxext.revealjs.directives import depart_rv_code
+from pyquickhelper.sphinxext.revealjs.directives import visit_rv_small
+from pyquickhelper.sphinxext.revealjs.directives import depart_rv_small
+from pyquickhelper.sphinxext.revealjs.directives import visit_rv_note
+from pyquickhelper.sphinxext.revealjs.directives import depart_rv_note
+from pyquickhelper.sphinxext.revealjs.directives import setup
+from pyquickhelper.sphinxext.revealjs import directives as d
 
 
 class DummyConfig(object):

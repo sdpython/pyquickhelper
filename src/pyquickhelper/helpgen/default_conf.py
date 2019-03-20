@@ -189,7 +189,6 @@ def get_epkg_dictionary():
         'svn': 'https://subversion.apache.org/',
         'tar.gz': 'https://en.wikipedia.org/wiki/Tar_(computing)',
         'toctree': 'http://www.sphinx-doc.org/en/stable/markup/toctree.html',
-        'travis': 'https://travis-ci.org/',
         'TexnicCenter': 'http://www.texniccenter.org/',
         'tinycss2': 'http://pythonhosted.org/tinycss2/',
         'tkinter': 'https://docs.python.org/3/library/tkinter.html',
@@ -424,7 +423,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     autosummary_generate = True
 
     # import helpers to find tools to build the documentation
-    from .conf_path_tools import find_latex_path, find_graphviz_dot, find_dvipng_path
+    from .conf_path_tools import find_graphviz_dot, find_dvipng_path
 
     # graphviz
     graphviz_output_format = "svg"
@@ -740,8 +739,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             warnings.warn(
                 "memory_profiler is not install, sphinx_gallery will not show memory consumption.")
     else:
-        extensions = [_ for _ in extensions if _
-                      != "sphinx_gallery.gen_gallery"]
+        skipset = {"sphinx_gallery.gen_gallery"}
+        extensions = [_ for _ in extensions if _ not in skipset]
 
     # notebooks replacements (post-process)
     notebook_replacements = {'html': [('\\mathbb{1}_', '\\mathbf{1\\!\\!1}_')]}
@@ -829,7 +828,7 @@ def get_first_line(filename):
 #################
 
 
-def skip(app, what, name, obj, skip, options):
+def _skip(app, what, name, obj, skip, options):
     """
     to skip some functions,
 
@@ -877,14 +876,13 @@ def custom_setup(app, author):
     from ..sphinxext import setup_image
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
-    from ..sphinxext.sphinx_downloadlink_extension import setup as setup_downloadlink
 
     # delayed import to speed up import time
     from sphinx.errors import ExtensionError
     from sphinx.extension import Extension
 
     try:
-        app.connect("autodoc-skip-member", skip)
+        app.connect("autodoc-skip-member", _skip)
     except ExtensionError as e:
         # No event autodoc-skip-member.
         warnings.warn("Sphinx extension error {0}".format(e), RuntimeError)
@@ -914,7 +912,7 @@ def custom_setup(app, author):
         import bokeh
         assert bokeh is not None
         from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
-        meta = setup_bokeh(app)
+        setup_bokeh(app)
         name = "pyquickhelper.sphinxext.bokeh.bokeh_plot"
         app.extensions[name] = Extension(name, setup_bokeh.__module__)
     except ImportError:

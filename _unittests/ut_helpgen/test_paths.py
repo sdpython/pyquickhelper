@@ -10,30 +10,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.conf_path_tools import find_in_PATH, find_latex_path, find_pandoc_path, find_graphviz_dot
-from src.pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.helpgen.conf_path_tools import find_in_PATH, find_latex_path, find_pandoc_path, find_graphviz_dot
+from pyquickhelper.pycode.ci_helper import is_travis_or_appveyor
 
 
 class TestPaths(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_paths(self):
         fLOG(

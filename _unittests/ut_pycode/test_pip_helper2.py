@@ -7,23 +7,10 @@ import os
 import unittest
 import pandas
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode.pip_helper import get_package_info
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.pycode.pip_helper import fix_pip_902
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode.pip_helper import get_package_info
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode.pip_helper import fix_pip_902
 
 
 class TestPipHelper2(ExtTestCase):

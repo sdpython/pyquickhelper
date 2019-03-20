@@ -222,8 +222,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
         if raise_exception:
             raise NotImplementedError(
                 "not implemented yet for this platform %s" % sys.platform)
-        else:
-            return None
+        return None
 
 
 def get_build_script(module, requirements=None, port=8067, default_engine_paths=None,
@@ -395,8 +394,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
     # common post-processing
     if script is None:
         raise Exception("unexpected command: " + command)
-    else:
-        return private_script_replacements(script, module, requirements, port, default_engine_paths=default_engine_paths)
+    return private_script_replacements(script, module, requirements, port, default_engine_paths=default_engine_paths)
 
 
 def get_script_module(command, platform=sys.platform, blog_list=None,

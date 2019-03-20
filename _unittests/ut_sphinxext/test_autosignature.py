@@ -9,24 +9,10 @@ import unittest
 import pandas
 import numpy
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
-from src.pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
-from src.pyquickhelper.helpgen import rst2html
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
+from pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
+from pyquickhelper.helpgen import rst2html
 
 
 class TestAutoSignature(ExtTestCase):
@@ -67,8 +53,7 @@ class TestAutoSignature(ExtTestCase):
         ipath = import_path(pandas.DataFrame)
         self.assertEqual(ipath, 'pandas')
         ipath = import_path(rst2html)
-        self.assertIn(ipath, ('pyquickhelper.helpgen',
-                              'src.pyquickhelper.helpgen'))
+        self.assertIn(ipath, ('pyquickhelper.helpgen', ))
 
     def test_import_path_loc(self):
         this = os.path.abspath(os.path.dirname(__file__))
@@ -286,7 +271,7 @@ class TestAutoSignature(ExtTestCase):
         self.assertIn("numpy.ndarray.__init__", res)
 
     def test_extract_signature(self):
-        sigs = ["__init__(self: src.cpyquickhelper.numbers.weighted_number.WeightedDouble, value: float, weight: float=1.0) -> None",
+        sigs = ["__init__(self: cpyquickhelper.numbers.weighted_number.WeightedDouble, value: float, weight: float=1.0) -> None",
                 "__init__()",
                 "__init__(a)",
                 "__init__(a=1)",

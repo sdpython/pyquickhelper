@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import sys
 import os
 
@@ -13,7 +12,6 @@ from setuptools import find_packages
 
 project_var_name = "pyquickhelper"
 github_owner = "sdpython"
-sversion = "1.8"
 versionPython = "%s.%s" % (sys.version_info.major, sys.version_info.minor)
 path = "Lib/site-packages/" + project_var_name
 readme = 'README.rst'
@@ -211,6 +209,7 @@ if not r:
     else:
         pyquickhelper = import_pyquickhelper()
     from pyquickhelper.pycode import clean_readme
+    from pyquickhelper import __version__ as sversion
     long_description = clean_readme(long_description)
 
     setup(

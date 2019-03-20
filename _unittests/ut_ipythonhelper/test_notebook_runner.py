@@ -6,23 +6,9 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.ipythonhelper import run_notebook, NotebookError
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
+from pyquickhelper.ipythonhelper import run_notebook, NotebookError
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 class TestNotebookRunner(ExtTestCase):

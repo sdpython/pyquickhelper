@@ -6,30 +6,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG, run_cmd
-from src.pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
-from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, convert_sequence_into_batch_file
+from pyquickhelper.loghelper import fLOG, run_cmd
+from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions, convert_sequence_into_batch_file
 
 
 class TestYamlExe(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_bug_exe(self):
         fLOG(

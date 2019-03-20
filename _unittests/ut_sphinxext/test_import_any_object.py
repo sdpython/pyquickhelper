@@ -7,21 +7,7 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.sphinxext.import_object_helper import import_any_object, import_object
+from pyquickhelper.sphinxext.import_object_helper import import_any_object, import_object
 
 
 class TestImportAnyObject(unittest.TestCase):
@@ -41,7 +27,7 @@ class TestImportAnyObject(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
-        name = "src.pyquickhelper.benchhelper.grid_benchmark.GridBenchMark.bench_experiment"
+        name = "pyquickhelper.benchhelper.grid_benchmark.GridBenchMark.bench_experiment"
         import_object(name, "method")
         obj, name, kind = import_any_object(name)
         sys.path.pop()
@@ -54,7 +40,7 @@ class TestImportAnyObject(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
-        name = "src.pyquickhelper.filehelper.transfer_api.TransferAPI_FileInfo.read_json"
+        name = "pyquickhelper.filehelper.transfer_api.TransferAPI_FileInfo.read_json"
         try:
             import_object(name, "method")
             self.assertTrue(False)
@@ -72,7 +58,7 @@ class TestImportAnyObject(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         sys.path.append(data)
-        name = "src.pyquickhelper.benchhelper.benchmark.BenchMark.Name"
+        name = "pyquickhelper.benchhelper.benchmark.BenchMark.Name"
         import_object(name, "property")
 
         obj, name, kind = import_any_object(name)

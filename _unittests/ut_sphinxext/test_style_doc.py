@@ -7,24 +7,11 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import get_default_extensions, get_default_standard_extensions
-from src.pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
-from src.pyquickhelper.helpgen._fake_function_to_documentation import f1, f2, f3, f4, f5, f6
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.sphinxext import get_default_extensions, get_default_standard_extensions
+from pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
+from pyquickhelper.helpgen._fake_function_to_documentation import f1, f2, f3, f4, f5, f6
 
 
 class TestStyleDoc(unittest.TestCase):
@@ -51,7 +38,7 @@ class TestStyleDoc(unittest.TestCase):
                 "a: parameter a"]
 
         for i in range(1, 7):
-            content = ".. autofunction:: src.pyquickhelper.helpgen._fake_function_to_documentation.f{0}".format(
+            content = ".. autofunction:: pyquickhelper.helpgen._fake_function_to_documentation.f{0}".format(
                 i)
             text = rst2html(content,  # fLOG=fLOG,
                             writer="rst", keep_warnings=True,

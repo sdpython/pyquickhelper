@@ -11,30 +11,13 @@ if "temp_" in os.path.abspath(__file__):
         "this file should not be imported in that location: " +
         os.path.abspath(__file__))
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.filehelper import synchronize_folder
-from src.pyquickhelper.loghelper.pqh_exception import PQHException
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.filehelper import synchronize_folder
+from pyquickhelper.loghelper.pqh_exception import PQHException
 
 
 class TestSyncHelper(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_synchronize(self):
         fLOG(

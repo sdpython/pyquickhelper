@@ -2,7 +2,6 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
@@ -12,27 +11,13 @@ import shutil
 from io import StringIO
 from docutils.parsers.rst import directives
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import VideoDirective
-from src.pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
-from src.pyquickhelper.helpgen.sphinx_main_helper import compile_latex_output_final
-from src.pyquickhelper.helpgen.conf_path_tools import find_latex_path
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.sphinxext import VideoDirective
+from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
+from pyquickhelper.helpgen.sphinx_main_helper import compile_latex_output_final
+from pyquickhelper.helpgen.conf_path_tools import find_latex_path
 
 
 class TestVideoExtension(ExtTestCase):

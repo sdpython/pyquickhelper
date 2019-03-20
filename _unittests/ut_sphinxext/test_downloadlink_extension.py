@@ -10,22 +10,9 @@ import warnings
 from distutils.version import StrictVersion
 import sphinx
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import process_downloadlink_role
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.sphinxext import process_downloadlink_role
 from docutils.parsers.rst.roles import register_canonical_role
 
 

@@ -172,14 +172,12 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
                 if asbytes:
                     raise TypeError(
                         "file_url_stream is str when expected bytes")
-                else:
-                    return (file_url_stream, "s") if add_source else file_url_stream
+                return (file_url_stream, "s") if add_source else file_url_stream
             else:
                 if asbytes:
                     return (file_url_stream, "b") if add_source else file_url_stream
-                else:
-                    raise TypeError(
-                        "file_url_stream is bytes when expected str")
+                raise TypeError(
+                    "file_url_stream is bytes when expected str")
     elif isinstance(file_url_stream, bytes):
         if asbytes:
             return (file_url_stream, "b") if add_source else file_url_stream

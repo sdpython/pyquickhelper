@@ -470,9 +470,8 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
                 if raise_exception:
                     raise PermissionError(
                         "unable to remove file {0}".format(t)) from e
-                else:
-                    remove_also_top = False
-                    continue
+                remove_also_top = False
+                continue
             res.append((t, "file"))
         for name in dirs:
             t = os.path.join(root, name)
@@ -482,9 +481,8 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
                 if raise_exception:
                     raise OSError(
                         "unable to remove folder {0}".format(t)) from e
-                else:
-                    remove_also_top = False
-                    continue
+                remove_also_top = False
+                continue
             res.append((t, "dir"))
         if first_root is None:
             first_root = root

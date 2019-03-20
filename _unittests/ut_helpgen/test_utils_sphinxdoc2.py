@@ -8,30 +8,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase
+import pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase
 
 
 class TestSphinxDoc2(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_apply_modification_template_obj(self):
         path = os.path.split(__file__)[0]

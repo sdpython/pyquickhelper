@@ -7,21 +7,8 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG, _get_file_url, _get_file_txt, get_default_value_type, run_cmd, download
-from src.pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.loghelper.flog import fLOG, _get_file_url, _get_file_txt, get_default_value_type, run_cmd, download
+from pyquickhelper.pycode import get_temp_folder
 
 
 class TestLog2 (unittest.TestCase):

@@ -11,29 +11,12 @@ if "temp_" in os.path.abspath(__file__):
         "This file should not be imported in that location: '{0}'.".format(
             os.path.abspath(__file__)))
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.filehelper import FileTreeNode
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import_fct
+from pyquickhelper.filehelper import FileTreeNode
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.helpgen.utils_sphinx_doc import filecontent_to_rst, replace_relative_import_fct
 
 
 class TestFileNodeTree(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_file_tree_node(self):
         this = os.path.abspath(os.path.dirname(__file__))

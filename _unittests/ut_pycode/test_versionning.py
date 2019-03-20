@@ -7,22 +7,9 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.texthelper import compare_module_version
-from src.pyquickhelper.texthelper.version_helper import numeric_module_version
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.texthelper import compare_module_version
+from pyquickhelper.texthelper.version_helper import numeric_module_version
 
 
 class TestVersionning(unittest.TestCase):

@@ -3,33 +3,15 @@
 @author     Xavier Dupre
 """
 
-import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_travis
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.helpgen.sphinx_main import process_notebooks
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_travis
 
 
 class TestNoteBooksExporter(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     @skipif_travis('pandoc is not installed on travis')
     def test_notebook_rst_svg(self):

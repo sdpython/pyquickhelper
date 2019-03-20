@@ -6,22 +6,9 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.ipythonhelper import notebook_coverage
-from src.pyquickhelper.loghelper import fLOG
+import pyquickhelper
+from pyquickhelper.ipythonhelper import notebook_coverage
+from pyquickhelper.loghelper import fLOG
 
 
 class TestNotebookRunnerReport (unittest.TestCase):
@@ -34,7 +21,7 @@ class TestNotebookRunnerReport (unittest.TestCase):
 
         this = os.path.abspath(os.path.dirname(__file__))
         dump = os.path.join(this, "data", "dump.notebook.pyquickhelper.txt")
-        cov = notebook_coverage(src.pyquickhelper, dump=dump)
+        cov = notebook_coverage(pyquickhelper, dump=dump)
         if len(cov) == 0:
             raise Exception("dataframe cannot be empty")
         if len(cov) <= 9:

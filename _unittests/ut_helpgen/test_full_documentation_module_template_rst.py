@@ -2,40 +2,23 @@
 @brief      test log(time=287s)
 @author     Xavier Dupre
 """
-import os
 import sys
+import os
 import unittest
 import warnings
 import logging
 from docutils.parsers.rst import roles
 from sphinx.util.logging import getLogger
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG, download
-from src.pyquickhelper.loghelper import CustomLog
-from src.pyquickhelper.helpgen.sphinx_main import generate_help_sphinx
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.pycode import is_travis_or_appveyor
-from src.pyquickhelper.filehelper.synchelper import remove_folder
+import pyquickhelper
+from pyquickhelper.loghelper.flog import fLOG, download
+from pyquickhelper.loghelper import CustomLog
+from pyquickhelper.helpgen.sphinx_main import generate_help_sphinx
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.filehelper.synchelper import remove_folder
 
 
 class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_full_documentation_module_template_rst(self):
         """
@@ -109,7 +92,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
         var = "python3_module_template"
 
         # we modify conf.py to let it find pyquickhelper
-        pyq = os.path.abspath(os.path.dirname(src.__file__))
+        pyq = os.path.abspath(os.path.dirname(pyquickhelper.__file__))
         confpy = os.path.join(root, "_doc", "sphinxdoc", "source", "conf.py")
         if not os.path.exists(confpy):
             raise FileNotFoundError(
@@ -136,7 +119,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
             fLOG("#################################################", i)
 
             # we add access to pyquickhelper
-            p = os.path.abspath(os.path.dirname(src.__file__))
+            p = os.path.abspath(os.path.dirname(pyquickhelper.__file__))
             fLOG("PYTHONPATH=", p)
             os.environ["PYTHONPATH"] = p
             if p not in sys.path:

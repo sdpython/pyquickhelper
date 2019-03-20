@@ -11,31 +11,14 @@ if "temp_" in os.path.abspath(__file__):
         "this file should not be imported in that location: " +
         os.path.abspath(__file__))
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.filehelper import gzip_files, zip_files, zip7_files, download, unzip_files, ungzip_files, un7zip_files, unrar_files
-from src.pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless, skipif_azure
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.filehelper import gzip_files, zip_files, zip7_files, download, unzip_files, ungzip_files, un7zip_files, unrar_files
+from pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless, skipif_azure
+from pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestCompressHelper(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_compress_helper(self):
         fLOG(

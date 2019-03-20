@@ -1,37 +1,18 @@
 """
 @brief      test tree node (time=7s)
 """
-
-
-from __future__ import print_function
 import sys
 import os
 import unittest
 import warnings
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.filehelper.visual_sync import create_visual_diff_through_html
+import pyquickhelper.filehelper.visual_sync
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.filehelper.visual_sync import create_visual_diff_through_html
 
 
 class TestJsDiffLib(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_jsdifflib(self):
         fLOG(
@@ -39,30 +20,8 @@ class TestJsDiffLib(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        try:
-            import pymyinstall as skip_
-        except ImportError:
-            path = os.path.normpath(
-                os.path.abspath(
-                    os.path.join(
-                        os.path.split(__file__)[0],
-                        "..",
-                        "..",
-                        "..",
-                        "pymyinstall",
-                        "src")))
-            if path not in sys.path:
-                sys.path.append(path)
-            try:
-                import pymyinstall as skip_
-            except ImportError:
-                # we skip
-                warnings.warn(
-                    "unable to test TestJsDiffLib.test_jsdifflib", ImportWarning)
-                return
-
         tt = os.path.split(
-            src.pyquickhelper.filehelper.visual_sync.__file__)[0]
+            pyquickhelper.filehelper.visual_sync.__file__)[0]
         ma = tt
         p = create_visual_diff_through_html("a", "b")
         self.assertNotEmpty(p)

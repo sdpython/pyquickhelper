@@ -3,35 +3,16 @@
 @brief      test log(time=42s)
 """
 
-import sys
 import os
 import unittest
 import warnings
-
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
+import pyquickhelper
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
 
 
 class TestSKIPRunNotebooks(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_skip_run_notebook_javascript(self):
         fLOG(
@@ -62,7 +43,7 @@ class TestSKIPRunNotebooks(unittest.TestCase):
             res = execute_notebook_list(
                 temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
             execute_notebook_list_finalize_ut(
-                res, fLOG=fLOG, dump=src.pyquickhelper)
+                res, fLOG=fLOG, dump=pyquickhelper)
         except Exception as e:
             # Issue with permission.
             warnings.warn("Unable to test this notebook due to " + str(e))
@@ -97,7 +78,7 @@ class TestSKIPRunNotebooks(unittest.TestCase):
         res = execute_notebook_list(
             temp, keepnote, fLOG=fLOG, valid=valid, additional_path=addpaths)
         execute_notebook_list_finalize_ut(
-            res, fLOG=fLOG, dump=src.pyquickhelper)
+            res, fLOG=fLOG, dump=pyquickhelper)
 
 
 if __name__ == "__main__":

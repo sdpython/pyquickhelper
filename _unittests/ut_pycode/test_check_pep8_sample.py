@@ -1,28 +1,13 @@
 """
 @brief      test tree node (time=15s)
 """
-
-
 import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path_ = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path_ not in sys.path:
-        sys.path.append(path_)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import check_pep8, ExtTestCase
-from src.pyquickhelper.pycode.utils_tests_helper import PEP8Exception
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import check_pep8, ExtTestCase
+from pyquickhelper.pycode.utils_tests_helper import PEP8Exception
 
 
 class TestCheckPep8Sample(ExtTestCase):
@@ -37,7 +22,7 @@ class TestCheckPep8Sample(ExtTestCase):
         aa = 5
 
     def undeclared_var(self):
-        aa + 5
+        aa + 5  # pylint: disable=E0602, W0104
 
     def test_unused_variable(self):
         fLOG(

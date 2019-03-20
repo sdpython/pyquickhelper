@@ -2,35 +2,16 @@
 @brief      test log(time=2s)
 """
 
-import sys
 import os
 import unittest
-
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG  # pylint: disable=E0401
-from src.pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions  # pylint: disable=E0401
-from src.pyquickhelper.jenkinshelper.yaml_helper import evaluate_condition, convert_sequence_into_batch_file  # pylint: disable=E0401
-from src.pyquickhelper.jenkinshelper.jenkins_helper import jenkins_final_postprocessing  # pylint: disable=E0401
+import sys
+from pyquickhelper.loghelper import fLOG  # pylint: disable=E0401
+from pyquickhelper.jenkinshelper.yaml_helper import load_yaml, enumerate_convert_yaml_into_instructions  # pylint: disable=E0401
+from pyquickhelper.jenkinshelper.yaml_helper import evaluate_condition, convert_sequence_into_batch_file  # pylint: disable=E0401
+from pyquickhelper.jenkinshelper.jenkins_helper import jenkins_final_postprocessing  # pylint: disable=E0401
 
 
 class TestYaml(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_jenkins_job_verif(self):
         fLOG(

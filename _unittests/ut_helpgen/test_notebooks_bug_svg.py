@@ -7,32 +7,14 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.helpgen.sphinx_main import process_notebooks
-from src.pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
-from src.pyquickhelper.helpgen.post_process import post_process_latex
-from src.pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.helpgen.sphinx_main import process_notebooks
+from pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
+from pyquickhelper.helpgen.post_process import post_process_latex
+from pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
 
 class TestNoteBooksBugSvg(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_notebook_svg(self):
         """

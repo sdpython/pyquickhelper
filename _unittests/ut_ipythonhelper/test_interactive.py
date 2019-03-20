@@ -7,22 +7,9 @@ import os
 import unittest
 import numpy as np
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.ipythonhelper import StaticInteract, RangeWidget, RadioWidget, DropDownWidget
-from src.pyquickhelper.pycode import fix_tkinter_issues_virtualenv, ExtTestCase
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.ipythonhelper import StaticInteract, RangeWidget, RadioWidget, DropDownWidget
+from pyquickhelper.pycode import fix_tkinter_issues_virtualenv, ExtTestCase
 
 
 class TestInteractive(ExtTestCase):

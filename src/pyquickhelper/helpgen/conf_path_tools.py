@@ -52,9 +52,9 @@ def find_graphviz_dot(exc=True):
             if exc:
                 typstr = str
                 raise FileNotFoundError(
-                    "unable to find graphviz, look into paths such as: " + typstr(graphviz_dot))
-            else:
-                return None
+                    "Unable to find graphviz, look into paths such as: {}".format(
+                        typstr(graphviz_dot)))
+            return None
         else:
             return os.path.join(p, "dot.exe")
     else:
@@ -80,8 +80,7 @@ def find_latex_path(exc=True):
                     typstr = str
                     raise FileNotFoundError(
                         "unable to find latex (miktex), look into paths such as: " + typstr(latex0))
-                else:
-                    return None
+                return None
         return latex
     else:
         # linux, should be in PATH.
@@ -126,8 +125,7 @@ def find_pandoc_path(exc=True):
             if pandoc is None and exc:
                 raise FileNotFoundError(
                     "unable to find pandoc, look into paths such as:\n" + "\n".join(tries))
-            else:
-                return pandoc
+            return pandoc
         else:
             return pandoc
     else:
@@ -168,8 +166,7 @@ def find_dvipng_path(exc=True):
         if imgmath_dvipng is None or not os.path.exists(imgmath_dvipng):
             if exc:
                 raise FileNotFoundError(imgmath_dvipng)
-            else:
-                imgmath_dvipng = "dvipng"
+            imgmath_dvipng = "dvipng"
         if imgmath_latex is None:
             imgmath_dvisvgm = None
         else:
@@ -177,8 +174,7 @@ def find_dvipng_path(exc=True):
         if imgmath_dvisvgm is None or not os.path.exists(imgmath_dvisvgm):
             if exc:
                 raise FileNotFoundError(imgmath_dvisvgm)
-            else:
-                imgmath_dvisvgm = "dvisvgm"
+            imgmath_dvisvgm = "dvisvgm"
 
         env_path = os.environ.get("PATH", "")
         if imgmath_latex and imgmath_latex not in env_path:
@@ -193,13 +189,11 @@ def find_dvipng_path(exc=True):
         if imgmath_latex is None or not os.path.exists(imgmath_latex):
             if exc:
                 raise FileNotFoundError(imgmath_latex)
-            else:
-                imgmath_latex = "latex"
+            imgmath_latex = "latex"
         if imgmath_dvipng is None or not os.path.exists(imgmath_dvipng):
             if exc:
                 raise FileNotFoundError(imgmath_dvipng)
-            else:
-                imgmath_dvipng = "dvipng"
+            imgmath_dvipng = "dvipng"
     else:
         # On linux, we expect latex, dvipng, dvisvgm to be available.
         imgmath_latex = "latex"

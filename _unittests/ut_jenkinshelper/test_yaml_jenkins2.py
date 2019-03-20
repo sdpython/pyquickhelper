@@ -1,36 +1,17 @@
 """
 @brief      test log(time=2s)
 """
-
 import sys
 import os
 import unittest
 import re
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
-from src.pyquickhelper.jenkinshelper.jenkins_helper import default_engines, default_jenkins_jobs, setup_jenkins_server_yml
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
+from pyquickhelper.jenkinshelper.jenkins_helper import default_engines, default_jenkins_jobs, setup_jenkins_server_yml
 
 
 class TestYamlJenkins2(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     @unittest.skipIf(sys.version_info[:2] < (3, 7), "Python37 is a constant in this test")
     def test_jenkins_ext_setup_server_yaml2_url(self):

@@ -1,29 +1,12 @@
 """
 @brief      test log(time=1s)
 """
-
-
 import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.loghelper.run_cmd import split_cmp_command, run_cmd, skip_run_cmd
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.loghelper.run_cmd import split_cmp_command, run_cmd, skip_run_cmd
 
 
 class TestLogFunc (unittest.TestCase):
@@ -33,13 +16,13 @@ class TestLogFunc (unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        assert split_cmp_command("ab cd ef") == ["ab", "cd", "ef"]
+        self.assertEqual(split_cmp_command("ab cd ef"), ["ab", "cd", "ef"])
         r = split_cmp_command('ab "cd ef"')
         if r != ["ab", 'cd ef']:
             raise Exception(r)
-        assert split_cmp_command('"ab cd" ef') == ["ab cd", "ef"]
-        assert split_cmp_command('"ab" cd ef') == ["ab", "cd", "ef"]
-        assert split_cmp_command('"ab cd ef"') == ["ab cd ef"]
+        self.assertEqual(split_cmp_command('"ab cd" ef'), ["ab cd", "ef"])
+        self.assertEqual(split_cmp_command('"ab" cd ef'), ["ab", "cd", "ef"])
+        self.assertEqual(split_cmp_command('"ab cd ef"'), ["ab cd ef"])
 
     def test_run_cmd_simple(self):
         fLOG(

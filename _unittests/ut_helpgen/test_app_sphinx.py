@@ -6,34 +6,15 @@ This tesdt must be run last because it screws up with
 *test_convert_doc_helper* and *test_full_documentation_module_template*.
 """
 
-import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
 
 
 class TestAppSphinx(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_app_sphinx(self):
         fLOG(

@@ -377,8 +377,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         mes = "Unable to find a title in notebook '{0}'".format(file)
         if exc:
             raise HelpGenException(mes)
-        else:
-            warnings.warn(mes, UserWarning)
+        warnings.warn(mes, UserWarning)
 
     # label
     labelname = name.replace(" ", "").replace("_", "").replace(
@@ -754,9 +753,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         if nblinks is None or len(nblinks) == 0:
             raise Exception(
                 "find:// was found in '{0}'\nYou should add nblinks in conf.py.\n{1}".format(file, st))
-        else:
-            raise Exception(
-                "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, st))
+        raise Exception(
+            "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, st))
 
     # notebook replacements
     st = _notebook_replacements(st, notebook_replacements, fLOG)

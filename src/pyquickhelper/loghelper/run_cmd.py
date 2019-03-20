@@ -312,8 +312,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                         mes = "SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\n#---OUT---#\n{3}\n#---ERR---#\n{4}"
                         raise RunCmdException(mes.format(
                             returnCode, cmd, os.getcwd(), "\n".join(out), "\n".join(err)))
-                    else:
-                        raise subprocess.CalledProcessError(returnCode, cmd)
+                    raise subprocess.CalledProcessError(returnCode, cmd)
 
                 if not skip_waiting:
                     pproc.wait()

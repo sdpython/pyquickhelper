@@ -40,7 +40,7 @@ def run_js_fct(script, required=None):
     Function @see fn install_node_js_modules can be run with admin right for that.
     :epkg:`js2py` tries to convert a dependency into :epkg:`Python`
     """
-    from js2py import eval_js, require, node_import
+    from js2py import eval_js, require, node_import  # pylint: disable=W0621
     # To skip npm installation.
     node_import.DID_INIT = True
     if required:
@@ -52,17 +52,27 @@ def run_js_fct(script, required=None):
     return fct
 
 
-def install_node_js_modules(dest, module_list=['babel-core', 'babel-cli',
-                                               'babel-preset-env', 'babel-polyfill',
-                                               'babelify', 'browserify', 'babel-preset-es2015'],
-                            fLOG=noLOG):
+def install_node_js_modules(dest, module_list=None, fLOG=noLOG):
     """
     Installs missing dependencies to compile a convert a :epkg:`javascript`
     libraries.
 
     @param      dest        installation folder
     @param      module_list list of modules to install
+    @param      fLOG        logging function
+
+    If *module_list is None*, it is replaced by:
+
+    ::
+
+        ['babel-core', 'babel-cli', 'babel-preset-env',
+         'babel-polyfill', 'babelify', 'browserify',
+         'babel-preset-es2015']
     """
+    if module_list is None:
+        module_list = ['babel-core', 'babel-cli', 'babel-preset-env',
+                       'babel-polyfill', 'babelify', 'browserify',
+                       'babel-preset-es2015']
     dir_name = dest
     node_modules = os.path.join(dir_name, "node_modules")
     should = [os.path.join(node_modules, n) for n in module_list]

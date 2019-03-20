@@ -1,7 +1,6 @@
 """
 @brief      test log(time=0s)
 """
-
 import sys
 import os
 import unittest
@@ -13,23 +12,10 @@ if "temp_" in os.path.abspath(__file__):
         "This file should not be imported in that location: {0}".format(
             os.path.abspath(__file__)))
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG, load_content_file_with_encoding, get_prefix
-from src.pyquickhelper.loghelper.run_cmd import run_cmd, run_script
-from src.pyquickhelper.loghelper.flog import removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
-from src.pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.loghelper.flog import fLOG, load_content_file_with_encoding, get_prefix
+from pyquickhelper.loghelper.run_cmd import run_cmd, run_script
+from pyquickhelper.loghelper.flog import removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
+from pyquickhelper.pycode import ExtTestCase
 
 
 class TestLog(ExtTestCase):

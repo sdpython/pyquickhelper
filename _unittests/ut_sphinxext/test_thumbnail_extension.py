@@ -2,7 +2,6 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
@@ -11,24 +10,11 @@ import logging
 from io import StringIO
 from docutils.parsers.rst import directives
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
-from src.pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
+from pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
 
 
 class TestImageExtension(ExtTestCase):

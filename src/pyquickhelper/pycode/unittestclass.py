@@ -75,7 +75,7 @@ class ExtTestCase(unittest.TestCase):
                 disp = ""
             raise AssertionError("x is not empty{0}".format(disp))
 
-    def assertGreater(self, x, y, strict=False):
+    def assertGreater(self, x, y, strict=False):  # pylint: disable=W0221
         """
         Checks that ``x >= y``.
         """
@@ -249,7 +249,7 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(
                 "'{1}' ends with '{0}'".format(sub, whole))
 
-    def assertEqual(self, a, b):
+    def assertEqual(self, a, b):  # pylint: disable=W0221
         """
         Checks that ``a == b``.
         """
@@ -275,7 +275,7 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError("Unable to check equality for types {0} and {1}".format(
                 type(a), type(b))) from e
 
-    def assertNotEqual(self, a, b):
+    def assertNotEqual(self, a, b):  # pylint: disable=W0221
         """
         Checks that ``a != b``.
         """

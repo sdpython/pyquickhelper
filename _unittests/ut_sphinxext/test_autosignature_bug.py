@@ -9,24 +9,10 @@ import unittest
 import pandas
 import numpy
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
-from src.pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
-from src.pyquickhelper.helpgen import rst2html
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
+from pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
+from pyquickhelper.helpgen import rst2html
 
 
 def has_cpyquickhelper():

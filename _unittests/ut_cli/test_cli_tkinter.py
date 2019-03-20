@@ -2,36 +2,18 @@
 @brief      test tree node (time=7s)
 """
 
-
 import sys
 import os
 import unittest
 import warnings
 from io import StringIO
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG, BufferedPrint
-from src.pyquickhelper.pycode import ExtTestCase, skipif_travis, skipif_circleci
-from src.pyquickhelper.__main__ import main
+from pyquickhelper.loghelper import fLOG, BufferedPrint
+from pyquickhelper.pycode import ExtTestCase, skipif_travis, skipif_circleci
+from pyquickhelper.__main__ import main
 
 
 class TestCliMainTkinterHelper(ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     @skipif_travis('_tkinter.TclError: invalid command name "frame"')
     @skipif_circleci('_tkinter.TclError: invalid command name "frame"')

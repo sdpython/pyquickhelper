@@ -12,22 +12,9 @@ if "temp_" in os.path.abspath(__file__):
         "this file should not be imported in that location: " +
         os.path.abspath(__file__))
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.loghelper.repositories.pygit_helper import get_repo_log, get_file_details, repo_ls
-from src.pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.loghelper.repositories.pygit_helper import get_repo_log, get_file_details, repo_ls
+from pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestGitLog(unittest.TestCase):

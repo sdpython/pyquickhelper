@@ -7,30 +7,12 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.helpgen.utils_sphinx_doc import migrating_doxygen_doc
-from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.helpgen.utils_sphinx_doc import migrating_doxygen_doc
+from pyquickhelper.helpgen.utils_sphinx_doc_helpers import process_var_tag
 
 
 class TestDoxygen2rst (unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_doxygen2rst(self):
         fLOG(

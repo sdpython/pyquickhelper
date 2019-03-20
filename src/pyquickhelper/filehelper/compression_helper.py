@@ -83,8 +83,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
     except zipfile.BadZipFile as e:
         if isinstance(zipf, BytesIO):
             raise e
-        else:
-            raise IOError("Unable to read file '{0}'".format(zipf)) from e
+        raise IOError("Unable to read file '{0}'".format(zipf)) from e
 
     files = []
     with zipfile.ZipFile(zipf, "r") as file:
@@ -98,10 +97,9 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                     if fail_if_error:
                         raise zipfile.BadZipFile(
                             "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
-                    else:
-                        warnings.warn(
-                            "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
-                        continue
+                    warnings.warn(
+                        "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
+                    continue
                 files.append((info.filename, content))
             else:
                 clean = remove_diacritics(info.filename)
@@ -119,10 +117,9 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                         if fail_if_error:
                             raise zipfile.BadZipFile(
                                 "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
-                        else:
-                            warnings.warn(
-                                "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
-                            continue
+                        warnings.warn(
+                            "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
+                        continue
                     # check encoding to avoid characters not allowed in paths
                     if not os.path.exists(tos):
                         if sys.platform.startswith("win"):
@@ -147,19 +144,18 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                                 # between the two cases
                                 if not os.path.exists(finalfolder):
                                     raise e
-                                else:
-                                    newname = info.filename.replace(
-                                        " ", "_").replace(",", "_")
-                                    if sys.platform.startswith("win"):
-                                        newname = newname.replace("/", "\\")
-                                    tos = os.path.join(where_to, newname)
-                                    finalfolder = os.path.split(tos)[0]
-                                    if not os.path.exists(finalfolder):
-                                        fLOG("[unzip_files]    creating folder (zip)",
-                                             os.path.abspath(finalfolder))
-                                        os.makedirs(finalfolder)
-                                    with open(tos, "wb") as u:
-                                        u.write(data)
+                                newname = info.filename.replace(
+                                    " ", "_").replace(",", "_")
+                                if sys.platform.startswith("win"):
+                                    newname = newname.replace("/", "\\")
+                                tos = os.path.join(where_to, newname)
+                                finalfolder = os.path.split(tos)[0]
+                                if not os.path.exists(finalfolder):
+                                    fLOG("[unzip_files]    creating folder (zip)",
+                                         os.path.abspath(finalfolder))
+                                    os.makedirs(finalfolder)
+                                with open(tos, "wb") as u:
+                                    u.write(data)
                             files.append(tos)
                             fLOG("[unzip_files]    unzipped ",
                                  info.filename, " to ", tos)
@@ -420,19 +416,18 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                                 # between the two cases
                                 if not os.path.exists(finalfolder):
                                     raise e
-                                else:
-                                    newname = info.filename.replace(
-                                        " ", "_").replace(",", "_")
-                                    if sys.platform.startswith("win"):
-                                        newname = newname.replace("/", "\\")
-                                    tos = os.path.join(where_to, newname)
-                                    finalfolder = os.path.split(tos)[0]
-                                    if not os.path.exists(finalfolder):
-                                        fLOG("[un7zip_files]    creating folder (7z)",
-                                             os.path.abspath(finalfolder))
-                                        os.makedirs(finalfolder)
-                                    with open(tos, "wb") as u:
-                                        u.write(data)
+                                newname = info.filename.replace(
+                                    " ", "_").replace(",", "_")
+                                if sys.platform.startswith("win"):
+                                    newname = newname.replace("/", "\\")
+                                tos = os.path.join(where_to, newname)
+                                finalfolder = os.path.split(tos)[0]
+                                if not os.path.exists(finalfolder):
+                                    fLOG("[un7zip_files]    creating folder (7z)",
+                                         os.path.abspath(finalfolder))
+                                    os.makedirs(finalfolder)
+                                with open(tos, "wb") as u:
+                                    u.write(data)
                             files.append(tos)
                             fLOG("[un7zip_files]    unzipped ",
                                  info.filename, " to ", tos)

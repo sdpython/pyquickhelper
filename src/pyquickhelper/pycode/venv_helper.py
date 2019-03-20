@@ -170,7 +170,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None, platform=None):
         platform = sys.platform
 
     if packages == "pip" or packages == ["pip"]:  # pylint: disable=R1714
-        from .get_pip import __file__ as pip_loc
+        from .get_pip import __file__ as pip_loc  # pylint: disable=E0401
         ppath = os.path.abspath(pip_loc.replace(".pyc", ".py"))
         script = ["-u", ppath]
         return run_venv_script(venv, script, fLOG=fLOG, is_cmd=True, platform=platform)
@@ -294,7 +294,7 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
         platform = sys.platform
 
     if hasattr(sys, 'real_prefix'):
-        exe = sys.real_prefix
+        exe = sys.base_prefix
     elif hasattr(sys, "base_exec_prefix"):
         exe = sys.base_exec_prefix
     else:

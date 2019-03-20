@@ -980,9 +980,8 @@ class NotebookRunner(object):
             except NotebookError as e:
                 if not skip_exceptions:
                     raise
-                else:
-                    raise Exception(
-                        "issue when executing:\n{0}".format(codei)) from e
+                raise Exception(
+                    "issue when executing:\n{0}".format(codei)) from e
             if progress_callback:
                 progress_callback(i)
         etime = time.perf_counter() - cl
@@ -1133,7 +1132,7 @@ class NotebookRunner(object):
         # select the image
         if len(images) == 0:
             raise ValueError("There should be at least one image.")
-        elif len(images) == 1:
+        if len(images) == 1:
             image = images[0]
         else:
             # maybe later we'll implement a different logic

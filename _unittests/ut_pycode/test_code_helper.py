@@ -9,22 +9,9 @@ import unittest
 import shutil
 import warnings
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import remove_extra_spaces_and_pep8
-from src.pyquickhelper.filehelper import create_visual_diff_through_html_files
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import remove_extra_spaces_and_pep8
+from pyquickhelper.filehelper import create_visual_diff_through_html_files
 
 
 class TestCodeHelper(unittest.TestCase):

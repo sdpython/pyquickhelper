@@ -58,8 +58,7 @@ def import_pywin32():
                            for _ in dll if "dll" in _]
                     if len(dll) == 0:
                         raise ImportError("Did you install pywin32?") from e
-                    else:
-                        raise ImportError(
-                            "Some DLL must be copied:\n" + "\n".join(dll)) from e
+                    raise ImportError(
+                        "Some DLL must be copied:\n" + "\n".join(dll)) from e
         else:
             raise e

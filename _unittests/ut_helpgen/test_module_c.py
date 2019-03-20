@@ -2,7 +2,6 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
@@ -10,25 +9,11 @@ import shutil
 import warnings
 from textwrap import dedent
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.loghelper import run_cmd
-from src.pyquickhelper.pycode import ExtTestCase, get_temp_folder
-from src.pyquickhelper.helpgen.utils_sphinx_doc_helpers import add_file_rst_template, import_module
-from src.pyquickhelper.helpgen.utils_sphinx_doc import copy_source_files, add_file_rst
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.loghelper import run_cmd
+from pyquickhelper.pycode import ExtTestCase, get_temp_folder
+from pyquickhelper.helpgen.utils_sphinx_doc_helpers import add_file_rst_template, import_module
+from pyquickhelper.helpgen.utils_sphinx_doc import copy_source_files, add_file_rst
 
 
 class TestModuleC(ExtTestCase):
@@ -119,10 +104,6 @@ class TestModuleC(ExtTestCase):
         }
         #endif
     """)
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     @unittest.skipIf(sys.version_info[:2] < (3, 7), "no test file to use")
     @unittest.skipIf(sys.platform != "win32", "no test file to use")

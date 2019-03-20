@@ -101,7 +101,7 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
             if len(myfunc.__code__.co_varnames) == 0:
                 raise TypeError(
                     "'{0}' is not a method(**) - {1}".format(docname, myfunc))
-            elif myfunc.__code__.co_varnames[0] != 'self':
+            if myfunc.__code__.co_varnames[0] != 'self':
                 raise TypeError(
                     "'{0}' is not a method(***) - {1}".format(docname, myfunc))
         name = spl[-1]

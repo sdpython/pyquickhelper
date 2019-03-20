@@ -380,8 +380,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         if cut not in duration:
             raise Exception("{0} not found in\n{1}".format(
                 cut, "\n".join(sorted(duration.keys()))))
-        else:
-            dur = duration[cut]
+        dur = duration[cut]
         zzz = "\ntest % 3d (%04ds), %s" % (i + 1, dur, cut)
         memout.write(zzz)
     memout.write("\n")

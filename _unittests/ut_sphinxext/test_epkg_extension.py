@@ -8,22 +8,9 @@ import os
 import unittest
 import warnings
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.cli.cli_helper import clean_documentation_for_cli
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
 
 class TestEpkgExtension(unittest.TestCase):
@@ -243,7 +230,7 @@ class TestEpkgExtension(unittest.TestCase):
                         directives=None, layout="sphinx",
                         epkg_dictionary={'pandas': ('http://pandas.pydata.org/pandas-docs/stable/generated/',
                                                     ('http://pandas.pydata.org/pandas-docs/stable/generated/{0}.html', 1),
-                                                    ('src.pyquickhelper.sphinxext._private_for_unittest._private_unittest', None)),
+                                                    ('pyquickhelper.sphinxext._private_for_unittest._private_unittest', None)),
                                          '7z': "http://www.7-zip.org/", })
 
         t1 = "abeforea"

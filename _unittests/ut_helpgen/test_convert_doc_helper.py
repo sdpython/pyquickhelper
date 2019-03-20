@@ -10,24 +10,10 @@ import sys
 import os
 import unittest
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.helpgen.rst_converters import rst2html, docstring2html
-from src.pyquickhelper.pandashelper import df2rst
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.helpgen.rst_converters import rst2html, docstring2html
+from pyquickhelper.pandashelper import df2rst
 
 from IPython.core.display import HTML
 import pandas
@@ -37,10 +23,6 @@ class TestConvertDocHelper(ExtTestCase):
     """
     Tests function rst2html.
     """
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_rst2html(self):
         fLOG(

@@ -61,7 +61,7 @@ def find_pdflatex(latex_path):
             return lat
         raise FileNotFoundError(
             "Unable to find pdflatex or xelatex in '{0}'".format(latex_path))
-    elif sys.platform.startswith("darwin"):
+    if sys.platform.startswith("darwin"):
         try:
             err = run_cmd("/Library/TeX/texbin/xelatex --help", wait=True)[1]
             if len(err) == 0:
@@ -594,10 +594,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     if len(left) > 0:
                         raise HelpGenException(
                             "issue with cmd: %s\n[nberror]\n%s" % (c, err))
-                    else:
-                        for _ in lines:
-                            fLOG("[_process_notebooks_in] w, pandoc issue: {0}".format(
-                                _.strip("\n\r")))
+                    for _ in lines:
+                        fLOG("[_process_notebooks_in] w, pandoc issue: {0}".format(
+                            _.strip("\n\r")))
                 outputfile = outfilep
                 format = "docx"
 

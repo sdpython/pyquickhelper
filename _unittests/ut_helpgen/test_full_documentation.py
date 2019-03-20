@@ -7,31 +7,13 @@ import sys
 import unittest
 import shutil
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.filehelper.synchelper import synchronize_folder
-import src.pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.filehelper.synchelper import synchronize_folder
+import pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
 
 
 class TestSphinxDocFull (ExtTestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_full_documentation(self):
         fLOG(

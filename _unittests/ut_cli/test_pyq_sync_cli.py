@@ -7,29 +7,12 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.cli.pyq_sync_cli import pyq_sync
-from src.pyquickhelper.cli.cli_helper import clean_documentation_for_cli
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.cli.pyq_sync_cli import pyq_sync
+from pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
 
 class TestPyqSyncCli(unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_pyq_sync_cli(self):
         fLOG(

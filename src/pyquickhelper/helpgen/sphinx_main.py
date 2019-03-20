@@ -279,8 +279,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if add_htmlhelp:
         if not sys.platform.startswith("win"):
             raise ValueError("add_htmlhelp is True and the OS is not Windows")
-        else:
-            fLOG("[generate_help_sphinx] add add_htmlhelp")
+        fLOG("[generate_help_sphinx] add add_htmlhelp")
 
     if extra_ext is None:
         extra_ext = []
@@ -913,14 +912,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 raise HelpGenException(
                     "Sphinx raised an exception (direct_call={3})\n--CMD--\n{0}\n--OUT--\n{1}\n[sphinxerror]-3\n{2}".format(
                         cmd, out, err, direct_call))
-            else:
-                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                fLOG("[generate_help_sphinx]", kind, "~~~~", cmd)
-                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
-                warnings.warn(
-                    "Sphinx went through errors. Check if any of them is important.\n---OUT---\n{0}\n[sphinxerror]-2\n{1}\n----".format(
-                        out, err), UserWarning)
-                fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+
+            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            fLOG("[generate_help_sphinx]", kind, "~~~~", cmd)
+            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
+            warnings.warn(
+                "Sphinx went through errors. Check if any of them is important.\n---OUT---\n{0}\n[sphinxerror]-2\n{1}\n----".format(
+                    out, err), UserWarning)
+            fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         if kind == "html":
             fLOG(

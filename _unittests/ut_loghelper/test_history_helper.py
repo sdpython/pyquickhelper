@@ -12,22 +12,9 @@ if "temp_" in os.path.abspath(__file__):
         "this file should not be imported in that location: " +
         os.path.abspath(__file__))
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.loghelper.history_helper import build_history, compile_history, extract_issue_from_history
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.loghelper.history_helper import build_history, compile_history, extract_issue_from_history
 
 try:
     from io import StringIO

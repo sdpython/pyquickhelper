@@ -172,8 +172,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 if exc_path:
                     message += "\n---EXC--\n{0}".format(exc_path)
                 raise RunPythonExecutionError(message) from ee
-            else:
-                return str(ee), str(ee), None
+            return str(ee), str(ee), None
     else:
 
         try:
@@ -185,8 +184,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}".format(
                     script, params, comment)
                 raise RunPythonCompileError(message) from ec
-            else:
-                return "", "Cannot compile the do to {0}".format(ec), None
+            return "", "Cannot compile the do to {0}".format(ec), None
 
         globs = globals().copy()
         loc = locals()
@@ -233,8 +231,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                             message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}\nTRACEBACK\n{6}".format(
                                 script, params, comment, gout, gerr, ee, excs)
                             raise RunPythonExecutionError(message) from ee
-                        else:
-                            return (gout + "\n" + gerr), (gerr + "\n" + excs), None
+                        return (gout + "\n" + gerr), (gerr + "\n" + excs), None
 
                     if chdir is not None:
                         os.chdir(current)

@@ -2,30 +2,16 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper.flog import fLOG
-from src.pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor, skipif_azure_macosx
-from src.pyquickhelper.helpgen import rst2html
-from src.pyquickhelper.sphinxext import CmdRef, CmdRefList
-from src.pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
+import pyquickhelper
+from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor, skipif_azure_macosx
+from pyquickhelper.helpgen import rst2html
+from pyquickhelper.sphinxext import CmdRef, CmdRefList
+from pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
 
 
 class TestCmdRefExtension(ExtTestCase):
@@ -57,7 +43,7 @@ class TestCmdRefExtension(ExtTestCase):
                         :title: first cmd
                         :tag: crypt
                         :lid: idcmd3
-                        :cmd: src.pyquickhelper.cli.encryption_cli:encrypt
+                        :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
                         this code shoud appear___
 
@@ -118,7 +104,7 @@ class TestCmdRefExtension(ExtTestCase):
                         :title: first cmd
                         :tag: freg
                         :lid: id3
-                        :cmd: src.pyquickhelper.cli.encryption_cli:encrypt
+                        :cmd: pyquickhelper.cli.encryption_cli:encrypt
 
                         this code shoud appear___
 
@@ -179,7 +165,7 @@ class TestCmdRefExtension(ExtTestCase):
                         :title: first cmd
                         :tag: crypt
                         :lid: idcmd3
-                        :cmd: encrypt2=src.pyquickhelper.cli.encryption_cli:decrypt
+                        :cmd: encrypt2=pyquickhelper.cli.encryption_cli:decrypt
 
                         this code shoud appear___
 
@@ -224,7 +210,7 @@ class TestCmdRefExtension(ExtTestCase):
                         :title: first cmd
                         :tag: crypt
                         :lid: idcmd3
-                        :cmd: src.pyquickhelper.cli.pyq_sync_cli:pyq_sync
+                        :cmd: pyquickhelper.cli.pyq_sync_cli:pyq_sync
 
                         this code shoud appear___
 
@@ -264,7 +250,7 @@ class TestCmdRefExtension(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        path = src.__path__
+        path = pyquickhelper.__path__
         if isinstance(path, list):
             path = path[0]
         path = os.path.abspath(path)

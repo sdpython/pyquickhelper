@@ -8,23 +8,11 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.loghelper import fLOG
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.pycode import is_travis_or_appveyor
-from src.pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
+import pyquickhelper
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.ipythonhelper import execute_notebook_list, execute_notebook_list_finalize_ut
 
 
 class TestCacheUrls(unittest.TestCase):
@@ -48,7 +36,7 @@ class TestCacheUrls(unittest.TestCase):
             temp, keepnote, fLOG=fLOG, valid=None, additional_path=addpaths,
             cache_urls=["https://docs.python.org/3.4/library/urllib.request.html"])
         execute_notebook_list_finalize_ut(
-            res, fLOG=fLOG, dump=src.pyquickhelper)
+            res, fLOG=fLOG, dump=pyquickhelper)
 
 
 if __name__ == "__main__":

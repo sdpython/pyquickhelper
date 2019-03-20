@@ -158,9 +158,8 @@ def _private_process_one_file(
         except SyntaxError as e:
             if not silent:
                 raise e
-            else:
-                content = keepc
-                counts = dict(docrows=0)
+            content = keepc
+            counts = dict(docrows=0)
 
         content = fmod(content, fullname)
         content = remove_undesired_part_for_documentation(

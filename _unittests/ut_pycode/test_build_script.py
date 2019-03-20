@@ -7,22 +7,9 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import get_temp_folder
-from src.pyquickhelper.pycode.build_helper import get_build_script, get_script_command, get_extra_script_command, _default_nofolder
-from src.pyquickhelper.pycode.setup_helper import write_pyproj
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode.build_helper import get_build_script, get_script_command, get_extra_script_command, _default_nofolder
+from pyquickhelper.pycode.setup_helper import write_pyproj
 
 
 class TestBuildScript(unittest.TestCase):

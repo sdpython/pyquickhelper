@@ -7,24 +7,11 @@ import sys
 import os
 import unittest
 
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper.pycode import ExtTestCase
-from src.pyquickhelper.sphinxext.sphinx_doctree_builder import DocTreeTranslator
-from src.pyquickhelper.sphinxext.sphinx_latex_builder import EnhancedLaTeXTranslator
-from src.pyquickhelper.sphinxext.sphinx_md_builder import MdTranslator
-from src.pyquickhelper.sphinxext.sphinx_rst_builder import RstTranslator
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.sphinxext.sphinx_doctree_builder import DocTreeTranslator
+from pyquickhelper.sphinxext.sphinx_latex_builder import EnhancedLaTeXTranslator
+from pyquickhelper.sphinxext.sphinx_md_builder import MdTranslator
+from pyquickhelper.sphinxext.sphinx_rst_builder import RstTranslator
 
 
 class TestBuildersMissing(ExtTestCase):

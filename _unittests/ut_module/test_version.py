@@ -7,29 +7,11 @@ import os
 import unittest
 import re
 
-
-try:
-    import src
-except ImportError:
-    path = os.path.normpath(
-        os.path.abspath(
-            os.path.join(
-                os.path.split(__file__)[0],
-                "..",
-                "..")))
-    if path not in sys.path:
-        sys.path.append(path)
-    import src
-
-from src.pyquickhelper import __version__
-from src.pyquickhelper.loghelper import fLOG
+from pyquickhelper import __version__
+from pyquickhelper.loghelper import fLOG
 
 
 class TestVersion (unittest.TestCase):
-
-    def test_src_import(self):
-        """for pylint"""
-        self.assertTrue(src is not None)
 
     def test_version(self):
         fLOG(
