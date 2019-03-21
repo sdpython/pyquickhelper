@@ -121,6 +121,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
                 # we add access to pyquickhelper
                 p = os.path.abspath(os.path.dirname(pyquickhelper.__file__))
+                p = os.path.join(p, 'src')
                 fLOG("PYTHONPATH=", p)
                 os.environ["PYTHONPATH"] = p
                 if p not in sys.path:

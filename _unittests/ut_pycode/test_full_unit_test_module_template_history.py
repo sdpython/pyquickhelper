@@ -72,6 +72,9 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
                 PYTHONPATH = os.environ.get("PYTHONPATH", "")
                 sep = ";" if sys.platform.startswith("win") else ":"
                 new_val = PYTHONPATH + sep + thispath + sep + jyqpath
+                new_val_src = new_val + sep + 'src'
+                if os.path.exists(new_val_src):
+                    new_val = new_val_src
                 os.environ["PYTHONPATH"] = new_val.strip(sep)
                 log_lines = []
 
