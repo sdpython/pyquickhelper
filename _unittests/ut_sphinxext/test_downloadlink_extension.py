@@ -7,12 +7,12 @@ import sys
 import os
 import unittest
 import warnings
-from distutils.version import StrictVersion
 import sphinx
 
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import process_downloadlink_role
+from pyquickhelper.texthelper import compare_module_version
 from docutils.parsers.rst.roles import register_canonical_role
 
 
@@ -27,7 +27,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         dest = os.path.join(this, name)
         return dest.replace("\\", "/")
 
-    @unittest.skipIf(StrictVersion(sphinx.__version__) < StrictVersion('1.8'),
+    @unittest.skipIf(compare_module_version(sphinx.__version__, '1.8') < 0,
                      reason="DownloadFiles not available in 1.7")
     def test_downloadlink_rst(self):
         name = self.get_name()
@@ -50,7 +50,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out.rst"), "w", encoding="utf8") as f:
             f.write(out)
 
-    @unittest.skipIf(StrictVersion(sphinx.__version__) < StrictVersion("1.8"),
+    @unittest.skipIf(compare_module_version(sphinx.__version__, '1.8') < 0,
                      reason="DownloadFiles not available in 1.7")
     def test_downloadlink_md(self):
         name = self.get_name()
@@ -68,7 +68,7 @@ class TestDownloadlinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out.rst"), "w", encoding="utf8") as f:
             f.write(out)
 
-    @unittest.skipIf(StrictVersion(sphinx.__version__) < StrictVersion("1.8"),
+    @unittest.skipIf(compare_module_version(sphinx.__version__, '1.8') < 0,
                      reason="DownloadFiles not available in 1.7")
     def test_downloadlink_html(self):
         name = self.get_name()
