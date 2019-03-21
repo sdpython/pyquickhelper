@@ -15,6 +15,7 @@ virtualenv:
 # Dependencies to install.
 install:
   - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/\".split())"
+  - $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyrsslocal --no-deps --extra-index-url=https://pypi.python.org/simple/\".split())"
   - $PYINT -c "from pip._internal import main;main(\"install -r requirements.txt\".split())"
   - $PYINT --version
   - $PYINT -m pip uninstall -y pyquickhelper

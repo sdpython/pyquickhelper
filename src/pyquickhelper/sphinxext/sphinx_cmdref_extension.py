@@ -94,7 +94,8 @@ class CmdRef(BlocRef):
                 out, err = run_script(
                     name, fLOG=noLOG, wait=True, change_path=path)
                 if err:
-                    out = "--OUT--\n{0}\n--ERR--\n{1}".format(out, err)
+                    out = "--SCRIPT--{}\n--OUT--\n{}\n--ERR--\n{}\n--PATH--\n{}".format(
+                        name, out, err, path)
                 content = "python " + name
                 cont += nodes.paragraph('<<<', '<<<')
                 pout = nodes.literal_block(content, content)

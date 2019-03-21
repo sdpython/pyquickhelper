@@ -159,6 +159,33 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     inter = []
     reg = re.compile('\\"(([a-zA-Z]:)?[^:]*?[.]py)\\"')
 
+    def handle_filename(name, root_source_dup, begin, root_source, slash):
+        exp = name
+        name = name.groups()[0]
+        if not name.startswith(begin) and ':' not in name:
+            if not slash:
+                co = Counter(name)
+                if co.get('\\', 0) > 0 and co.get('\\\\', 0) == 0:
+                    name = name.replace("\\", "\\\\")
+            name = "{0}{1}{2}".format(root_source_dup, begin, name)
+        if not name.startswith(root_source_dup):
+            end = root_source_dup.split(begin)[-1]
+            spl = name.split(end)
+            found = None
+            for i in range(len(spl) - 1, 0, -1):
+                last = begin.join(spl[i:]).lstrip(begin)
+                found = "{0}{1}{2}".format(
+                    root_source_dup, begin, last)
+                if os.path.exists(found.replace("\\\\", "\\")):
+                    break
+            if found is None:
+                mes = "Unable to handle one file.\nroot_source='{0}'\nroot_source_dup='{1}'\nname='{2}'\nbegin='{3}'\n{4}\n{5}"
+                raise ValueError(mes.format(
+                    root_source, root_source_dup, name, begin, exp.groups(), end))
+            name = found
+
+        return '"{0}"'.format(name)
+
     def copy_replace(source, dest, root_source):
         with open(source, "r") as f:
             content = f.read()
@@ -177,34 +204,8 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             root_source_dup = root_source.replace("\\", "\\\\")
 
         if absolute_path:
-
-            def handle_filename(name):
-                name = name.groups()[0]
-                if not name.startswith(begin) and ':' not in name:
-                    if not slash:
-                        co = Counter(name)
-                        if co.get('\\', 0) > 0 and co.get('\\\\', 0) == 0:
-                            name = name.replace("\\", "\\\\")
-                    name = "{0}{1}{2}".format(root_source_dup, begin, name)
-                if not name.startswith(root_source_dup):
-                    end = root_source_dup.split(begin)[-1]
-                    spl = name.split(end)
-                    found = None
-                    for i in range(len(spl) - 1, 0, -1):
-                        last = begin.join(spl[i:]).lstrip(begin)
-                        found = "{0}{1}{2}".format(
-                            root_source_dup, begin, last)
-                        if os.path.exists(found.replace("\\\\", "\\")):
-                            break
-                    if found is None:
-                        mes = "Unable to handle one file.\nroot_source='{0}'\nroot_source_dup='{1}'\nname='{2}'\nbegin='{3}'"
-                        raise ValueError(mes.format(
-                            root_source, root_source_dup, name, begin))
-                    name = found
-
-                return '"{0}"'.format(name)
-
-            content = reg.sub(handle_filename, content)
+            content = reg.sub(lambda name: handle_filename(name, root_source_dup, begin, root_source, slash),
+                              content)
 
         with open(dest, "w") as f:
             f.write(content)
