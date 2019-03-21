@@ -193,6 +193,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            pip uninstall -y pyquickhelper
+            if %errorlevel% neq 0 exit /b %errorlevel%
             python --version
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
@@ -267,6 +269,8 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
             if %errorlevel% neq 0 exit /b %errorlevel%
+            pip uninstall -y pyquickhelper
+            if %errorlevel% neq 0 exit /b %errorlevel%
             python --version
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip freeze
@@ -336,6 +340,8 @@ class TestYaml(unittest.TestCase):
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT --version
             if [ $? -ne 0 ]; then exit $?; fi
+            $PYINT -y uninstall pyquickhelper
+            if [ $? -ne 0 ]; then exit $?; fi            
             $PYINT -c "from pip._internal import main;main([\\"freeze\\"])"
             if [ $? -ne 0 ]; then exit $?; fi
             export JOB_NAME=UT
@@ -438,6 +444,8 @@ class TestYaml(unittest.TestCase):
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            pip uninstall -y pyquickhelper
             if %errorlevel% neq 0 exit /b %errorlevel%
             python --version
             if %errorlevel% neq 0 exit /b %errorlevel%
