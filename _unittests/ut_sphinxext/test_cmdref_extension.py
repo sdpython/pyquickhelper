@@ -7,7 +7,6 @@ import os
 import unittest
 from docutils.parsers.rst import directives
 import pyquickhelper
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor, skipif_azure_macosx
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef, CmdRefList
@@ -17,20 +16,10 @@ from pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_c
 class TestCmdRefExtension(ExtTestCase):
 
     def test_post_parse_cmdref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("cmdref", CmdRef)
         directives.register_directive("cmdreflist", CmdRefList)
 
     def test_cmdref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -87,11 +76,6 @@ class TestCmdRefExtension(ExtTestCase):
             raise Exception(html)
 
     def test_cmdreflist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -148,11 +132,6 @@ class TestCmdRefExtension(ExtTestCase):
             raise Exception(html)
 
     def test_cmdref_rename(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -193,11 +172,6 @@ class TestCmdRefExtension(ExtTestCase):
             raise Exception(html)
 
     def test_cmdref_quote(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -245,15 +219,10 @@ class TestCmdRefExtension(ExtTestCase):
         https://github.com/pypa/virtualenv/issues/54.
         Or use https://docs.python.org/3/library/venv.html.
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         path = pyquickhelper.__path__
         if isinstance(path, list):
             path = path[0]
-        path = os.path.join(os.path.abspath(path), 'src')
+        path = os.path.normpath(os.path.join(os.path.abspath(path), '..'))
         self.assertExists(path)
         from docutils import nodes as skip_
 
