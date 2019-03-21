@@ -340,7 +340,7 @@ class TestYaml(unittest.TestCase):
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT --version
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -m pip -y uninstall pyquickhelper
+            $PYINT -m pip uninstall -y pyquickhelper
             if [ $? -ne 0 ]; then exit $?; fi            
             $PYINT -c "from pip._internal import main;main([\\"freeze\\"])"
             if [ $? -ne 0 ]; then exit $?; fi
