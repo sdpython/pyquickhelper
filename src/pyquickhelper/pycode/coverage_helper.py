@@ -223,8 +223,8 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             alls = [_[0] for _ in reg.findall(content)]
             lroot = find_longest_common_root(alls, begin)
             if root_source_dup.endswith(begin + "src"):
-                raise RuntimeError("Cannot continue with '{0}'\nlroot='{1}'.".format(
-                    root_source_dup, lroot))
+                le = len(begin + "src")
+                root_source_dup = root_source_dup[: -le]
             content = reg.sub(lambda name: handle_filename(name, root_source_dup, begin, slash, lroot),
                               content)
 

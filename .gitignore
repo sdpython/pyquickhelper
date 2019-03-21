@@ -290,3 +290,4 @@ _unittests/ut_module/bokeh_plot
 _doc/sphinxdoc/source/tutorial/oo.png
 IMPOSSIBLETOFIND
 _unittests/ut_cli/math/*.png
+_unittests/unittests.out
