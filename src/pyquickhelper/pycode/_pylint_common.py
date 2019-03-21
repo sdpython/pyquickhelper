@@ -106,4 +106,5 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "No name 'sphinxm_mock_app' in module 'pyquickhelper.helpgen'",
                      "test_yaml.py:333: [E501]",
                      "test_yaml.py:337: [E501]",
+                     "test_yaml.py:339: [E501]",
                      ])

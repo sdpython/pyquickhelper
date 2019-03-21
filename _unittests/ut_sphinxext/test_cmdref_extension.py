@@ -253,7 +253,7 @@ class TestCmdRefExtension(ExtTestCase):
         path = pyquickhelper.__path__
         if isinstance(path, list):
             path = path[0]
-        path = os.path.abspath(path)
+        path = os.path.join(os.path.abspath(path), 'src')
         self.assertExists(path)
         from docutils import nodes as skip_
 
