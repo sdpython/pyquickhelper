@@ -178,7 +178,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
             fLOG("OUT:\n", stdout.getvalue())
             fLOG("ERR:\n", stderr.getvalue())
 
-            out = os.path.join(temp, "_unittests", "run_unittests.py.out")
+            out = os.path.join(temp, "_unittests", "unittests.out")
             if not os.path.exists(out):
                 raise Exception("not found: " + out)
 
