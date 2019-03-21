@@ -293,7 +293,7 @@ class TestCmdRefExtension(ExtTestCase):
         self.assertIn("<<<", html)
         self.assertIn("python -m pyquickhelper clean_files --help", html)
         if "No module named pyquickhelper" in html:
-            msg = [pyquickhelper.__file__, os.environ.get('PYTHONPATH', '**'), '---'] + sys.path
+            rows = [pyquickhelper.__file__, os.environ.get('PYTHONPATH', '**'), '---'] + sys.path
             raise RuntimeError("Issue with pyquickhelper.\n{}".format("\n".join(rows)))
         if "usage: clean_files [-h] [-f FOLDER] [-p POSREG] [-n NEGREG] [--op OP]" not in html:
             raise Exception("Unable to find a substring in\n{0}".format(html))
