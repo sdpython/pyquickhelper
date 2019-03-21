@@ -10,6 +10,7 @@ from io import StringIO
 
 import pyquickhelper
 from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.loghelper import sys_path_append
 from pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from pyquickhelper.loghelper import git_clone
 from pyquickhelper import __file__ as pyq_location
@@ -40,72 +41,67 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
             temp = os.path.abspath(os.path.join(
                 "temp2_full_unit_test", "python3_module_template"))
         root = temp
-        setup = os.path.join(root, "setup.py")
-        pyq = os.path.join(os.path.dirname(pyquickhelper.__file__), "..")
 
-        if "src" in sys.modules:
-            memo = sys.modules["src"]
-            del sys.modules["src"]
-        else:
-            memo = None
+        with sys_path_append(os.path.join(root, "src")):
+            setup = os.path.join(root, "setup.py")
+            pyq = os.path.join(os.path.dirname(pyquickhelper.__file__), "..")
 
-        def skip_function(name, code, duration):
-            return "test_example" not in name
+            def skip_function(name, code, duration):
+                return "test_example" not in name
 
-        pyq_folder = os.path.normpath(os.path.abspath(
-            os.path.join(os.path.dirname(pyq_location), '..')))
+            pyq_folder = os.path.normpath(os.path.abspath(
+                os.path.join(os.path.dirname(pyq_location), '..')))
 
-        stdout = StringIO()
-        stderr = StringIO()
-        fLOG("setup", setup)
-        thispath = os.path.abspath(os.path.dirname(__file__))
-        thispath = os.path.normpath(os.path.join(thispath, "..", "..", "src"))
-        import jyquickhelper
-        jyqpath = os.path.abspath(os.path.join(
-            os.path.split(jyquickhelper.__file__)[0], ".."))
+            stdout = StringIO()
+            stderr = StringIO()
+            fLOG("setup", setup)
+            thispath = os.path.abspath(os.path.dirname(__file__))
+            thispath = os.path.normpath(
+                os.path.join(thispath, "..", "..", "src"))
+            import jyquickhelper
+            jyqpath = os.path.abspath(os.path.join(
+                os.path.split(jyquickhelper.__file__)[0], ".."))
 
-        fLOG("unit tests", root)
-        for command in ["build_history"]:
+            fLOG("unit tests", root)
+            for command in ["build_history"]:
+                fLOG("#######################################################")
+                fLOG("#######################################################")
+                fLOG(command)
+                fLOG("#######################################################")
+                rem = False
+                PYTHONPATH = os.environ.get("PYTHONPATH", "")
+                sep = ";" if sys.platform.startswith("win") else ":"
+                new_val = PYTHONPATH + sep + thispath + sep + jyqpath
+                os.environ["PYTHONPATH"] = new_val.strip(sep)
+                log_lines = []
+
+                def logging_custom(*l, **p):
+                    log_lines.append(l)
+                lcmd = command.split() if ' ' in command else [command]
+                stdout2 = StringIO()
+                stderr2 = StringIO()
+
+                r = process_standard_options_for_setup(
+                    lcmd, setup, "python3_module_template",
+                    port=8067, requirements=["pyquickhelper"], blog_list=None,
+                    fLOG=logging_custom, additional_ut_path=[
+                        pyq, (root, True)],
+                    skip_function=skip_function, coverage_options={
+                        "disable_coverage": True},
+                    hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
+
+                vout = stdout2.getvalue()
+                stdout.write(vout)
+                verr = stderr2.getvalue()
+                stderr.write(verr)
+                if rem:
+                    del sys.path[sys.path.index(thispath)]
+                os.environ["PYTHONPATH"] = PYTHONPATH
+
             fLOG("#######################################################")
             fLOG("#######################################################")
-            fLOG(command)
-            fLOG("#######################################################")
-            rem = False
-            PYTHONPATH = os.environ.get("PYTHONPATH", "")
-            sep = ";" if sys.platform.startswith("win") else ":"
-            new_val = PYTHONPATH + sep + thispath + sep + jyqpath
-            os.environ["PYTHONPATH"] = new_val.strip(sep)
-            log_lines = []
-
-            def logging_custom(*l, **p):
-                log_lines.append(l)
-            lcmd = command.split() if ' ' in command else [command]
-            stdout2 = StringIO()
-            stderr2 = StringIO()
-
-            r = process_standard_options_for_setup(
-                lcmd, setup, "python3_module_template",
-                port=8067, requirements=["pyquickhelper"], blog_list=None,
-                fLOG=logging_custom, additional_ut_path=[pyq, (root, True)],
-                skip_function=skip_function, coverage_options={
-                    "disable_coverage": True},
-                hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
-
-            vout = stdout2.getvalue()
-            stdout.write(vout)
-            verr = stderr2.getvalue()
-            stderr.write(verr)
-            if rem:
-                del sys.path[sys.path.index(thispath)]
-            os.environ["PYTHONPATH"] = PYTHONPATH
-
-        fLOG("#######################################################")
-        fLOG("#######################################################")
-        fLOG("OUT:\n", stdout.getvalue())
-        fLOG("ERR:\n", stderr.getvalue())
-
-        if memo is not None:
-            sys.modules["src"] = memo
+            fLOG("OUT:\n", stdout.getvalue())
+            fLOG("ERR:\n", stderr.getvalue())
 
 
 if __name__ == "__main__":
