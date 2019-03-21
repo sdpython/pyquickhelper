@@ -23,7 +23,7 @@ class TestCoverageHelper(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_coverage_combine")
         source = os.path.normpath(os.path.abspath(
-            os.path.join(temp, "..", "..", "..", "src")))
+            os.path.join(temp, "..", "..", "..")))
         self.assertExists(source)
         cov1 = os.path.join(temp, "..", "data", "_coverage_dumps",
                             "tkinterquickhelper", "ba594812", "20171226T1558", '.coverage')
@@ -68,7 +68,7 @@ class TestCoverageHelper(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_coverage_combine2")
         source = os.path.normpath(os.path.abspath(
-            os.path.join(temp, "..", "..", "..", "src")))
+            os.path.join(temp, "..", "..", "..")))
         self.assertExists(source)
         cov1 = os.path.join(temp, "..", "data", "pyq.coverage0")
         cov2 = os.path.join(temp, "..", "data", "pyq.coverage1")
@@ -81,4 +81,5 @@ class TestCoverageHelper(ExtTestCase):
 
 
 if __name__ == "__main__":
+    TestCoverageHelper().test_combine()
     unittest.main()

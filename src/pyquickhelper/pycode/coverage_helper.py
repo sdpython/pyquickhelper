@@ -198,6 +198,8 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                                             name, begin, exp.groups(), lroot))
             name = found
 
+        if "src\\src" in name or "src/src" in name:
+            raise NameError("Irresponsible replacement '{0}'.".format(name))
         return '"{0}"'.format(name)
 
     def copy_replace(source, dest, root_source):
@@ -220,6 +222,9 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         if absolute_path:
             alls = [_[0] for _ in reg.findall(content)]
             lroot = find_longest_common_root(alls, begin)
+            if root_source_dup.endswith(begin + "src"):
+                raise RuntimeError("Cannot continue with '{0}'\nlroot='{1}'.".format(
+                    root_source_dup, lroot))
             content = reg.sub(lambda name: handle_filename(name, root_source_dup, begin, slash, lroot),
                               content)
 
@@ -251,12 +256,15 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     # Let's combine.
     cov.combine(dests)
 
-    from coverage.misc import NoSource
+    from coverage.misc import NoSource, CoverageException
     try:
         cov.html_report(directory=output_path,
                         omit="*.html", ignore_errors=True)
     except NoSource as e:
         raise_exc(e, "", ex, ex2, "", destcov, source, dests, inter, cov)
+    except CoverageException as e:
+        raise RuntimeError(
+            "Unable to process report in '{0}'.".format(output_path)) from e
 
     outfile = os.path.join(output_path, "coverage_report.xml")
     cov.xml_report(outfile=outfile)
