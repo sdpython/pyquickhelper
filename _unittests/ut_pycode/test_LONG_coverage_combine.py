@@ -15,12 +15,6 @@ from pyquickhelper.loghelper.repositories.pygit_helper import clone
 
 class TestLONGCoverageCombine(ExtTestCase):
 
-    def test_combine(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
     def test_find_combine_coverage_report(self):
         fLOG(
             __file__,
@@ -35,6 +29,7 @@ class TestLONGCoverageCombine(ExtTestCase):
 
         temp = get_temp_folder(
             __file__, "temp_coverage_find_combine", clean=False)
+
         gg = os.path.join(temp, '.git')
         if not os.path.exists(gg):
             clone(temp, "github.com", "sdpython", "code_beatrix", fLOG=fLOG)

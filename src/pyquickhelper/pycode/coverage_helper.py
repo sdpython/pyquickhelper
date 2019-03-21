@@ -159,7 +159,22 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     inter = []
     reg = re.compile('\\"(([a-zA-Z]:)?[^:]*?[.]py)\\"')
 
-    def handle_filename(name, root_source_dup, begin, root_source, slash):
+    def find_longest_common_root(names, begin):
+        counts = {}
+        for name in names:
+            spl = name.split(begin)
+            for i in range(1, len(spl) + 1):
+                if spl[i - 1] == 'src':
+                    break
+                sub = begin.join(spl[:i])
+                if sub in counts:
+                    counts[sub] += 1
+                else:
+                    counts[sub] = 1
+        item = max((v, k) for k, v in counts.items())
+        return item[1]
+
+    def handle_filename(name, root_source_dup, begin, slash, lroot):
         exp = name
         name = name.groups()[0]
         if not name.startswith(begin) and ':' not in name:
@@ -169,8 +184,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                     name = name.replace("\\", "\\\\")
             name = "{0}{1}{2}".format(root_source_dup, begin, name)
         if not name.startswith(root_source_dup):
-            end = root_source_dup.split(begin)[-1]
-            spl = name.split(end)
+            spl = name.split(lroot)
             found = None
             for i in range(len(spl) - 1, 0, -1):
                 last = begin.join(spl[i:]).lstrip(begin)
@@ -179,9 +193,9 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                 if os.path.exists(found.replace("\\\\", "\\")):
                     break
             if found is None:
-                mes = "Unable to handle one file.\nroot_source='{0}'\nroot_source_dup='{1}'\nname='{2}'\nbegin='{3}'\n{4}\n{5}"
-                raise ValueError(mes.format(
-                    root_source, root_source_dup, name, begin, exp.groups(), end))
+                mes = "Unable to handle one file.\nroot_source='{}'\nname='{}'\nbegin='{}'\n{}\nlroot='{}'"
+                raise ValueError(mes.format(root_source_dup.replace("\\\\", "\\"),
+                                            name, begin, exp.groups(), lroot))
             name = found
 
         return '"{0}"'.format(name)
@@ -204,7 +218,9 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             root_source_dup = root_source.replace("\\", "\\\\")
 
         if absolute_path:
-            content = reg.sub(lambda name: handle_filename(name, root_source_dup, begin, root_source, slash),
+            alls = [_[0] for _ in reg.findall(content)]
+            lroot = find_longest_common_root(alls, begin)
+            content = reg.sub(lambda name: handle_filename(name, root_source_dup, begin, slash, lroot),
                               content)
 
         with open(dest, "w") as f:
