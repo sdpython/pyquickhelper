@@ -18,6 +18,7 @@ virtualenv:
 install:
   - pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
   - pip install -r requirements.txt
+  - pip uninstall -y pyquickhelper
   - python --version
   - pip freeze
   - pip freeze > pip_freeze.txt

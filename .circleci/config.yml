@@ -53,6 +53,7 @@ jobs:
             pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
             pip install scipy scikit-learn
             pip install sphinx --upgrade
+            pip uninstall -y pyquickhelper
 
       - save_cache:
           paths:
