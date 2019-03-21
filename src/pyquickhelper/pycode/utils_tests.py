@@ -6,6 +6,7 @@ import os
 import sys
 import unittest
 from datetime import datetime
+import warnings
 
 from ..loghelper.flog import noLOG
 from ..loghelper.os_helper import get_user
@@ -369,8 +370,12 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                         "[main_wrapper_tests] ADD COVERAGE COMBINE={0}\n".format(covs))
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
-                    coverage_combine(covs, src, source)
-                    write_covlog(covs)
+                    try:
+                        coverage_combine(covs, src, source)
+                        write_covlog(covs)
+                    except Exception as e:
+                        warnings.warn("[main_wrapper_tests] {}".format(
+                            str(e).replace("\n", " ")))
 
             if covtoken:
                 if isinstance(covtoken, tuple):
