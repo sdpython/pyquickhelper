@@ -62,6 +62,7 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         f6(3, 4)
 
     @skipif_vless((3, 6), "AttributeError: 'PosixPath' object has no attribute 'rfind'")
+    @skipif_vless((3, 7), "TypeError: __new__() missing 2 required positional")
     def test_sphinx_main(self):
         all_tocs, build_paths, parameters, html_static_paths = [], [], [], []
         root = os.path.join(os.path.dirname(__file__), '..',
