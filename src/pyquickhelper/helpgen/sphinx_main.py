@@ -20,6 +20,7 @@ except ImportError:
     from sphinx import build_main
 
 from ..filehelper import remove_folder
+from ..loghelper import python_path_append
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers import HelpGenException, ImportErrorHelpGen
@@ -892,7 +893,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 if args:
                     fLOG(*args, **kwargs)
 
-            out, err = _process_sphinx_in_private_cmd(cmd, fLOG=customfLOG)
+            with python_path_append(os.path.join(root, "_doc", "sphinxdoc", "source")):
+                out, err = _process_sphinx_in_private_cmd(cmd, fLOG=customfLOG)
             lines = ['***OUT//***'] + out.split('\n') + ['***OUT\\\\***']
             lines = [
                 _ for _ in lines if "toctree contains reference to document 'blog/" not in _]

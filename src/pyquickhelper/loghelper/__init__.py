@@ -13,7 +13,7 @@ from .pyrepo_helper import SourceRepository
 from .repositories.pygit_helper import clone as git_clone
 from .run_cmd import run_cmd, decode_outerr, run_script, RunCmdException
 from .url_helper import get_url_content
-from .sys_helper import sys_path_append
+from .sys_helper import sys_path_append, python_path_append
 
 
 def check_log():
