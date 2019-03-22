@@ -51,10 +51,72 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
         err = new_err.getvalue()
         if err:
             raise Exception(
-                "unable to run:\nCMD:\n{0}\nOUT:\n{1}\n[pyqerror]\n{2}".format(cmd, out, err))
+                "Unable to run:\nCMD:\n{0}\nOUT:\n{1}\n[pyqerror]\n{2}".format(cmd, out, err))
         return out, err
     else:
         return cmd
+
+
+def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
+    """
+    Finds all coverage reports in one subfolder.
+
+    @param      folder      which folder to look at
+    @param      exclude     list of subfolder not to look at
+    @param      filter_out  filter out from the name
+    @return                 list of files ``.coverage``
+
+    The structure is supposed to:
+
+    ::
+
+        folder
+          +- hash1
+          |    +- date1
+          |    |    +- .coverage - not selected
+          |    +- date2
+          |         +- .coverage - selected
+          +- hash2
+               +- date
+                    +- .coverage - selected
+    """
+    regexp = re.compile('data_file=([0-9a-zA-Z_]+)')
+    regcov = re.compile(
+        '<h1>Coveragereport:<spanclass=.?pc_cov.?>([0-9]+)%</span>')
+    regout = re.compile(filter_out) if filter_out else None
+    covs = {}
+    subfold = os.listdir(folder)
+    for sub in subfold:
+        if exclude is not None and sub in exclude:
+            continue
+        full = os.path.join(folder, sub)
+        keep = []
+        nn = None
+        cov = None
+        for it in explore_folder_iterfile(full):
+            name = os.path.split(it)[-1]
+            dt = os.stat(full).st_mtime
+            if name == 'index.html':
+                with open(it, 'r') as f:
+                    htd = f.read().replace('\n', '').replace('\r', '').replace(' ', '')
+                cont = regcov.findall(htd)
+                if len(cont) > 0:
+                    cov = cont[0]
+            if name == 'covlog.txt':
+                with open(it, 'r') as f:
+                    logd = f.read()
+                cont = regexp.findall(logd)
+                if len(cont) > 0:
+                    nn = cont[0]
+            if name == '.coverage':
+                keep.append((dt, it))
+        if len(keep) == 0:
+            continue
+        mx = max(keep)
+        if regout is not None and regout.search(nn):
+            continue
+        covs[sub] = (mx[-1], nn, cov)
+    return covs
 
 
 def coverage_combine(data_files, output_path, source, process=None, absolute_path=True,
@@ -279,65 +341,3 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                   ex2, outfile, destcov, source, dests, inter, cov)
 
     return cov
-
-
-def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
-    """
-    Finds all coverage reports in one subfolder.
-
-    @param      folder      which folder to look at
-    @param      exclude     list of subfolder not to look at
-    @param      filter_out  filter out from the name
-    @return                 list of files ``.coverage``
-
-    The structure is supposed to:
-
-    ::
-
-        folder
-          +- hash1
-          |    +- date1
-          |    |    +- .coverage - not selected
-          |    +- date2
-          |         +- .coverage - selected
-          +- hash2
-               +- date
-                    +- .coverage - selected
-    """
-    regexp = re.compile('data_file=([0-9a-zA-Z_]+)')
-    regcov = re.compile(
-        '<h1>Coveragereport:<spanclass=.?pc_cov.?>([0-9]+)%</span>')
-    regout = re.compile(filter_out) if filter_out else None
-    covs = {}
-    subfold = os.listdir(folder)
-    for sub in subfold:
-        if exclude is not None and sub in exclude:
-            continue
-        full = os.path.join(folder, sub)
-        keep = []
-        nn = None
-        cov = None
-        for it in explore_folder_iterfile(full):
-            name = os.path.split(it)[-1]
-            dt = os.stat(full).st_mtime
-            if name == 'index.html':
-                with open(it, 'r') as f:
-                    htd = f.read().replace('\n', '').replace('\r', '').replace(' ', '')
-                cont = regcov.findall(htd)
-                if len(cont) > 0:
-                    cov = cont[0]
-            if name == 'covlog.txt':
-                with open(it, 'r') as f:
-                    logd = f.read()
-                cont = regexp.findall(logd)
-                if len(cont) > 0:
-                    nn = cont[0]
-            if name == '.coverage':
-                keep.append((dt, it))
-        if len(keep) == 0:
-            continue
-        mx = max(keep)
-        if regout is not None and regout.search(nn):
-            continue
-        covs[sub] = (mx[-1], nn, cov)
-    return covs
