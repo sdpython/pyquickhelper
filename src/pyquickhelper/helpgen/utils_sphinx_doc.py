@@ -990,7 +990,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
     @param      auto_rst_generation     add a file *.rst* for each source file
     @param      fLOG                    logging function
 
-    @return                     list of written files stored in RstFileHelp
+    @return                             list of written files stored in @see cl RstFileHelp
 
     Example:
 

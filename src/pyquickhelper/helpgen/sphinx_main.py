@@ -7,7 +7,6 @@ for a module designed the same way as this one, @see fn generate_help_sphinx.
 import os
 import sys
 import shutil
-import importlib
 import warnings
 from datetime import datetime
 from io import StringIO
@@ -21,6 +20,7 @@ except ImportError:
 
 from ..filehelper import remove_folder
 from ..loghelper import python_path_append
+from ..loghelper.run_script import execute_script_get_local_variables, dictionary_as_class
 from ..loghelper.flog import run_cmd, fLOG
 from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers import HelpGenException, ImportErrorHelpGen
@@ -265,6 +265,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
     .. versionchanged:: 1.8
         Uses own image directive.
+
+    .. versionchanged:: 1.9
+        Import ``conf.py`` in a separate process before running
+        the generation of the documentation. Do not import it
+        directly.
     """
     datetime_rows = [("begin", datetime.now())]
 
@@ -337,6 +342,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     froot = root
     root_sphinxdoc = os.path.join(root, "_doc", "sphinxdoc")
     root_source = os.path.join(root_sphinxdoc, "source")
+    root_package = os.path.join(root, "src")
     fLOG("[generate_help_sphinx] root_source='{0}'".format(root_source))
 
     ########################################
@@ -344,20 +350,23 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ########################################
     confb = os.path.join(root_source, "conf_base.py")
     if os.path.exists(confb):
+        code = "from conf_base import *"
         try:
-            import conf_base
+            module_conf = execute_script_get_local_variables(code, folder='.')
         except (ImportError, ModuleNotFoundError) as e:
-            sys.path.insert(0, root_source)
-            try:
-                import conf_base
-                del sys.path[0]
-            except (ImportError, ModuleNotFoundError) as e:
-                del sys.path[0]
-                raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
-                    confb, root_source, "\n".join(sys.path)))
+            with python_path_append(root_package):
+                try:
+                    execute_script_get_local_variables(code, folder='.')
+                except RuntimeError as e:
+                    raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
+                        confb, root_source, "\n".join(sys.path))) from e
 
+        if module_conf is None:
+            raise ImportError(
+                "Unable to import '{0}' which defines the help generation".format(confb))
+        conf_base = dictionary_as_class(module_conf)
         fLOG("[generate_help_sphinx] conf_base.__file__='{0}'".format(
-            os.path.abspath(conf_base.__file__)))
+            os.path.abspath(conf_base.__file__)))  # pylint: disable=E1101
 
     copypath = list(sys.path)
 
@@ -389,21 +398,25 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we add the source path to the list of path to considered before importing
     # import conf.py
     ################################################################
-    sys.path.insert(0, root_source)
-
-    try:
-        theconf = importlib.import_module('conf')
-    except ImportError as e:
-        raise ImportError("unable to import conf.py from {0}, sys.path=\n{1}\nBEFORE:\n{2}".format(
-            root_source, "\n".join(sys.path), "\n".join(copypath))) from e
-    if theconf is None:
-        raise ImportError(
-            "unable to import 'conf.py' which defines the help generation")
-    fLOG("[generate_help_sphinx] conf.__file__='{0}'".format(
-        os.path.abspath(theconf.__file__)))
-    tocs = add_missing_files(root, theconf, "__INSERT__")
-    all_tocs.extend(tocs)
-    del sys.path[0]
+    with python_path_append([root_package, root_source]):
+        try:
+            module_conf = execute_script_get_local_variables(
+                "from conf import *", folder='.', check=True)
+        except ImportError as e:
+            raise ImportError("Unable to import 'conf.py' from '{0}', sys.path=\n{1}\nBEFORE:\n{2}".format(
+                root_source, "\n".join(sys.path), "\n".join(copypath))) from e
+        if module_conf is None:
+            raise ImportError(
+                "unable to import 'conf.py' which defines the help generation")
+        if 'ERROR' in module_conf:
+            raise ImportError("\n" + module_conf['ERROR'] + "\n")
+        if len(module_conf) == 0:
+            raise ImportError("No extracted local variable.")
+        theconf = dictionary_as_class(module_conf)
+        fLOG("[generate_help_sphinx] conf.__file__='{0}'".format(
+            os.path.abspath(theconf.__file__)))  # pylint: disable=E1101
+        tocs = add_missing_files(root, theconf, "__INSERT__")
+        all_tocs.extend(tocs)
 
     ##############################
     # some checkings on the configuration
@@ -429,8 +442,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if custom_latex_processing is not None:
         # The configuration file is pickled by sphinx
         # and parameter should not be functions.
-        if isinstance(custom_latex_processing, str  # unicode #
-                      ):
+        if isinstance(custom_latex_processing, str):
             custom_latex_processing = find_custom_latex_processing(  # pylint: disable=E1111
                 custom_latex_processing)
         res = custom_latex_processing("dummy phrase")
@@ -442,7 +454,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         "notebook_custom_snippet_folder", None)
     if snippet_folder:
         snippet_folder = os.path.join(
-            os.path.dirname(theconf.__file__), snippet_folder)
+            os.path.dirname(theconf.__file__), snippet_folder)  # pylint: disable=E1101
 
     notebook_replacements = theconf.__dict__.get("notebook_replacements", None)
     if notebook_replacements is not None and not isinstance(notebook_replacements, dict):
@@ -512,7 +524,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     datetime_rows = [("changes", datetime.now())]
     chan = os.path.join(root, "_doc", "sphinxdoc", "source", "filechanges.rst")
     if "modify_commit" in theconf.__dict__:
-        modify_commit = theconf.modify_commit
+        modify_commit = theconf.modify_commit  # pylint: disable=E1101
     else:
         modify_commit = None
     generate_changes_repo(
@@ -639,8 +651,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("     -pattern  '{0}'".format(nbneg_pattern))
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern,
                                    fullname=True, fLOG=fLOG)[1]
-        notebooks = [_ for _ in notebooks if "checkpoint" not in _ and
-                                             "/build/" not in _.replace("\\", "/")]
+        notebooks = [_ for _ in notebooks if ("checkpoint" not in _ and
+                                              "/build/" not in _.replace("\\", "/"))]
         fLOG("     found {0} notebooks".format(len(notebooks)))
         if len(notebooks) > 0:
             fLOG("[generate_help_sphinx] **** notebooks", nbformats)
@@ -862,43 +874,44 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("[generate_help_sphinx] cmd='''{0}'''".format(" ".join(cmd)))
         fLOG("[generate_help_sphinx] kind='{0}'".format(kind))
         fLOG("[generate_help_sphinx] build='{0}'".format(build))
+        fLOG("[generate_help_sphinx] direct_call={0}".format(direct_call))
 
         # direct call
-        if direct_call:
-            # mostly to debug
-            out = StringIO()
-            err = StringIO()
-            memo_out = sys.stdout
-            memo_err = sys.stderr
-            sys.stdout = out
-            sys.stderr = out
-            try:
-                build_main(cmd[1:])
-            except SystemExit as e:
-                raise SystemExit("Unable to run Sphinx\n--CMD\n{0}\n--ERR--\n{1}\n--CWD--\n{2}\n--OUT--\n{3}\n--".format(
-                    cmd, err.getvalue(), os.getcwd(), out.getvalue())) from e
-            sys.stdout = memo_out
-            sys.stderr = memo_err
-            out = out.getvalue()
-            err = err.getvalue()
-            lines = ['***OUT/***'] + out.split('\n') + ['***OUT\\***']
-            lines = [
-                _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
-            out = "\n".join(lines)
-        else:
-            def customfLOG(*args, **kwargs):
-                "filter out some lines"
-                args = [
-                    _ for _ in args if "toctree contains reference to document 'blog/" not in _]
-                if args:
-                    fLOG(*args, **kwargs)
+        with python_path_append(root_source):
+            if direct_call:
+                # mostly to debug
+                out = StringIO()
+                err = StringIO()
+                memo_out = sys.stdout
+                memo_err = sys.stderr
+                sys.stdout = out
+                sys.stderr = out
+                try:
+                    build_main(cmd[1:])
+                except SystemExit as e:
+                    raise SystemExit("Unable to run Sphinx\n--CMD\n{0}\n--ERR--\n{1}\n--CWD--\n{2}\n--OUT--\n{3}\n--".format(
+                        cmd, err.getvalue(), os.getcwd(), out.getvalue())) from e
+                sys.stdout = memo_out
+                sys.stderr = memo_err
+                out = out.getvalue()
+                err = err.getvalue()
+                lines = ['***OUT/***'] + out.split('\n') + ['***OUT\\***']
+                lines = [
+                    _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
+                out = "\n".join(lines)
+            else:
+                def customfLOG(*args, **kwargs):
+                    "filter out some lines"
+                    args = [
+                        _ for _ in args if "toctree contains reference to document 'blog/" not in _]
+                    if args:
+                        fLOG(*args, **kwargs)
 
-            with python_path_append(os.path.join(root, "_doc", "sphinxdoc", "source")):
                 out, err = _process_sphinx_in_private_cmd(cmd, fLOG=customfLOG)
-            lines = ['***OUT//***'] + out.split('\n') + ['***OUT\\\\***']
-            lines = [
-                _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
-            out = "\n".join(lines)
+                lines = ['***OUT//***'] + out.split('\n') + ['***OUT\\\\***']
+                lines = [
+                    _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
+                out = "\n".join(lines)
 
         fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(
             len(out), len(err)))
@@ -1207,27 +1220,31 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     * html_static_paths
     """
     # trick, we place the good folder in the first position
-    sys.path.insert(0, folds)
-    if fLOG:
-        fLOG("[generate_help_sphinx] import from", folds)
-    try:
-        thenewconf = importlib.import_module("conf")
+    with python_path_append(folds):
         if fLOG:
-            fLOG("[_import_conf_extract_parameter] import:", thenewconf)
-    except Exception as ee:
-        raise HelpGenException(
-            "Unable to import a config file (root_source='{0}').".format(
-                root_source),
-            os.path.join(folds, "conf.py")) from ee
+            fLOG("[generate_help_sphinx] import from '{0}'".format(folds))
+        try:
+            module_conf = execute_script_get_local_variables(
+                "from conf import *", folder='.')
+        except Exception as ee:
+            raise HelpGenException(
+                "Unable to import a config file (root_source='{0}').".format(
+                    root_source),
+                os.path.join(folds, "conf.py")) from ee
+        if 'ERROR' in module_conf:
+            raise ImportError("\n" + module_conf['ERROR'] + "\n")
+        if len(module_conf) == 0:
+            raise ImportError("Unable to extract local variable from conf.py.")
 
-    # we remove the insert path
-    del sys.path[0]
-    if thenewconf is None:
+    if module_conf is None:
         raise ImportError(
-            "unable to import {0} which defines the help generation".format(newconf))
+            "Unable to import '{0}' which defines the help generation".format(newconf))
+    thenewconf = dictionary_as_class(module_conf)
+    if fLOG:
+        fLOG("[_import_conf_extract_parameter] import:", thenewconf)
+
     tocs = add_missing_files(root, thenewconf, "__INSERT__")
     all_tocs.extend(tocs)
-    del sys.modules["conf"]
 
     # check if we need to run ie_layout_html
     check_ie_layout_html = thenewconf.__dict__.get(
@@ -1247,4 +1264,4 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     html_static_paths.append(html_static_path)
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", build, "html")))
-    parameters.append(dict(latex_book=thenewconf.latex_book))
+    parameters.append(dict(latex_book=thenewconf.latex_book))  # pylint: disable=E1101
