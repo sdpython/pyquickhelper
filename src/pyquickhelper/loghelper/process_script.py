@@ -86,7 +86,11 @@ def execute_script(code, folder=None, filename="_temp_custom_run_script_.py", ch
                                 stderr=subprocess.PIPE)
         _, errs = proc.communicate()
         if errs:
-            return {'ERROR': errs.decode('utf-8', errors="ignore")}
+            lines = errs.split('\n')
+            lines = [line for line in lines if "Warning" not in line and line and line[0] != ' ']
+            errs2 = "\n".join(lines).strip("\r\n ")
+            if errs2:
+                return {'ERROR': errs.decode('utf-8', errors="ignore")}
         with open(data, "rb") as f:
             loc = pickle.load(f)
         return loc
