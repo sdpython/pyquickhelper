@@ -6,8 +6,8 @@ import unittest
 import textwrap
 
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
-from pyquickhelper.loghelper.run_script import execute_script, execute_script_get_local_variables
-from pyquickhelper.loghelper.run_script import dictionary_as_class
+from pyquickhelper.loghelper.process_script import execute_script, execute_script_get_local_variables
+from pyquickhelper.loghelper.process_script import dictionary_as_class
 
 
 class TestRunScript(ExtTestCase):

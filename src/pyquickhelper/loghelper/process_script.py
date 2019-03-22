@@ -78,7 +78,10 @@ def execute_script(code, folder=None, filename="_temp_custom_run_script_.py", ch
                 data.replace("\\", "/"))
         with open(name, "w", encoding="utf-8") as f:
             f.write(new_code)
-        cmdl = '{0} -u "{1}"'.format(sys.executable, name)
+        if sys.platform.startswith("win"):
+            cmdl = '{0} -u "{1}"'.format(sys.executable, name)
+        else:
+            cmdl = [sys.executable, '-u', name]
         proc = subprocess.Popen(cmdl, stdout=subprocess.PIPE,
                                 stderr=subprocess.PIPE)
         _, errs = proc.communicate()
