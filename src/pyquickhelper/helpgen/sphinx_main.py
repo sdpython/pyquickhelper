@@ -352,11 +352,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if os.path.exists(confb):
         code = "from conf_base import *"
         try:
-            module_conf = execute_script_get_local_variables(code, folder='.')
+            module_conf = execute_script_get_local_variables(code, folder=root_source)
         except (ImportError, ModuleNotFoundError) as e:
             with python_path_append(root_package):
                 try:
-                    execute_script_get_local_variables(code, folder='.')
+                    execute_script_get_local_variables(code, folder=root_source)
                 except RuntimeError as e:
                     raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
                         confb, root_source, "\n".join(sys.path))) from e
@@ -401,7 +401,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     with python_path_append([root_package, root_source]):
         try:
             module_conf = execute_script_get_local_variables(
-                "from conf import *", folder='.', check=True)
+                "from conf import *", folder=root_source, check=True)
         except ImportError as e:
             raise ImportError("Unable to import 'conf.py' from '{0}', sys.path=\n{1}\nBEFORE:\n{2}".format(
                 root_source, "\n".join(sys.path), "\n".join(copypath))) from e
@@ -1225,7 +1225,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
             fLOG("[generate_help_sphinx] import from '{0}'".format(folds))
         try:
             module_conf = execute_script_get_local_variables(
-                "from conf import *", folder='.')
+                "from conf import *", folder=root_source)
         except Exception as ee:
             raise HelpGenException(
                 "Unable to import a config file (root_source='{0}').".format(
