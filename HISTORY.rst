@@ -5,12 +5,12 @@
 History
 =======
 
-current - 2019-03-20 - 0.00Mb
+current - 2019-03-23 - 0.00Mb
 =============================
 
 * `243`: refactor unit tests (2019-03-20)
-* `239`: add sphinx directive to add date of the latest commit (2019-03-16)
 * `242`: add command line sphinx_rst to convert rst document (2019-03-16)
+* `239`: add sphinx directive to add date of the latest commit (2019-03-16)
 * `240`: replaces separator ; by ;; in yaml files when dealing with conditional instructions (2019-03-04)
 * `236`: command line is slow (2019-03-01)
 * `237`: add parameter number_format to df2rst (2019-02-28)
@@ -25,10 +25,6 @@ current - 2019-03-20 - 0.00Mb
 * `230`: autosignature does not work for C++ function in cpyquickhelper (2019-01-19)
 * `229`: remove specific code for python2 (2019-01-12)
 * `228`: fix missing jpg images in documentation (2019-01-09)
-
-1.8.2924 - 2019-01-08 - 2.03Mb
-==============================
-
 * `227`: makes more functions available from command line (2019-01-08)
 * `226`: fix command line name when created from a function (2019-01-08)
 * `225`: add class BufferedPrint to retrieve logging through fLOG (2019-01-07)

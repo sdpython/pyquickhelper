@@ -307,12 +307,12 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             file_regex = re.compile("\\\"(.+?[.]py)\\\"")
             fall = file_regex.findall(content)
             if len(fall) == 0:
-                raise ValueError("Unable to find any file in\n{}".format(content))
+                raise ValueError(
+                    "Unable to find any file in\n{}".format(content))
             nb = len(list(filter(os.path.exists, fall)))
             if nb == 0:
                 raise ValueError("Unable to find any existing file.\n--\n{}\n--\n{}\n--\n{}".format(
                     pprint.pformat(keep_infos), "\n".join(fall), content0))
-
 
         with open(dest, "w") as f:
             f.write(content)
