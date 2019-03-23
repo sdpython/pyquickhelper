@@ -150,7 +150,8 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         Parameter *remove_unexpected_root* was added.
         The function was refactored to handle better relative files.
     """
-    def raise_exc(exc, content, ex, ex2, outfile, destcov, source, dests, inter, cov):
+    def raise_exc(exc, content, ex, ex2, outfile, destcov, source,
+                  dests, inter, cov, infos):
 
         from coverage.data import CoverageData
 
@@ -163,14 +164,20 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             content = content[:2000] + '\n...'
         ex = "\n-\n".join(shorten(_) for _ in ex)
         ex2 = "\n-\n".join(shorten(_) for _ in ex2)
-        rows = ["destcov='{0}'".format(destcov),
+        rows = ['-----------------',
+                "destcov='{0}'".format(destcov),
                 "outfile='{0}'".format(outfile),
                 "source='{0}'".format(source),
                 "cov.source={0}".format(cov.source),
                 "dests='{0}'".format(';'.join(dests)),
                 "inter={0}".format(inter)]
+        for ii, info in enumerate(infos):
+            rows.append('----------------- {}/{}'.format(ii, len(infos)))
+            for k, v in sorted(infos.items()):
+                rows.append("{}='{}'".format(k, v))
+        rows.append('-----------------')
         if cov is not None and cov.data is not None and cov.data._lines is not None:
-            rows.append("----- LINES")
+            rows.append("##### LINES")
             end = min(5, len(cov.data._lines))
             for k, v in list(sorted(cov.data._lines.items()))[:end]:
                 rows.append('   {0}:{1}'.format(k, v))
@@ -182,7 +189,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         for d in dests:
             dd = CoverageData()
             dd.read_file(d + "~")
-            rows.append("------- LINES - '{0}'".format(d))
+            rows.append("####### LINES - '{0}'".format(d))
             end = min(5, len(dd._lines))
             for k, v in list(sorted(dd._lines.items()))[:end]:
                 rows.append('   {0}:{1}'.format(k, v))
@@ -264,7 +271,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             raise NameError("Irresponsible replacement '{0}'.".format(name))
         return '"{0}"'.format(name)
 
-    def copy_replace(source, dest, root_source):
+    def copy_replace(source, dest, root_source, keep_infos):
         with open(source, "r") as f:
             content = f.read()
         if process is not None:
@@ -281,6 +288,14 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
             begin = "\\\\"
             root_source_dup = root_source.replace("\\", "\\\\")
 
+        keep_infos["slash"] = slash
+        keep_infos["begin"] = begin
+        keep_infos["root_source_dup"] = root_source_dup
+        keep_infos["root_source"] = root_source
+        keep_infos["absolute_path"] = absolute_path
+        keep_infos["source"] = source
+        keep_infos["dest"] = dest
+
         if absolute_path:
             alls = [_[0] for _ in reg.findall(content)]
             lroot = find_longest_common_root(alls, begin)
@@ -296,8 +311,11 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     # We modify the root in every coverage file.
     dests = [os.path.join(output_path, '.coverage{0}'.format(
         i)) for i in range(len(data_files))]
+    infos = []
     for fi, de in zip(data_files, dests):
-        copy_replace(fi, de, source)
+        keep_infos = {}
+        copy_replace(fi, de, source, keep_infos)
+        infos.append(keep_infos)
         shutil.copy(de, de + "~")
 
     # Keeping information (for exception).
@@ -338,6 +356,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
 
     if 'line hits="1"' not in content:
         raise_exc(Exception("Coverage is empty"), content, ex,
-                  ex2, outfile, destcov, source, dests, inter, cov)
+                  ex2, outfile, destcov, source, dests, inter,
+                  cov, infos)
 
     return cov
