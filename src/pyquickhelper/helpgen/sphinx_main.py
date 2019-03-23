@@ -91,7 +91,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          layout=None,
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG,
-                         parallel=1):
+                         parallel=1, extra_paths=None):
     """
     Runs the help generation:
 
@@ -119,6 +119,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                     or run a command line in an another process to get
                                     a clear environment
     @param      parallel            degree of parallelization
+    @param      extra_paths         extra paths when importing configuration
     @param      fLOG                logging function
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
@@ -344,6 +345,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     root_source = os.path.join(root_sphinxdoc, "source")
     root_package = os.path.join(root, "src")
     fLOG("[generate_help_sphinx] root_source='{0}'".format(root_source))
+    conf_paths = [root_source, root_package]
+    if extra_paths:
+        conf_paths.extend(extra_paths)
 
     ########################################
     # we import conf_base, specific to multi layers
@@ -351,19 +355,22 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     confb = os.path.join(root_source, "conf_base.py")
     if os.path.exists(confb):
         code = "from conf_base import *"
-        try:
-            module_conf = execute_script_get_local_variables(code, folder=root_source)
-        except (ImportError, ModuleNotFoundError) as e:
-            with python_path_append(root_package):
-                try:
-                    execute_script_get_local_variables(code, folder=root_source)
-                except RuntimeError as e:
-                    raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
-                        confb, root_source, "\n".join(sys.path))) from e
+        with python_path_append(conf_paths):
+            try:
+                module_conf = execute_script_get_local_variables(code,
+                                                                 folder=root_source, check=True)
+            except RuntimeError as e:
+                raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
+                    confb, root_source, "\n".join(sys.path))) from e
 
         if module_conf is None:
             raise ImportError(
                 "Unable to import '{0}' which defines the help generation".format(confb))
+        if 'ERROR' in module_conf:
+            msg = "\n".join(["paths:"] + conf_paths + [
+                "-----------------------",
+                module_conf['ERROR']])
+            raise ImportError(msg)
         conf_base = dictionary_as_class(module_conf)
         fLOG("[generate_help_sphinx] conf_base.__file__='{0}'".format(
             os.path.abspath(conf_base.__file__)))  # pylint: disable=E1101
@@ -398,7 +405,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we add the source path to the list of path to considered before importing
     # import conf.py
     ################################################################
-    with python_path_append([root_package, root_source]):
+    with python_path_append(conf_paths):
         try:
             module_conf = execute_script_get_local_variables(
                 "from conf import *", folder=root_source, check=True)
@@ -409,7 +416,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             raise ImportError(
                 "unable to import 'conf.py' which defines the help generation")
         if 'ERROR' in module_conf:
-            raise ImportError("\n" + module_conf['ERROR'] + "\n")
+            msg = "\n".join(["paths:"] + conf_paths + [
+                "-----------------------",
+                module_conf['ERROR']])
+            raise ImportError(msg)
         if len(module_conf) == 0:
             raise ImportError("No extracted local variable.")
         theconf = dictionary_as_class(module_conf)
@@ -1264,4 +1274,5 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     html_static_paths.append(html_static_path)
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", build, "html")))
-    parameters.append(dict(latex_book=thenewconf.latex_book))  # pylint: disable=E1101
+    pp = dict(latex_book=thenewconf.latex_book)  # pylint: disable=E1101
+    parameters.append(pp)

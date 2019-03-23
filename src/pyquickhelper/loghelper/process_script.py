@@ -88,7 +88,8 @@ def execute_script(code, folder=None, filename="_temp_custom_run_script_.py", ch
         errs = errs.decode('utf-8', errors="ignore")
         if errs:
             lines = errs.split('\n')
-            lines = [line for line in lines if "Warning" not in line and line and line[0] != ' ']
+            lines = [
+                line for line in lines if "Warning" not in line and line and line[0] != ' ']
             errs2 = "\n".join(lines).strip("\r\n ")
             if errs2:
                 return {'ERROR': errs}

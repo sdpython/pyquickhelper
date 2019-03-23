@@ -43,6 +43,8 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
                                clean=__name__ != "__main__")
 
         clog = CustomLog(temp)
+        this_pyq = os.path.normpath(os.path.abspath(
+            os.path.join(os.path.dirname(pyquickhelper.__file__), "..")))
 
         class MyStream:
             def __init__(self):
@@ -156,7 +158,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
                     generate_help_sphinx(var, module_name=var, root=root,
                                          layout=layout, extra_ext=["tohelp"],
                                          from_repo=False, direct_call=direct_call,
-                                         parallel=1, fLOG=clog)
+                                         parallel=1, fLOG=clog, extra_paths=[this_pyq])
                     for w in ww:
                         if isinstance(w, dict):
                             rows = [
