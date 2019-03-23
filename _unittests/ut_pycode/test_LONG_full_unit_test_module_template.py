@@ -162,16 +162,18 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                         fLOG("  ", line)
                     if len(log_lines) == 0:
                         raise Exception(
-                            "command={0}\nOUT:\n{1}\nERR:\n{2}".format(command, vout, verr))
+                            "command1={0}\n--OUT--\n{1}\n--ERR--\n{2}".format(command, vout, verr))
                     if "-e" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                         raise Exception(vout)
                     if "-e" in command and "_ext" not in vout and "code_style" not in command:
-                        raise Exception(vout)
+                        raise Exception(
+                            "command3={0}\n--OUT--\n{1}".format(command, vout))
                     if "LONG" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                         raise Exception(vout)
-                    if "LONG" not in command and "LONG" in vout and "-g" not in command:
-                        raise Exception(
-                            "command={0}\nOUT\n{1}".format(command, vout))
+                    if "-e .*code_style.*" not in command:
+                        if "LONG" not in command and "LONG" in vout and "-g" not in command:
+                            raise Exception(
+                                "command2={0}\n--OUT--\n{1}".format(command, vout))
                 if rem:
                     del sys.path[sys.path.index(thispath)]
                 os.environ["PYTHONPATH"] = PYTHONPATH
