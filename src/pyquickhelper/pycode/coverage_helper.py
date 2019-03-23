@@ -222,7 +222,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
     cov.get_data()
     if cov.source is None or len(cov.source) == 0:
         raise_exc(FileNotFoundError("Probably unable to find '{0}'".format(source)),
-                  "", [], [], "", destcov, source, [], [], cov)
+                  "", [], [], "", destcov, source, [], [], cov, [])
     source = cov.source[0]
 
     inter = []
@@ -341,7 +341,8 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         cov.html_report(directory=output_path,
                         omit="*.html", ignore_errors=True)
     except NoSource as e:
-        raise_exc(e, "", ex, ex2, "", destcov, source, dests, inter, cov)
+        raise_exc(e, "", ex, ex2, "", destcov, source,
+                  dests, inter, cov, infos)
     except CoverageException as e:
         raise RuntimeError(
             "Unable to process report in '{0}'.".format(output_path)) from e
