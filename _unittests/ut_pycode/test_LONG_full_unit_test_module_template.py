@@ -13,6 +13,7 @@ from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.loghelper import sys_path_append
 from pyquickhelper.pycode import get_temp_folder, process_standard_options_for_setup, is_travis_or_appveyor
 from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode.utils_tests import TestWrappedException
 from pyquickhelper.loghelper import git_clone
 from pyquickhelper import __file__ as pyq_location
 
@@ -138,6 +139,11 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                             "disable_coverage": True},
                         hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
                     goon = True
+                except TestWrappedException as e:
+                    if "test_coverage_combine.py" in str(e):
+                        goon = False
+                    else:
+                        raise e
                 except NotImplementedError:
                     # Maybe not implemented on linux or windows.
                     goon = False
@@ -149,6 +155,8 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                                 "sys.path has changed at position {0}".format(pos_remove))
                         del sys.path[pos_remove]
                         fLOG("REMOVE='{0}'".format(pyq_folder))
+                elif pos_remove:
+                    del sys.path[pos_remove]
 
                 vout = stdout2.getvalue()
                 stdout.write(vout)

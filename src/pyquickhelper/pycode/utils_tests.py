@@ -18,6 +18,11 @@ from .utils_tests_private import default_skip_function, main_run_test
 from .utils_tests_stringio import StringIOAndFile
 
 
+class TestWrappedException(Exception):
+    "Raised by @see fn main_wrapper_tests"
+    pass
+
+
 def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
                        skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
@@ -424,7 +429,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
             err = "\n".join(lines)
         if len(err) > 0:
-            raise Exception(err)
+            raise TestWrappedException(err)
 
         datetime_end = datetime.now()
 
