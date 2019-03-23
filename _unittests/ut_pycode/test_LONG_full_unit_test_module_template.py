@@ -121,13 +121,12 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                 stdout2 = StringIO()
                 stderr2 = StringIO()
 
+                pos_remove = None
                 if command == "unittests -e .*code_style.*":
                     if pyq_folder not in sys.path:
                         pos_remove = len(sys.path)
                         sys.path.append(pyq_folder)
                         fLOG("ADD='{0}'".format(pyq_folder))
-                    else:
-                        pos_remove = None
 
                 try:
                     r = process_standard_options_for_setup(
