@@ -50,6 +50,6 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     if not os.path.exists(expected):
         one = download_requirejs(dest, fLOG=fLOG)
     else:
-        one = expected
+        one = [expected]
     lfiles.extend(one)
     return lfiles

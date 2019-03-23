@@ -423,10 +423,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if len(module_conf) == 0:
             raise ImportError("No extracted local variable.")
         theconf = dictionary_as_class(module_conf)
-        fLOG("[generate_help_sphinx] conf.__file__='{0}'".format(
-            os.path.abspath(theconf.__file__)))  # pylint: disable=E1101
-        tocs = add_missing_files(root, theconf, "__INSERT__")
-        all_tocs.extend(tocs)
+    fLOG("[generate_help_sphinx] conf.__file__='{0}'".format(
+        os.path.abspath(theconf.__file__)))  # pylint: disable=E1101
+    tocs = add_missing_files(root, theconf, "__INSERT__", fLOG)
+    all_tocs.extend(tocs)
 
     ##############################
     # some checkings on the configuration
@@ -1251,9 +1251,10 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
             "Unable to import '{0}' which defines the help generation".format(newconf))
     thenewconf = dictionary_as_class(module_conf)
     if fLOG:
-        fLOG("[_import_conf_extract_parameter] import:", thenewconf)
+        fLOG("[_import_conf_extract_parameter] import:", thenewconf.drop(
+            "epkg_dictionary", "latex_elements", "imgmath_latex_preamble", "preamble"))
 
-    tocs = add_missing_files(root, thenewconf, "__INSERT__")
+    tocs = add_missing_files(root, thenewconf, "__INSERT__", fLOG)
     all_tocs.extend(tocs)
 
     # check if we need to run ie_layout_html

@@ -757,12 +757,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'expected_failing_examples': [],
         }
 
-        try:
-            import memory_profiler
-            sphinx_gallery_conf['show_memory'] = True
-        except ImportError as e:
-            warnings.warn(
-                "memory_profiler is not install, sphinx_gallery will not show memory consumption.")
+        sphinx_gallery_conf['show_memory'] = False
     else:
         skipset = {"sphinx_gallery.gen_gallery"}
         extensions = [_ for _ in extensions if _ not in skipset]
@@ -831,9 +826,8 @@ def get_first_line(filename):
 
 def _skip(app, what, name, obj, skip, options):
     """
-    to skip some functions,
-
-    see `Skipping members <http://sphinx-doc.org/ext/autodoc.html#event-autodoc-skip-member>`_
+    To skip some functions,
+    see `Skipping members <http://sphinx-doc.org/ext/autodoc.html#event-autodoc-skip-member>`_.
     """
     if name.startswith("_") and name not in \
             ["__qualname__",
@@ -941,7 +935,7 @@ def custom_setup(app, author):
 
 def get_default_stylesheet():
     """
-    Returns the style of additional style sheets
+    Returns the style of additional style sheets.
 
     @return         list of files
     """

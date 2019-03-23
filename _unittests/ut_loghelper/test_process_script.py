@@ -71,6 +71,14 @@ class TestRunScript(ExtTestCase):
         st = str(cl)
         self.assertEqual(st, "{'d1': 'e', 'r': 4}")
 
+    def test_dummy_class_drop(self):
+        cl = dictionary_as_class(dict(d1="e", r=4))
+        st = str(cl)
+        self.assertEqual(st, "{'d1': 'e', 'r': 4}")
+        cl = cl.drop("d1")
+        st = str(cl)
+        self.assertEqual(st, "{'r': 4}")
+
     @skipif_appveyor("job stuck")
     def test_run_script_popen(self):
         temp = get_temp_folder(__file__, "temp_run_script_popen")

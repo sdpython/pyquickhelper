@@ -138,17 +138,24 @@ def dictionary_as_class(dico):
     @return                 class
     """
     class dummy_class:
+        def __init__(self, dico):
+            for k, v in dico.items():
+                if not isinstance(k, str):
+                    raise TypeError("Key '{}' must be a string.".format(k))
+                setattr(self, k, v)
+
         def __str__(self):
             data = {k: v for k, v in self.__dict__.items()
                     if not k.startswith("_")}
             return pprint.pformat(data)
 
-    du = dummy_class()
+        def drop(self, *dr):
+            sdr = set(dr)
+            data = {k: v for k, v in self.__dict__.items()
+                    if not k.startswith("_") and k not in sdr}
+            return dummy_class(data)
 
-    for k, v in dico.items():
-        if not isinstance(k, str):
-            raise TypeError("Key '{}' must be a string.".format(k))
-        setattr(du, k, v)
+    du = dummy_class(dico)
     return du
 
 

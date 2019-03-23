@@ -3,10 +3,11 @@
 @brief function around missing file for the documentation
 """
 import os
+import shutil
 from ..texthelper.texts_language import TITLES
 
 
-def add_missing_files(root, conf, blog_list):
+def add_missing_files(root, conf, blog_list, fLOG):
     """
     Adds missing files for the documentation,
     ``moduletoc.html``, ``blogtoc.html``, ``searchbox.html``.
@@ -16,6 +17,7 @@ def add_missing_files(root, conf, blog_list):
     @param      blog_list   list of recent blog posts to add to the navigational bar (list)
                             or a name for a placeholder (such as ``__INSERT__``)
     @param      theme       theme, missing files depend on it
+    @param      fLOG        logging function
     @return                 list of modified files
 
     The function considers the theme for the searchbox.
@@ -56,6 +58,8 @@ def add_missing_files(root, conf, blog_list):
 
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")
+    if fLOG:
+        fLOG("[add_missing_files] create '{}'".format(mt))
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc0"]))
@@ -91,6 +95,8 @@ def add_missing_files(root, conf, blog_list):
 
     # blogtoc.html
     mt = os.path.join(loc, "blogtoc.html")
+    if fLOG:
+        fLOG("[add_missing_files] create '{}'".format(mt))
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         f.write("""<a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
@@ -108,6 +114,8 @@ def add_missing_files(root, conf, blog_list):
     # searchbox.html
     theme = conf.theme
     mt = os.path.join(loc, "searchbox.html")
+    if fLOG:
+        fLOG("[add_missing_files] create '{}'".format(mt))
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         if theme == "sphinx_rtd_theme":
@@ -154,6 +162,17 @@ def add_missing_files(root, conf, blog_list):
                 """.replace("                ", "")
             f.write(text)
 
+    missings = ['layout.html', 'page.html']
+    import sphinx
+    themes = os.path.join(os.path.dirname(sphinx.__file__), "themes", "basic")
+    for mis in missings:
+        mt = os.path.join(loc, mis)
+        if not os.path.exists(mt):
+            sr = os.path.join(themes, mis)
+            if os.path.exists(sr):
+                if fLOG:
+                    fLOG("[add_missing_files] create '{}'".format(mt))
+                shutil.copy(sr, loc)
     return tocs
 
 
