@@ -177,10 +177,6 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                             "command3={0}\n--OUT--\n{1}".format(command, vout))
                     if "LONG" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                         raise Exception(vout)
-                    if "-e .*code_style.*" not in command:
-                        if "LONG" not in command and "LONG" in vout and "-g" not in command:
-                            raise Exception(
-                                "command2={0}\n--OUT--\n{1}".format(command, vout))
                 if rem:
                     del sys.path[sys.path.index(thispath)]
                 os.environ["PYTHONPATH"] = PYTHONPATH
