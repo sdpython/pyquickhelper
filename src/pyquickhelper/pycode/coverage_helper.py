@@ -301,11 +301,18 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         if absolute_path:
             alls = [_[0] for _ in reg.findall(content)]
             lroot = find_longest_common_root(alls, begin)
-            if root_source_dup.endswith(begin + "src"):
-                le = len(begin + "src")
-                root_source_dup = root_source_dup[: -le]
+            content0 = content
             content = reg.sub(lambda name: handle_filename(name, root_source_dup, begin, slash, lroot),
                               content)
+            file_regex = re.compile("\\\"(.+?[.]py)\\\"")
+            fall = file_regex.findall(content)
+            if len(fall) == 0:
+                raise ValueError("Unable to find any file in\n{}".format(content))
+            nb = len(list(filter(os.path.exists, fall)))
+            if nb == 0:
+                raise ValueError("Unable to find any existing file.\n--\n{}\n--\n{}\n--\n{}".format(
+                    pprint.pformat(keep_infos), "\n".join(fall), content0))
+
 
         with open(dest, "w") as f:
             f.write(content)
