@@ -333,8 +333,14 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     if doc_version is None:
         mod = sys.modules.get(module_name, None)
         if mod is None:
-            raise RuntimeError("Unknown module version. You should import '{0}' or specifiy 'doc_version'.".format(
-                module_name))
+            import importlib
+            try:
+                mod = importlib.import_module(module_name)
+            except (ImportError, ModuleNotFoundError):
+                mod = None
+            if mod is None:
+                raise RuntimeError("Unknown module version. You should import '{0}' or specify 'doc_version'.".format(
+                    module_name))
         version = mod.__version__
     else:
         version = doc_version

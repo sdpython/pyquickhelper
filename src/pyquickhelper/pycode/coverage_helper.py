@@ -267,6 +267,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                                             name, begin, exp.groups(), lroot))
             name = found
 
+        name = name.replace("//", "/")
         if "src\\src" in name or "src/src" in name:
             raise NameError("Irresponsible replacement '{0}'.".format(name))
         return '"{0}"'.format(name)
@@ -280,9 +281,9 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         co = Counter(root_source)
         slash = co.get('/', 0) >= co.get('\\', 0)
         if slash:
-            content = content.replace("\\", "/")
+            content = content.replace("\\", "/").replace('//', '/')
             begin = "/"
-            root_source_dup = root_source.replace("\\", "/")
+            root_source_dup = root_source.replace("\\", "/").replace('//', '/')
         else:
             content = content.replace("/", "\\")
             begin = "\\\\"
