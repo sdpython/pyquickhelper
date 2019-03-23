@@ -173,7 +173,7 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
                 "inter={0}".format(inter)]
         for ii, info in enumerate(infos):
             rows.append('----------------- {}/{}'.format(ii, len(infos)))
-            for k, v in sorted(infos.items()):
+            for k, v in sorted(info.items()):
                 rows.append("{}='{}'".format(k, v))
         rows.append('-----------------')
         if cov is not None and cov.data is not None and cov.data._lines is not None:
