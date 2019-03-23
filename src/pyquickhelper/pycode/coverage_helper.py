@@ -6,6 +6,7 @@ import os
 import re
 from collections import Counter
 import shutil
+import pprint
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
 from ..loghelper import SourceRepository, noLOG
@@ -345,8 +346,10 @@ def coverage_combine(data_files, output_path, source, process=None, absolute_pat
         raise_exc(e, "", ex, ex2, "", destcov, source,
                   dests, inter, cov, infos)
     except CoverageException as e:
+        msg = pprint.pformat(infos)
         raise RuntimeError(
-            "Unable to process report in '{0}'.".format(output_path)) from e
+            "Unable to process report in '{0}'.\n----\n{1}".format(
+                output_path, msg)) from e
 
     outfile = os.path.join(output_path, "coverage_report.xml")
     cov.xml_report(outfile=outfile)
