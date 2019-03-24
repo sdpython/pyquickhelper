@@ -162,7 +162,7 @@ def add_missing_files(root, conf, blog_list, fLOG):
                 """.replace("                ", "")
             f.write(text)
 
-    missings = ['layout.html', 'page.html']
+    missings = []  # ['layout.html', 'page.html']
     import sphinx
     themes = os.path.join(os.path.dirname(sphinx.__file__), "themes", "basic")
     for mis in missings:
