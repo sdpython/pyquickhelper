@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2019-03-23 - 0.00Mb
+current - 2019-03-26 - 0.00Mb
 =============================
 
+* `244`: remove need of __init__.py in folder src, do not import conf.py in the same process while generating the documentation (2019-03-25)
 * `243`: refactor unit tests (2019-03-20)
 * `242`: add command line sphinx_rst to convert rst document (2019-03-16)
 * `239`: add sphinx directive to add date of the latest commit (2019-03-16)
