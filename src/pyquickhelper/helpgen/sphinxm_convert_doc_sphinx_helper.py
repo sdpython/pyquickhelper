@@ -1393,19 +1393,19 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('role', name))
         self.debug('[_CustomSphinx]  adding role: %r', (name, role))
         if name in roles._roles and not override:
-            self.warning(_('[_CustomSphinx] while setting up extension %s: role %r is '
-                           'already registered, it will be overridden'),
+            self.warning(("[_CustomSphinx] while setting up extension '%s': role '%r' is "
+                          "already registered, it will be overridden"),
                          self._setting_up_extension[-1], name,
                          type='app', subtype='add_role')
         roles.register_local_role(name, role)
 
     def add_generic_role(self, name, nodeclass, override=True):
         self._added_objects.append(('generic_role', name))
-        self.debug('[_CustomSphinx] adding generic role: %r',
+        self.debug("[_CustomSphinx] adding generic role: '%r'",
                    (name, nodeclass))
         if name in roles._roles and not override:
-            self.warning(_('[_CustomSphinx] while setting up extension %s: role %r is '
-                           'already registered, it will be overridden'),
+            self.warning(("[_CustomSphinx] while setting up extension '%s': role '%r' is "
+                          "already registered, it will be overridden"),
                          self._setting_up_extension[-1], name,
                          type='app', subtype='add_generic_role')
         role = roles.GenericRole(name, nodeclass)
@@ -1415,8 +1415,8 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('node', node))
         self.debug('[_CustomSphinx]  adding node: %r', (node, kwds))
         if not override and hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
-            self.warning(_('[_CustomSphinx] while setting up extension %s: node class %r is '
-                           'already registered, its visitors will be overridden'),
+            self.warning(("[_CustomSphinx] while setting up extension '%s': node class '%r' is "
+                          "already registered, its visitors will be overridden"),
                          self._setting_up_extension, node.__name__,
                          type='app', subtype='add_node')
         nodes._add_node_class_names([node.__name__])
@@ -1424,8 +1424,8 @@ class _CustomSphinx(Sphinx):
             try:
                 visit, depart = val
             except ValueError:
-                raise ExtensionError(_('Value for key %r must be a '
-                                       '(visit, depart) function tuple') % key)
+                raise ExtensionError(("Value for key '%r' must be a "
+                                      "(visit, depart) function tuple") % key)
             translator = self.registry.translators.get(key)
             translators = []
             if translator is not None:

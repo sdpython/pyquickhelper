@@ -410,7 +410,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     pylint_lines = [_ for _ in pylint_lines if '(pylint)' in _ and fkeep(_) and _[
         0] != ' ' and ':' in _]
     pylint_lines = [_ for _ in pylint_lines if not _.startswith(
-        "except ") and not _.startswith("else:") and not _.startswith("try:")]
+        "except ") and not _.startswith("else:") and not _.startswith(
+        "try:") and "# noqa" not in _]
     lines.extend(pylint_lines)
     if len(lines) > 0:
         raise PEP8Exception(
