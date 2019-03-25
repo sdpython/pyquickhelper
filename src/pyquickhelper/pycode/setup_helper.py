@@ -39,6 +39,15 @@ def get_available_setup_commands():
     return commands
 
 
+def get_available_build_commands():
+    """
+    Returns commands which build the package.
+    """
+    return {"bdist_msi", "sdist",
+            "bdist_wheel", "publish", "publish_doc", "register",
+            "upload_docs", "bdist_wininst", "build_ext"}
+
+
 def available_commands_list(argv):
     """
     Checks that on command handled by pyquickhelper is part of the arguments.
@@ -180,7 +189,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
-        return True
+        return not len(get_available_build_commands() & set(argv))
     fLOG("[process_standard_options_for_setup]", argv)
 
     def process_argv_for_unittest(argv):
