@@ -55,7 +55,8 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
         number = content['number']
         if closed < since:
             break
-        yield number, closed, title
+        if "[WIP]" not in title and "[remove]" not in title and "[removed]" not in title:
+            yield number, closed, title
 
 
 def build_history(owner, repo, name=None, since=None, issues=None, url=None,
