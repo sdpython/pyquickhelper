@@ -103,17 +103,19 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     @param      project_var_name    project name
     @param      clean               if True, cleans the previous documentation first (html files)
     @param      root                see below
-    @param      filter_commit       function which accepts a commit to show on the documentation (based on the comment)
+    @param      filter_commit       function which accepts a commit to show on the documentation
+                                    (based on the comment)
     @param      extra_ext           list of file extensions to document (not .py)
     @param      nbformats           requested formats for the notebooks conversion
     @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx,
                                     it is a list of tuple (layout, build directory, parameters to override),
                                     if None --> ``[("html", "build", {})]``
-    @param      module_name         name of the module (must be the folder name src/*name*, if None, *module_name*
+    @param      module_name         name of the module (must be the folder name src/*name*
+                                    if None, *module_name*
                                     will be replaced by *project_var_name*
     @param      from_repo           if True, assumes the sources come from a source repository,
                                     False otherwise
-    @param      add_htmlhelp        run HTML Help too (only on Windows)
+    @param      add_htmlhelp        run :epkg:`HTML` Help too (only on :epkg:`Windows`)
     @param      copy_add_ext        additional file extension to copy
     @param      direct_call         direct call to sphinx with *sphinx_build* if *True*
                                     or run a command line in an another process to get
