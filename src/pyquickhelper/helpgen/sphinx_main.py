@@ -101,7 +101,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     - calls sphinx to generate the documentation.
 
     @param      project_var_name    project name
-    @param      clean               if True, cleans the previous documentation first (html files)
+    @param      clean               if True, cleans the previous documentation first
+                                    (:epkg:`html` files)
     @param      root                see below
     @param      filter_commit       function which accepts a commit to show on the documentation
                                     (based on the comment)
