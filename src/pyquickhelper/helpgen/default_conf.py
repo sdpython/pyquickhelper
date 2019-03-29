@@ -774,7 +774,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # do not add anything after this
     loc = locals()
     for k, v in loc.items():
-        if not k.startswith("_"):
+        if not k.startswith("_") and k not in {'app', 'ext_locals'}:
             ext_locals[k] = v
 
     if custom_style is not None:
