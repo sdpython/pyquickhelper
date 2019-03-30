@@ -13,15 +13,15 @@ from docutils.parsers.rst import roles
 from docutils.languages import en as docutils_en
 from docutils import nodes
 from docutils.utils import Reporter
-
 from sphinx.application import Sphinx
 from sphinx.builders.html import SingleFileHTMLBuilder
 from sphinx.environment import BuildEnvironment
-from sphinx.errors import ExtensionError, ApplicationError
+from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
 from sphinx.util.build_phase import BuildPhase
+
 try:
     from sphinx.util.logging import prefixed_warnings
     sphinx20 = True
@@ -33,7 +33,14 @@ try:
     from sphinx.project import Project
 except ImportError:
     # Sphinx < 2.0
-    pass
+    class Project:
+        def __init__(self, srcdir, source_suffix):
+            self.srcdir = srcdir
+            self.source_suffix = source_suffix
+try:
+    from sphinx.errors import ApplicationError
+except ImportError:
+    ApplicationError = Exception
 
 from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
