@@ -14,7 +14,7 @@ install:
     - pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
     - npm install
     - pip install sphinx$sphinxconstraint
-    - pip install tkinterhelper --no-deps
+    - pip install tkinterquickhelper --no-deps
     - export PYTHONPATH=src
 script:
     - python setup.py unittests
