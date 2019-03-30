@@ -1009,6 +1009,10 @@ class _CustomSphinx(Sphinx):
         self.post_transforms = []               # type: List[Transform]
         self.html_themes = {}                   # type: Dict[unicode, unicode]
 
+        # sphinx 1.8
+        if not sphinx20:
+            self._setting_up_extension = []
+
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"
         if srcdir is None:
@@ -1231,10 +1235,6 @@ class _CustomSphinx(Sphinx):
 
         # addition
         self._extended_init_()
-
-        # sphinx 1.8
-        if not sphinx20:
-            self._setting_up_extension = []
 
     def _init_env(self, freshenv):
         # type: (bool) -> None
