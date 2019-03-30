@@ -24,9 +24,11 @@ from sphinx.writers.html import HTMLWriter
 from sphinx.util.build_phase import BuildPhase
 try:
     from sphinx.util.logging import prefixed_warnings
+    sphinx20 = True
 except ImportError:
     # Sphinx < 2.0
     prefixed_warnings = None
+    sphinx20 = False
 try:
     from sphinx.project import Project
 except ImportError:
@@ -1229,6 +1231,10 @@ class _CustomSphinx(Sphinx):
 
         # addition
         self._extended_init_()
+
+        # sphinx 1.8
+        if not sphinx20:
+            self._setting_up_extension = []
 
     def _init_env(self, freshenv):
         # type: (bool) -> None
