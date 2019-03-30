@@ -312,7 +312,6 @@ def depart_rv_note(self, node=None):
 
 def setup(app):
     """Initialize """
-    app.info('Initializing RevealJS theme directives')
     app.add_node(revealjs, html=(visit_revealjs, depart_revealjs))
     app.add_node(rv_code, html=(visit_rv_code, depart_rv_code))
     app.add_node(rv_note, html=(visit_rv_note, depart_rv_note))

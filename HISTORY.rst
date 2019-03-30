@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2019-03-26 - 0.00Mb
+current - 2019-03-30 - 0.00Mb
 =============================
+
+* `245`: make test pass for sphinx 2.0.0 (2019-03-30)
+
+1.9.3069 - 2019-03-25 - 2.04Mb
+==============================
 
 * `244`: remove need of __init__.py in folder src, do not import conf.py in the same process while generating the documentation (2019-03-25)
 * `243`: refactor unit tests (2019-03-20)

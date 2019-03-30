@@ -274,8 +274,6 @@ def initialize_videos_directive(app):
     config = copy.deepcopy(DEFAULT_CONFIG)
     config.update(app.config.videos_config)
     app.config.videos_config = config
-    # ensuredir(os.path.join(app.env.srcdir, config['cache_path']))
-    # app.info("Initiated video directive: cache='{}'".format(config['cache_path']))
     app.env.videos = FilenameUniqDict()
 
 

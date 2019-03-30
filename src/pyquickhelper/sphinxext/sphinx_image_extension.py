@@ -342,8 +342,6 @@ def initialize_simpleimages_directive(app):
     config = copy.deepcopy(DEFAULT_CONFIG)
     config.update(app.config.simpleimages_config)
     app.config.simpleimages_config = config
-    # ensuredir(os.path.join(app.env.srcdir, config['cache_path']))
-    # app.info("Initiated image directive: cache='{}'".format(config['cache_path']))
     app.env.images_mapping = FilenameUniqDict()
 
 

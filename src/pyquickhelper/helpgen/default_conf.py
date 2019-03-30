@@ -125,6 +125,7 @@ def get_epkg_dictionary():
         'latex': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTeX': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTex': 'https://en.wikipedia.org/wiki/LaTeX',
+        'Latex': 'https://en.wikipedia.org/wiki/LaTeX',
         'Linux': 'https://en.wikipedia.org/wiki/Linux',
         'linux': 'https://en.wikipedia.org/wiki/Linux',
         'mako': 'http://www.makotemplates.org/',

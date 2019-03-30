@@ -417,18 +417,10 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             raise ValueError("sort option should be file, number, title")
 
         # printing
-        now = datetime.datetime.now()
-        app.info("    {0} - process tag '{1}' #={2}".format(now,
-                                                            breftag, len(double_list)))
         for n, blocref_info_ in enumerate(double_list):
             blocref_info = blocref_info_[1]
 
             nbbref += 1
-
-            if len(double_list) % 5 == 0:
-                now = datetime.datetime.now()
-                app.info("    {0} - process tag '{1}' node={2}/{3}".format(now,
-                                                                           breftag, nbbref, len(double_list)))
 
             para = nodes.paragraph(classes=['%s-source' % class_name])
 
@@ -498,9 +490,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             content.append(blocref_entry)
             content.append(para)
 
-        app.info("    {0} - replace - '{1}'".format(now, breftag))
         node.replace_self(content)
-        app.info("    {0} - END - '{1}'".format(now, breftag))
 
 
 def purge_blocrefs(app, env, docname):

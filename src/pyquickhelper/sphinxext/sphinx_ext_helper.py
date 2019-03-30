@@ -2,6 +2,7 @@
 @file
 @brief Few helpers for :epkg:`Sphinx`.
 """
+import logging
 
 
 def info_blocref(app, doctree, fromdocname, class_name,
@@ -43,7 +44,8 @@ def info_blocref(app, doctree, fromdocname, class_name,
                  "doctree='{0}'".format(type(doctree)),
                  "#doctree={0}".format(len(doctree))])
     message = " ".join(rows)
-    app.info(message)
+    logger = logging.getLogger("info_blocref")
+    logger.info(message)
     return True
 
 
