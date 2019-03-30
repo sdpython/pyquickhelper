@@ -11,10 +11,16 @@ from docutils.frontend import OptionParser
 from sphinx.locale import __
 from sphinx.builders.latex import LaTeXBuilder
 from sphinx.writers.latex import LaTeXWriter, LaTeXTranslator
-from sphinx.writers.latex import toRoman, rstdim_to_latexdim
+from sphinx.writers.latex import rstdim_to_latexdim
 from sphinx.util import logging
 from sphinx import addnodes
 
+try:
+    from sphinx.writers.latex import toRoman
+except ImportError:
+    # Sphinx 1.7
+    def toRomain(x):
+        return x
 try:
     # Sphinx >= 1.8
     from sphinx.writers.latex import ENUMERATE_LIST_STYLE

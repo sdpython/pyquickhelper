@@ -1105,9 +1105,10 @@ class _CustomSphinx(Sphinx):
                         "ignore", category=DeprecationWarning)
                     self.setup_extension(extension)
             except Exception as e:
-                mes = "Unable to run setup_extension '{0}'\nWHOLE LIST\n{1}".format(
-                    extension, "\n".join(builtin_extensions))
-                raise ExtensionError(mes) from e
+                if 'sphinx.builders.applehelp' not in str(e):
+                    mes = "Unable to run setup_extension '{0}'\nWHOLE LIST\n{1}".format(
+                        extension, "\n".join(builtin_extensions))
+                    raise ExtensionError(mes) from e
 
         # load all user-given extension modules
         for extension in self.config.extensions:
