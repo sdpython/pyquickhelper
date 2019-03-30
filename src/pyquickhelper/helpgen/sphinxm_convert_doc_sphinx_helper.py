@@ -22,7 +22,11 @@ from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
 from sphinx.util.build_phase import BuildPhase
-from sphinx.util.logging import prefixed_warnings
+try:
+    from sphinx.util.logging import prefixed_warnings
+except ImportError:
+    # Sphinx < 2.0
+    prefixed_warnings = None
 try:
     from sphinx.project import Project
 except ImportError:
@@ -1141,17 +1145,20 @@ class _CustomSphinx(Sphinx):
         # the config file itself can be an extension
         if self.config.setup:
             prefix = 'while setting up extension %s:' % "conf.py"
-            with prefixed_warnings(prefix):
-                if hasattr(self.config.setup, '__call__'):
-                    self.config.setup(self)
-                else:
-                    from sphinx.locale import _
-                    from sphinx.application import ConfigError
-                    raise ConfigError(
-                        _("'setup' as currently defined in conf.py isn't a Python callable. "
-                          "Please modify its definition to make it a callable function. This is "
-                          "needed for conf.py to behave as a Sphinx extension.")
-                    )
+            if prefixed_warnings:
+                with prefixed_warnings(prefix):
+                    if hasattr(self.config.setup, '__call__'):
+                        self.config.setup(self)
+                    else:
+                        from sphinx.locale import _
+                        from sphinx.application import ConfigError
+                        raise ConfigError(
+                            _("'setup' as currently defined in conf.py isn't a Python callable. "
+                            "Please modify its definition to make it a callable function. This is "
+                            "needed for conf.py to behave as a Sphinx extension.")
+                        )
+            elif hasattr(self.config.setup, '__call__'):
+                self.config.setup(self)
 
         # now that we know all config values, collect them from conf.py
         noallowed = []
