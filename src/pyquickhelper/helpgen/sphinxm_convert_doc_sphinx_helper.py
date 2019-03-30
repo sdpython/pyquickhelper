@@ -7,6 +7,7 @@ import sys
 from collections import deque
 import warnings
 import pickle
+from html import escape as htmlescape
 from io import StringIO
 from docutils.parsers.rst import roles
 from docutils.languages import en as docutils_en
@@ -16,11 +17,17 @@ from docutils.utils import Reporter
 from sphinx.application import Sphinx
 from sphinx.builders.html import SingleFileHTMLBuilder
 from sphinx.environment import BuildEnvironment
-from sphinx.errors import ExtensionError
+from sphinx.errors import ExtensionError, ApplicationError
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
-from sphinx.util.pycompat import htmlescape
+from sphinx.util.build_phase import BuildPhase
+from sphinx.util.logging import prefixed_warnings
+try:
+    from sphinx.project import Project
+except ImportError:
+    # Sphinx < 2.0
+    pass
 
 from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
@@ -170,9 +177,11 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
         """
         HTMLTranslator.__init__(self, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'html')
-        for name, f1, f2 in builder._function_node:
-            setattr(self.__class__, "visit_" + name, f1)
-            setattr(self.__class__, "depart_" + name, f2)
+        nodes_list = getattr(builder, '_function_node', None)
+        if nodes_list is not None:
+            for name, f1, f2 in nodes_list:
+                setattr(self.__class__, "visit_" + name, f1)
+                setattr(self.__class__, "depart_" + name, f2)
         self.base_class = HTMLTranslator
 
     def visit_field(self, node):
@@ -575,7 +584,10 @@ class _MemoryBuilder:
         """
         from sphinx.util.osutil import relative_uri
         ctx = self.globalcontext.copy()
-        ctx['warn'] = self.warning if hasattr(self, "warning") else self.warn
+        if hasattr(self, "warning"):
+            ctx['warn'] = self.warning
+        elif hasattr(self, "warn"):
+            ctx['warn'] = self.warn
         # current_page_name is backwards compatibility
         ctx['pagename'] = ctx['current_page_name'] = pagename
         ctx['encoding'] = self.config.html_output_encoding
@@ -913,8 +925,10 @@ class _CustomSphinx(Sphinx):
     """
 
     def __init__(self, srcdir, confdir, outdir, doctreedir, buildername="memoryhtml",  # pylint: disable=W0231
-                 confoverrides=None, status=None, freshenv=False, warningiserror=False,
-                 tags=None, verbosity=0, parallel=0, new_extensions=None):
+                 confoverrides=None, status=None, warning=None,
+                 freshenv=False, warningiserror=False,
+                 tags=None, verbosity=0, parallel=0, keep_going=False,
+                 new_extensions=None):
         '''
         Same constructor as :epkg:`Sphinx application`.
         Additional parameters:
@@ -977,22 +991,23 @@ class _CustomSphinx(Sphinx):
         # from sphinx.domains.rst import ReSTDomain
         # from sphinx.domains.c import CDomain
 
+        # type: Dict[unicode, Extension]
+        from sphinx.registry import SphinxComponentRegistry
+        self.phase = BuildPhase.INITIALIZATION
+        self.verbosity = verbosity
+        self.extensions = {}
+        self.builder = None                     # type: Builder
+        self.env = None                         # type: BuildEnvironment
+        self.project = None                     # type: Project
+        self.registry = SphinxComponentRegistry()
+        self.post_transforms = []               # type: List[Transform]
+        self.html_themes = {}                   # type: Dict[unicode, unicode]
+
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"
         if srcdir is None:
             srcdir = "IMPOSSIBLE:TOFIND"
         update_docutils_languages()
-        self.verbosity = verbosity
-
-        # type: Dict[unicode, Extension]
-        from sphinx.registry import SphinxComponentRegistry
-        self.extensions = {}
-        self._setting_up_extension = ['?']      # type: List[unicode]
-        self.builder = None                     # type: Builder
-        self.env = None                         # type: BuildEnvironment
-        self.registry = SphinxComponentRegistry()
-        self.post_transforms = []               # type: List[Transform]
-        self.html_themes = {}                   # type: Dict[unicode, unicode]
 
         from sphinx import __version__ as sphinx_version
         from ..texthelper import compare_module_version
@@ -1000,12 +1015,16 @@ class _CustomSphinx(Sphinx):
         if sphinx_version_less_18 < 0:
             self.enumerable_nodes = {}          # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
 
-        self.srcdir = srcdir
-        self.confdir = confdir
-        self.outdir = outdir
-        self.doctreedir = doctreedir
-
+        self.srcdir = os.path.abspath(srcdir)
+        self.confdir = os.path.abspath(
+            confdir) if confdir is not None else None
+        self.outdir = os.path.abspath(outdir) if confdir is not None else None
+        self.doctreedir = os.path.abspath(doctreedir)
         self.parallel = parallel
+
+        if self.srcdir == self.outdir:
+            raise ApplicationError('Source directory and destination '
+                                   'directory cannot be identical')
 
         if status is None:
             self._status = StringIO()      # type: IO
@@ -1013,15 +1032,6 @@ class _CustomSphinx(Sphinx):
         else:
             self._status = status
             self.quiet = False
-
-        # warning = confoverrides.get('warning_stream', None)
-        # if warning is None:
-        #    self._warning = StringIO()     # type: IO
-        # else:
-        #    self._warning = warning
-        # self._warncount = 0
-        # self.warningiserror = warningiserror
-        # logging.setup(self, self._status, self._warning)
 
         from sphinx.events import EventManager
         self.events = EventManager()
@@ -1051,12 +1061,14 @@ class _CustomSphinx(Sphinx):
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
             warnings.simplefilter("ignore", RemovedInSphinx40Warning)
-            self.config = Config(confdir, CONFIG_FILENAME,
-                                 confoverrides or {}, self.tags)
+            if self.confdir is None:
+                self.config = Config({}, confoverrides or {})
+            else:
+                self.config = Config(confdir, CONFIG_FILENAME,
+                                     confoverrides or {}, self.tags)
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
-        self.env = _CustomBuildEnvironment(self)
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
             warnings.simplefilter("ignore", RemovedInSphinx40Warning)
@@ -1128,16 +1140,18 @@ class _CustomSphinx(Sphinx):
 
         # the config file itself can be an extension
         if self.config.setup:
-            if hasattr(self.config.setup, '__call__'):
-                self.config.setup(self)
-            else:
-                from sphinx.locale import _
-                from sphinx.application import ConfigError
-                raise ConfigError(
-                    _("'setup' as currently defined in conf.py isn't a Python callable. "
-                      "Please modify its definition to make it a callable function. This is "
-                      "needed for conf.py to behave as a Sphinx extension.")
-                )
+            prefix = 'while setting up extension %s:' % "conf.py"
+            with prefixed_warnings(prefix):
+                if hasattr(self.config.setup, '__call__'):
+                    self.config.setup(self)
+                else:
+                    from sphinx.locale import _
+                    from sphinx.application import ConfigError
+                    raise ConfigError(
+                        _("'setup' as currently defined in conf.py isn't a Python callable. "
+                          "Please modify its definition to make it a callable function. This is "
+                          "needed for conf.py to behave as a Sphinx extension.")
+                    )
 
         # now that we know all config values, collect them from conf.py
         noallowed = []
@@ -1158,6 +1172,8 @@ class _CustomSphinx(Sphinx):
             raise ValueError("The following configuration values are declared in any extension.\n{0}\n--DECLARED--\n{1}".format(
                 "\n".join(sorted(noallowed)),
                 "\n".join(sorted(self.config.values))))
+
+        # now that we know all config values, collect them from conf.py
         self.config.init_values()
         self.emit('config-inited', self.config)
 
@@ -1187,31 +1203,17 @@ class _CustomSphinx(Sphinx):
 
             verify_extensions(self, self.config)
 
-        # check primary_domain if requested
-        primary_domain = self.config.primary_domain
-        if primary_domain and not self.registry.has_domain(primary_domain):
-            from sphinx.locale import _
-            self.warning(
-                _('primary_domain %r not found, ignored.'), primary_domain)
-
+        # create the project
+        self.project = Project(self.srcdir, self.config.source_suffix)
         # create the builder
         self.builder = self.create_builder(buildername)
-        # check all configuration values for permissible types
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
-            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
-            self.config.check_types()
         # set up the build environment
         self._init_env(freshenv)
         # set up the builder
         self._init_builder()
 
         # set up the build environment
-        if freshenv:
-            self._init_env(freshenv)
-        else:
-            for domain in self.registry.create_domains(self.env):
-                self.env.domains[domain.name] = domain
+        self._init_env(freshenv)
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(
@@ -1230,16 +1232,20 @@ class _CustomSphinx(Sphinx):
         elif "IMPOSSIBLE:TOFIND" not in self.doctreedir:
             from sphinx.application import ENV_PICKLE_FILENAME
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
-            from sphinx.locale import __
             try:
-                self.info(__('loading pickled environment... '), nonl=True)
+                self.info('loading pickled environment... ', nonl=True)
                 with open(filename, 'rb') as f:
                     self.env = pickle.load(f)
                     self.env.setup(self)
-                self.info(__('done'))
+                self.info('done')
             except Exception as err:
                 self.info('failed: %s' % err)
                 self._init_env(freshenv=True)
+        elif self.env is None:
+            self.env = _CustomBuildEnvironment(self)
+            self.env.setup(self)
+        if not hasattr(self.env, 'project') or self.env.project is None:
+            raise AttributeError("self.env.project is not initialized.")
 
     def create_builder(self, name):
         """

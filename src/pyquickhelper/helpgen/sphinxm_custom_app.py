@@ -143,12 +143,10 @@ class CustomSphinxApp(Sphinx):
         @param      error       error is an exception
         """
         from sphinx.theming import Theme
-        from sphinx.ext.autodoc import AutoDirective
 
         if error and self.cleanup_on_errors is False:
             return
 
         Theme.themes.clear()
-        AutoDirective._registry.clear()
         for tree in self.cleanup_trees:
             shutil.rmtree(tree, True)

@@ -8,7 +8,6 @@ import os
 import unittest
 from docutils.parsers.rst import directives
 
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 
@@ -16,11 +15,6 @@ from pyquickhelper.helpgen import rst2html
 class TestCollapseExtension(ExtTestCase):
 
     def test_collapse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -86,11 +80,6 @@ class TestCollapseExtension(ExtTestCase):
             raise Exception(html)
 
     def test_collapse_legend(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -125,11 +114,6 @@ class TestCollapseExtension(ExtTestCase):
             raise Exception(html)
 
     def test_collapse_show(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """

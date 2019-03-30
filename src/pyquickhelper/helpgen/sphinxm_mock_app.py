@@ -24,12 +24,14 @@ class MockSphinxApp:
         @param      confoverrides   default options
         @param      new_extensions  additional extensions
         """
+        from sphinx.registry import SphinxComponentRegistry        
         if confoverrides is None:
             confoverrides = {}
         self.app = app
         self.env = app.env
         self.new_options = {}
         self.writer = writer
+        self.registry = SphinxComponentRegistry()
         self.mapping = {"<class 'sphinx.ext.todo.todo_node'>": "todo",
                         "<class 'sphinx.ext.graphviz.graphviz'>": "graphviz",
                         "<class 'sphinx.ext.mathbase.math'>": "math",
@@ -147,10 +149,9 @@ class MockSphinxApp:
         """
         See :epkg:`class Sphinx`.
         """
-        # delayed import to speed up import time
-        from sphinx.ext import autodoc
-        autodoc.add_documenter(cls)
-        self.app.add_directive('auto' + cls.objtype, autodoc.AutoDirective)
+        from sphinx.ext.autodoc.directive import AutodocDirective
+        self.registry.add_documenter(cls.objtype, cls)
+        self.add_directive('auto' + cls.objtype, AutodocDirective)
 
     def connect(self, node, func):
         """
