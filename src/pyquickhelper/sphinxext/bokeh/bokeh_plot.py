@@ -226,7 +226,6 @@ class BokehPlotDirective(Directive):
 
         # process inline examples here
         if self.content:
-            app.debug("[bokeh-plot] handling inline example in %r", env.docname)
             source = '\n'.join(self.content)
             # need docname not to look like a path
             docname = env.docname.replace("/", "-")
@@ -244,15 +243,11 @@ class BokehPlotDirective(Directive):
 
             # if it's an "internal" example, the python parser has already handled it
             if example_path in env.bokeh_plot_files:
-                app.debug("[bokeh-plot] handling internal example in %r: %s",
-                          env.docname, self.arguments[0])
                 (script, js, js_path,
                  source) = env.bokeh_plot_files[example_path]
 
             # handle examples external to the docs source, e.g. gallery examples
             else:
-                app.debug("[bokeh-plot] handling external example in %r: %s",
-                          env.docname, self.arguments[0])
                 source = open(self.arguments[0]).read()
                 source = decode_utf8(source)
                 docname = env.docname.replace("/", "-")
