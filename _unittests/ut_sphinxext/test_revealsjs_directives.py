@@ -620,9 +620,6 @@ class TestSetup(unittest.TestCase):
 
         dummy_app = DummyApp()
         self._call_fut(dummy_app)
-        self.assertEqual(
-            'Initializing RevealJS theme directives', dummy_app.info)
-
         self.assertEqual(d.revealjs, dummy_app.nodes[0][0])
         self.assertEqual((d.visit_revealjs, d.depart_revealjs),
                          dummy_app.nodes[0][1])

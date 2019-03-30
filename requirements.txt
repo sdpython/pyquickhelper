@@ -43,7 +43,6 @@ sphinx-rtd-theme
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
 sphinxjp.themes.sphinxjp
-tkinterquickhelper
 tqdm
 unify
 virtualenv
