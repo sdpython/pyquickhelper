@@ -34,8 +34,6 @@ class TestLatexBuilder(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -424,5 +422,4 @@ class TestLatexBuilder(ExtTestCase):
 
 
 if __name__ == "__main__":
-    TestLatexBuilder().test_latex_image_overwrite()
     unittest.main()

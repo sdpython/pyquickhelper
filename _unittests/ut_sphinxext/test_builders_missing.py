@@ -2,11 +2,8 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.sphinxext.sphinx_doctree_builder import DocTreeTranslator
 from pyquickhelper.sphinxext.sphinx_latex_builder import EnhancedLaTeXTranslator
@@ -18,6 +15,12 @@ class TestBuildersMissing(ExtTestCase):
 
     def test_builders_missing(self):
         from docutils import nodes as skip_
+        from sphinx.builders.latex.util import ExtBabel
+
+        context = {'sphinxpkgoptions': '', 'latex_engine': 'pdflatex',
+                   'fontenc': [], 'babel': [],
+                   'polyglossia': False, 'maxlistdepth': 3,
+                   'sphinxsetup': None, 'extraclassoptions': {}}
 
         class dummy0:
             def __init__(self):
@@ -36,6 +39,8 @@ class TestBuildersMissing(ExtTestCase):
                     return "%b %d, %Y"
                 if name in ('numfig_secnum_depth', ):
                     return 0
+                if name in ('context', ):
+                    return context
                 return None
 
         class dummy:
@@ -45,6 +50,8 @@ class TestBuildersMissing(ExtTestCase):
                 self.rst_image_dest = ''
                 self.md_image_dest = ''
                 self.env = dummy0()
+                self.context = context
+                self.babel = ExtBabel('en')
 
             def get(self, name):  # pylint: disable=R1711
                 return None

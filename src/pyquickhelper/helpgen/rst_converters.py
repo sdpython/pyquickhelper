@@ -286,6 +286,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     settings_overrides["warning_stream"] = StringIO()
     settings_overrides["master_doc"] = document_name
     settings_overrides["source"] = document_name
+    settings_overrides["contentsname"] = document_name
     settings_overrides.update({k: v[0]
                                for k, v in mockapp.new_options.items()})
 

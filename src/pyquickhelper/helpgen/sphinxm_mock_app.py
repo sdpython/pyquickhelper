@@ -24,7 +24,7 @@ class MockSphinxApp:
         @param      confoverrides   default options
         @param      new_extensions  additional extensions
         """
-        from sphinx.registry import SphinxComponentRegistry        
+        from sphinx.registry import SphinxComponentRegistry
         if confoverrides is None:
             confoverrides = {}
         self.app = app
