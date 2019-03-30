@@ -4,7 +4,6 @@
 @brief Defines a :epkg:`sphinx` extension to keep track of blocs such as examples, FAQ, ...
 """
 import os
-import datetime
 from docutils import nodes
 from docutils.parsers.rst import directives
 

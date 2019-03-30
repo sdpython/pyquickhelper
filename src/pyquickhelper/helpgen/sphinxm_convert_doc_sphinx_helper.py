@@ -1154,8 +1154,8 @@ class _CustomSphinx(Sphinx):
                         from sphinx.application import ConfigError
                         raise ConfigError(
                             _("'setup' as currently defined in conf.py isn't a Python callable. "
-                            "Please modify its definition to make it a callable function. This is "
-                            "needed for conf.py to behave as a Sphinx extension.")
+                              "Please modify its definition to make it a callable function. This is "
+                              "needed for conf.py to behave as a Sphinx extension.")
                         )
             elif hasattr(self.config.setup, '__call__'):
                 self.config.setup(self)
@@ -1347,7 +1347,6 @@ class _CustomSphinx(Sphinx):
 
     def setup_extension(self, extname):
         self._added_objects.append(('extension', extname))
-        self.debug('[_CustomSphinx]  setting up extension: %r', extname)
 
         # delayed import to speed up time
         try:
@@ -1405,33 +1404,18 @@ class _CustomSphinx(Sphinx):
     def add_role(self, name, role, override=True):
         self._added_objects.append(('role', name))
         self.debug('[_CustomSphinx]  adding role: %r', (name, role))
-        if name in roles._roles and not override:
-            self.warning(("[_CustomSphinx] while setting up extension '%s': role '%r' is "
-                          "already registered, it will be overridden"),
-                         self._setting_up_extension[-1], name,
-                         type='app', subtype='add_role')
         roles.register_local_role(name, role)
 
     def add_generic_role(self, name, nodeclass, override=True):
         self._added_objects.append(('generic_role', name))
         self.debug("[_CustomSphinx] adding generic role: '%r'",
                    (name, nodeclass))
-        if name in roles._roles and not override:
-            self.warning(("[_CustomSphinx] while setting up extension '%s': role '%r' is "
-                          "already registered, it will be overridden"),
-                         self._setting_up_extension[-1], name,
-                         type='app', subtype='add_generic_role')
         role = roles.GenericRole(name, nodeclass)
         roles.register_local_role(name, role)
 
     def add_node(self, node, override=True, **kwds):
         self._added_objects.append(('node', node))
         self.debug('[_CustomSphinx]  adding node: %r', (node, kwds))
-        if not override and hasattr(nodes.GenericNodeVisitor, 'visit_' + node.__name__):
-            self.warning(("[_CustomSphinx] while setting up extension '%s': node class '%r' is "
-                          "already registered, its visitors will be overridden"),
-                         self._setting_up_extension, node.__name__,
-                         type='app', subtype='add_node')
         nodes._add_node_class_names([node.__name__])
         for key, val in kwds.items():
             try:

@@ -290,7 +290,7 @@ def env_before_read_docs(app, env, docnames):
 
 def builder_inited(app):
     app.env.bokeh_plot_auxdir = join(app.env.doctreedir, 'bokeh_plot')
-    if app.env.srcdir is not None and app.env.srcdir != 'IMPOSSIBLE:TOFIND':
+    if app.env.srcdir is not None and "IMPOSSIBLE:TOFIND" not in app.env.srcdir:
         # sphinx/_build/doctrees/bokeh_plot
         ensuredir(app.env.bokeh_plot_auxdir)
     if not hasattr(app.env, 'bokeh_plot_files'):
