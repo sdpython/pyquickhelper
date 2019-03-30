@@ -3,7 +3,10 @@
 @brief Puts everything related to package :epkg:`yaml` in a separate files.
 """
 import yaml
-from yaml import CLoader as Loader
+try:
+    from yaml import CLoader as Loader
+except ImportError:
+    Loader = None
 
 
 def yaml_load(content):
@@ -13,4 +16,7 @@ def yaml_load(content):
     @param      content     string
     @return                 structured data
     """
-    return yaml.load(content, Loader=Loader)
+    if Loader is None:
+        return yaml.load(content)
+    else:
+        return yaml.load(content, Loader=Loader)
