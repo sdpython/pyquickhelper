@@ -1024,7 +1024,7 @@ class _CustomSphinx(Sphinx):
 
         # sphinx 1.8
         if not sphinx20:
-            self._setting_up_extension = []
+            self._setting_up_extension = [None]
 
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"
