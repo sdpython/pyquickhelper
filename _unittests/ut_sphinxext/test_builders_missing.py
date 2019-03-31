@@ -15,7 +15,11 @@ class TestBuildersMissing(ExtTestCase):
 
     def test_builders_missing(self):
         from docutils import nodes as skip_
-        from sphinx.builders.latex.util import ExtBabel
+        try:
+            from sphinx.builders.latex.util import ExtBabel
+            sphinx20 = True
+        except ImportError:
+            sphinx20 = False
 
         context = {'sphinxpkgoptions': '', 'latex_engine': 'pdflatex',
                    'fontenc': [], 'babel': [],
@@ -51,7 +55,8 @@ class TestBuildersMissing(ExtTestCase):
                 self.md_image_dest = ''
                 self.env = dummy0()
                 self.context = context
-                self.babel = ExtBabel('en')
+                if sphinx20:
+                    self.babel = ExtBabel('en')
 
             def get(self, name):  # pylint: disable=R1711
                 return None

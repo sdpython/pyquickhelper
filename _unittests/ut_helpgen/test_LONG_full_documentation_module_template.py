@@ -240,8 +240,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                                      "_doc", "sphinxdoc", "build", "html", "index.html")
                 with open(fhtml, "r", encoding="utf8") as f:
                     content = f.read()
-                if '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span>ext-tohelp</span></a></td>' not in content and \
-                   '<td><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span class="std std-ref">ext-tohelp</span></a></td>' not in content:
+                if '<td><p><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span class="std std-ref">ext-tohelp</span></a></p></td>' not in content:
                     raise Exception(content)
 
                 # checks some links were processed

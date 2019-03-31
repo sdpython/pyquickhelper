@@ -1275,7 +1275,8 @@ class _CustomSphinx(Sphinx):
                 self._init_env(freshenv=True)
         elif self.env is None:
             self.env = _CustomBuildEnvironment(self)
-            self.env.setup(self)
+            if hasattr(self.env, 'setup'):
+                self.env.setup(self)
         if sphinx20 and (not hasattr(self.env, 'project') or self.env.project is None):
             raise AttributeError("self.env.project is not initialized.")
 
