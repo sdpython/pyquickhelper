@@ -20,7 +20,13 @@ from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
-from sphinx.util.build_phase import BuildPhase
+
+try:
+    from sphinx.util.build_phase import BuildPhase
+except ImportError:
+    class BuildPhase:
+        pass
+    BuildPhase.INITIALIZATION = "initialization"
 
 try:
     from sphinx.util.logging import prefixed_warnings
