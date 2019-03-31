@@ -19,7 +19,7 @@ try:
     from sphinx.writers.latex import toRoman
 except ImportError:
     # Sphinx 1.7
-    def toRomain(x):
+    def toRoman(x):
         return x
 try:
     # Sphinx >= 1.8

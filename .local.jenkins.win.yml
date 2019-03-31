@@ -43,7 +43,6 @@ before_script:
 # This means the job will be stop if it produces no output for 20 minutes.
 script:
   - { CMD: "python -u setup.py unittests", NAME: "UT", TIMEOUT: 899 }
-  - { CMD: "python -m pip install sphinx==1.7;python -u setup.py unittests", NAME: "UT_SPHINX17", TIMEOUT: 899 }
   - { CMD: "python -m pip install sphinx==1.8;python -u setup.py unittests", NAME: "UT_SPHINX18", TIMEOUT: 899 }
   - { CMD: "python -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)).*\"", NAME: "UT_SKIP", TIMEOUT: 900 }
   - { CMD: "python -u setup.py unittests -e \".*api.*\"", NAME: "UT_SKIP_API" }

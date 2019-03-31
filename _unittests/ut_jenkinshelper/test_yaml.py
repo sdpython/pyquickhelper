@@ -94,7 +94,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[1][0] != "python" and r[1][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 12:
+        if len(res) != 10:
             rows = [str(_) for _ in res]
             raise Exception("len(res)={0}\n{1}".format(
                 len(res), "\n".join(rows)))
@@ -237,7 +237,7 @@ class TestYaml(unittest.TestCase):
 
         conv = [_ for _ in convs if set_name +
                 " DIST=std" in _ and "TIMEOUT=899" in _]
-        if len(conv) != 3:
+        if len(conv) != 2:
             raise Exception(
                 "################################\nlen(conv)={0}\n{1}".format(len(conv), conv))
         conv = conv[0]
