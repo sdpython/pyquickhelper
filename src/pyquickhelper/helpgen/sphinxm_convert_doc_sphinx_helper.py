@@ -1085,7 +1085,12 @@ class _CustomSphinx(Sphinx):
             warnings.simplefilter("ignore", RemovedInSphinx30Warning)
             warnings.simplefilter("ignore", RemovedInSphinx40Warning)
             if self.confdir is None:
-                self.config = Config({}, confoverrides or {})
+                try:
+                    self.config = Config({}, confoverrides or {})
+                except TypeError:
+                    # Sphinx 1.7
+                    self.config = Config(confdir, CONFIG_FILENAME,
+                                         confoverrides or {}, self.tags)
             else:
                 self.config = Config(confdir, CONFIG_FILENAME,
                                      confoverrides or {}, self.tags)
@@ -1271,7 +1276,7 @@ class _CustomSphinx(Sphinx):
         elif self.env is None:
             self.env = _CustomBuildEnvironment(self)
             self.env.setup(self)
-        if not hasattr(self.env, 'project') or self.env.project is None:
+        if sphinx20 and (not hasattr(self.env, 'project') or self.env.project is None):
             raise AttributeError("self.env.project is not initialized.")
 
     def create_builder(self, name):
