@@ -367,7 +367,7 @@ def depart_blogpostagg_node_html(self, node):
                 self.body.append(link)
         else:
             self.body.append(
-                "%blogpostagg: link to source only available for HTML\n")
+                "%blogpostagg: link to source only available for HTML: {}\n".format(type(self)))
     # if node["blog_background"]:
     #     # the node will be in a box
     #     self.depart_admonition(node)
