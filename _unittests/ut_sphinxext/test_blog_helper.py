@@ -19,17 +19,11 @@ from pyquickhelper.sphinxext import RunPythonDirective
 class TestBlogHelper(unittest.TestCase):
 
     def test_post_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("blogpost", BlogPostDirective)
 
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.join(path, "data", "2015-04-04_first_blogpost.rst")
         p = BlogPost(file)
-        fLOG(p.title)
         self.assertEqual(
             p.title, "An example of a blog post included in the documentation")
         self.assertEqual(p.date, "2015-04-04")
@@ -40,11 +34,6 @@ class TestBlogHelper(unittest.TestCase):
             p.Tag, "post-2015-04-04-anexampleofablogpostincludedinthedocumentation")
 
     def test_post_list(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         # the test will fail if you add a file in data/blog others
         # with rst files which is not a blog post
 
@@ -55,9 +44,7 @@ class TestBlogHelper(unittest.TestCase):
         out = get_temp_folder(__file__, "temp_post_list")
         p = BlogPostList(fold)
         cats = p.get_categories()
-        fLOG(cats)
         months = p.get_months()
-        fLOG(months)
         self.assertEqual(cats, ['documentation', 'example'])
         self.assertEqual(months, ['2015-04'])
 
@@ -74,18 +61,12 @@ class TestBlogHelper(unittest.TestCase):
                 self.assertIn('...', content)
 
     def test_directive_with_rst2html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.join(path, "data", "2015-04-04_first_blogpost.rst")
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True)
+        html = rst2html(content, writer="custom", keep_warnings=True)
 
         t1 = "<p>Text before the blog post.</p>"
         t2 = "<p>Text after the blog post.</p>"
@@ -97,11 +78,6 @@ class TestBlogHelper(unittest.TestCase):
             fLOG("--------------ERRORS\n", html[p1:p2], "------------")
 
     def test_docutils(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         # from https://gist.github.com/mastbaum/2655700
         import docutils.core
         from docutils.nodes import TextElement, Inline
@@ -157,11 +133,6 @@ class TestBlogHelper(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -190,8 +161,7 @@ class TestBlogHelper(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
 
-        html = rst2html(content,  # fLOG=fLOG,
-                        writer="custom", keep_warnings=True,
+        html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=tives)
 
         ta = "<p><b>visit_rp_node</b></p>"
@@ -210,11 +180,6 @@ class TestBlogHelper(unittest.TestCase):
                 raise Exception(html)
 
     def test_newdirective_with_rst2html_bug(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -244,7 +209,7 @@ class TestBlogHelper(unittest.TestCase):
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_node, depart_node)]
 
-        html = rst2html(content,  # fLOG=fLOG,
+        html = rst2html(content,
                         writer="custom", keep_warnings=True,
                         directives=tives)
 

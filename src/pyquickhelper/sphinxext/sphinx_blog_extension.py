@@ -10,7 +10,6 @@ import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive
 from sphinx.locale import _ as _locale
-from sphinx.writers.html import HTMLTranslator
 from docutils.parsers.rst import directives
 from docutils.statemachine import StringList
 from sphinx import addnodes
@@ -325,9 +324,6 @@ def visit_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    # if node["blog_background"]:
-    #     # the node will be in a box
-    #    self.visit_admonition(node)
     pass
 
 
@@ -338,9 +334,6 @@ def depart_blogpostagg_node(self, node):
     depending on the format, or the setup should
     specify a different function for each.
     """
-    # if node["blog_background"]:
-    #     # the node will be in a box
-    #     self.depart_admonition(node)
     pass
 
 
@@ -352,25 +345,21 @@ def depart_blogpostagg_node_html(self, node):
     specify a different function for each.
     """
     if node.hasattr("year"):
-        if isinstance(self, HTMLTranslator):
-            rawfile = node["rawfile"]
-            if rawfile is not None:
-                # there is probably better to do
-                # module name is something list doctuils.../[xx].py
-                lg = node["lg"]
-                name = os.path.splitext(os.path.split(rawfile)[-1])[0]
-                name += ".html"
-                year = node["year"]
-                linktitle = node["linktitle"]
-                link = """<p><a class="reference internal" href="{0}/{2}" title="{1}">{3}</a></p>""" \
-                    .format(year, linktitle, name, TITLES[lg]["more"])
-                self.body.append(link)
+        rawfile = node["rawfile"]
+        if rawfile is not None:
+            # there is probably better to do
+            # module name is something list doctuils.../[xx].py
+            lg = node["lg"]
+            name = os.path.splitext(os.path.split(rawfile)[-1])[0]
+            name += ".html"
+            year = node["year"]
+            linktitle = node["linktitle"]
+            link = """<p><a class="reference internal" href="{0}/{2}" title="{1}">{3}</a></p>""" \
+                .format(year, linktitle, name, TITLES[lg]["more"])
+            self.body.append(link)
         else:
             self.body.append(
-                "%blogpostagg: link to source only available for HTML: {}\n".format(type(self)))
-    # if node["blog_background"]:
-    #     # the node will be in a box
-    #     self.depart_admonition(node)
+                "%blogpostagg: link to source only available for HTML: '{}'\n".format(type(self)))
 
 
 ######################

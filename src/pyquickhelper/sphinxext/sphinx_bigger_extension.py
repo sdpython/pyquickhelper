@@ -9,14 +9,6 @@ from docutils import nodes
 from sphinx.util.logging import getLogger
 from sphinx.util.docutils import is_html5_writer_available
 
-if is_html5_writer_available():
-    from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
-    from sphinx.writers.html import HTMLTranslator as HTMLTranslatorOld
-    inheritance = (HTMLTranslator, HTMLTranslatorOld)
-else:
-    from sphinx.writers.html import HTMLTranslator
-    inheritance = HTMLTranslator
-
 
 class bigger_node(nodes.Element):
 
@@ -127,8 +119,8 @@ def depart_bigger_node(self, node):
     depart bigger_node for format other than html
     """
     logger = getLogger("bigger")
-    logger.warning("[depart_bigger_node] output only available for HTML not for '{0}' != '{1}'".format(
-        type(self), HTMLTranslator))
+    logger.warning("[depart_bigger_node] output only available for HTML not for '{0}'".format(
+        type(self)))
 
 
 def setup(app):

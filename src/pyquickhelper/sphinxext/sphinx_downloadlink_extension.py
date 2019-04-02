@@ -31,15 +31,6 @@ except ImportError:
             self[docname] = (docname, ref_filename)
 
 
-if is_html5_writer_available():
-    from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
-    from sphinx.writers.html import HTMLTranslator as HTMLTranslatorOld
-    inheritance = (HTMLTranslator, HTMLTranslatorOld)
-else:
-    from sphinx.writers.html import HTMLTranslator
-    inheritance = HTMLTranslator
-
-
 class downloadlink_node(*addnodes.download_reference.__bases__):
 
     """
