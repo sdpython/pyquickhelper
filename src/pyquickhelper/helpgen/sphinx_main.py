@@ -394,7 +394,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #################################################
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
-        fLOG("[generate_help_sphinx] newconf:", newconf, t3)
+        fLOG("[generate_help_sphinx] newconf: '{}' - {}".format(newconf, t3))
         if newconf is None:
             continue
         # we need to import this file to guess the template directory and
@@ -1235,15 +1235,14 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     # trick, we place the good folder in the first position
     with python_path_append(folds):
         if fLOG:
-            fLOG("[generate_help_sphinx] import from '{0}'".format(folds))
+            fLOG("[_import_conf_extract_parameter] import from '{0}'".format(folds))
         try:
             module_conf = execute_script_get_local_variables(
-                "from conf import *", folder=root_source)
+                "from conf import *", folder=folds)
         except Exception as ee:
             raise HelpGenException(
                 "Unable to import a config file (root_source='{0}').".format(
-                    root_source),
-                os.path.join(folds, "conf.py")) from ee
+                    folds), os.path.join(folds, "conf.py")) from ee
         if 'ERROR' in module_conf:
             raise ImportError("\n" + module_conf['ERROR'] + "\n")
         if len(module_conf) == 0:
