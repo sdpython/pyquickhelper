@@ -11,7 +11,6 @@ import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.util.logging import getLogger
-from sphinx.util.docutils import is_html5_writer_available
 from sphinx.util import FilenameUniqDict
 
 

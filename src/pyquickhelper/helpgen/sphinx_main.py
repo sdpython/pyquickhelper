@@ -664,8 +664,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("     -pattern  '{0}'".format(nbneg_pattern))
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern,
                                    fullname=True, fLOG=fLOG)[1]
-        notebooks = [_ for _ in notebooks if ("checkpoint" not in _ and
-                                              "/build/" not in _.replace("\\", "/"))]
+        notebooks = [_ for _ in notebooks if (
+            "checkpoint" not in _ and "/build/" not in _.replace("\\", "/"))]
         fLOG("     found {0} notebooks".format(len(notebooks)))
         if len(notebooks) > 0:
             fLOG("[generate_help_sphinx] **** notebooks", nbformats)
@@ -1235,7 +1235,8 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     # trick, we place the good folder in the first position
     with python_path_append(folds):
         if fLOG:
-            fLOG("[_import_conf_extract_parameter] import from '{0}'".format(folds))
+            fLOG(
+                "[_import_conf_extract_parameter] import from '{0}'".format(folds))
         try:
             module_conf = execute_script_get_local_variables(
                 "from conf import *", folder=folds)

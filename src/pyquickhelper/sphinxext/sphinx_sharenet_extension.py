@@ -6,7 +6,6 @@
 import sphinx
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
-from sphinx.util.docutils import is_html5_writer_available
 
 
 class sharenet_node(nodes.Structural, nodes.Element):

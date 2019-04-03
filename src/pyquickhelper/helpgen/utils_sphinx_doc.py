@@ -128,7 +128,7 @@ def _private_process_one_file(
     ext = os.path.splitext(fullname)[-1]
 
     if ext in {".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o",
-               ".so", ".exe", ".enc", ".txt", ".gif", ".csv"}:
+               ".so", ".exe", ".enc", ".txt", ".gif", ".csv", '.pyx'}:
         if ext in (".pyd", ".so"):
             # If the file is being executed, the copy might keep the properties of
             # the original (only Windows).
@@ -402,6 +402,10 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
         pos = fullname.index(rootrep[0])
         fullname = rootrep[1] + fullname[pos + len(rootrep[0]):]
     fullnamenoext = fullname[:-3] if fullname.endswith(".py") else fullname
+    if fullnamenoext.endswith(".pyd"):
+        fullnamenoext = '.'.join(fullnamenoext.split('.')[:-2])
+    elif fullnamenoext.endswith('-linux-gnu.so'):
+        fullnamenoext = '.'.join(fullnamenoext.split('.')[:-2])
     pythonname = None
 
     not_expected = os.environ.get(

@@ -10,7 +10,6 @@ import os
 import sphinx
 from docutils import nodes
 from sphinx import addnodes
-from sphinx.util.docutils import is_html5_writer_available
 from sphinx.environment.collectors import EnvironmentCollector
 from sphinx.util import status_iterator, relative_path, ensuredir, copyfile
 from sphinx.util import logging

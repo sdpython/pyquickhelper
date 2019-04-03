@@ -81,8 +81,9 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
     if "processor" not in opt:
         user = opt["user"]
         project = opt["project"]
-        ref = "https://github.com/{0}/{1}/blob/master/{2}".format(
-            user, project, path)
+        ll = 'x' if '.cpython' in path else ''
+        ref = "https://github.com/{0}/{1}/blob/master/{2}{3}".format(
+            user, project, path, ll)
         if lineno:
             ref += "#L{0}".format(lineno)
     else:
@@ -151,7 +152,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
                 ext = "." + ext
             lineno = int(no) if no != "*" else None
         elif len(spl) != 2:
-            raise ValueError("unable to interpret '{0}'".format(text))
+            raise ValueError("Unable to interpret '{0}'.".format(text))
         else:
             text, ext = spl
             ext = "." + ext
@@ -183,7 +184,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
             path = os.path.join('_doc', 'sphinxdoc', 'source', docname)
         else:
             raise ValueError(
-                "Unable to interpret subfolder in '{0}'".format(text0))
+                "Unable to interpret subfolder in '{0}'.".format(text0))
 
     # Path with extension.
     if ext is not None:

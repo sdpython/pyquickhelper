@@ -7,7 +7,6 @@ import html as cgiesc
 import sphinx
 from docutils import nodes
 from sphinx.util.logging import getLogger
-from sphinx.util.docutils import is_html5_writer_available
 
 
 class bigger_node(nodes.Element):
