@@ -26,6 +26,7 @@ def main(args, fLOG=print):
         from .filehelper import create_visual_diff_through_html_files
         from .filehelper import explore_folder
         from .cli.simplified_fct import sphinx_rst
+        from .ipythonhelper import run_notebook
     except ImportError:
         from pyquickhelper.cli.pyq_sync_cli import pyq_sync
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
@@ -37,6 +38,7 @@ def main(args, fLOG=print):
         from pyquickhelper.filehelper import create_visual_diff_through_html_files
         from pyquickhelper.filehelper import explore_folder
         from pyquickhelper.cli.simplified_fct import sphinx_rst
+        from pyquickhelper.ipythonhelper import run_notebook
 
     fcts = dict(synchronize_folder=pyq_sync, encrypt_file=encrypt_file,
                 decrypt_file=decrypt_file, encrypt=encrypt,
@@ -44,7 +46,7 @@ def main(args, fLOG=print):
                 process_notebooks=process_notebooks,
                 visual_diff=create_visual_diff_through_html_files,
                 ls=explore_folder, run_test_function=run_test_function,
-                sphinx_rst=sphinx_rst)
+                sphinx_rst=sphinx_rst, run_notebook=run_notebook)
     return cli_main_helper(fcts, args=args, fLOG=fLOG)
 
 

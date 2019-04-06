@@ -96,6 +96,13 @@ class CmdRef(BlocRef):
                 if err:
                     out = "--SCRIPT--{}\n--OUT--\n{}\n--ERR--\n{}\n--PATH--\n{}".format(
                         name, out, err, path)
+                    logger = logging.getLogger("CmdRef")
+                    logger.warning("[CmdRef] cmd failed '{0}'".format(name))
+                elif out in (None, ''):
+                    out = "--SCRIPT--{}\n--EMPTY OUTPUT--\n--PATH--\n{}".format(
+                        name, path)
+                    logger = logging.getLogger("CmdRef")
+                    logger.warning("[CmdRef] cmd empty '{0}'".format(name))
                 content = "python " + name
                 cont += nodes.paragraph('<<<', '<<<')
                 pout = nodes.literal_block(content, content)
@@ -166,6 +173,10 @@ class CmdRef(BlocRef):
                         if lineno is not None:
                             logger.warning(
                                 '   File "{0}", line {1}'.format(source, lineno))
+                        out = "--SCRIPT--{}\n--EMPTY OUTPUT--\n--PATH--\n{}".format(
+                            name, path)
+                        logger = logging.getLogger("CmdRef")
+                        logger.warning("[CmdRef] cmd empty '{0}'".format(name))
                     else:
                         start = 'usage: ' + name_fct
                         if content.startswith(start):

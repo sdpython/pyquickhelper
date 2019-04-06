@@ -99,7 +99,8 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                                     <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
     @return                         tuple (statistics, output)
 
-    @warning The function calls `basicConfig <https://docs.python.org/3/library/logging.html#logging.basicConfig>`_.
+    @warning The function calls `basicConfig
+    <https://docs.python.org/3/library/logging.html#logging.basicConfig>`_.
 
     .. exref::
         :title: Run a notebook end to end
@@ -109,7 +110,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
             from pyquickhelper.ipythonhelper import run_notebook
             run_notebook("source.ipynb", working_dir="temp",
                         outfilename="modified.ipynb",
-                        additional_path = [ "c:/temp/mymodule/src" ] )
+                        additional_path=["custom_path"] )
 
     The function adds the local variable ``theNotebook`` with
     the absolute file name of the notebook.
