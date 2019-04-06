@@ -5,7 +5,7 @@
 History
 =======
 
-current - 2019-03-30 - 0.00Mb
+current - 2019-04-06 - 0.00Mb
 =============================
 
 * `245`: make test pass for sphinx 2.0.0 (2019-03-30)

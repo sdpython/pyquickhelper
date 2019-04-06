@@ -322,7 +322,7 @@ directory.
             ax.plot([0, 1], [0, 1], '--')
             fig.savefig(os.path.join(__WD__, "oo.png"))
 
-            text = ".. image:: oo.png\\n    :width: 202px"
+            text = ".. image:: oo.png\\\\n    :width: 202px"
             print(text)
 
 The image needs to be save in the same folder than
@@ -336,7 +336,7 @@ the *rst* file.
     ax.plot([0, 1], [0, 1], '--')
     fig.savefig(os.path.join(__WD__, "oo.png"))
 
-    text = ".. image:: oo.png\\n    :width: 201px"
+    text = ".. image:: oo.png\\\\n    :width: 201px"
     print(text)
 
 Option ``:toggle:`` can hide the code or the output or both
@@ -870,3 +870,26 @@ The file is copied close to the source file which references it.
 
 The first before ``::`` indicates which output format
 should see it.
+
+*gitlog*: to see the last modification
+++++++++++++++++++++++++++++++++++++++
+
+Location: :func:`gitlog_role <pyquickhelper.sphinxext.sphinx_gitlog_extension.gitlog_role>`.
+
+In *conf.py*:
+
+::
+
+    extensions = [ ...
+        'pyquickhelper.sphinxext.sphinx_gitlog_extension']
+
+It adds the date of last modification of the current
+based on the last commit (if :epkg:`git` is used).
+
+:gitlog:`date`
+
+.. sidebar:: downloadlink
+
+    ::
+
+        :gitlog:`date`
