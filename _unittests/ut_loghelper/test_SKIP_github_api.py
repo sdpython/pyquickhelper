@@ -31,9 +31,9 @@ class TestGitHub(unittest.TestCase):
         self.assertIsInstance(pr, list)
         self.assertTrue(len(pr) > 0)
         stats = call_github_api(
-            "scikit-learn", "scikit-learn", "stats/commit_activity")
+            "scikit-learn", "scikit-learn", "stats/commit_activity")    
         self.assertIsInstance(stats, list)
-        self.assertTrue(len(stats) > 0)
+        self.assertTrue(len(stats) >= 0)
         try:
             call_github_api("scikit-learn", "scikit-learn", "traffic/views")
             self.assertTrue(False)
