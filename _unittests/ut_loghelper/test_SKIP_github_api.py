@@ -7,7 +7,6 @@ import sys
 import os
 import unittest
 
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import is_travis_or_appveyor
 from pyquickhelper.loghelper.github_api import call_github_api, GitHubApiException
 
@@ -15,11 +14,6 @@ from pyquickhelper.loghelper.github_api import call_github_api, GitHubApiExcepti
 class TestGitHub(unittest.TestCase):
 
     def test_github_api(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if is_travis_or_appveyor():
             # Too many calls from many projects.
             return
