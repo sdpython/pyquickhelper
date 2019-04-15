@@ -128,6 +128,7 @@ def add_missing_files(root, conf, blog_list, fLOG):
                         <input type="hidden" name="area" value="default" />
                       </form>
                     </div>
+                    <script type="text/javascript">$('#searchbox').show(0);</script>
                     {%- endif %}
                     """.replace("                    ", "")
         else:
