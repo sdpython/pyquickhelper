@@ -39,10 +39,9 @@ semantic_version
 setuptools
 Sphinx>=1.8
 sphinx-gallery
-sphinx-rtd-theme
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
-sphinxjp.themes.sphinxjp
+sphinx_readable_theme
 tqdm
 unify
 virtualenv
