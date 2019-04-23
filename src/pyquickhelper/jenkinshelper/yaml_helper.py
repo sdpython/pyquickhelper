@@ -159,6 +159,8 @@ def interpret_instruction(inst, variables=None):
         else:
             return None
     elif isinstance(inst, tuple):
+        if len(inst) != 2 or inst[1] is None:
+            raise ValueError("Unable to interpret '{}'.".format(inst))
         return (inst[0], interpret_instruction(inst[1], variables))
     elif isinstance(inst, dict):
         return inst
