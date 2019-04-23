@@ -42,8 +42,7 @@ class TestCheckPep8Sample(ExtTestCase):
                        pattern="test_check_pep8_sample.py",
                        neg_pattern="##",
                        skip=["test_check_pep8_sample.py:15",
-                             "test_check_pep8_sample.py:18",
-                             "Unused import src"])
+                             "test_check_pep8_sample.py:18"])
 
         self.assertRaise(check_pep8_one_file, PEP8Exception,
                          "line too long (165 > 150 characters)")
