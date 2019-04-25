@@ -111,8 +111,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     @param      layout              list of formats sphinx should generate such as html, latex, pdf, docx,
                                     it is a list of tuple (layout, build directory, parameters to override),
                                     if None --> ``[("html", "build", {})]``
-    @param      module_name         name of the module (must be the folder name src/*name*
-                                    if None, *module_name*
+    @param      module_name         name of the module (must be the folder name ``src/module_name``
+                                    if None, ``module_name``
                                     will be replaced by *project_var_name*
     @param      from_repo           if True, assumes the sources come from a source repository,
                                     False otherwise
@@ -148,7 +148,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         ::
 
-            # from the main folder which contains folder src
+            # from the main folder which contains folder src or the sources
             generate_help_sphinx("pyquickhelper")
 
     By default, the function only consider files end by ``.py`` and ``.rst`` but you could
@@ -280,7 +280,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("---- JENKINS BEGIN DOCUMENTATION ----")
     if layout is None:
         layout = [("html", "build", {})]
-    fLOG("---- layout", layout)
+    fLOG("[generate_help_sphinx] ---- layout", layout)
     setup_environment_for_help(fLOG=fLOG)
     # we keep a clean list of modules
     # sphinx configuration is a module and the function loads and unloads it
@@ -347,7 +347,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     root_sphinxdoc = os.path.join(root, "_doc", "sphinxdoc")
     root_source = os.path.join(root_sphinxdoc, "source")
     root_package = os.path.join(root, "src")
+    if not os.path.exists(root_package):
+        root_package = root
+    if not os.path.exists(root_package):
+        raise FileNotFoundError("Unable to find source root from '{}'.".format(root))
+    fLOG("[generate_help_sphinx] root='{0}'".format(root))
+    fLOG("[generate_help_sphinx] root_package='{0}'".format(root_package))
     fLOG("[generate_help_sphinx] root_source='{0}'".format(root_source))
+    fLOG("[generate_help_sphinx] root_sphinxdoc='{0}'".format(root_sphinxdoc))
     conf_paths = [root_source, root_package]
     if extra_paths:
         conf_paths.extend(extra_paths)
@@ -360,8 +367,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         code = "from conf_base import *"
         with python_path_append(conf_paths):
             try:
-                module_conf = execute_script_get_local_variables(code,
-                                                                 folder=root_source, check=True)
+                module_conf = execute_script_get_local_variables(
+                    code, folder=root_source, check=True)
             except RuntimeError as e:
                 raise ImportError("Unable to import conf_base '{}' from '{}'\nsys.path=\n{}".format(
                     confb, root_source, "\n".join(sys.path))) from e
@@ -595,13 +602,16 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ####################
     datetime_rows = [("prepare", datetime.now())]
     try:
-
-        prepare_file_for_sphinx_help_generation({}, root,
-                                                os.path.join(
-                                                    root, "_doc", "sphinxdoc", "source"),
-                                                subfolders=[
-                                                    ("src/" + module_name, module_name), ],
-                                                silent=True,
+        dest_doc = os.path.join(root, "_doc", "sphinxdoc", "source")
+        fLOG("[generate_help_sphinx] root='{0}'".format(root))
+        fLOG("[generate_help_sphinx] dest_doc='{0}'".format(dest_doc))
+        subfolders = []
+        if root_package.endswith("src"):
+            subfolders.append(("src/" + module_name, module_name))
+        else:
+            subfolders.append((module_name, module_name))
+        fLOG("[generate_help_sphinx] subfolders={0}".format(subfolders))
+        prepare_file_for_sphinx_help_generation({}, root, dest_doc, subfolders=subfolders, silent=True,
                                                 rootrep=("_doc.sphinxdoc.source.%s." % (
                                                     module_name,), ""),
                                                 optional_dirs=optional_dirs, mapped_function=mapped_function,

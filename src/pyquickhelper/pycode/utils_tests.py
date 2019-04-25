@@ -224,8 +224,12 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     src_abs = os.path.normpath(os.path.abspath(
         os.path.join(os.path.dirname(logfile), "..")))
 
-    srcp = os.path.relpath(
-        os.path.join(src_abs, "src", project_var_name), os.getcwd())
+    root_src = os.path.join(src_abs, "src", project_var_name)
+    if not os.path.exists(root_src):
+        root_src = os.path.join(src_abs, project_var_name)
+    if not os.path.exists(root_src):
+        raise FileNotFoundError("Unable to find '{}'.".format(root_src))
+    srcp = os.path.relpath(root_src, os.getcwd())
 
     if get_user() in srcp:
         raise Exception(
@@ -283,7 +287,14 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             stdout_this.write(
                 "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}\n'".format(report_folder))
 
-            cov.html_report(directory=report_folder)
+            from coverage.misc import CoverageException
+            try:
+                cov.html_report(directory=report_folder)
+            except CoverageException as e:
+                raise RuntimeError("Unable to publish the coverage repot into '{}',"
+                                   "\nsource='{}'\ndata='{}'".format(
+                                        report_folder, coverage_options["source"],
+                                        coverage_options.get("data_file", ''))) from e
             outfile = os.path.join(report_folder, "coverage_report.xml")
             cov.xml_report(outfile=outfile)
             cov.save()

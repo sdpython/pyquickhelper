@@ -3,8 +3,6 @@
 @file
 @brief Default values for the Sphinx configuration.
 """
-
-
 import sys
 import os
 import datetime
@@ -353,7 +351,12 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if mod is None:
                 raise RuntimeError("Unknown module version. You should import '{0}' or specify 'doc_version'.".format(
                     module_name))
-        version = mod.__version__
+        try:
+            version = mod.__version__
+        except AttributeError:
+            raise AttributeError("Unable to find attribute '__version__' in module '{}', "
+                                 "__file__='{}'\n--PATH--\n{}".format(
+                    module_name, mod.__file__, "\n".join(sys.path)))
     else:
         version = doc_version
 

@@ -252,8 +252,8 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 @echo ################# VERSION
 
 @echo #######################################################_PATH
-set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
-@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
+set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__;%current%__ADDITIONAL_LOCAL_PATH__
+@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__;%current%__ADDITIONAL_LOCAL_PATH__
 """.replace("PY??", _sversion())
 
 
@@ -409,8 +409,8 @@ exit /b 1
 set path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~SET path=%path%;%pythonexe%;%pythonexe%\\Scripts
 @echo ~CALL jupyter-notebook --notebook-dir=_doc\\notebooks
-set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
-@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__
+set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__;%current%__ADDITIONAL_LOCAL_PATH__
+@echo ~SET PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__;%current%__ADDITIONAL_LOCAL_PATH__
 @echo on
 jupyter-notebook --notebook-dir=_doc\\notebooks --NotebookApp.token= --NotebookApp.password=
 """.replace("PY??", _sversion())
