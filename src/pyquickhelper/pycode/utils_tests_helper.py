@@ -221,11 +221,9 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     * *W0613*: unused argument
 
     The full list is available at :epkg:`pylint error codes`.
-
-    .. versionchanged:: 1.7
-        :epkg:`pylint` was added used to check the code.
-        It produces the following list of errors
-        :epkg:`pylint error codes`.
+    :epkg:`pylint` was added used to check the code.
+    It produces the following list of errors
+    :epkg:`pylint error codes`.
 
     .. versionchanged:: 1.8
         If *neg_pattern* is empty, it populates with a default value
@@ -476,8 +474,12 @@ def add_missing_development_version(names, root, hide=False):
 
         if py27:
             this = os.path.join(newroot, name, "dist_module27", "src")
+            if not os.path.exists(this):
+                this = os.path.join(newroot, name, "dist_module27")
         else:
             this = os.path.join(newroot, name, "src")
+            if not os.path.exists(this):
+                this = os.path.join(newroot, name)
 
         if not os.path.exists(this):
             raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}' (*py27={3})\nFOUND:\n{2}".format(

@@ -350,7 +350,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if not os.path.exists(root_package):
         root_package = root
     if not os.path.exists(root_package):
-        raise FileNotFoundError("Unable to find source root from '{}'.".format(root))
+        raise FileNotFoundError(
+            "Unable to find source root from '{}'.".format(root))
     fLOG("[generate_help_sphinx] root='{0}'".format(root))
     fLOG("[generate_help_sphinx] root_package='{0}'".format(root_package))
     fLOG("[generate_help_sphinx] root_source='{0}'".format(root_source))

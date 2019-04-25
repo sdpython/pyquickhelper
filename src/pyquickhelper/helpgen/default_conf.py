@@ -356,7 +356,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         except AttributeError:
             raise AttributeError("Unable to find attribute '__version__' in module '{}', "
                                  "__file__='{}'\n--PATH--\n{}".format(
-                    module_name, mod.__file__, "\n".join(sys.path)))
+                                     module_name, mod.__file__, "\n".join(sys.path)))
     else:
         version = doc_version
 

@@ -256,6 +256,7 @@ if not r:
             "pydocstyle",
             "pylint",
             "semantic_version",
+            "setuptools",
             "simplegeneric",
             "sphinx>=1.8",
             "sphinx-gallery",
@@ -276,4 +277,5 @@ if not r:
                 'encrypt_file = pyquickhelper.cli.encryption_file_cli:encrypt_file',
                 'decrypt_file = pyquickhelper.cli.encryption_file_cli:decrypt_file',
                 'pyq-sync = pyquickhelper.cli.pyq_sync_cli:pyq_sync',
-            ]})
+            ]}
+    )

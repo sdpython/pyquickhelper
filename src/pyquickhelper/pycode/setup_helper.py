@@ -309,9 +309,11 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         neg_pattern = argv[pos + 2] if len(argv) > pos + 2 else None
         print("[run_pylint] run_pylint for sources pattern='{0}' neg_pattern='{1}'".format(
             pattern, neg_pattern))
-        run_pylint_for_setup(os.path.join(folder, "src"),
-                             fLOG=print, pattern=pattern, verbose=verbose,
-                             pylint_ignore=ignores)
+        src_folder = os.path.join(folder, "src")
+        if not os.path.exists(src_folder):
+            src_folder = folder
+        run_pylint_for_setup(src_folder, fLOG=print, pattern=pattern,
+                             verbose=verbose, pylint_ignore=ignores)
         print("[run_pylint] run_pylint for unittest")
         run_pylint_for_setup(os.path.join(folder, "_unittests"),
                              fLOG=print, pattern=pattern, verbose=verbose,

@@ -42,7 +42,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
                 "temp2_full_unit_test", "python3_module_template"))
         root = temp
 
-        with sys_path_append(os.path.join(root, "src")):
+        with sys_path_append(os.path.join(root)):
             setup = os.path.join(root, "setup.py")
             pyq = os.path.join(os.path.dirname(pyquickhelper.__file__), "..")
 
@@ -59,8 +59,6 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
             thispath = os.path.normpath(
                 os.path.join(thispath, "..", "..", "src"))
             import jyquickhelper
-            jyqpath = os.path.abspath(os.path.join(
-                os.path.split(jyquickhelper.__file__)[0], ".."))
 
             fLOG("unit tests", root)
             for command in ["build_history"]:
@@ -71,10 +69,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
                 rem = False
                 PYTHONPATH = os.environ.get("PYTHONPATH", "")
                 sep = ";" if sys.platform.startswith("win") else ":"
-                new_val = PYTHONPATH + sep + thispath + sep + jyqpath
-                new_val_src = new_val + sep + 'src'
-                if os.path.exists(new_val_src):
-                    new_val = new_val_src
+                new_val = PYTHONPATH + sep + thispath                
                 os.environ["PYTHONPATH"] = new_val.strip(sep)
                 log_lines = []
 
@@ -103,8 +98,11 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
 
             fLOG("#######################################################")
             fLOG("#######################################################")
-            fLOG("OUT:\n", stdout.getvalue())
-            fLOG("ERR:\n", stderr.getvalue())
+            sout = stdout.getvalue()
+            fLOG("--OUT--\n", sout)
+            fLOG("--ERR--\n", stderr.getvalue())
+            if len(sout) == 0:
+                fLOG("Empty output. thispath='{}'".format(thispath))            
 
 
 if __name__ == "__main__":

@@ -215,7 +215,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         raise FileNotFoundError(folder)
     content = [_ for _ in os.listdir(folder) if not _.startswith(
         "_") and not _.startswith(".") and os.path.isdir(os.path.join(folder,
-        _)) and _ not in ('bin', 'dist', 'build') and '.egg' not in _]
+                                                                      _)) and _ not in ('bin', 'dist', 'build') and '.egg' not in _ and "dist_module27" not in _]
     if len(content) != 1:
         raise FileNotFoundError(
             "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
@@ -293,8 +293,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             except CoverageException as e:
                 raise RuntimeError("Unable to publish the coverage repot into '{}',"
                                    "\nsource='{}'\ndata='{}'".format(
-                                        report_folder, coverage_options["source"],
-                                        coverage_options.get("data_file", ''))) from e
+                                       report_folder, coverage_options["source"],
+                                       coverage_options.get("data_file", ''))) from e
             outfile = os.path.join(report_folder, "coverage_report.xml")
             cov.xml_report(outfile=outfile)
             cov.save()

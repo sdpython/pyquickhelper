@@ -35,7 +35,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
             git_clone(temp, "github.com", "sdpython",
                       "python3_module_template")
             wait = 0
-            while not os.path.exists(os.path.join(temp, "src")) and wait < 5:
+            while not os.path.exists(os.path.join(temp, "python3_module_template")) and wait < 5:
                 fLOG("wait", wait)
                 time.sleep(1000)
                 wait += 1
@@ -77,8 +77,6 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
             thispath = os.path.normpath(
                 os.path.join(thispath, "..", "..", "src"))
             import jyquickhelper
-            jyqpath = os.path.abspath(os.path.join(
-                os.path.split(jyquickhelper.__file__)[0], ".."))
 
             fLOG("unit tests", root)
             for command in ["version", "write_version", "clean_pyd",
@@ -103,7 +101,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                 rem = False
                 PYTHONPATH = os.environ.get("PYTHONPATH", "")
                 sep = ";" if sys.platform.startswith("win") else ":"
-                new_val = PYTHONPATH + sep + thispath + sep + jyqpath
+                new_val = PYTHONPATH + sep + thispath
                 new_val_src = new_val + sep + 'src'
                 if os.path.exists(new_val_src):
                     new_val = new_val_src
