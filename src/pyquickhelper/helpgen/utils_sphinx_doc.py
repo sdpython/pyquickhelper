@@ -80,8 +80,8 @@ def replace_relative_import_fct(fullname, content=None):
     namedot = "([a-zA-Z_][a-zA-Z_0-9.]*)"
     names = name + "(, " + name + ")*"
     end = "( .*)?$"
-    regi = re.compile("^( *)from ([.]{1,3})" + namedot +
-                      " import " + names + end)
+    regi = re.compile("^( *)from ([.]{1,3})" + namedot
+                      + " import " + names + end)
 
     for i in range(0, len(lines)):
         line = lines[i]
@@ -633,8 +633,8 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
         else:
             cpxx = ".cpython-%d%dm-" % sys.version_info[:2]
 
-        if file.endswith(".py") or (cpxx in file and
-                                    (file.endswith(".pyd") or file.endswith("linux-gnu.so"))):
+        if file.endswith(".py") or (cpxx in file
+                                    and (file.endswith(".pyd") or file.endswith("linux-gnu.so"))):
             if os.stat(to).st_size > 0:
                 content = apply_modification_template(
                     rootm, store_obj, template, to, rootrep, softfile, indexes,
@@ -695,7 +695,7 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
                             indexes, "ext-" + filenoext)
                         indexes[label] = IndexInformation(
                             "ext-" + ext, label, filenoext, doc, rst, to)
-                        fLOG("add ext into index ", indexes[label])
+                        fLOG("[add_file_rst] add ext into index ", indexes[label])
 
     return app
 
@@ -760,10 +760,10 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
                 continue
             types[_.type] = types.get(_.type, 0) + 1
 
-    fLOG("store_obj: extraction of types ", types)
+    fLOG("[produces_indexes] store_obj: extraction of types: {}".format(types))
     res = {}
     for k in types:
-
+        fLOG("[produces_indexes] type: [{}] - rst".format(k))
         values = []
         for t, so in store_obj.items():
             if not isinstance(so, list):
@@ -774,10 +774,10 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
                     continue
                 if o.type != k:
                     continue
-                values.append([o.name,
-                               o.rst_link(class_in_bracket=False),
-                               o.classname.__name__ if o.classname is not None else "",
-                               o.truncdoc])
+                oclname = o.classname.__name__ if o.classname is not None else ""
+                rlink = o.rst_link(class_in_bracket=False)
+                fLOG("[produces_indexes]   + '{}': {}".format(o.name, rlink))
+                values.append([o.name, rlink, oclname, o.truncdoc])
 
         values.sort()
         for row in values:
@@ -790,10 +790,10 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
         values = [
             row for row in values if ":func:`__" in row or ":func:`_" not in row]
 
-        tbl = DataFrame(
-            columns=["_", k, "class parent", "truncated documentation"], data=values)
+        columns = ["_", k, "class parent", "truncated documentation"]
+        tbl = DataFrame(columns=columns, data=values)
         if len(tbl.columns) >= 2:
-            tbl = tbl[tbl.columns[1:]]  # pylint: disable=E1136
+            tbl = tbl.iloc[:, 1:].copy()
 
         if len(tbl) > 0:
             maxi = max([len(_) for _ in tbl[k]])
@@ -802,16 +802,18 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
             tbl.iloc[0, 1] = t + (" " * (3 * maxi - s))
             sph = df2rst(tbl)
             res[k] = sph
+        fLOG("[produces_indexes] type: [{}] - shape: {}".format(k, tbl.shape))
 
     # we process indexes
 
+    fLOG("[produces_indexes] indexes")
     types = {}
     for k, v in indexes.items():
         if fexclude_index(v):
             continue
         types[v.type] = types.get(v.type, 0) + 1
 
-    fLOG("indexes: extraction of types ", types)
+    fLOG("[produces_indexes] extraction of types: {}".format(types))
 
     for k in types:
         if k in res:
@@ -843,6 +845,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
     # end
 
     for k in res:
+        fLOG("[produces_indexes] index name '{}'".format(k))
         label = correspondances.get(k, k)
         title = titles.get(k, k)
         under = "=" * len(title)
@@ -1104,7 +1107,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
     # processing all store_obj to compute some indices
     fLOG("[prepare_file_for_sphinx_help_generation] processing all store_obj to compute some indices")
-    fLOG("extracted ", len(store_obj), " objects")
+    fLOG("[prepare_file_for_sphinx_help_generation] extracted ",
+         len(store_obj), " objects")
     res = produces_indexes(store_obj, indexes, fexclude_index, fLOG=fLOG)
 
     fLOG("[prepare_file_for_sphinx_help_generation] generating ",
