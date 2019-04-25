@@ -69,7 +69,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
                 rem = False
                 PYTHONPATH = os.environ.get("PYTHONPATH", "")
                 sep = ";" if sys.platform.startswith("win") else ":"
-                new_val = PYTHONPATH + sep + thispath                
+                new_val = PYTHONPATH + sep + thispath
                 os.environ["PYTHONPATH"] = new_val.strip(sep)
                 log_lines = []
 
@@ -102,7 +102,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
             fLOG("--OUT--\n", sout)
             fLOG("--ERR--\n", stderr.getvalue())
             if len(sout) == 0:
-                fLOG("Empty output. thispath='{}'".format(thispath))            
+                fLOG("Empty output. thispath='{}'".format(thispath))
 
 
 if __name__ == "__main__":
