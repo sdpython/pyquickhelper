@@ -18,8 +18,8 @@ class TestCallSetupHook(unittest.TestCase):
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
-        cmd, code = call_setup_hook_cmd(
-            "c:/__MOCK__", "pyquickhelper", interpreter_path="__PYTHON__")
+        cmd, code = call_setup_hook_cmd("c:/__MOCK__", "pyquickhelper", check=False,
+                                        interpreter_path="__PYTHON__")
         pyq = os.path.normpath(os.path.join(os.path.abspath(PYQ), "..", ".."))
         exp = '''__PYTHON__ -c "import sys;sys.path.append('c:/__MOCK__/src');sys.path.append('__PYQ__');''' + \
               '''from pyquickhelper import _setup_hook;_setup_hook();sys.exit(0)"'''

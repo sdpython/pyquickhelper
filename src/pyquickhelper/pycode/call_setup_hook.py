@@ -12,7 +12,8 @@ from .open_script_file import open_script
 
 
 def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
-                        additional_paths=None, interpreter_path=None, **args):
+                        additional_paths=None, interpreter_path=None,
+                        check=True, **args):
     """
     Prepares the command line to call function @see fn _setup_hook for a specific module.
 
@@ -22,17 +23,21 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
     @param      additional_paths    additional_paths to add to *sys.path* before call the function
     @param      args                additional parameter (dictionary)
     @param      interpreter_path    to use a different interpreter than the current one
+    @param      check               check existence of filename
     @return                         stdout, stderr
 
     The function expects to find file ``__init__.py`` in
     ``<folder>/src/<module_name>``.
+
+    .. versionadded:: 1.9
+        Parameter *check* was added.
     """
     this = os.path.abspath(os.path.dirname(__file__))
     this = os.path.normpath(os.path.join(this, "..", ".."))
     src = os.path.abspath(os.path.join(folder, "src"))
-    if not os.path.exists(src):
+    if check and not os.path.exists(src):
         src = os.path.abspath(folder)
-    if not os.path.exists(src):
+    if check and not os.path.exists(src):
         raise FileNotFoundError("Unable to find folder '{}'.".format(folder))
     if additional_paths is None:
         additional_paths = [src, this]
