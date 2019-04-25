@@ -277,7 +277,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         ignore = tuple(ignore)
 
     if neg_pattern is None:
-        neg_pattern = ".*[/\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)).*"
+        neg_pattern = ".*[/\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)|([.]egg)|(bin)).*"
 
     try:
         regneg_filter = None if neg_pattern is None else re.compile(

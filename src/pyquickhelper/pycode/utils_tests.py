@@ -208,8 +208,14 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     # project_var_name
     folder = os.path.normpath(
         os.path.join(os.path.dirname(logfile), "..", "src"))
+    if not os.path.exists(folder):
+        folder = os.path.normpath(
+            os.path.join(os.path.dirname(logfile), ".."))
+    if not os.path.exists(folder):
+        raise FileNotFoundError(folder)
     content = [_ for _ in os.listdir(folder) if not _.startswith(
-        "_") and not _.startswith(".") and os.path.isdir(os.path.join(folder, _))]
+        "_") and not _.startswith(".") and os.path.isdir(os.path.join(folder,
+        _)) and _ not in ('bin', 'dist', 'build') and '.egg' not in _]
     if len(content) != 1:
         raise FileNotFoundError(
             "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
