@@ -3,8 +3,8 @@
 Defines the setup for *pyquickhelpersetup*.
 """
 
-from distutils.core import setup
-from setuptools import find_packages  # noqa
+from distutils.core import setup  # pylint: disable=E0401, E0611
+from setuptools import find_packages  # pylint: disable=W0611
 
 project_var_name = "pyquickhelpersetup"
 
@@ -30,5 +30,5 @@ setup(
     keywords=['pyquickhelper', 'setup'],
     classifiers=CLASSIFIERS,
     install_requires=["setuptools"],
-    py_modules= ["pyquickhelpersetup"],
+    py_modules=["pyquickhelpersetup"],
 )

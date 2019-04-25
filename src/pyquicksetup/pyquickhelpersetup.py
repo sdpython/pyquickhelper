@@ -5,7 +5,7 @@
 import re
 import os
 import pprint
-from distutils.core import Command
+from distutils.core import Command  # pylint: disable=E0401, E0611
 
 
 class SetupCommandDisplay(Command):
