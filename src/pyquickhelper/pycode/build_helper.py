@@ -74,6 +74,8 @@ def private_path_choice(path):
         return os.path.join(current, "..", s.replace('ROOT', ''))
     elif 'BLIB' in s:
         return os.path.join(current, "..", s.replace('BLIB', ''), "build", "lib")
+    elif 'NSRC' in s:
+        return os.path.join(current, "..", s.replace("NSRC", ''))
     else:
         return os.path.join(current, "..", s, "src")
 

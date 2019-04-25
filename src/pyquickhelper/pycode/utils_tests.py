@@ -213,12 +213,26 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             os.path.join(os.path.dirname(logfile), ".."))
     if not os.path.exists(folder):
         raise FileNotFoundError(folder)
-    content = [_ for _ in os.listdir(folder) if not _.startswith(
-        "_") and not _.startswith(".") and os.path.isdir(os.path.join(folder,
-                                                                      _)) and _ not in ('bin', 'dist', 'build') and '.egg' not in _ and "dist_module27" not in _]
+
+    def selec_name(folder, name):
+        if name.startswith('_') or name.startswith('.'):
+            return False
+        if name in ('bin', 'dist', 'build'):
+            return False
+        if '.egg' in name or 'dist_module27' in name:
+            return False
+        fold = os.path.join(folder, name)
+        if not os.path.isdir(fold):
+            return False
+        init = os.path.join(fold, '__init__.py')
+        if not os.path.exists(init):
+            return False
+        return True
+
+    content = [_ for _ in os.listdir(folder) if selec_name(folder, _)]
     if len(content) != 1:
         raise FileNotFoundError(
-            "unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
+            "Unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
 
     project_var_name = content[0]
     src_abs = os.path.normpath(os.path.abspath(

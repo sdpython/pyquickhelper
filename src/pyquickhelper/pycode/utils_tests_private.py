@@ -280,7 +280,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         paths = [os.path.join(path_module, "src"), ]
         for path in paths:
             if os.path.exists(path):
-                raise FileExistsError("this path should not exist " + path)
+                raise FileExistsError(
+                    "This path should not exist '{}'.".format(path))
 
     def short_name(l):
         cut = os.path.split(l)

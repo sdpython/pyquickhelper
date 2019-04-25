@@ -30,6 +30,10 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
     this = os.path.abspath(os.path.dirname(__file__))
     this = os.path.normpath(os.path.join(this, "..", ".."))
     src = os.path.abspath(os.path.join(folder, "src"))
+    if not os.path.exists(src):
+        src = os.path.abspath(folder)
+    if not os.path.exists(src):
+        raise FileNotFoundError("Unable to find folder '{}'.".format(folder))
     if additional_paths is None:
         additional_paths = [src, this]
     else:
@@ -103,6 +107,11 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
 
         if exit != 0:
             src = os.path.abspath(os.path.join(folder, "src"))
+            if not os.path.exists(src):
+                src = os.path.abspath(folder)
+            if not os.path.exists(src):
+                raise FileNotFoundError(
+                    "Unable to find folder '{}'.".format(folder))
             init = os.path.join(src, module_name, "__init__.py")
             with open_script(init, "r") as f:
                 content = f.read()
@@ -126,8 +135,8 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                                                                                            out, err, cmd, exit)
         return mes
 
-    if not must_be and ("ImportError: cannot import name '{0}'".format(function_name) in err or
-                        "ImportError: cannot import name {0}".format(function_name) in err):
+    if not must_be and ("ImportError: cannot import name '{0}'".format(function_name) in err
+                        or "ImportError: cannot import name {0}".format(function_name) in err):
         # no _setup_hook
         return out, "no {0}".format(function_name)
     if "Error while finding spec " in err:
