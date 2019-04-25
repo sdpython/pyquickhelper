@@ -33,7 +33,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
             git_clone(temp, "github.com", "sdpython",
                       "python3_module_template")
             wait = 0
-            while not os.path.exists(os.path.join(temp, "src")) and wait < 5:
+            while not os.path.exists(os.path.join(temp, "python3_module_template")) and wait < 5:
                 fLOG("wait", wait)
                 time.sleep(1000)
                 wait += 1
