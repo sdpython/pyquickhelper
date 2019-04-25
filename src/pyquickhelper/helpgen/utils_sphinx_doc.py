@@ -80,8 +80,8 @@ def replace_relative_import_fct(fullname, content=None):
     namedot = "([a-zA-Z_][a-zA-Z_0-9.]*)"
     names = name + "(, " + name + ")*"
     end = "( .*)?$"
-    regi = "{0}{1}{2}{3}{4}".format(re.compile("^( *)from ([.]{1,3})",
-                                   namedot, " import ", names, end)
+    regi = re.compile("{0}{1}{2}{3}{4}".format("^( *)from ([.]{1,3})",
+                                               namedot, " import ", names, end))
 
     for i in range(0, len(lines)):
         line = lines[i]
@@ -412,7 +412,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
         "USERNAME", os.environ.get("USER", "````````````"))
     if not_expected not in ("jenkins", 'vsts') and not_expected in fullnamenoext:
         mes = "The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'" + \
-              "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
+            "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
@@ -542,7 +542,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
         "USERNAME", os.environ.get("USER", "````````````"))
     if not_expected not in ("jenkins", 'vsts') and not_expected in fullnamenoext:
         mes = "The title is probably wrong (3): {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}" + \
-              "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'"
+            "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
@@ -636,8 +636,8 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
         if file.endswith(".py") or (
             cpxx in file and (
                 file.endswith(".pyd") or file.endswith("linux-gnu.so")
-                )
-            ):
+            )
+        ):
             if os.stat(to).st_size > 0:
                 content = apply_modification_template(
                     rootm, store_obj, template, to, rootrep, softfile, indexes,
@@ -1011,10 +1011,12 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                     ".",
                     "_doc/sphinxdoc/source/",
                     subfolders      = [
-                                        ("src/" + project_var_name, project_var_name),
+                                        ("src/" + project_var_name,
+                                         project_var_name),
                                          ],
                     silent          = True,
-                    rootrep         = ("_doc.sphinxdoc.source.%s." % (project_var_name,), ""),
+                    rootrep         = ("_doc.sphinxdoc.source.%s." %
+                                       (project_var_name,), ""),
                     optional_dirs   = optional_dirs,
                     mapped_function = [ (".*[.]tohelp$", None) ] )
 
@@ -1413,7 +1415,8 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
 
     ::
 
-        raise SyntaxError("  File \"%s\", line %d, in ???\n    unable to process: %s " %(filename, index_first_line+i+1, row))
+        raise SyntaxError("  File \"%s\", line %d, in ???\n    unable to process: %s " %(
+            filename, index_first_line+i+1, row))
 
     __sphinx__skip__
 

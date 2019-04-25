@@ -4,6 +4,7 @@ Defines the setup for *pyquickhelpersetup*.
 """
 
 from distutils.core import setup
+from setuptools import find_packages  # noqa
 
 project_var_name = "pyquickhelpersetup"
 
@@ -28,6 +29,6 @@ setup(
     long_description="Predefined setup commands relying on pyquickhelper",
     keywords=['pyquickhelper', 'setup'],
     classifiers=CLASSIFIERS,
-    package_dir=['pyquickhelpersetup'],
     install_requires=["setuptools"],
+    py_modules= ["pyquickhelpersetup"],
 )

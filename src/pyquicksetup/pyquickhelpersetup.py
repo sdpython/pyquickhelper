@@ -5,7 +5,7 @@
 import re
 import os
 import pprint
-from distutils.core import setup, Command
+from distutils.core import Command
 
 
 class SetupCommandDisplay(Command):
