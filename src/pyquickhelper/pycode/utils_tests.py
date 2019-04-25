@@ -301,10 +301,10 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             stdout_this.write(
                 "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}\n'".format(report_folder))
 
-            from coverage.misc import CoverageException
+            from coverage.misc import CoverageException as RawCoverageException
             try:
                 cov.html_report(directory=report_folder)
-            except CoverageException as e:
+            except RawCoverageException as e:
                 raise RuntimeError("Unable to publish the coverage repot into '{}',"
                                    "\nsource='{}'\ndata='{}'".format(
                                        report_folder, coverage_options["source"],

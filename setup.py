@@ -113,6 +113,14 @@ def import_pyquickhelper():
             message += "({0}), not found in path {1} - current {2}".format(
                 sys.executable, sys.path[-1], os.getcwd())
             raise ImportError(message)
+
+    try:
+        from pyquickhelpersetup import SetupCommandDisplay
+    except ImportError:
+        sys.path.append(os.path.join(os.path.dirname(
+            pyquickhelper.__file__), '..', 'pyquicksetup'))
+        from pyquickhelpersetup import SetupCommandDisplay
+
     return pyquickhelper
 
 
@@ -176,7 +184,7 @@ if os.path.exists(history):
 if "--verbose" in sys.argv:
     verbose()
 
-if is_local():
+if is_local() and not ({"history"} & set(sys.argv)):
     pyquickhelper = import_pyquickhelper()
     logging_function = pyquickhelper.get_fLOG()
     logging_function(OutputPrint=True)
@@ -212,6 +220,11 @@ if not r:
     from pyquickhelper import __version__ as sversion
     long_description = clean_readme(long_description)
 
+    from pyquickhelpersetup import SetupCommandDisplay, SetupCommandHistory
+    cmdclass = {}
+    cmdclass.update({'display': SetupCommandDisplay,
+                     'history': SetupCommandHistory})
+
     setup(
         name=project_var_name,
         version='%s%s' % (sversion, subversion),
@@ -228,6 +241,7 @@ if not r:
         package_dir=package_dir,
         package_data=package_data,
         ext_modules=[],
+        cmdclass=cmdclass,
         install_requires=[
             "autopep8",     # part of the minimal list
             "babel!=2.0",   # babel 2.0 has issue

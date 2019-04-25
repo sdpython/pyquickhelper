@@ -80,8 +80,8 @@ def replace_relative_import_fct(fullname, content=None):
     namedot = "([a-zA-Z_][a-zA-Z_0-9.]*)"
     names = name + "(, " + name + ")*"
     end = "( .*)?$"
-    regi = re.compile("^( *)from ([.]{1,3})" + namedot
-                      + " import " + names + end)
+    regi = "{0}{1}{2}{3}{4}".format(re.compile("^( *)from ([.]{1,3})",
+                                   namedot, " import ", names, end)
 
     for i in range(0, len(lines)):
         line = lines[i]
@@ -633,8 +633,11 @@ def add_file_rst(rootm, store_obj, actions, template=add_file_rst_template,
         else:
             cpxx = ".cpython-%d%dm-" % sys.version_info[:2]
 
-        if file.endswith(".py") or (cpxx in file
-                                    and (file.endswith(".pyd") or file.endswith("linux-gnu.so"))):
+        if file.endswith(".py") or (
+            cpxx in file and (
+                file.endswith(".pyd") or file.endswith("linux-gnu.so")
+                )
+            ):
             if os.stat(to).st_size > 0:
                 content = apply_modification_template(
                     rootm, store_obj, template, to, rootrep, softfile, indexes,

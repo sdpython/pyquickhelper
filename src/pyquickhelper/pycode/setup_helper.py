@@ -170,9 +170,6 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     Option ``-e`` and ``-g`` were added to
     filter file by regular expressions (in with *e*, out with *g*).
 
-    .. versionadded:: 1.7
-        Parameters *github_owner*, *existing_history* were added.
-
     .. versionchanged:: 1.8
         Parameters *coverage_root*, *direct_call* were added.
     """
