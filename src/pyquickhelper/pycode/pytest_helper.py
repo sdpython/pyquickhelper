@@ -57,6 +57,8 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
                     module_name, module_path))
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
+    if module is None:
+        raise ValueError("module must be specified.")
 
     reg = re.compile(pattern)
     fcts = []
