@@ -59,7 +59,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             else:
                 snb = "\n".join("'{0}': '{1}'".format(k, v)
                                 for k, v in sorted(nblinks.items()))
-                extension = "You shoud add links into variable 'nblinks' "
+                extension = "You shoud add links into variable 'nblinks' " \
                             "into documentation configuration file."
                 extension += "\nnblinks={0}".format(nblinks)
                 raise Exception(
@@ -101,7 +101,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             if not url.startswith("http"):
                 mes = "\n".join("{0}: '{1}'".format(k, v)
                                 for k, v in sorted(nblinks.items()))
-                extension = "You should add this link into the documentation "
+                extension = "You should add this link into the documentation " \
                             "configuration file in variable 'nblinks'."
                 extension += "nblinks={0}".format(nblinks)
                 raise Exception("A reference was no found: '{0}' - '{1}' "
