@@ -54,12 +54,17 @@ def update_notebook_link(text, format, nblinks, fLOG):
         else:
             url = nblinks(url, format)
         if url.startswith("find://"):
-            snb = "\n".join("'{0}': '{1}'".format(k, v)
-                            for k, v in sorted(nblinks.items()))
-            extension = "You shoud add links into variable 'nblinks' into documentation configuration file."
-            extension += "\nnblinks={0}".format(nblinks)
-            raise Exception(
-                "Unable to find a replacement for '{0}' format='{1}' in \n{2}\n{3}".format(url, format, snb, extension))
+            if format == 'python':
+                url = url[7:]
+            else:
+                snb = "\n".join("'{0}': '{1}'".format(k, v)
+                                for k, v in sorted(nblinks.items()))
+                extension = "You shoud add links into variable 'nblinks' "
+                            "into documentation configuration file."
+                extension += "\nnblinks={0}".format(nblinks)
+                raise Exception(
+                    "Unable to find a replacement for '{0}' format='{1}' in \n{2}\n{3}".format(
+                        url, format, snb, extension))
         return url
 
     if nblinks is None:
@@ -96,10 +101,12 @@ def update_notebook_link(text, format, nblinks, fLOG):
             if not url.startswith("http"):
                 mes = "\n".join("{0}: '{1}'".format(k, v)
                                 for k, v in sorted(nblinks.items()))
-                extension = "You should add this link into the documentation configuration file in variable 'nblinks'."
+                extension = "You should add this link into the documentation "
+                            "configuration file in variable 'nblinks'."
                 extension += "nblinks={0}".format(nblinks)
-                raise Exception(
-                    "A reference was no found: '{0}' - '{1}' format={2}\n{3}\n{4}".format(anc, url, format, mes, extension))
+                raise Exception("A reference was no found: '{0}' - '{1}' "
+                                "format={2}\n{3}\n{4}".format(
+                                    anc, url, format, mes, extension))
             new_url = "[{0}]({1})".format(anc, url)
             if fLOG:
                 fLOG("      [update_notebook_link]3 add in ",
@@ -120,7 +127,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
             return new_url
         reg = re.compile("\\\\href{find://([^{} ]+?)}{([^{}]+)}")
         new_text = reg.sub(replat, text)
-        # {\hyperref[\detokenize{c_classes/classes:chap-classe}]{\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
+        # {\hyperref[\detokenize{c_classes/classes:chap-classe}]
+        # {\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
     else:
         raise NotImplementedError(
             "Unsupported format '{0}'\n{1}".format(format, text))
