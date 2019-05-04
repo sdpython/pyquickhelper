@@ -102,7 +102,7 @@ class TestYaml(unittest.TestCase):
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG(doc)
         doc = [s for s in doc if "documentation" in s]
-        if len(doc) != 1:
+        if len(doc) != 2:
             raise Exception("len(doc)={0}\n{1}".format(
                 len(doc), "\n".join(str(_) for _ in doc)))
         fLOG("**", doc)
@@ -214,7 +214,11 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
+            $PYINT -u src\\pyquicksetup\\setup.py bdist_wheel
+            if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            cp src\\pyquicksetup\\dist\\*.whl ROOT\\pyquickhelper/../local_pypi/local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
@@ -290,7 +294,11 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
+            $PYINT -u src\\pyquicksetup\\setup.py bdist_wheel
+            if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
+            if %errorlevel% neq 0 exit /b %errorlevel%
+            cp src\\pyquicksetup\\dist\\*.whl ROOT\\pyquickhelper/../local_pypi/local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
@@ -357,7 +365,11 @@ class TestYaml(unittest.TestCase):
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
             $PYINT -u setup.py bdist_wheel
             if [ $? -ne 0 ]; then exit $?; fi
+            $PYINT -u src/pyquicksetup/setup.py bdist_wheel
+            if [ $? -ne 0 ]; then exit $?; fi
             cp dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
+            if [ $? -ne 0 ]; then exit $?; fi
+            cp src/pyquicksetup/dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
             if [ $? -ne 0 ]; then exit $?; fi
 
             echo DOCUMENTATION
@@ -479,14 +491,21 @@ class TestYaml(unittest.TestCase):
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
             python -u setup.py bdist_wheel
             if %errorlevel% neq 0 exit /b %errorlevel%
+            $PYINT -u src\\pyquicksetup\\setup.py bdist_wheel
+            if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
-            cd ..
+
+            @echo DOCUMENTATION
+            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            python -u setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
+            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
+            if %errorlevel% neq 0 exit /b %errorlevel%            
             """.replace("            ", "").strip("\n \t\r")
             val = conv.strip("\n \t\r")
             if expected != val:
-                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                mes = "EXP:\n{0}\n###########\nGOT:\n---\n{1}\n---".format(expected, val)
                 for i, (a, b) in enumerate(zip(expected.split("\n"), val.split("\n"))):
                     if a != b:
                         raise Exception(
