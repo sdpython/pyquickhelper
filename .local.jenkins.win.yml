@@ -51,11 +51,11 @@ script:
 # To run after the script.
 after_script:
   - python -u setup.py bdist_wheel
-  - if [ ${VERSION} == "2.7" and ${DIST} != "conda" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
-  - if [ ${VERSION} == "2.7" ] then cd .. fi
-  - if [ ${VERSION} != "2.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
+  - if [ ${NAME} == "UT" ] then $PYINT -u src\pyquicksetup\setup.py bdist_wheel fi
+  - if [ ${DIST} != "conda" and ${NAME} == "UT" ] then copy dist\*.whl {{root_path}}\..\..\local_pypi\local_pypi_server fi
+  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp src\pyquicksetup\dist\*.whl {{root_path}}/../local_pypi/local_pypi_server fi
 
 # Same as after script.
 documentation:
-  - if [ ${NAME} == "UT" and ${VERSION} != "2.7" ] then python -u setup.py build_sphinx fi
-  - if [ ${NAME} == "UT" and ${VERSION} != "2.7" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi
+  - if [ ${NAME} == "UT" ] then python -u setup.py build_sphinx fi
+  - if [ ${NAME} == "UT" ] then xcopy /E /C /I /Y _doc\sphinxdoc\build\html dist\html fi

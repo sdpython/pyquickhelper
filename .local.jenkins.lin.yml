@@ -39,7 +39,9 @@ script:
 # To run after the script.
 after_script:
   - $PYINT -u setup.py bdist_wheel
+  - if [ ${NAME} == "UT" ] then $PYINT -u src/pyquicksetup/setup.py bdist_wheel fi
   - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
+  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp src/pyquicksetup/dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
 
 # Same as after script.
 documentation:

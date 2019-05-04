@@ -103,9 +103,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
                                 for k, v in sorted(nblinks.items()))
                 extension = "You should add this link into the documentation " \
                             "configuration file in variable 'nblinks'."
-                extension += "nblinks={0}".format(nblinks)
-                raise Exception("A reference was no found: '{0}' - '{1}' "
-                                "format={2}\n{3}\n{4}".format(
+                raise Exception("A reference was not found: '{0}' - '{1}' "
+                                "format={2}, nblinks=\n{3}\n{4}".format(
                                     anc, url, format, mes, extension))
             new_url = "[{0}]({1})".format(anc, url)
             if fLOG:
@@ -486,7 +485,8 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     content = "".join(lines)
     content = update_notebook_link(content, "rst", nblinks=nblinks, fLOG=fLOG)
     if "find://" in content:
-        raise Exception("find:// was found in '{0}'".format(file))
+        raise Exception("find:// was found in '{0}'.\nYou should "
+                        "add or extend 'nblinks' in conf.py.".format(file))
 
     # notebooks replacements
     content = _notebook_replacements(content, notebook_replacements, fLOG)
@@ -531,7 +531,8 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True,
 
     text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
-        raise Exception("find:// was found in '{0}'".format(file))
+        raise Exception("find:// was found in '{0}'.\nYou should add "
+                        "or extend 'nblinks' in conf.py.".format(file))
 
     with open(file, "w", encoding="utf8") as f:
         f.write(text)
@@ -587,7 +588,8 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True,
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
     text = update_notebook_link(text, "slides", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
-        raise Exception("find:// was found in '{0}'".format(file))
+        raise Exception("find:// was found in '{0}'.\nYou should add "
+                        "or extend 'nblinks' in conf.py.".format(file))
 
     # notebook replacements
     text = _notebook_replacements(text, notebook_replacements, fLOG)
@@ -758,11 +760,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     # fix references
     st = update_notebook_link(st, "latex", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
-        if nblinks is None or len(nblinks) == 0:
-            raise Exception(
-                "find:// was found in '{0}'\nYou should add nblinks in conf.py.\n{1}".format(file, st))
-        raise Exception(
-            "find:// was found in '{0}'\nYou should extend nblinks in conf.py.\n{1}".format(file, st))
+        raise Exception("find:// was found in '{0}'\nYou should add or extend "
+                        "'nblinks' in conf.py.\n{1}".format(file, st))
 
     # notebook replacements
     st = _notebook_replacements(st, notebook_replacements, fLOG)
@@ -800,7 +799,8 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
     st = update_notebook_link(st, "python", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
-        raise Exception("find:// was found in '{0}'".format(file))
+        raise Exception("find:// was found in '{0}'.\nYou should add or extend "
+                        "'nblinks' in conf.py.".format(file))
 
     # notebook replacements
     st = _notebook_replacements(st, notebook_replacements, fLOG)

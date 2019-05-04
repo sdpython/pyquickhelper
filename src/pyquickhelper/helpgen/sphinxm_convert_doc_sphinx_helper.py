@@ -14,7 +14,7 @@ from docutils.languages import en as docutils_en
 from docutils import nodes
 from docutils.utils import Reporter
 from sphinx.application import Sphinx
-from sphinx.builders.html import SingleFileHTMLBuilder
+from sphinx.builders.html import SingleFileHTMLBuilder  # pylint: disable=E0611
 from sphinx.environment import BuildEnvironment
 from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransformer
