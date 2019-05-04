@@ -463,7 +463,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
             if add_contents:
                 title = blocref_info['breftitle']
                 item = nodes.list_item()
-                p = nodes.paragraph()
+                p = nodes.container()
                 item += p
                 newnode = nodes.reference('', '', internal=True)
                 innernode = nodes.paragraph(text=title)
