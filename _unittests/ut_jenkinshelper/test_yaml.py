@@ -218,8 +218,6 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
-            cp src\\pyquicksetup\\dist\\*.whl ROOT\\pyquickhelper/../local_pypi/local_pypi_server
-            if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
@@ -298,8 +296,6 @@ class TestYaml(unittest.TestCase):
             if %errorlevel% neq 0 exit /b %errorlevel%
             copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
             if %errorlevel% neq 0 exit /b %errorlevel%
-            cp src\\pyquicksetup\\dist\\*.whl ROOT\\pyquickhelper/../local_pypi/local_pypi_server
-            if %errorlevel% neq 0 exit /b %errorlevel%
 
             @echo DOCUMENTATION
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
@@ -368,8 +364,6 @@ class TestYaml(unittest.TestCase):
             $PYINT -u src/pyquicksetup/setup.py bdist_wheel
             if [ $? -ne 0 ]; then exit $?; fi
             cp dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
-            if [ $? -ne 0 ]; then exit $?; fi
-            cp src/pyquicksetup/dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
             if [ $? -ne 0 ]; then exit $?; fi
 
             echo DOCUMENTATION
