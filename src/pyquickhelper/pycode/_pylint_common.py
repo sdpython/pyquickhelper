@@ -107,4 +107,6 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "test_yaml.py:333: [E501]",
                      "test_yaml.py:337: [E501]",
                      "test_yaml.py:339: [E501]",
+                     "test_yaml.py:345: [E501]",
+                     "test_yaml.py:347: [E501]",
                      ])

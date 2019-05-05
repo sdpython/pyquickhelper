@@ -295,6 +295,8 @@ class RunPythonDirective(Directive):
     * ``:language:``: changes ``::`` into ``.. code-block:: language``
     * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
       see @see fn remove_extra_spaces_and_pep8.
+    * ``:numpy_precision: <precision>``, run ``numpy.set_printoptions(precision=...)``,
+      precision is 3 by default
     * ``:process:`` run the script in an another process
     * ``:restore:`` restore the local context stored in :epkg:`sphinx` application
       by the previous call to *runpython*
@@ -385,6 +387,7 @@ class RunPythonDirective(Directive):
         'language': directives.unchanged,
         'store': directives.unchanged,
         'restore': directives.unchanged,
+        'numpy_precision': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -436,6 +439,7 @@ class RunPythonDirective(Directive):
             'current': 'current' in self.options and self.options['current'] in bool_set_,
             'assert': self.options.get('assert', '').strip(),
             'language': self.options.get('language', '').strip(),
+            'numpy_precision': self.options.get('numpy_precision', '3').strip(),
             'store': 'store' in self.options and self.options['store'] in bool_set_,
             'restore': 'restore' in self.options and self.options['restore'] in bool_set_,
         }
@@ -451,6 +455,15 @@ class RunPythonDirective(Directive):
             content = ["if True:"]
         else:
             content = ["def {0}():".format(name)]
+
+        if "numpy" in "\n".join(self.content) and p['numpy_precision'] not in (None, 'None', '-', ''):
+            try:
+                import numpy  # pylint: disable=W0611
+                prec = int(p['numpy_precision'])
+                content.append("    import numpy")
+                content.append("    numpy.set_printoptions(%d)" % prec)
+            except (ImportError, ValueError):
+                pass
 
         content.append('    ## __WD__ ##')
 

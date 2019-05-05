@@ -501,11 +501,12 @@ class TestYaml(unittest.TestCase):
             python -u setup.py build_sphinx
             if %errorlevel% neq 0 exit /b %errorlevel%
             xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
-            if %errorlevel% neq 0 exit /b %errorlevel%            
+            if %errorlevel% neq 0 exit /b %errorlevel%
             """.replace("            ", "").strip("\n \t\r")
             val = conv.strip("\n \t\r")
             if expected != val:
-                mes = "EXP:\n{0}\n###########\nGOT:\n---\n{1}\n---".format(expected, val)
+                mes = "EXP:\n{0}\n###########\nGOT:\n---\n{1}\n---".format(
+                    expected, val)
                 for i, (a, b) in enumerate(zip(expected.split("\n"), val.split("\n"))):
                     if a != b:
                         raise Exception(

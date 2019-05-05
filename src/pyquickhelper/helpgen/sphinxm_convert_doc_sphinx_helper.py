@@ -192,7 +192,7 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
     def __init__(self, builder, *args, **kwds):
         """
         .. versionchanged:: 1.7
-            Does something specific for HTML. only is a node.
+            Does something specific for :epkg:`HTML`. only is a node.
         """
         HTMLTranslator.__init__(self, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'html')
