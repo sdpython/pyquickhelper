@@ -10,6 +10,7 @@ import json
 import os
 import sys
 import shutil
+import warnings
 from io import StringIO
 
 from .utils_sphinx_doc_helpers import HelpGenException
@@ -285,7 +286,10 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
     else:
         if sys.platform.startswith("win"):
             from .utils_pywin32 import import_pywin32
-            import_pywin32()
+            try:
+                import_pywin32()
+            except ModuleNotFoundError as e:
+                warnings.warn(e)
         exe = os.path.split(sys.executable)[0]
 
     extensions = {"ipynb": ".ipynb", "latex": ".tex", "elatex": ".tex", "pdf": ".pdf",
