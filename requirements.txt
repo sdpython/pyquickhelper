@@ -22,7 +22,7 @@ git+https://github.com/sdpython/nbconvert.git@fixes
 nbformat
 nbpresent
 notebook>=5.0.0
-numpy>=1.11.1
+numpy>=1.16
 openpyxl
 pandas>=0.22.0
 pandocfilters

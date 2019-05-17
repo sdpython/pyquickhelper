@@ -73,7 +73,7 @@ jobs:
     displayName: 'Install Pandoc'
   - script: brew install graphviz
     displayName: 'Install Graphviz'
-  - script: brew cask install mactex
+  - script: brew cask install basictex
     displayName: 'Install latex'
   - script: brew install cairo pango gdk-pixbuf libffi
     displayName: 'Install cairo pango gdk-pixbuf libffi'
