@@ -56,6 +56,21 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False):
     @param      rootrem root to remove in filenames
     @param      as_df   return the results as a dataframe and not text
     @return             raw results, statistics text dump (or dataframe is *as_df* is True)
+
+    .. plot::
+
+        import matplotlib.pyplot as plt
+        from pyquickhelper.pycode.profiling import profile
+        from pyquickhelper.texthelper import compare_module_version
+
+        def fctm():
+            return compare_module_version('0.20.4', '0.22.dev0')
+
+        pr, df = profile(lambda: [fctm() for i in range(0, 1000)], as_df=True)
+        ax = df[['fct', 'cum_tall']].head(n=15).set_index('fct').plot(kind='bar', figsize=(8, 3), rot=30)
+        ax.set_title("example of a graph")
+        for la in ax.get_xticklabels(): la.set_horizontalalignment('right');
+        plt.show()
     """
     pr = cProfile.Profile()
     pr.enable()
