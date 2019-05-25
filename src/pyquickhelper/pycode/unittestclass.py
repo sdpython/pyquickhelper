@@ -7,16 +7,9 @@ import sys
 import unittest
 import warnings
 import decimal
-import cProfile
-import pstats
-import site
 from .ci_helper import is_travis_or_appveyor
+from .profiling import profile
 from ..loghelper import fLOG
-
-try:
-    from io import StringIO
-except ImportError:
-    from StringIO import StringIO
 
 
 class ExtTestCase(unittest.TestCase):
@@ -362,26 +355,7 @@ class ExtTestCase(unittest.TestCase):
         @param      rootrem root to remove in filenames
         @return             statistics text dump
         """
-        pr = cProfile.Profile()
-        pr.enable()
-        fct()
-        pr.disable()
-        s = StringIO()
-        ps = pstats.Stats(pr, stream=s).sort_stats(sort)
-        ps.print_stats()
-        res = s.getvalue()
-        try:
-            pack = site.getsitepackages()
-        except AttributeError:
-            import numpy
-            pack = os.path.normpath(os.path.abspath(
-                os.path.join(os.path.dirname(numpy.__file__), "..")))
-            pack = [pack]
-        res = res.replace(pack[-1], "site-packages")
-        if rootrem is not None:
-            res = res.replace(rootrem, '')
-
-        return ps, res
+        return profile(fct, sort=sort, rootrem=rootrem)
 
     def read_file(self, filename, mode='r', encoding="utf-8"):
         """
