@@ -5,9 +5,16 @@
 History
 =======
 
-current - 2019-04-25 - 0.00Mb
+current - 2019-05-27 - 0.00Mb
 =============================
 
+* `238`: add simple function to profile and command line, implements a graph as well (2019-05-27)
+* `248`: add option numpy_precision in runpython (2019-05-05)
+
+1.9.3118 - 2019-04-26 - 2.04Mb
+==============================
+
+* `247`: Use of command in setup.py (2019-04-25)
 * `246`: Supports projects without src folder (2019-04-25)
 
 1.9.3100 - 2019-04-06 - 2.04Mb
