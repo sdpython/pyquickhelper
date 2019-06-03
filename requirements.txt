@@ -37,7 +37,7 @@ python-jenkins>=1.0.0
 PyYAML
 semantic_version
 setuptools
-Sphinx>=1.8
+Sphinx>=2.1
 sphinx-gallery
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo

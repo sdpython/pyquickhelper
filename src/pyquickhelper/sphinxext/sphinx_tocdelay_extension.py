@@ -9,10 +9,7 @@ import re
 from docutils import nodes
 from docutils.parsers.rst import Directive, directives
 from sphinx.util import logging
-try:
-    from sphinx.errors import NoUri
-except ImportError:
-    from sphinx.environment import NoUri
+from sphinx.errors import NoUri
 import sphinx
 
 

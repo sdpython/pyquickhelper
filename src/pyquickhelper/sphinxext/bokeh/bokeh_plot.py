@@ -79,11 +79,6 @@ from docutils.parsers.rst.directives import choice, flag
 from sphinx.errors import SphinxError
 from sphinx.util import console, copyfile, ensuredir, status_iterator
 from sphinx.util.nodes import set_source_info
-try:
-    from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
-except ImportError:
-    RemovedInSphinx30Warning = DeprecationWarning
-    RemovedInSphinx40Warning = DeprecationWarning
 
 from bokeh.settings import settings
 from bokeh.resources import Resources
@@ -341,8 +336,8 @@ def setup(app):
     app.add_config_value('bokeh_plot_pyfile_include_dirs', [], 'html')
 
     with warnings.catch_warnings():
-        warnings.simplefilter("ignore", RemovedInSphinx30Warning)
-        warnings.simplefilter("ignore", RemovedInSphinx40Warning)
+        warnings.simplefilter(
+            "ignore", (DeprecationWarning, PendingDeprecationWarning))
         app.add_source_parser('.py', PlotScriptParser)
 
     app.add_directive('bokeh-plot', BokehPlotDirective)

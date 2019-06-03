@@ -272,7 +272,7 @@ if not r:
             "semantic_version",
             "setuptools",
             "simplegeneric",
-            "sphinx>=1.8",
+            "sphinx>=2.1",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
             "tqdm",

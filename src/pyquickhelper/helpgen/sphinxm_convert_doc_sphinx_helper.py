@@ -20,34 +20,10 @@ from sphinx.errors import ExtensionError
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
-
-try:
-    from sphinx.util.build_phase import BuildPhase
-except ImportError:
-    class BuildPhase:
-        pass
-    BuildPhase.INITIALIZATION = "initialization"
-
-try:
-    from sphinx.util.logging import prefixed_warnings
-    sphinx20 = True
-except ImportError:
-    # Sphinx < 2.0
-    prefixed_warnings = None
-    sphinx20 = False
-try:
-    from sphinx.project import Project
-except ImportError:
-    # Sphinx < 2.0
-    class Project:
-        def __init__(self, srcdir, source_suffix):
-            self.srcdir = srcdir
-            self.source_suffix = source_suffix
-try:
-    from sphinx.errors import ApplicationError
-except ImportError:
-    ApplicationError = Exception
-
+from sphinx.util.build_phase import BuildPhase
+from sphinx.util.logging import prefixed_warnings
+from sphinx.project import Project
+from sphinx.errors import ApplicationError
 from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
 from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
@@ -1022,10 +998,6 @@ class _CustomSphinx(Sphinx):
         self.post_transforms = []               # type: List[Transform]
         self.html_themes = {}                   # type: Dict[unicode, unicode]
 
-        # sphinx 1.8
-        if not sphinx20:
-            self._setting_up_extension = [None]
-
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"
         if srcdir is None:
@@ -1057,11 +1029,7 @@ class _CustomSphinx(Sphinx):
             self.quiet = False
 
         from sphinx.events import EventManager
-        try:
-            self.events = EventManager(self)
-        except TypeError:
-            self.info('Running sphinx version <= 2.1')
-            self.events = EventManager()
+        self.events = EventManager(self)
 
         # keep last few messages for traceback
         # This will be filled by sphinx.util.logging.LastMessagesWriter
@@ -1075,19 +1043,14 @@ class _CustomSphinx(Sphinx):
         self.statuscode = 0
 
         # delayed import to speed up time
-        try:
-            from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
-        except ImportError:
-            RemovedInSphinx30Warning = DeprecationWarning
-            RemovedInSphinx40Warning = DeprecationWarning
         from sphinx.application import CONFIG_FILENAME, Config
 
         # read config
         from sphinx.application import Tags
         self.tags = Tags(tags)
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
-            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
+            warnings.simplefilter(
+                "ignore", (DeprecationWarning, PendingDeprecationWarning))
             if self.confdir is None:
                 try:
                     self.config = Config({}, confoverrides or {})
@@ -1106,9 +1069,8 @@ class _CustomSphinx(Sphinx):
 
         # create the environment
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
-            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
-            warnings.simplefilter("ignore", ImportWarning)
+            warnings.simplefilter(
+                "ignore", (DeprecationWarning, PendingDeprecationWarning, ImportWarning))
             self.config.check_unicode()
         self.config.pre_init_values()
 
@@ -1218,10 +1180,7 @@ class _CustomSphinx(Sphinx):
 
         # now that we know all config values, collect them from conf.py
         self.config.init_values()
-        try:
-            self.events.emit('config-inited', self.config)
-        except TypeErrpr:
-            self.emit('config-inited', self.config)
+        self.events.emit('config-inited', self.config)
 
         # /2 addition to the original code
         # check extension versions if requested
@@ -1294,7 +1253,7 @@ class _CustomSphinx(Sphinx):
             self.env = _CustomBuildEnvironment(self)
             if hasattr(self.env, 'setup'):
                 self.env.setup(self)
-        if sphinx20 and (not hasattr(self.env, 'project') or self.env.project is None):
+        if not hasattr(self.env, 'project') or self.env.project is None:
             raise AttributeError("self.env.project is not initialized.")
 
     def create_builder(self, name):
@@ -1355,20 +1314,14 @@ class _CustomSphinx(Sphinx):
         # If a path startswith('/'), it is removed.
         from sphinx.environment.collectors.asset import logger as logger_asset
         logger_asset.setLevel(40)  # only errors
-        try:
-            self.events.emit('doctree-read', doctree)
-        except TypeError:
-            self.emit('doctree-read', doctree)
+        self.events.emit('doctree-read', doctree)
         logger_asset.setLevel(30)  # back to warnings
 
         for img in imgs:
             img['uri'] = img['save_uri']
 
-        try:
-            self.events.emit('doctree-resolved', doctree,
-                             self.config.master_doc)
-        except TypeError:
-            self.emit('doctree-resolved', doctree, self.config.master_doc)
+        self.events.emit('doctree-resolved', doctree,
+                         self.config.master_doc)
         self.builder.write(None, None, 'all')
 
     def debug(self, message, *args, **kwargs):
@@ -1400,16 +1353,9 @@ class _CustomSphinx(Sphinx):
 
         # delayed import to speed up time
         try:
-            from sphinx.deprecation import RemovedInSphinx30Warning
-        except ImportError:
-            RemovedInSphinx30Warning = DeprecationWarning
-
-        try:
             with warnings.catch_warnings():
                 warnings.filterwarnings(
                     "ignore", category=DeprecationWarning)
-                warnings.filterwarnings(
-                    "ignore", category=RemovedInSphinx30Warning)
                 self.registry.load_extension(self, extname)
         except Exception as e:
             raise ExtensionError(

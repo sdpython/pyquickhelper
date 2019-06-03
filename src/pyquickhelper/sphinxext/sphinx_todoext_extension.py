@@ -11,10 +11,7 @@ from docutils.frontend import Values
 
 import sphinx
 from sphinx.locale import _ as locale_
-try:
-    from sphinx.errors import NoUri
-except ImportError:
-    from sphinx.environment import NoUri
+from sphinx.errors import NoUri
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from sphinx.util.nodes import set_source_info, process_index_entry

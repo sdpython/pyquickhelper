@@ -16,8 +16,8 @@ install:
     # Install miktex to get pdflatex, if we don't get it from the cache
     # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/miktex-portable.exe
     # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x miktex-portable.exe -oC:\miktex >NUL
-    - set miktex_install=miktex-portable-2.9.6942.exe
-    - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile https://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/%miktex_install%
+    - set miktex_install=miktex-portable.exe    
+    - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://mirrors.ctan.org/systems/win32/miktex/setup/windows-x86/%miktex_install%
     - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x %miktex_install% -oC:\miktex >NUL
     - if not exist c:\miktex @echo Unable to find c:\miktex
     - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe @echo Unable to find c:\miktex\texmfs\install\miktex\bin\pdflatex.exe

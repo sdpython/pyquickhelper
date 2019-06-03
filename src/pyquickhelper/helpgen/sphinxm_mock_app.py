@@ -40,17 +40,12 @@ class MockSphinxApp:
                         }
 
         # delayed import to speed up import time
-        try:
-            from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning
-        except ImportError:
-            RemovedInSphinx30Warning = DeprecationWarning
-            RemovedInSphinx40Warning = DeprecationWarning
         from sphinx.config import Config
 
         self.mapping_connect = {}
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
-            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
+            warnings.simplefilter(
+                "ignore", (DeprecationWarning, PendingDeprecationWarning))
             self.config = Config(None, None, confoverrides, None)
         self.confdir = "."
         self.doctreedir = "."
@@ -137,10 +132,7 @@ class MockSphinxApp:
         """
         See :epkg:`class Sphinx`.
         """
-        try:
-            return self.app.events.emit(event, *args)
-        except TypeError:
-            return self.app.emit(event, *args)
+        return self.app.events.emit(event, *args)
 
     def emit_firstresult(self, event, *args):
         """

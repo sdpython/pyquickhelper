@@ -11,13 +11,7 @@ import warnings
 from datetime import datetime
 from io import StringIO
 from docutils.parsers.rst import directives, roles
-
-try:
-    from sphinx.cmd.build import main as build_main
-except ImportError:
-    # Sphinx >= 1.7
-    from sphinx import build_main
-
+from sphinx.cmd.build import main as build_main
 from ..filehelper import remove_folder
 from ..loghelper import python_path_append
 from ..loghelper.process_script import execute_script_get_local_variables, dictionary_as_class

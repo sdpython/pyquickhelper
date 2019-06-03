@@ -100,17 +100,9 @@ class CustomSphinxApp(Sphinx):
                 confoverrides['extensions'] = exts
 
         # delayed import to speed up time
-        try:
-            from sphinx.deprecation import RemovedInSphinx30Warning, RemovedInSphinx40Warning, RemovedInSphinx20Warning
-        except ImportError:
-            RemovedInSphinx20Warning = DeprecationWarning
-            RemovedInSphinx30Warning = DeprecationWarning
-            RemovedInSphinx40Warning = DeprecationWarning
-
         with warnings.catch_warnings():
-            warnings.simplefilter("ignore", RemovedInSphinx20Warning)
-            warnings.simplefilter("ignore", RemovedInSphinx30Warning)
-            warnings.simplefilter("ignore", RemovedInSphinx40Warning)
+            warnings.simplefilter(
+                "ignore", (DeprecationWarning, PendingDeprecationWarning))
             Sphinx.__init__(self, srcdir, confdir, outdir, doctreedir,
                             buildername, confoverrides, status,
                             warning, freshenv, warningiserror, tags,
