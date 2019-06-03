@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2019-05-27 - 0.00Mb
+current - 2019-06-04 - 0.00Mb
 =============================
+
+* `251`: Switch to Sphinx 2.1, remove specific code for older versions (2019-06-03)
+* `250`: fix errors introduced by installing sphinx 2.1 (2019-06-03)
+
+1.9.3135 - 2019-05-27 - 2.04Mb
+==============================
 
 * `238`: add simple function to profile and command line, implements a graph as well (2019-05-27)
 * `248`: add option numpy_precision in runpython (2019-05-05)
