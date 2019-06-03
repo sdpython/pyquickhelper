@@ -6,7 +6,7 @@ matrix:
   - python: 3.6.6
     name: "python3.6 sphinx1.8"
     env: sphinxconstraint="<2.0"
-  - python: 3.7.2
+  - python: 3.7.3
     name: "python3.7 sphinx2.0"
     env: sphinxconstraint=">=2.0"
 install: 

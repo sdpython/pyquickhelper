@@ -12,7 +12,10 @@ from docutils.frontend import Values
 
 import sphinx
 from sphinx.locale import _
-from sphinx.environment import NoUri
+try:
+    from sphinx.errors import NoUri
+except ImportError:
+    from sphinx.environment import NoUri
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from docutils.statemachine import StringList

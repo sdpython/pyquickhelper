@@ -1057,7 +1057,11 @@ class _CustomSphinx(Sphinx):
             self.quiet = False
 
         from sphinx.events import EventManager
-        self.events = EventManager()
+        try:
+            self.events = EventManager(self)
+        except TypeError:
+            self.info('Running sphinx version <= 2.1')
+            self.events = EventManager()
 
         # keep last few messages for traceback
         # This will be filled by sphinx.util.logging.LastMessagesWriter
@@ -1092,8 +1096,12 @@ class _CustomSphinx(Sphinx):
                     self.config = Config(confdir, CONFIG_FILENAME,
                                          confoverrides or {}, self.tags)
             else:
-                self.config = Config(confdir, CONFIG_FILENAME,
-                                     confoverrides or {}, self.tags)
+                try:
+                    self.config = Config(
+                        confdir, confoverrides or {}, self.tags)
+                except TypeError:
+                    self.config = Config(confdir, CONFIG_FILENAME,
+                                         confoverrides or {}, self.tags)
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
@@ -1138,6 +1146,7 @@ class _CustomSphinx(Sphinx):
         for extension in self.config.extensions:
             self.setup_extension(extension)
 
+        # /1 addition to the original code
         # additional extensions
         if new_extensions:
             for extension in new_extensions:
@@ -1163,6 +1172,8 @@ class _CustomSphinx(Sphinx):
                     "The builder can be custom but it must be specifed as a 2-uple=(builder_name, builder_class).")
             self.add_builder(buildername[1])
             buildername = buildername[0]
+
+        # /1 end of addition
 
         # preload builder module (before init config values)
         self.preload_builder(buildername)
@@ -1207,8 +1218,9 @@ class _CustomSphinx(Sphinx):
 
         # now that we know all config values, collect them from conf.py
         self.config.init_values()
-        self.emit('config-inited', self.config)
+        self.events.emit('config-inited', self.config)
 
+        # /2 addition to the original code
         # check extension versions if requested
         # self.config.needs_extensions = self.config.extensions
         if not hasattr(self.config, 'items'):
@@ -1234,6 +1246,8 @@ class _CustomSphinx(Sphinx):
                         "Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
 
             verify_extensions(self, self.config)
+
+        # /2 end of addition
 
         # create the project
         self.project = Project(self.srcdir, self.config.source_suffix)
