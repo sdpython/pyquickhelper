@@ -137,7 +137,10 @@ class MockSphinxApp:
         """
         See :epkg:`class Sphinx`.
         """
-        return self.app.emit(event, *args)
+        try:
+            return self.app.events.emit(event, *args)
+        except TypeError:
+            return self.app.emit(event, *args)
 
     def emit_firstresult(self, event, *args):
         """

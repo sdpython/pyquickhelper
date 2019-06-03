@@ -1218,7 +1218,10 @@ class _CustomSphinx(Sphinx):
 
         # now that we know all config values, collect them from conf.py
         self.config.init_values()
-        self.events.emit('config-inited', self.config)
+        try:
+            self.events.emit('config-inited', self.config)
+        except TypeErrpr:
+            self.emit('config-inited', self.config)
 
         # /2 addition to the original code
         # check extension versions if requested
@@ -1352,13 +1355,20 @@ class _CustomSphinx(Sphinx):
         # If a path startswith('/'), it is removed.
         from sphinx.environment.collectors.asset import logger as logger_asset
         logger_asset.setLevel(40)  # only errors
-        self.emit('doctree-read', doctree)
+        try:
+            self.events.emit('doctree-read', doctree)
+        except TypeError:
+            self.emit('doctree-read', doctree)
         logger_asset.setLevel(30)  # back to warnings
 
         for img in imgs:
             img['uri'] = img['save_uri']
 
-        self.emit('doctree-resolved', doctree, self.config.master_doc)
+        try:
+            self.events.emit('doctree-resolved', doctree,
+                             self.config.master_doc)
+        except TypeError:
+            self.emit('doctree-resolved', doctree, self.config.master_doc)
         self.builder.write(None, None, 'all')
 
     def debug(self, message, *args, **kwargs):
