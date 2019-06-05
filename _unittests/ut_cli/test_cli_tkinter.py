@@ -9,7 +9,7 @@ import warnings
 from io import StringIO
 
 from pyquickhelper.loghelper import fLOG, BufferedPrint
-from pyquickhelper.pycode import ExtTestCase, skipif_travis, skipif_circleci
+from pyquickhelper.pycode import ExtTestCase, skipif_travis, skipif_circleci, skipif_azure
 from pyquickhelper.__main__ import main
 
 
@@ -17,6 +17,7 @@ class TestCliMainTkinterHelper(ExtTestCase):
 
     @skipif_travis('_tkinter.TclError: invalid command name "frame"')
     @skipif_circleci('_tkinter.TclError: invalid command name "frame"')
+    @skipif_azure('_tkinter.TclError: invalid command name "frame"')
     def test_main(self):
         from tkinter import TclError
         st = BufferedPrint()
