@@ -89,7 +89,7 @@ jobs:
     displayName: 'uninstall pyquickhelper'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
-  - script: python -u setup.py unittests
+  - script: python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
   - script: pip freeze
     displayName: 'pip freeze'
