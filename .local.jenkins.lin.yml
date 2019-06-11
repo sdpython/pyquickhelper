@@ -29,7 +29,6 @@ install:
 # This means the job will be stop if it produces no output for 20 minutes.
 script:
   - { CMD: "$PYINT -u setup.py unittests", NAME: "UT", TIMEOUT: 899 }
-  - { CMD: "$PYINT -m pip install sphinx==1.8;$PYINT -u setup.py unittests", NAME: "UT_SPHINX18", TIMEOUT: 899 }
   - { CMD: "$PYINT -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)|(gitjs)).*\"", NAME: "UT_SKIP", TIMEOUT: 900 }
   - { CMD: "$PYINT -u setup.py unittests -e \".*api.*\"", NAME: "UT_SKIP_API" }
   - { CMD: "$PYINT -u setup.py unittests -e \".*pylint.*\"", NAME: "UT_SKIP_PYLINT", TIMEOUT: 1500 }
