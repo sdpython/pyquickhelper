@@ -239,7 +239,7 @@ class TestYaml(unittest.TestCase):
 
         conv = [_ for _ in convs if set_name +
                 " DIST=std" in _ and "TIMEOUT=899" in _]
-        if len(conv) != 2:
+        if len(conv) not in (1, 2):
             raise Exception(
                 "################################\nlen(conv)={0}\n{1}".format(len(conv), conv))
         conv = conv[0]
