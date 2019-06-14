@@ -69,7 +69,8 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False):
         pr, df = profile(lambda: [fctm() for i in range(0, 1000)], as_df=True)
         ax = df[['fct', 'cum_tall']].head(n=15).set_index('fct').plot(kind='bar', figsize=(8, 3), rot=30)
         ax.set_title("example of a graph")
-        for la in ax.get_xticklabels(): la.set_horizontalalignment('right');
+        for la in ax.get_xticklabels():
+            la.set_horizontalalignment('right');
         plt.show()
     """
     pr = cProfile.Profile()
@@ -107,12 +108,21 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False):
         return res
 
     if as_df:
+
+        def better_name(row):
+            if len(row['fct']) > 15:
+                return "{}-{}".format(row['file'].split(':')[-1], row['fct'])
+            else:
+                name = row['file'].replace("\\", "/")
+                return "{}-{}".format(name.split('/')[-1], row['fct'])
+
         rows = _process_pstats(ps, clean_text)
         import pandas
         df = pandas.DataFrame(rows)
         df = df[['fct', 'file', 'ncalls1', 'ncalls2', 'tin', 'cum_tin',
                  'tall', 'cum_tall']]
-        df = df.groupby(['fct', 'file'], as_index=False).sum().sort_values(
+        df['namefct'] = df.apply(lambda row: better_name(row), axis=1)
+        df = df.groupby(['namefct', 'file'], as_index=False).sum().sort_values(
             'cum_tall', ascending=False).reset_index(drop=True)
         return ps, df
     else:

@@ -502,6 +502,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import matplotlib.sphinxext
         assert matplotlib.sphinxext is not None
         extensions.append('matplotlib.sphinxext.plot_directive')
+        plot_include_source = True
+        plot_html_show_source_link = False
     except ImportError:
         # matplotlib is not installed.
         pass
