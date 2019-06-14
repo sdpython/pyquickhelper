@@ -43,7 +43,7 @@ class TestProfiling(ExtTestCase):
             os.path.join(os.path.dirname(rootfile), '..')))
         ps, df = profile(simple, rootrem=rootrem, as_df=True)
         self.assertIsInstance(df, pandas.DataFrame)
-        self.assertEqual(df.loc[0, 'fct'], 'simple2')
+        self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple2')
 
 
 if __name__ == "__main__":
