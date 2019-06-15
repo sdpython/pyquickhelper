@@ -84,7 +84,7 @@ class BlocRef(BaseAdmonition):
         :tag: dummy_example
         :sort: title
 
-    This directives is used to highlight a bloc about
+    This directive is used to highlight a bloc about
     anything @see cl BlocRef, a question @see cl FaqRef,
     a magic command @see cl NbRef, an example @see cl ExRef.
     It supports option *index* in most of the extensions
@@ -426,6 +426,14 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
             para = nodes.paragraph(classes=['%s-source' % class_name])
 
+            # Create a target?
+            int_ids = ['index%s-%s' % (blocref_info['target']['refid'],
+                                       env.new_serialno(blocref_info['target']['refid']))]
+            int_targetnode = nodes.target(
+                blocref_info['breftitle'], '', ids=int_ids)
+            para += int_targetnode
+
+            # rest of the content
             if app.config['%s_link_only' % class_name]:
                 description = _('<<%s>>' % orig_entry)
             else:
@@ -456,20 +464,21 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
             newnode.append(nodes.Text(newnode['name']))
 
+            # para is duplicate of the content of the bloc
             para += newnode
             para += nodes.Text(desc2, desc2)
 
             blocref_entry = blocref_info['blocref']
             idss = ["index-%s-%d-%d" % (class_name, ilist, n)]
 
-            # Insert into the blocreflist
+            # Inserts into the blocreflist
+            # in the list of links at the beginning of the page.
             if add_contents:
                 title = blocref_info['breftitle']
                 item = nodes.list_item()
-                p = nodes.container()
+                p = nodes.paragraph()
                 item += p
-                innernode = nodes.paragraph(text=title)
-                newnode = nodes.reference('', '', internal=True)
+                newnode = nodes.reference('', title, internal=True)
                 try:
                     newnode['refuri'] = app.builder.get_relative_uri(
                         fromdocname, brefdocname)
@@ -477,10 +486,10 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 except NoUri:
                     # ignore if no URI can be determined, e.g. for LaTeX output
                     pass
-                p += innernode
-                innernode += newnode
+                p += newnode
                 bullets += item
 
+            # Adds the content.
             blocref_entry["ids"] = idss
             if not hasattr(blocref_entry, "settings"):
                 blocref_entry.settings = Values()
