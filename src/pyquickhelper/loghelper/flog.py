@@ -10,14 +10,14 @@ The function fLOG (or fLOG) is used to logged everything into a log file.
 ::
 
     from pyquickhelper.loghelper.flog import fLOG
-    fLOG (OutputPrint = True)                 # the logs are also displayed in the output stream
-    fLOG (LogPath     = "...")                # chanages the path returned by GetPath
-    fLOG ("un", "deux", 4, ["gt"])            # log everything in a log file
+    fLOG(OutputPrint = True)                  # the logs are also displayed in the output stream
+    fLOG(LogPath     = "...")                 # chanages the path returned by GetPath
+    fLOG("un", "deux", 4, ["gt"])             # log everything in a log file
 
     from pyquickhelper.loghelper.flog import GetPath ()
-    print GetPath ()                          # return the log path (file temp_log.txt)
+    print GetPath()                           # return the log path (file temp_log.txt)
 
-    fLOG (LogPath = "c:/temp/log_path")       # change the log path, creates it if it does not exist
+    fLOG(LogPath = "c:/temp/log_path")        # change the log path, creates it if it does not exist
 
 @warning This module inserts static variable in module :epkg:`*py:sys`.
          I was done to deal with several instances of the same module
@@ -196,7 +196,7 @@ def fLOG(*l, **p):
 
         ::
 
-        fLOG(OutputPrint=True, LogFile="log_file.txt")
+            fLOG(OutputPrint=True, LogFile="log_file.txt")
 
     .. versionchanged:: 1.8
         Parameter *OutputStream* allows to print

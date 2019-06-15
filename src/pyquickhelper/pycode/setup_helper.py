@@ -76,7 +76,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
                                        file_filter_pep8=None, github_owner=None,
-                                       existing_history=None, coverage_root='src', fLOG=noLOG):
+                                       existing_history=None, coverage_root='src',
+                                       fexclude=None, fLOG=noLOG):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -133,6 +134,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                             in that file
     @param      coverage_root               see @see fn main_wrapper_tests
     @param      direct_call                 @see fn generate_help_sphinx
+    @param      fexclude                    function which tells which file not to copy in the folder
+                                            used to build the documentation
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -366,7 +369,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         standard_help_for_setup(argv,
                                 file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
                                 add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout,
-                                use_run_cmd=use_run_cmd, fLOG=fLOG, direct_call=direct_call)
+                                use_run_cmd=use_run_cmd, fLOG=fLOG, direct_call=direct_call,
+                                fexclude=fexclude)
 
         if func_sphinx_end is not None:
             func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
@@ -648,8 +652,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=("ipynb", "html", "python",
                                        "rst", "slides", "pdf", "present"),
-                            layout=None,
-                            use_run_cmd=False, direct_call=False, fLOG=noLOG):
+                            layout=None, use_run_cmd=False, direct_call=False,
+                            fexclude=None, fLOG=noLOG):
     """
     Standard function which generates help assuming they follow the same design
     as *pyquickhelper*.
@@ -666,6 +670,8 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
     @param      use_run_cmd         use function @see fn run_cmd instead of ``os.system``
                                     to build the documentation
     @param      direct_call         see @see fn generate_help_sphinx
+    @param      fexclude            function which tells which file not to copy in the folder
+                                    used to build the documentation
     @param      fLOG                logging function
 
     The function outputs some information through function @see fn fLOG.
@@ -703,7 +709,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
         generate_help_sphinx(project_name, module_name=module_name, layout=layout,
                              extra_ext=extra_ext, nbformats=nbformats, add_htmlhelp=add_htmlhelp,
                              copy_add_ext=copy_add_ext, fLOG=fLOG, root=ffolder,
-                             direct_call=direct_call)
+                             direct_call=direct_call, fexclude=fexclude)
 
 
 def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,

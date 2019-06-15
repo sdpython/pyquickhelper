@@ -54,7 +54,7 @@ class TestExRefExtension(unittest.TestCase):
         tives = [("exref", ExRef, exref_node,
                   visit_exref_node, depart_exref_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,
                         writer="custom", keep_warnings=True,
                         directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
 
@@ -109,7 +109,7 @@ class TestExRefExtension(unittest.TestCase):
         tives = [("exref", ExRef, exref_node,
                   visit_exref_node, depart_exref_node)]
 
-        html = rst2html(content, fLOG=fLOG,
+        html = rst2html(content,
                         writer="custom", keep_warnings=True,
                         directives=tives)
         if "admonition-exref exref_node admonition" not in html:
@@ -130,6 +130,47 @@ class TestExRefExtension(unittest.TestCase):
         t1 = "first todo"
         if t1 not in html:
             raise Exception(html)
+
+    def test_exreflist_rst(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes as skip_
+
+        content = """
+                    test a directive
+                    ================
+
+                    before
+
+                    .. exref::
+                        :title: first todo
+                        :tag: freg
+                        :lid: id3
+
+                        this code shoud appear___
+
+                    middle
+
+                    .. exreflist::
+                        :tag: freg
+                        :sort: title
+
+                    after
+                    """.replace("                    ", "")
+        if sys.version_info[0] >= 3:
+            content = content.replace('u"', '"')
+
+        tives = [("exref", ExRef, exref_node,
+                  visit_exref_node, depart_exref_node)]
+
+        rst = rst2html(content,
+                       writer="rst", keep_warnings=True,
+                       directives=tives)
+
+        print(rst)
 
 
 if __name__ == "__main__":

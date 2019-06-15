@@ -1,6 +1,6 @@
 
-pyquickhelper documentation
-===========================
+pyquickhelper: various automations in python
+============================================
 
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
     :target: https://travis-ci.org/sdpython/pyquickhelper

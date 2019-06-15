@@ -85,7 +85,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          layout=None,
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG,
-                         parallel=1, extra_paths=None):
+                         parallel=1, extra_paths=None, fexclude=None):
     """
     Runs the help generation:
 
@@ -117,6 +117,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                     a clear environment
     @param      parallel            degree of parallelization
     @param      extra_paths         extra paths when importing configuration
+    @param      fexclude            function which tells which file not to copy in the folder
+                                    used to build the documentation
     @param      fLOG                logging function
 
     The result is stored in path: ``root/_doc/sphinxdoc/source``.
@@ -611,7 +613,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                                     module_name,), ""),
                                                 optional_dirs=optional_dirs, mapped_function=mapped_function,
                                                 replace_relative_import=False, module_name=module_name,
-                                                copy_add_ext=copy_add_ext, use_sys=use_sys,
+                                                copy_add_ext=copy_add_ext, use_sys=use_sys, fexclude=fexclude,
                                                 auto_rst_generation=auto_rst_generation, fLOG=fLOG)
 
     except ImportErrorHelpGen as e:
