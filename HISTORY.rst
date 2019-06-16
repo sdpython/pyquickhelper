@@ -1,12 +1,19 @@
 
+
 .. _l-HISTORY:
 
 =======
 History
 =======
 
-current - 2019-06-04 - 0.00Mb
+current - 2019-06-16 - 0.00Mb
 =============================
+
+* `253`: fix links in exreflist (2019-06-15)
+* `252`: expose parameter fxeclude to avoid including them in the documentation (2019-06-15)
+
+1.9.3141 - 2019-06-03 - 2.04Mb
+==============================
 
 * `251`: Switch to Sphinx 2.1, remove specific code for older versions (2019-06-03)
 * `250`: fix errors introduced by installing sphinx 2.1 (2019-06-03)
@@ -179,3 +186,4 @@ current - 2019-06-04 - 0.00Mb
 
 1.5.2275 - 2017-11-28 - 0.50Mb
 ==============================
+

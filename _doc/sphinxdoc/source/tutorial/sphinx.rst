@@ -336,7 +336,7 @@ the *rst* file.
     ax.plot([0, 1], [0, 1], '--')
     fig.savefig(os.path.join(__WD__, "oo.png"))
 
-    text = ".. image:: oo.png\\\\n    :width: 201px"
+    text = ".. image:: oo.png\\n    :width: 201px"
     print(text)
 
 Option ``:toggle:`` can hide the code or the output or both

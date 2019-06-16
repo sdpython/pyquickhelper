@@ -19,12 +19,13 @@ from ..pandashelper.tblformat import df2rst
 
 def validate_file_for_help(filename, fexclude=lambda f: False):
     """
-    accept or reject a file to be copied in the help folder
+    Accepts or rejects a file to be copied in the help folder.
+
     @param      filename        filename
     @param      fexclude        function to exclude some files
     @return                     boolean
     """
-    if fexclude(filename):
+    if fexclude is not None and fexclude(filename):
         return False
 
     if filename.endswith(".pyd") or filename.endswith(".so"):
