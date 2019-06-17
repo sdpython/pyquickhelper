@@ -273,66 +273,70 @@ class MockSphinxApp:
         .. versionchanged:: 1.8
             Parameter *load_bokeh* was added.
         """
-        if confoverrides is None:
-            confoverrides = {}
-        if "extensions" not in confoverrides:
-            confoverrides["extensions"] = get_default_extensions(
-                load_bokeh=load_bokeh)
+        with warnings.catch_warnings():
+            warnings.simplefilter(
+                "ignore", (DeprecationWarning, PendingDeprecationWarning))
+            if confoverrides is None:
+                confoverrides = {}
+            if "extensions" not in confoverrides:
+                confoverrides["extensions"] = get_default_extensions(
+                    load_bokeh=load_bokeh)
 
-        if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
-            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memoryhtml', confoverrides=confoverrides,
-                                new_extensions=new_extensions)
-            writer = HTMLWriterWithCustomDirectives(
-                builder=app.builder, app=app)
-            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+            if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                    buildername='memoryhtml', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
-        elif writer == "rst":
-            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memoryrst', confoverrides=confoverrides,
-                                new_extensions=new_extensions)
-            writer = RSTWriterWithCustomDirectives(
-                builder=app.builder, app=app)
-            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                writer = HTMLWriterWithCustomDirectives(
+                    builder=app.builder, app=app)
+                mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                        new_extensions=new_extensions)
+            elif writer == "rst":
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                    buildername='memoryrst', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
-        elif writer == "md":
-            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memorymd', confoverrides=confoverrides,
-                                new_extensions=new_extensions)
-            writer = MDWriterWithCustomDirectives(builder=app.builder, app=app)
-            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                writer = RSTWriterWithCustomDirectives(
+                    builder=app.builder, app=app)
+                mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                        new_extensions=new_extensions)
+            elif writer == "md":
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                    buildername='memorymd', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
-        elif writer == "elatex":
-            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memorylatex', confoverrides=confoverrides,
-                                new_extensions=new_extensions)
-            writer = LatexWriterWithCustomDirectives(
-                builder=app.builder, app=app)
-            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                writer = MDWriterWithCustomDirectives(
+                    builder=app.builder, app=app)
+                mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                        new_extensions=new_extensions)
+            elif writer == "elatex":
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                    buildername='memorylatex', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
-        elif writer == "doctree":
-            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername='memorydoctree', confoverrides=confoverrides,
-                                new_extensions=new_extensions)
-            writer = DocTreeWriterWithCustomDirectives(
-                builder=app.builder, app=app)
-            mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                writer = LatexWriterWithCustomDirectives(
+                    builder=app.builder, app=app)
+                mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                        new_extensions=new_extensions)
+            elif writer == "doctree":
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                    buildername='memorydoctree', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
-        elif isinstance(writer, tuple):
-            # We expect ("builder_name", builder_class)
-            app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
-                                buildername=writer, confoverrides=confoverrides,
-                                new_extensions=new_extensions)
-            if not hasattr(writer[1], "_writer_class"):
-                raise AttributeError(
-                    "Class '{0}' does not have any attribute '_writer_class'.".format(writer[1]))
-            writer = writer[1]._writer_class(  # pylint: disable=E1101
-                builder=app.builder, app=app)  # pylint: disable=E1101
-            mockapp = MockSphinxApp(writer, app, confoverrides=confoverrides,
+                writer = DocTreeWriterWithCustomDirectives(
+                    builder=app.builder, app=app)
+                mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
+                                        new_extensions=new_extensions)
+            elif isinstance(writer, tuple):
+                # We expect ("builder_name", builder_class)
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                                    buildername=writer, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
-        else:
-            raise ValueError(
-                "Writer must be 'html', 'rst', 'md', 'elatex', not '{0}'.".format(writer))
+                if not hasattr(writer[1], "_writer_class"):
+                    raise AttributeError(
+                        "Class '{0}' does not have any attribute '_writer_class'.".format(writer[1]))
+                writer = writer[1]._writer_class(  # pylint: disable=E1101
+                    builder=app.builder, app=app)  # pylint: disable=E1101
+                mockapp = MockSphinxApp(writer, app, confoverrides=confoverrides,
+                                        new_extensions=new_extensions)
+            else:
+                raise ValueError(
+                    "Writer must be 'html', 'rst', 'md', 'elatex', not '{0}'.".format(writer))
 
         # titles
         title_names = []
