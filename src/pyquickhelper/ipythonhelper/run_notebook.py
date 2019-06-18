@@ -295,8 +295,13 @@ def _get_dump_default_path(dump):
             # We guess the package name.
             name = dump.__name__.split('.')[-1]
             loc = os.path.dirname(dump.__file__)
-            # We choose a path for the dumps in a way
-            fold = os.path.join(loc, "..", "..", "..", "_notebook_dumps")
+            src_loc = os.path.split(loc)
+            if src_loc[-1] == 'src':
+                # We choose a path for the dumps in a way
+                fold = os.path.join(loc, "..", "..", "..", "_notebook_dumps")
+            else:
+                # This should be a parameter.
+                fold = os.path.join(loc, "..", "..", "_notebook_dumps")
             if not os.path.exists(fold):
                 os.mkdir(fold)
             dump = os.path.join(fold, "notebook.{0}.txt".format(name))

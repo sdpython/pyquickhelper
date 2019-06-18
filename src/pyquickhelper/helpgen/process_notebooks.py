@@ -1194,8 +1194,9 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
         dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
                                              "_notebook_dumps", "notebook.{0}.txt".format(module_name)))
     if not os.path.exists(dump):
-        fLOG(
-            "[notebooks-coverage] No execution report about notebook at '{0}'".format(dump))
+        fLOG("[notebooks-coverage] No execution report about "
+             "notebook at '{0}' (fileout='{1}')".format(dump,
+                                                        os.path.dirname(fileout)))
         return None
     report0 = notebook_coverage(nbs, dump, too_old=too_old)
     fLOG("[notebooks-coverage] report shape", report0.shape)
