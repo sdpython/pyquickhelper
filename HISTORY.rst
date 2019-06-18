@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2019-06-16 - 0.00Mb
+current - 2019-06-18 - 0.00Mb
 =============================
 
+* `254`: Implements gdot to skip graphviz and render dot file with viz.js (2019-06-18)
 * `253`: fix links in exreflist (2019-06-15)
 * `252`: expose parameter fxeclude to avoid including them in the documentation (2019-06-15)
 
