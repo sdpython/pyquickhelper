@@ -203,7 +203,7 @@ def get_epkg_dictionary():
         'tornado': 'http://www.tornadoweb.org/en/stable/',
         'TortoiseSVN': 'http://tortoisesvn.net/',
         'travis': 'https://travis-ci.org/',
-        'Visual Studio Community Edition': 'https://www.visualstudio.com/',
+        'vis.js': 'https://visjs.org/',
         'Visual Studio Community Edition 2015': 'https://imagine.microsoft.com/en-us/Catalog/Product/101',
         'Windows': 'https://en.wikipedia.org/wiki/Microsoft_Windows',
         'xml': 'https://docs.python.org/3/library/xml.etree.elementtree.html#module-xml.etree.ElementTree',
@@ -877,6 +877,7 @@ def custom_setup(app, author):
     from ..sphinxext import setup_image
     from ..sphinxext.sphinx_toctree_extension import setup as setup_toctree
     from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
+    from ..sphinxext.sphinx_gdot_extension import setup as setup_gdot
 
     # delayed import to speed up import time
     from sphinx.errors import ExtensionError
@@ -897,7 +898,7 @@ def custom_setup(app, author):
             setup_faqref, setup_nbref, setup_cmdref,
             setup_signature, setup_docassert, setup_postcontents,
             setup_tocdelay, setup_youtube, setup_tpl,
-            setup_epkg, setup_image, setup_collapse,
+            setup_epkg, setup_image, setup_collapse, setup_gdot,
             setup_downloadlink, setup_quote, setup_gitlog]
 
     for ext in exts:

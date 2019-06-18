@@ -58,6 +58,7 @@ from ..sphinxext.sphinx_nbref_extension import NbRef
 from ..sphinxext.sphinx_cmdref_extension import CmdRef
 from ..sphinxext.sphinx_todoext_extension import TodoExt
 from ..sphinxext.sphinx_collapse_extension import CollapseDirective
+from ..sphinxext.sphinx_gdot_extension import GDotDirective
 
 template_examples = """
 
@@ -323,6 +324,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     directives.register_directive("youtube", YoutubeDirective)
     directives.register_directive("thumbnail", ImageDirective)
     directives.register_directive("collapse", CollapseDirective)
+    directives.register_directive("gdot", GDotDirective)
     roles.register_canonical_role("sharenet", sharenet_role)
     roles.register_canonical_role("bigger", bigger_role)
     roles.register_canonical_role("githublink", githublink_role)

@@ -46,6 +46,7 @@ from ..sphinxext.sphinx_bigger_extension import setup as setup_bigger
 from ..sphinxext.sphinx_blocref_extension import setup as setup_blocref
 from ..sphinxext.sphinx_blog_extension import setup as setup_blog
 from ..sphinxext.sphinx_collapse_extension import setup as setup_collapse
+from ..sphinxext.sphinx_gdot_extension import setup as setup_gdot
 from ..sphinxext.sphinx_cmdref_extension import setup as setup_cmdref
 from ..sphinxext.sphinx_docassert_extension import setup as setup_docassert
 from ..sphinxext.sphinx_epkg_extension import setup as setup_epkg
@@ -123,7 +124,7 @@ def get_default_extensions(load_bokeh=False):
                       setup_graphviz, setup_imgmath, setup_todo,
                       # the rest of it
                       setup_autodoc, setup_imagesvg,
-                      setup_plot, setup_image, setup_collapse,
+                      setup_plot, setup_image, setup_collapse, setup_gdot,
                       setup_video, setup_simpleimage, setup_downloadlink,
                       setup_quote, setup_gitlog]
 
