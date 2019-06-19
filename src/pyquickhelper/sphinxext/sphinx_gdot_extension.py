@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to hide / unhide section of the
-HTML page.
+@brief Defines a sphinx extension to show :epkg:`DOT` graph
+with :epkg:`viz.js` or :epkg:`graphviz`.
 
-.. versionadded:: 1.7
+.. versionadded:: 1.9
 """
+import os
+import logging
+import shutil
 from docutils import nodes
 from docutils.parsers.rst import directives
 import sphinx
 from docutils.parsers.rst import Directive
+from .sphinxext_helper import get_env_state_info
 from .sphinx_runpython_extension import run_python_script
 
 
@@ -29,7 +33,7 @@ class GDotDirective(Directive):
     * *format*: SVG or HTML
     * *script*: boolean or a string to indicate than the standard output
         should only be considered after this substring
-    * *url*: url to :epkg:`vis.js`, only if format *SVG* is selected
+    * *url*: url to :epkg:`viz.js`, only if format *SVG* is selected
 
     Example::
 
@@ -80,19 +84,46 @@ class GDotDirective(Directive):
         'url': directives.unchanged,
     }
 
+    _default_url = "http://www.xavierdupre.fr/js/vizjs/viz.js"
+
     def run(self):
         """
         Builds the collapse text.
         """
-        env = getattr(self.state.document.settings, "env", None)
-
         # retrieves the parameters
         if 'format' in self.options:
             format = self.options['format']
         else:
             format = '?'
-        url = self.options.get(
-            'url', 'http://www.xavierdupre.fr/js/vizjs/viz.js')
+        url = self.options.get('url', 'local')
+        if url == 'local':
+            try:
+                import jyquickhelper
+                path = os.path.join(os.path.dirname(
+                    jyquickhelper.__file__), "js", "vizjs", "viz.js")
+                if not os.path.exists(path):
+                    raise ImportError(
+                        "jyquickelper needs to be updated to get viz.js.")
+                url = 'local'
+            except ImportError:
+                url = GDotDirective._default_url
+                logger = logging.getLogger("gdot")
+                logger.warning("[gdot] jyquickhelper not installed, falling back to "
+                               "'{}'".format(url))
+
+        info = get_env_state_info(self)
+        docname = info['docname']
+        if url == 'local':
+            if docname is None or 'HERE' not in info:
+                url = GDotDirective._default_url
+                logger = logging.getLogger("gdot")
+                logger.warning("[gdot] docname is none, falling back to "
+                               "'{}'".format(url))
+            else:
+                spl = docname.split("/")
+                sp = ['..'] * (len(spl) - 1) + ['_static', 'viz.js']
+                url = "/".join(sp)
+
         if 'script' in self.options:
             script = self.options['script']
             if script in (0, "0", "False", 'false'):
@@ -104,12 +135,6 @@ class GDotDirective(Directive):
                                    " the beginning of DOT graph.")
         else:
             script = False
-
-        env = self.state.document.settings.env if hasattr(
-            self.state.document.settings, "env") else None
-        docname = None if env is None else env.docname
-        if docname is not None:
-            docname = docname.replace("\\", "/").split("/")[-1]
 
         # executes script if any
         content = "\n".join(self.content)
@@ -176,7 +201,6 @@ def visit_gdot_node_html_svg(self, node):
     """.replace('__ID__', nid).replace('__DOT__', process(node['code'])).replace(
         "__URL__", node['url'])
 
-    self.body.append("<script>{0}{1}{0}</script>{0}".format("\n", script))
     self.body.append(content)
     self.body.append("<script>{0}{1}{0}</script>{0}".format("\n", script))
 
@@ -212,13 +236,59 @@ def depart_gdot_node_html(self, node):
     return depart_gdot_node_html_svg(self, node)
 
 
+def copy_js_files(app):
+    try:
+        import jyquickhelper
+        local = True
+    except ImportError:
+        local = False
+
+    logger = logging.getLogger("gdot")
+    if local:
+        path = os.path.join(os.path.dirname(
+            jyquickhelper.__file__), "js", "vizjs", "viz.js")
+        if os.path.exists(path):
+            # We copy the file to static path.
+            dest = app.config.html_static_path
+            if isinstance(dest, list) and len(dest) > 0:
+                dest = dest[0]
+            else:
+                dest = None
+
+            srcdir = app.builder.srcdir
+            if "IMPOSSIBLE:TOFIND" not in srcdir:
+                if not os.path.exists(srcdir):
+                    raise FileNotFoundError(
+                        "Source file is wrong '{}'.".format(srcdir))
+
+                if dest is not None:
+                    dest = os.path.join(
+                        os.path.abspath(srcdir), dest, 'viz.js')
+                    shutil.copy(path, dest)
+                    logger.info("[gdot] copy '{}' to '{}'.".format(path, dest))
+                    if not os.path.exists(dest):
+                        raise FileNotFoundError(
+                            "Unable to find the copied file '{}'.".format(dest))
+                else:
+                    logger.warning("[gdot] unable to locate html_static_path='{}', "
+                                   "unable to use local viz.js.".format(app.config.html_static_path))
+        else:
+            logger.warning("[gdot] jyquickhelper needs to be update, unable to find '{}'.".format(
+                path))
+    else:
+        logger.warning("[gdot] jyquickhelper not installed, falling back to "
+                       "'{}'".format(GDotDirective._default_url))
+
+
 def setup(app):
     """
-    setup for ``collapse`` (sphinx)
+    setup for ``gdot`` (sphinx)
     """
     if 'sphinx.ext.graphviz' not in app.config.extensions:
         from sphinx.ext.graphviz import setup as setup_g  # pylint: disable=W0611
         setup_g(app)
+
+    app.connect('builder-inited', copy_js_files)
 
     from sphinx.ext.graphviz import latex_visit_graphviz, man_visit_graphviz  # pylint: disable=W0611
     from sphinx.ext.graphviz import text_visit_graphviz  # pylint: disable=W0611

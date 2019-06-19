@@ -273,6 +273,13 @@ class MockSphinxApp:
         .. versionchanged:: 1.8
             Parameter *load_bokeh* was added.
         """
+        logger = logging.getLogger('gdot')
+        if not logger.disabled:
+            logger.disabled = True
+            restore = True
+        else:
+            restore = False
+
         with warnings.catch_warnings():
             warnings.simplefilter(
                 "ignore", (DeprecationWarning, PendingDeprecationWarning))
@@ -337,6 +344,9 @@ class MockSphinxApp:
             else:
                 raise ValueError(
                     "Writer must be 'html', 'rst', 'md', 'elatex', not '{0}'.".format(writer))
+
+        if restore:
+            logger.disabled = False
 
         # titles
         title_names = []

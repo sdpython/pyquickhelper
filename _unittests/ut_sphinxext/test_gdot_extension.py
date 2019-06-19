@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import logging
 from docutils.parsers.rst import directives
 
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
@@ -13,6 +14,10 @@ from pyquickhelper.helpgen import rst2html
 
 
 class TestGDotExtension(ExtTestCase):
+
+    def setUp(self):
+        logger = logging.getLogger('gdot')
+        logger.disabled = True
 
     def test_gdot1(self):
         content = """
