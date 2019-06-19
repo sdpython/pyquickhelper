@@ -8,6 +8,7 @@ This tesdt must be run last because it screws up with
 
 import os
 import unittest
+import logging
 
 from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
@@ -15,6 +16,10 @@ from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
 
 
 class TestAppSphinx(ExtTestCase):
+
+    def setUp(self):
+        logger = logging.getLogger('gdot')
+        logger.disabled = True
 
     def test_app_sphinx(self):
         fLOG(

@@ -22,6 +22,10 @@ from pyquickhelper.helpgen.conf_path_tools import find_latex_path
 
 class TestVideoExtension(ExtTestCase):
 
+    def setUp(self):
+        logger = logging.getLogger('gdot')
+        logger.disabled = True
+
     def test_post_parse_sn(self):
         fLOG(
             __file__,

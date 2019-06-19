@@ -262,13 +262,18 @@ def copy_js_files(app):
                         "Source file is wrong '{}'.".format(srcdir))
 
                 if dest is not None:
-                    dest = os.path.join(
-                        os.path.abspath(srcdir), dest, 'viz.js')
-                    shutil.copy(path, dest)
-                    logger.info("[gdot] copy '{}' to '{}'.".format(path, dest))
-                    if not os.path.exists(dest):
-                        raise FileNotFoundError(
-                            "Unable to find the copied file '{}'.".format(dest))
+                    destf = os.path.join(os.path.abspath(srcdir), dest)
+                    if os.path.exists(destf):
+                        dest = os.path.join(destf, 'viz.js')
+                        shutil.copy(path, dest)
+                        logger.info(
+                            "[gdot] copy '{}' to '{}'.".format(path, dest))
+                        if not os.path.exists(dest):
+                            raise FileNotFoundError(
+                                "Unable to find the copied file '{}'.".format(dest))
+                    else:
+                        logger.warning("[gdot] destination folder='{}' does not exists, "
+                                       "unable to use local viz.js.".format(destf))
                 else:
                     logger.warning("[gdot] unable to locate html_static_path='{}', "
                                    "unable to use local viz.js.".format(app.config.html_static_path))

@@ -4,9 +4,9 @@
 """
 import sys
 import os
+import logging
 import unittest
 import warnings
-import logging
 from io import StringIO
 from docutils.parsers.rst import directives
 
@@ -18,6 +18,10 @@ from pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirectiv
 
 
 class TestImageExtension(ExtTestCase):
+
+    def setUp(self):
+        logger = logging.getLogger('gdot')
+        logger.disabled = True
 
     def test_post_parse_sn(self):
         fLOG(

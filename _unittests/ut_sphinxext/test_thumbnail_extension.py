@@ -19,6 +19,10 @@ from pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirectiv
 
 class TestImageExtension(ExtTestCase):
 
+    def setUp(self):
+        logger = logging.getLogger('gdot')
+        logger.disabled = True
+
     def test_post_parse_sn(self):
         fLOG(
             __file__,
