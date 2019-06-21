@@ -6,18 +6,12 @@ import os
 import unittest
 import numpy
 from pandas import read_csv
-
-from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pandashelper import isempty, isnan
 
 
 class TestPandasHelper(unittest.TestCase):
 
     def test_version(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         url = "http://www.xavierdupre.fr/enseignement/complements/marathon.txt"
         repeat = 0
         while True:
@@ -31,14 +25,8 @@ class TestPandasHelper(unittest.TestCase):
                 repeat += 1
         self.assertTrue(len(df) > 0)
         self.assertEqual(len(df.columns), 4)
-        fLOG(df.head())
 
     def test_isnull(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         self.assertTrue(isempty(""))
         self.assertTrue(not isempty("e"))
         self.assertTrue(isempty(None))

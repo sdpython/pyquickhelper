@@ -61,10 +61,19 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
 
     .. versionchanged:: 1.8
         Parameter *number_format* was added.
+
+    .. versionchanged:: 1.9
+        Nan value are replaced by empty string even if
+        *number_format* is not None.
     """
     if isinstance(df, str):
         import pandas
         df = pandas.read_csv(df, encoding="utf-8", sep=sep)
+
+    def patternification(value, pattern):
+        if isinstance(value, float) and numpy.isnan(value):
+            return ""
+        return pattern.format(value)
 
     if number_format is not None:
         if isinstance(number_format, int):
@@ -79,10 +88,12 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         for name, typ in zip(df.columns, df.dtypes):
             if name in number_format:
                 pattern = number_format[name]
-                df[name] = df[name].apply(lambda x: pattern.format(x))
+                df[name] = df[name].apply(
+                    lambda x: patternification(x, pattern))
             elif typ in number_format:
                 pattern = number_format[typ]
-                df[name] = df[name].apply(lambda x: pattern.format(x))
+                df[name] = df[name].apply(
+                    lambda x: patternification(x, pattern))
 
     if index:
         df = df.reset_index(drop=False).copy()

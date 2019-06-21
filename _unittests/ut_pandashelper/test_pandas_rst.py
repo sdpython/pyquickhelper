@@ -158,7 +158,7 @@ class TestPandasRst(ExtTestCase):
                         * - 2.12
                           - 3.12
                           - 4.12
-                        * - nan
+                        * -
                           - 2.12e+10
                           - 2.12e-10
                     """.replace("                    ", "")
