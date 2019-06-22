@@ -16,13 +16,13 @@ class TestPandasRst(ExtTestCase):
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df)
-        exp = """+-----+---------+-----+
-                 | A   | AA      | AAA |
-                 +=====+=========+=====+
-                 | x   | xx      | xxx |
-                 +-----+---------+-----+
-                 |     | xxxxxxx | xxx |
-                 +-----+---------+-----+
+        exp = """+---+---------+-----+
+                 | A | AA      | AAA |
+                 +===+=========+=====+
+                 | x | xx      | xxx |
+                 +---+---------+-----+
+                 |   | xxxxxxx | xxx |
+                 +---+---------+-----+
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
@@ -30,24 +30,24 @@ class TestPandasRst(ExtTestCase):
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, align="r")
-        exp = """+-----+---------+-----+
-                 |   A |      AA | AAA |
-                 +=====+=========+=====+
-                 |   x |      xx | xxx |
-                 +-----+---------+-----+
-                 |     | xxxxxxx | xxx |
-                 +-----+---------+-----+
+        exp = """+---+---------+-----+
+                 | A |      AA | AAA |
+                 +===+=========+=====+
+                 | x |      xx | xxx |
+                 +---+---------+-----+
+                 |   | xxxxxxx | xxx |
+                 +---+---------+-----+
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
         rst = df2rst(df, align="c")
-        exp = """+-----+---------+-----+
-                 |  A  |   AA    | AAA |
-                 +=====+=========+=====+
-                 |  x  |   xx    | xxx |
-                 +-----+---------+-----+
-                 |     | xxxxxxx | xxx |
-                 +-----+---------+-----+
+        exp = """+---+---------+-----+
+                 | A |   AA    | AAA |
+                 +===+=========+=====+
+                 | x |   xx    | xxx |
+                 +---+---------+-----+
+                 |   | xxxxxxx | xxx |
+                 +---+---------+-----+
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
@@ -55,13 +55,13 @@ class TestPandasRst(ExtTestCase):
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, column_size=[1, 1, 2])
-        exp = """+-----+---------+--------+
-                 | A   | AA      | AAA    |
-                 +=====+=========+========+
-                 | x   | xx      | xxx    |
-                 +-----+---------+--------+
-                 |     | xxxxxxx | xxx    |
-                 +-----+---------+--------+
+        exp = """+---+---------+--------+
+                 | A | AA      | AAA    |
+                 +===+=========+========+
+                 | x | xx      | xxx    |
+                 +---+---------+--------+
+                 |   | xxxxxxx | xxx    |
+                 +---+---------+--------+
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 

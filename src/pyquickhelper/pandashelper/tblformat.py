@@ -66,19 +66,28 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         Nan value are replaced by empty string even if
         *number_format* is not None.
     """
+    import numpy
+    typstr = str
+
     if isinstance(df, str):
         import pandas
         df = pandas.read_csv(df, encoding="utf-8", sep=sep)
+    else:
+        df = df.copy()
 
     def patternification(value, pattern):
         if isinstance(value, float) and numpy.isnan(value):
             return ""
         return pattern.format(value)
 
+    def nan2empty(value):
+        if isinstance(value, float) and numpy.isnan(value):
+            return ""
+        return value
+
     if number_format is not None:
         if isinstance(number_format, int):
             number_format = "{:.%dg}" % number_format
-            import numpy
             import pandas
             typ1 = numpy.float64
             _df = pandas.DataFrame({'f': [0.12]})
@@ -94,6 +103,11 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 pattern = number_format[typ]
                 df[name] = df[name].apply(
                     lambda x: patternification(x, pattern))
+
+    # check empty strings
+    col_strings = df.select_dtypes(include=[object]).columns
+    for c in col_strings:
+        df[c] = df[c].apply(nan2empty)
 
     if index:
         df = df.reset_index(drop=False).copy()
@@ -115,9 +129,6 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             df[ind] = values
         except Exception:
             warnings.warn("Unable to boldify the index (2).", SyntaxWarning)
-
-    import numpy
-    typstr = str
 
     def align_string(s, align, length):
         if len(s) < length:
