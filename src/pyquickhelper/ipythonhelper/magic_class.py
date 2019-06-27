@@ -53,8 +53,8 @@ class MagicClassWithHelpers(Magics):
 
     def get_parser(self, parser_class, name):
         """
-        returns a parser for a magic command, initialize it
-        if it does not exists, it creates. The parsers are stored
+        Returns a parser for a magic command, initializes it
+        if it does not exists, it creates it. The parsers are stored
         in static member *_parser_store*.
 
         @param      parser_class    the parser to use for this magic command

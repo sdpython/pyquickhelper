@@ -55,7 +55,7 @@ def clean_documentation_for_cli(doc, cleandoc):
 
 
 def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
-                      cleandoc=("epkg", "link"), **options):
+                      cleandoc=("epkg", "link"), positional=None, cls=None, **options):
     """
     Automatically creates a parser based on a function,
     its signature with annotation and its documentation (assuming
@@ -69,10 +69,16 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     @param      cleandoc        cleans the documentation before converting it into text,
                                 @see fn clean_documentation_for_cli
     @param      options         additional :epkg:`Sphinx` options
+    @param      positional      positional argument
+    @param      cls             parser class, :epkg:`*py:argparse:ArgumentParser`
+                                by default
     @return                     :epkg:`*py:argparse:ArgumentParser`
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
+
+    .. versionchanged:: 1.9
+        Parameters *cls*, *positional* were added.
     """
     # delayed import to speed up import.
     from ..helpgen import docstring2html
@@ -111,8 +117,10 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     # add arguments with the signature
     signature = inspect.signature(f)
     parameters = signature.parameters
-    parser = argparse.ArgumentParser(prog=prog or f.__name__, description=fulldoc,
-                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    if cls is None:
+        cls = argparse.ArgumentParser
+    parser = cls(prog=prog or f.__name__, description=fulldoc,
+                 formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     if skip_parameters is None:
         skip_parameters = []
@@ -123,13 +131,13 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
         if k not in docparams:
             raise ValueError(
                 "Parameter '{0}' is not documented in\n{1}.".format(k, docf))
-        create_cli_argument(parser, p, docparams[k], names)
+        create_cli_argument(parser, p, docparams[k], names, positional)
 
     # end
     return parser
 
 
-def create_cli_argument(parser, param, doc, names):
+def create_cli_argument(parser, param, doc, names, positional):
     """
     Adds an argument for :epkg:`*py:argparse:ArgumentParser`.
 
@@ -137,9 +145,13 @@ def create_cli_argument(parser, param, doc, names):
     @param      param       parameter (from the signature)
     @param      doc         documentation for this parameter
     @param      names       for shortnames
+    @param      positional  positional arguments
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
+
+    .. versionchanged:: 1.9
+        Parameter *positional* was added.
     """
     p = param
     if p.annotation and p.annotation != inspect._empty:
@@ -165,10 +177,13 @@ def create_cli_argument(parser, param, doc, names):
         raise ValueError(
             "You should change the name of parameter '{0}'".format(p.name))
 
-    pnames = ["--" + p.name]
-    if shortname:
-        pnames.insert(0, "-" + shortname)
-        names[shortname] = p.name
+    if positional is not None and p.name in positional:
+        pnames = [p.name]
+    else:
+        pnames = ["--" + p.name]
+        if shortname:
+            pnames.insert(0, "-" + shortname)
+            names[shortname] = p.name
 
     if isinstance(typ, list):
         # Multiple options for the same parameter
