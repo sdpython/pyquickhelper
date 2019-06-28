@@ -2,11 +2,13 @@
 @file
 @brief Overwrites unit test class with additional testing functions.
 """
+from io import StringIO
 import os
 import sys
 import unittest
 import warnings
 import decimal
+from contextlib import redirect_stdout, redirect_stderr
 from .ci_helper import is_travis_or_appveyor
 from .profiling import profile
 from ..loghelper import fLOG
@@ -201,6 +203,17 @@ class ExtTestCase(unittest.TestCase):
                 "Function '{0}' does not raise exception '{1}' but '{2}' of type '{3}'.".format(fct, exc, e, type(e)))
         raise AssertionError(
             "Function '{0}' does not raise exception.".format(fct))
+
+    def capture(self, fct):
+        """
+        Runs a function and capture standard otuput and error.
+        """
+        sout = StringIO()
+        serr = StringIO()
+        with redirect_stdout(sout):
+            with redirect_stderr(serr):
+                res = fct()
+        return res, sout.getvalue(), serr.getvalue()
 
     def assertStartsWith(self, sub, whole):
         """

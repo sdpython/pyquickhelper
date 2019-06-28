@@ -197,6 +197,15 @@ class TestExtTestCase(ExtTestCase):
         self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
         self.assertNotEmpty(ps)
 
+    def test_capture(self):
+        def ok():
+            print('okok')
+            return 3
+        res, out, err = self.capture(ok)
+        self.assertIn('okok', out)
+        self.assertEmpty(err)
+        self.assertEqual(res, 3)
+
 
 if __name__ == "__main__":
     unittest.main()
