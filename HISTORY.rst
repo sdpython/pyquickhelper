@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2019-06-18 - 0.00Mb
+current - 2019-06-29 - 0.00Mb
 =============================
+
+* `259`: implement capture in ExtTestCase to capture stdout, stderr (2019-06-28)
+* `258`: force positional arguments in create_cli_parser (2019-06-27)
+
+1.9.3154 - 2019-06-18 - 2.04Mb
+==============================
 
 * `254`: Implements gdot to skip graphviz and render dot file with viz.js (2019-06-18)
 * `253`: fix links in exreflist (2019-06-15)

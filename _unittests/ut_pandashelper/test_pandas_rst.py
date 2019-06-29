@@ -51,6 +51,44 @@ class TestPandasRst(ExtTestCase):
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
+    def test_pandas_rst_right_format_number(self):
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, align="r", number_format=4)
+        exp = """+---+---------+-----+
+                 | A |      AA | AAA |
+                 +===+=========+=====+
+                 | x |      xx | xxx |
+                 +---+---------+-----+
+                 |   | xxxxxxx | xxx |
+                 +---+---------+-----+
+                 """.replace("                 ", "")
+        self.assertEqual(rst, exp)
+
+        rst = df2rst(df, align="c", number_format=4)
+        exp = """+---+---------+-----+
+                 | A |   AA    | AAA |
+                 +===+=========+=====+
+                 | x |   xx    | xxx |
+                 +---+---------+-----+
+                 |   | xxxxxxx | xxx |
+                 +---+---------+-----+
+                 """.replace("                 ", "")
+        self.assertEqual(rst, exp)
+
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx", 'N': 0.5123456},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, number_format=4)
+        exp = """+---+---------+-----+--------+
+                 | A | AA      | AAA | N      |
+                 +===+=========+=====+========+
+                 | x | xx      | xxx | 0.5123 |
+                 +---+---------+-----+--------+
+                 |   | xxxxxxx | xxx |        |
+                 +---+---------+-----+--------+
+                 """.replace("                 ", "")
+        self.assertEqual(rst, exp)
+
     def test_pandas_rst_size(self):
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
