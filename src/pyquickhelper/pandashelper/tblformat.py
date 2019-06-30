@@ -25,7 +25,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                                 is an integer, the pattern is replaced by
                                 ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
                                 see also :epkg:`pyformat.info`
-    @param      replacement     replacements just before converting into RST (dictionary)
+    @param      replacements    replacements just before converting into RST (dictionary)
     @return                     string
 
     If *list_table* is False, the format is the following.
