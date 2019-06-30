@@ -8,7 +8,7 @@ import warnings
 
 def df2rst(df, add_line=True, align="l", column_size=None, index=False,
            list_table=False, title=None, header=True, sep=',',
-           number_format=None):
+           number_format=None, replacements=None):
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
@@ -25,6 +25,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                                 is an integer, the pattern is replaced by
                                 ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
                                 see also :epkg:`pyformat.info`
+    @param      replacement     replacements just before converting into RST (dictionary)
     @return                     string
 
     If *list_table* is False, the format is the following.
@@ -65,6 +66,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     .. versionchanged:: 1.9
         Nan value are replaced by empty string even if
         *number_format* is not None.
+        Parameters *replacements* was added.
     """
     import numpy
     typstr = str
@@ -154,6 +156,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 s = ""
             else:
                 s = typstr(s).replace("\n", " ")
+            if replacements is not None:
+                if s in replacements:
+                    s = replacements[s]
             return (" " + s) if s else s
         else:
             i, s = cool
@@ -164,6 +169,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             else:
                 s = typstr(s).replace("\n", " ")
             i -= 2
+            if replacements is not None:
+                if s in replacements:
+                    s = replacements[s]
             s = align_string(s.strip(), align, i)
             return s
 

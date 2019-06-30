@@ -103,6 +103,20 @@ class TestPandasRst(ExtTestCase):
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
+    def test_pandas_rst_size_replace(self):
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, column_size=[1, 1, 2], replacements={'xxx': 'rrrr'})
+        exp = """+---+---------+--------+
+                 | A | AA      | AAA    |
+                 +===+=========+========+
+                 | x | xx      | rrrr   |
+                 +---+---------+--------+
+                 |   | xxxxxxx | rrrr   |
+                 +---+---------+--------+
+                 """.replace("                 ", "")
+        self.assertEqual(rst, exp)
+
     def test_pandas_rst_size_table(self):
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
@@ -163,6 +177,27 @@ class TestPandasRst(ExtTestCase):
                           - xxx
                         * -
                           - xxxxxxx
+                          - xxx
+                    """.replace("                    ", "")
+        self.assertEqual(rst.strip("\n "), exp.strip("\n "))
+
+    def test_pandas_rst_size_table_auto_replace(self):
+        df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                               {"AA": "xxxxxxx", "AAA": "xxx"}])
+        rst = df2rst(df, list_table=True, replacements={'xxxxxxx': 'gg'})
+        exp = """
+                    .. list-table::
+                        :widths: auto
+                        :header-rows: 1
+
+                        * - A
+                          - AA
+                          - AAA
+                        * - x
+                          - xx
+                          - xxx
+                        * -
+                          - gg
                           - xxx
                     """.replace("                    ", "")
         self.assertEqual(rst.strip("\n "), exp.strip("\n "))
