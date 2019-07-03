@@ -103,8 +103,13 @@ class RepoFile:
                                      .replace(r"e\314\201", "é") \
                                      .replace(r"\342\200\231", "’")
                 if not os.path.exists(self.name):
+                    try:
+                        ex = os.path.exists(name0)
+                    except ValueError as e:
+                        ex = str(e)
                     raise Exception(
-                        "The modification did not work\n'{0}'\nINTO\n'{1}'\n[{2}]".format(name0, self.name, [self.name]))
+                        "The modification did not work\n'{0}'\nINTO\n'{1}'\n[{2}\nexists: {3}]".format(
+                            name0, self.name, [self.name], ex))
 
     def __str__(self):
         """
