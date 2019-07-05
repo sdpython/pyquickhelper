@@ -45,6 +45,25 @@ class TestProfiling(ExtTestCase):
         self.assertIsInstance(df, pandas.DataFrame)
         self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple2')
 
+    def test_profile_pyinst(self):
+        def simple():
+            df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx"},
+                                   {"AA": "xxxxxxx", "AAA": "xxx"}])
+            for i in range(0, 99):
+                df2rst(df)
+            return df2rst(df)
+
+        ps, res = profile(simple, pyinst_format='text')
+        self.assertIn('series.py', res)
+        ps, res = profile(simple, pyinst_format='textu')
+        self.assertIn('Recorded', res)
+        ps, res = profile(simple, pyinst_format='html')
+        self.assertIn("</script>", res)
+        self.assertRaise(lambda: profile(
+            simple, pyinst_format='htmlgg'), ValueError)
+        ps, res = profile(simple, pyinst_format='json')
+        self.assertIn('"start_time"', res)
+
 
 if __name__ == "__main__":
     unittest.main()

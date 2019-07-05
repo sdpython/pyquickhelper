@@ -167,6 +167,7 @@ def get_epkg_dictionary():
         'pycryptodomex': 'https://pypi.org/project/pycryptodomex/',
         'pyformat.info': 'https://pyformat.info/>`_',
         'pygments': 'http://pygments.org/',
+        'pyinstrument': 'https://github.com/joerick/pyinstrument',
         'pylzma': 'https://pypi.org/project/pylzma',
         'pylint': 'https://www.pylint.org/',
         'pylint error codes': 'http://pylint-messages.wikidot.com/all-codes',

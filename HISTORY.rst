@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2019-06-29 - 0.00Mb
+current - 2019-07-05 - 0.00Mb
 =============================
+
+* `260`: Allow the use of pyinstrument when profiling a function (2019-07-05)
+
+1.9.3162 - 2019-06-29 - 2.04Mb
+==============================
 
 * `259`: implement capture in ExtTestCase to capture stdout, stderr (2019-06-28)
 * `258`: force positional arguments in create_cli_parser (2019-06-27)

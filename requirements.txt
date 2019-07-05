@@ -31,6 +31,7 @@ psutil
 pycodestyle>=2.0.0
 pycryptodomex
 pydocstyle
+pyinstrument
 pylint
 pylzma
 python-jenkins>=1.0.0
