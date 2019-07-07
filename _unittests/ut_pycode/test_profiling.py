@@ -54,7 +54,7 @@ class TestProfiling(ExtTestCase):
             return df2rst(df)
 
         ps, res = profile(simple, pyinst_format='text')
-        self.assertIn('series.py', res)
+        self.assertIn('setup.py', res)
         ps, res = profile(simple, pyinst_format='textu')
         self.assertIn('Recorded', res)
         ps, res = profile(simple, pyinst_format='html')
