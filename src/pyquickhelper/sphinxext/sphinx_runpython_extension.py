@@ -511,7 +511,7 @@ class RunPythonDirective(Directive):
                     comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                         docname, lineno)
                 raise ValueError(
-                    "Pep8 issue with\n'{0}'\n---SCRIPT---\n{1}".format(docname, script_disp)) from e
+                    "Pep8 issue with\n'{0}'\n---SCRIPT---\n{1}".format(docname, script)) from e
 
         # if an exception is raised, the documentation should report a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]
