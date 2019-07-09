@@ -38,7 +38,8 @@ class RunPythonExecutionError(Exception):
 
 
 def run_python_script(script, params=None, comment=None, setsysvar=None, process=False,
-                      exception=False, warningout=None, chdir=None, context=None):
+                      exception=False, warningout=None, chdir=None, context=None,
+                      store_in_file=None):
     """
     Executes a script :epkg:`python` as a string.
 
@@ -54,6 +55,11 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     @param  warningout          warning to disable (name of warnings)
     @param  chdir               change directory before running this script (if not None)
     @param  context             if not None, added to the local context
+    @parm   store_in_file       stores the script into this file
+                                and calls tells python the source can be found here,
+                                that is useful is the script is using module
+                                ``inspect`` to retrieve the source which are not
+                                stored in memory
     @return                     stdout, stderr, context
 
     If the execution throws an exception such as
@@ -94,6 +100,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     .. versionchanged:: 1.8
         Parameter *chdir*, *context* were added,
         returns the context too.
+
+    .. versionchanged:: 1.9
+        Parameter *store_in_file* was added.
     """
     def warning_filter(warningout):
         if warningout in (None, ''):
@@ -162,8 +171,16 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         header.append('')
         script = "\n".join(header) + script
 
+        if store_in_file is not None:
+            with open(store_in_file, "w", encoding="utf-8") as f:
+                f.write(script)
+            script_arg = None
+            cmd += ' ' + store_in_file
+        else:
+            script_arg = script
+
         try:
-            out, err = run_cmd(cmd, script, wait=True, change_path=chdir)
+            out, err = run_cmd(cmd, script_arg, wait=True, change_path=chdir)
             return out, err, None
         except Exception as ee:
             if not exception:
@@ -174,7 +191,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 raise RunPythonExecutionError(message) from ee
             return str(ee), str(ee), None
     else:
-
+        if store_in_file:
+            raise NotImplementedError(
+                "store_in_file is only implemented if process is True.")
         try:
             obj = compile(script, "", "exec")
         except Exception as ec:
@@ -194,6 +213,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         if context is not None:
             for k, v in context.items():
                 globs["__runpython__" + k] = v
+        globs['__runpython__script__'] = script
 
         if setsysvar is not None:
             sys.__dict__[setsysvar] = True
@@ -317,6 +337,11 @@ class RunPythonDirective(Directive):
       but adds a button to show it.
     * ``:warningout:`` name of warnings to disable (ex: ``ImportWarning``),
       separated by spaces
+    * ``:store_in_file:`` the directive store the script in a file,
+        then executes this file (only if ``:process:`` is enabled),
+        this trick is needed when the script to executes relies on
+        function such :epkg:`*py:inspect:getsource` which requires
+        the script to be stored somewhere in order to retrieve it.
 
     Option *rst* can be used the following way::
 
@@ -363,6 +388,9 @@ class RunPythonDirective(Directive):
 
     .. versionchanged:: 1.8
         Options *current*, *assert*, *store*, *restore* were added.
+
+    .. versionchanged:: 1.9
+        Options *store_in_file* was added.
     """
     required_arguments = 0
     optional_arguments = 0
@@ -388,6 +416,7 @@ class RunPythonDirective(Directive):
         'store': directives.unchanged,
         'restore': directives.unchanged,
         'numpy_precision': directives.unchanged,
+        'store_in_file': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -439,6 +468,7 @@ class RunPythonDirective(Directive):
             'current': 'current' in self.options and self.options['current'] in bool_set_,
             'assert': self.options.get('assert', '').strip(),
             'language': self.options.get('language', '').strip(),
+            'store_in_file': self.options.get('store_in_file', None),
             'numpy_precision': self.options.get('numpy_precision', '3').strip(),
             'store': 'store' in self.options and self.options['store'] in bool_set_,
             'restore': 'restore' in self.options and self.options['restore'] in bool_set_,
@@ -542,7 +572,7 @@ class RunPythonDirective(Directive):
                                               process=p["process"], exception=p['exception'],
                                               warningout=p['warningout'],
                                               chdir=cs_source_dir if p['current'] else None,
-                                              context=context)
+                                              context=context, store_in_file=p['store_in_file'])
 
         if p['store']:
             # Stores modified local context.
