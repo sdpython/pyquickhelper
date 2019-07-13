@@ -8,7 +8,7 @@ import os
 
 
 def rss_update_run_server(dbfile=None, xml_blogs=None, port=8093, browser=None,
-                          period="week", server=None, thread=False):
+                          period="week", server=None, thread=False):  # pragma: no cover
     """
     Creates a database if it does not exists, add a table for blogs and posts,
     update the database, starts a server and open a browser,

@@ -5,7 +5,7 @@
 import warnings
 
 
-def default_filter_warning(w):
+def default_filter_warning(w):  # pragma: no cover
     """
     Filters out warnings.
 

@@ -91,7 +91,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
     cmd, code = call_setup_hook_cmd(folder=folder, module_name=module_name,
                                     function_name=function_name,
                                     additional_paths=additional_paths, **args)
-    if use_print:
+    if use_print:  # pragma: no cover
         print("CODE:\n", code)
         print("CMD:\n", cmd)
 
@@ -100,7 +100,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, log_error=False)
         exit = 0
     else:
-        if use_print:
+        if use_print:  # pragma: no cover
             print("subprocess.call", cmd)
         if not sys.platform.startswith("win"):
             args = shlex.split(cmd)
@@ -127,7 +127,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                     function_name)
     fLOG("[call_setup_hook] end of call _setup_hook")
 
-    if use_print:
+    if use_print:  # pragma: no cover
         print("OUT:\n", out)
         if err:
             if "cannot import name '_setup_hook'" in err:

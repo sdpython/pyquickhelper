@@ -56,7 +56,7 @@ def _setup_hook(add_print=False, unit_test=False):
         print("Success: _setup_hook")
 
 
-def load_ipython_extension(ip):
+def load_ipython_extension(ip):  # pragma: no cover
     """
     to allow the call ``%load_ext pyquickhelper``
 

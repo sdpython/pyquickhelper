@@ -27,7 +27,7 @@ def main(args, fLOG=print):
         from .filehelper import explore_folder
         from .cli.simplified_fct import sphinx_rst
         from .ipythonhelper import run_notebook
-    except ImportError:
+    except ImportError:  # pragma: no cover
         from pyquickhelper.cli.pyq_sync_cli import pyq_sync
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
         from pyquickhelper.cli.encryption_cli import encrypt, decrypt

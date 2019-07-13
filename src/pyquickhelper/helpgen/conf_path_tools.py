@@ -35,7 +35,7 @@ def find_graphviz_dot(exc=True):
     :return: path to dot
     :raises FileNotFoundError: if graphviz not found
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         version = range(34, 45)
         for v in version:
             graphviz_dot = "C:\\Program Files (x86)\\Graphviz2.{0}\\bin\\dot.exe".format(
@@ -71,7 +71,7 @@ def find_latex_path(exc=True):
     :return: something like ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
     :raises FileNotFoundError: if latex not found
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         latex = latex0 = r"C:\Program Files\MiKTeX 2.9\miktex\bin\x64"
         if not os.path.exists(latex):
             latex = find_in_PATH("latex.exe")
@@ -94,7 +94,7 @@ def find_pandoc_path(exc=True):
 
     @return         path to :epkg:`pandoc`
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         path = os.environ["USERPROFILE"]
         pandoc = os.path.join(path, "AppData", "Local", "Pandoc")
         pdoc = os.path.join(pandoc, "pandoc.exe")
@@ -156,7 +156,7 @@ def find_dvipng_path(exc=True):
     .. versionadded:: 1.8
     """
 
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         sep = ";"
         imgmath_latex = find_latex_path(exc=exc)
         if imgmath_latex is None:
