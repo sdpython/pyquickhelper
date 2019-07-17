@@ -43,7 +43,7 @@ pyquickhelper: various automations in python
     :alt: Notebook Coverage
 
 .. image:: https://pepy.tech/badge/pyquickhelper
-    :target: https://pypi.org/project/qiskit/
+    :target: https://pypi.org/project/pyquickhelper/
     :alt: Downloads
 
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
@@ -87,6 +87,10 @@ And to avoid installing the dependencies::
     pip install pyquickhelper --no-deps
 
 Others options are described at: :ref:`l-moreinstall`.
+
+.. image:: https://mybinder.org/badge_logo.svg
+    :target: https://mybinder.org/v2/gh/sdpython/pyquickhelper/master
+    :alt: Binder
 
 Index and License
 -----------------

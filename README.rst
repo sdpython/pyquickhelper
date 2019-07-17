@@ -40,7 +40,7 @@
     :alt: Notebook Coverage
 
 .. image:: https://pepy.tech/badge/pyquickhelper
-    :target: https://pypi.org/project/qiskit/
+    :target: https://pypi.org/project/pyquickhelper/
     :alt: Downloads
 
 .. _l-README:
@@ -132,13 +132,14 @@ A sphinx extension to generate python documentation from a script:
         import sys
         print("sys.version_info=", str(sys.version_info))
 
-.. image:: https://mybinder.org/badge_logo.svg
-    :target: https://mybinder.org/v2/gh/sdpython/pyquickhelper/master
-    :alt: Binder
- 
 Links
 -----
 
 * `GitHub/pyquickhelper <https://github.com/sdpython/pyquickhelper>`_
 * `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
 * `Blog <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/blog/main_0000.html#ap-main-0>`_
+
+.. image:: https://mybinder.org/badge_logo.svg
+    :target: https://mybinder.org/v2/gh/sdpython/pyquickhelper/master
+    :alt: Binder
+ 
