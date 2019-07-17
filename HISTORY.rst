@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2019-07-05 - 0.00Mb
+current - 2019-07-17 - 0.00Mb
 =============================
 
+* `262`: Issue with jupyter_sphinx 0.2.0 (sphinx extension) (2019-07-17)
+* `261`: add option :store_in_file: to runpython extension (to be able to use inspect.getsource) (2019-07-09)
 * `260`: Allow the use of pyinstrument when profiling a function (2019-07-05)
 
 1.9.3162 - 2019-06-29 - 2.04Mb

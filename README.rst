@@ -142,4 +142,3 @@ Links
 .. image:: https://mybinder.org/badge_logo.svg
     :target: https://mybinder.org/v2/gh/sdpython/pyquickhelper/master
     :alt: Binder
- 

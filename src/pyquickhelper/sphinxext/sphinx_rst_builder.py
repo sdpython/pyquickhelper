@@ -1065,6 +1065,14 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.end_state(wrap=False, end=['\n'])
 
     def unknown_visit(self, node):
+        classname = node.__class__.__name__
+        if classname in {'JupyterKernelNode', 'JupyterCellNode',
+                         'JupyterWidgetViewNode', 'JupyterWidgetStateNode',
+                         'ThebeSourceNode', 'ThebeOutputNode',
+                         'ThebeButtonNode',
+                         }:
+            # due to jupyter_sphinx
+            return
         raise NotImplementedError(
             "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
 

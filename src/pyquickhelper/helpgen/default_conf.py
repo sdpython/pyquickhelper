@@ -89,6 +89,7 @@ def get_epkg_dictionary():
         'dataframe': 'https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.html',
         'datetime': 'https://docs.python.org/3/library/datetime.html#datetime-objects',
         'docx': 'https://en.wikipedia.org/wiki/Office_Open_XML',
+        'DOT': 'https://www.graphviz.org/doc/info/lang.html',
         'doxygen': 'http://www.doxygen.org/',
         'django': 'https://www.djangoproject.com/',
         'docutils': 'http://docutils.sourceforge.net/',
@@ -101,6 +102,7 @@ def get_epkg_dictionary():
         'Git': 'http://git-scm.com/',
         'github': 'https://github.com/',
         'GitHub': 'https://github.com/',
+        'graphviz': 'http://www.graphviz.org/',
         'GraphViz': 'http://www.graphviz.org/',
         'Graphviz': 'http://www.graphviz.org/',
         'html': 'https://en.wikipedia.org/wiki/HTML',
@@ -206,6 +208,7 @@ def get_epkg_dictionary():
         'TortoiseSVN': 'http://tortoisesvn.net/',
         'travis': 'https://travis-ci.org/',
         'vis.js': 'https://visjs.org/',
+        'viz.js': 'https://github.com/mdaines/viz.js/',
         'Visual Studio Community Edition 2015': 'https://imagine.microsoft.com/en-us/Catalog/Product/101',
         'Windows': 'https://en.wikipedia.org/wiki/Microsoft_Windows',
         'xml': 'https://docs.python.org/3/library/xml.etree.elementtree.html#module-xml.etree.ElementTree',
@@ -447,15 +450,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # jupyter_sphinx
     # See https://thebelab.readthedocs.io/en/latest/config_reference.html
     jupyter_sphinx_thebelab_config = {
-        'requestKernel': True,
-        # Options for requesting a notebook server from mybinder.org
         'binderOptions': {
-            'repo': "minrk/ligo-binder",
-            'ref': "master",
-            'binderUrl': "https://mybinder.org",
-            # select repository source (optional).
-            # Supports Github(default), Gitlab, and Git
-            'repoProvider': "github",
+            'repo': "sdpython/pyquickhelper/master",
         },
     }
 
