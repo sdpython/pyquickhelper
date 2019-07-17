@@ -8,13 +8,13 @@ import unittest
 from docutils.parsers.rst import directives
 
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import ExRef, ExRefList
 from pyquickhelper.sphinxext.sphinx_exref_extension import exref_node, visit_exref_node, depart_exref_node
 
 
-class TestExRefExtension(unittest.TestCase):
+class TestExRefExtension(ExtTestCase):
 
     def test_post_parse_exref(self):
         fLOG(
