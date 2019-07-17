@@ -1076,6 +1076,18 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         raise NotImplementedError(
             "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
 
+    def unknown_departure(self, node):
+        classname = node.__class__.__name__
+        if classname in {'JupyterKernelNode', 'JupyterCellNode',
+                         'JupyterWidgetViewNode', 'JupyterWidgetStateNode',
+                         'ThebeSourceNode', 'ThebeOutputNode',
+                         'ThebeButtonNode',
+                         }:
+            # due to jupyter_sphinx
+            return
+        raise NotImplementedError(
+            "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
+
 
 class RstBuilder(Builder):
     """

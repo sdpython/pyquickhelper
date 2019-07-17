@@ -141,6 +141,7 @@ def get_epkg_dictionary():
         'Miktex': 'http://miktex.org/',
         'miktex': 'http://miktex.org/',
         'MinGW': 'http://www.mingw.org/',
+        'MyBinder': 'https://gke.mybinder.org/',
         'nbconvert': 'http://nbconvert.readthedocs.io/en/latest/',
         'nbpresent': 'https://github.com/Anaconda-Platform/nbpresent',
         'node.js': 'https://nodejs.org/en/',
@@ -449,11 +450,16 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     # jupyter_sphinx
     # See https://thebelab.readthedocs.io/en/latest/config_reference.html
-    jupyter_sphinx_thebelab_config = {
-        'binderOptions': {
-            'repo': "sdpython/pyquickhelper/master",
-        },
-    }
+    if github_user:
+        jupyter_sphinx_thebelab_config = {
+            'requestKernel': True,
+            'binderOptions': {
+                'repo': "{0}/{1}/master?filepath=_doc%2Fnotebooks".format(
+                    github_user, module_name)
+            },
+        }
+    else:
+        jupyter_sphinx_thebelab_config = {'requestKernel': True}
 
     # settings
     exclude_patterns = ["*.py", "**/*.py"]
