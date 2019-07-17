@@ -170,7 +170,7 @@ class TestExRefExtension(unittest.TestCase):
                        writer="rst", keep_warnings=True,
                        directives=tives)
 
-        print(rst)
+        self.assertNotEmpty(rst)
 
 
 if __name__ == "__main__":

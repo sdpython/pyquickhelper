@@ -8,6 +8,7 @@ import unittest
 import warnings
 import logging
 import shutil
+from platform import system
 from io import StringIO
 from docutils.parsers.rst import directives
 
@@ -34,6 +35,7 @@ class TestVideoExtension(ExtTestCase):
 
         directives.register_directive("video", VideoDirective)
 
+    @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_video(self):
         fLOG(
             __file__,
@@ -112,6 +114,7 @@ class TestVideoExtension(ExtTestCase):
             shutil.copy(v1, v3)
         return src_
 
+    @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_html(self):
         fLOG(
             __file__,
@@ -136,6 +139,7 @@ class TestVideoExtension(ExtTestCase):
         index = os.path.join(temp, "jol", 'im', "mur3.mp4")
         self.assertExists(index)
 
+    @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_rst(self):
         fLOG(
             __file__,
@@ -161,6 +165,7 @@ class TestVideoExtension(ExtTestCase):
         index = os.path.join(temp, "jol", 'im', "mur3.mp4")
         self.assertExists(index)
 
+    @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_latex(self):
         fLOG(
             __file__,
@@ -197,6 +202,7 @@ class TestVideoExtension(ExtTestCase):
             index = os.path.join(temp, "pyq-video.pdf")
             self.assertExists(index)
 
+    @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_text(self):
         fLOG(
             __file__,
@@ -221,6 +227,7 @@ class TestVideoExtension(ExtTestCase):
         index = os.path.join(temp, "jol", 'im', "mur3.mp4")
         self.assertExists(index)
 
+    @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_video_url(self):
         fLOG(
             __file__,

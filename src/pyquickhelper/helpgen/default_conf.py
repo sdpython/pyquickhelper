@@ -120,6 +120,7 @@ def get_epkg_dictionary():
         'jupyter': 'http://jupyter.org/',
         'JupyterLab': 'https://jupyterlab.readthedocs.io/en/stable/',
         'Jupyter Lab': 'https://jupyterlab.readthedocs.io/en/stable/',
+        'jupyter_sphinx': 'https://jupyter-sphinx.readthedocs.io/en/latest/index.html',
         'latex': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTeX': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTex': 'https://en.wikipedia.org/wiki/LaTeX',
@@ -314,6 +315,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if hasattr(sys, <enable_disabled_parts>) and sys.<enable_disabled_parts>:
                 import module
             # -- HELP END EXCLUDE --
+
+    .. versionchanged:: 1.9
+        Uses ``jupyter_sphinx>=0.2``.
     """
     # sphinx_gallery only supports matplotlib.use('agg')
     # and it must be done first.
@@ -440,6 +444,21 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     blog_background_page = False
     sharepost = sharepost
 
+    # jupyter_sphinx
+    # See https://thebelab.readthedocs.io/en/latest/config_reference.html
+    jupyter_sphinx_thebelab_config = {
+        'requestKernel': True,
+        # Options for requesting a notebook server from mybinder.org
+        'binderOptions': {
+            'repo': "minrk/ligo-binder",
+            'ref': "master",
+            'binderUrl': "https://mybinder.org",
+            # select repository source (optional).
+            # Supports Github(default), Gitlab, and Git
+            'repoProvider': "github",
+        },
+    }
+
     # settings
     exclude_patterns = ["*.py", "**/*.py"]
     html_show_sphinx = False
@@ -493,7 +512,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                        'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                        'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                        'sphinxcontrib.imagesvg',
-                       'jupyter_sphinx.embed_widgets',
+                       'jupyter_sphinx.execute',
                        'pyquickhelper.sphinxext.sphinx_rst_builder',
                        'pyquickhelper.sphinxext.sphinx_md_builder',
                        'pyquickhelper.sphinxext.sphinx_latex_builder',

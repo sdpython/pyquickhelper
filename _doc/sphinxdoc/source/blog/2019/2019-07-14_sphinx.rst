@@ -1,31 +1,43 @@
 
 .. blogpost::
-    :title: Sphinx incompatibilities
+    :title: jupyter_sphinx
     :keywords: sphinx, jupyter
     :date: 2019-07-15
     :categories: import
 
-    I recently got the following error:
+    :epkg:`jupyter_sphinx` was recently updated and now
+    includes a directive which lets the user run a piece
+    of code and even modify it before running.
+
+    .. jupyter-execute::
+
+        n = 1
+        for i in range(1, 10):
+            n *= i
+            print('i!=%d' % n)
+
+    This kind of complex possibility still surprises me.
+    There must be a machine somewhere set up to run something,
+    similar to `binder <https://gke.mybinder.org/>`_.
 
     ::
 
-        ModuleNotFoundError: No module named 'jupyter_sphinx.embed_widgets'
+        .. jupyter-execute::
 
-        During handling of the above exception, another exception occurred:
+            n = 1
+            for i in range(1, 10):
+                n *= i
+                print('i!=%d' % n)
 
-        Traceback (most recent call last):
-          File "/home/circleci/repo/venv/lib/python3.7/site-packages/sphinx/cmd/build.py", line 283, in build_main
-            args.tags, args.verbosity, args.jobs, args.keep_going)
-          File "/home/circleci/repo/venv/lib/python3.7/site-packages/sphinx/application.py", line 235, in __init__
-            self.setup_extension(extension)
-          File "/home/circleci/repo/venv/lib/python3.7/site-packages/sphinx/application.py", line 394, in setup_extension
-            self.registry.load_extension(self, extname)
-          File "/home/circleci/repo/venv/lib/python3.7/site-packages/sphinx/registry.py", line 476, in load_extension
-            raise ExtensionError(__('Could not import extension %s') % extname, err)
-        sphinx.errors.ExtensionError: Could not import extension jupyter_sphinx.embed_widgets (exception: No module named 'jupyter_sphinx.embed_widgets')
+    Apparently, a button must be added to the page...
 
-    Which I resolved by using
-    ``jupyter_sphinx==0.1.4``.
-    But that's the kind of error I don't really
-    want to spend time on.
-    I'm hoping that will disappear after a couple of versions.
+    ::
+
+        .. thebe-button:: Optional title
+
+    Which gives:
+
+    .. thebe-button::
+
+    Let's see if this page works. I don't see a free website
+    running python for ever...

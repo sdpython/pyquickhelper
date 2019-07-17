@@ -42,6 +42,10 @@ pyquickhelper: various automations in python
     :target: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
+.. image:: https://pepy.tech/badge/pyquickhelper
+    :target: https://pypi.org/project/qiskit/
+    :alt: Downloads
+
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
 `github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_,

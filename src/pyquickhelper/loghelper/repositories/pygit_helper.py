@@ -83,6 +83,7 @@ class RepoFile:
                                      .replace(r"\302\267", "·") \
                                      .replace(r"\303\203", "Ã") \
                                      .replace(r"\303\207", "Ç") \
+                                     .replace(r"\303\211", "e") \
                                      .replace(r"\303\232", "Ú") \
                                      .replace(r"\303\240", "à") \
                                      .replace(r"\303\242", "â") \

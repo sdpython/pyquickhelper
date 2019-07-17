@@ -153,9 +153,9 @@ def get_default_standard_extensions(use_mathjax=False):
         'sphinx.ext.inheritance_diagram',
         'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
         'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
+        'jupyter_sphinx.execute',
         'sphinxcontrib.imagesvg',
         'matplotlib.sphinxext.plot_directive',
-        'jupyter_sphinx.embed_widgets',
     ]
 
     try:
