@@ -454,8 +454,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         jupyter_sphinx_thebelab_config = {
             'requestKernel': True,
             'binderOptions': {
-                'repo': "{0}/{1}/master?filepath=_doc%2Fnotebooks".format(
-                    github_user, module_name)
+                'repo': "sdpython/pyquickhelper/master?filepath=_doc"
+                # 'repo': "{0}/{1}/master?filepath=_doc%2Fnotebooks".format(
+                #    github_user, module_name)
             },
         }
     else:

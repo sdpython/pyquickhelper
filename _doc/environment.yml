@@ -1,0 +1,13 @@
+name: pyquickhelper
+
+channels:
+  - conda-forge
+
+dependencies:
+  - python=3.7
+  - sphinx
+  - ipywidgets>=7.0.0
+  - IPython
+  - nbconvert>=5.4
+  - nbformat
+  - matplotlib

@@ -40,4 +40,6 @@
     .. thebe-button::
 
     Let's see if this page works. I don't see a free website
-    running python for ever...
+    running python for ever... Anyway, it seems to work
+    very slowly on my first try or not to work. The page
+    was waiting for the kernel for ever.
