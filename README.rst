@@ -43,6 +43,14 @@
     :target: https://pypi.org/project/pyquickhelper/
     :alt: Downloads
 
+.. image:: https://img.shields.io/github/forks/sdpython/pyquickhelper.svg
+    :target: https://github.com/sdpython/pyquickhelper/
+    :alt: Forks
+
+.. image:: https://img.shields.io/github/stars/sdpython/pyquickhelper.svg
+    :target: https://github.com/sdpython/pyquickhelper/
+    :alt: Stars
+
 .. _l-README:
 
 pyquickhelper

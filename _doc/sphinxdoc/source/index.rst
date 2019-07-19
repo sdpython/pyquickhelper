@@ -46,6 +46,14 @@ pyquickhelper: various automations in python
     :target: https://pypi.org/project/pyquickhelper/
     :alt: Downloads
 
+.. image:: https://img.shields.io/github/forks/sdpython/pyquickhelper.svg
+    :target: https://github.com/sdpython/pyquickhelper/
+    :alt: Forks
+
+.. image:: https://img.shields.io/github/stars/sdpython/pyquickhelper.svg
+    :target: https://github.com/sdpython/pyquickhelper/
+    :alt: Stars
+
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
 `github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_,
