@@ -11,6 +11,7 @@ import decimal
 from contextlib import redirect_stdout, redirect_stderr
 from .ci_helper import is_travis_or_appveyor
 from .profiling import profile
+from ..texthelper import compare_module_version
 from ..loghelper import fLOG
 
 
@@ -478,4 +479,25 @@ def skipif_vless(version, msg):
     if sys.version_info[:3] >= version:
         return lambda x: x
     msg = 'Python {} < {}: {}'.format(sys.version_info[:3], version, msg)
+    return unittest.skip(msg)
+
+
+def unittest_require_at_least(mod, version, msg=""):
+    """
+    Skips a unit test if the version of one module
+    is not at least the provided version.
+
+    @param      mod     module (the module must have an attribute ``__version__``)
+    @param      version expected version or more recent
+    @param      msg     message
+
+    .. versionadded:: 1.9
+    """
+    v = getattr(mod, '__version__', None)
+    if v is None:
+        raise RuntimeError("Module '{}' has no version.".format(mod))
+    if compare_module_version(v, version) >= 0:
+        return lambda x: x
+    msg = "Module '{}'  is older than '{}' (= '{}'). {}".format(
+        mod, version, v, msg)
     return unittest.skip(msg)

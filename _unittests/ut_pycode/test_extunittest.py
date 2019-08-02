@@ -7,7 +7,7 @@ import unittest
 import warnings
 import pandas
 
-from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import ExtTestCase, unittest_require_at_least
 from pyquickhelper.pandashelper import df2rst
 from pyquickhelper import __file__ as rootfile
 
@@ -205,6 +205,23 @@ class TestExtTestCase(ExtTestCase):
         self.assertIn('okok', out)
         self.assertEmpty(err)
         self.assertEqual(res, 3)
+
+    def test_version_module(self):
+
+        @unittest_require_at_least(pandas, '0.20')
+        def zoo():
+            return 3
+
+        self.assertEqual(zoo(), 3)
+
+        @unittest_require_at_least(pandas, '100.20')
+        def zoo2():
+            return 3
+
+        try:
+            zoo2()
+        except Exception as e:
+            self.assertIn('older than', str(e))
 
 
 if __name__ == "__main__":
