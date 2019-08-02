@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2019-07-17 - 0.00Mb
+current - 2019-08-02 - 0.00Mb
 =============================
+
+* `264`: Implements function unittest_require_at_least to skip a unit test requiring a more recent version of a package (2019-08-02)
+* `263`: Skip type cells of type 'vnd.plotly.v1+json' when extracting snippets of a notebook (2019-07-30)
+
+1.9.3179 - 2019-07-17 - 2.05Mb
+==============================
 
 * `262`: Issue with jupyter_sphinx 0.2.0 (sphinx extension) (2019-07-17)
 * `261`: add option :store_in_file: to runpython extension (to be able to use inspect.getsource) (2019-07-09)
