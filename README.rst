@@ -4,8 +4,8 @@
 
 .. _l-README:
 
-pyquickhelper
-=============
+pyquickhelper: automation of many things
+========================================
 
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
     :target: https://travis-ci.org/sdpython/pyquickhelper
