@@ -1,4 +1,7 @@
 
+.. image:: https://github.com/sdpython/pyquickhelper/blob/master/_doc/sphinxdoc/source/phdoc_static/project_ico.png?raw=true
+    :target: https://github.com/sdpython/pyquickhelper/
+
 pyquickhelper: various automations in python
 ============================================
 

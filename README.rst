@@ -1,4 +1,12 @@
 
+.. image:: https://github.com/sdpython/pyquickhelper/blob/master/_doc/sphinxdoc/source/phdoc_static/project_ico.png?raw=true
+    :target: https://github.com/sdpython/pyquickhelper/
+
+.. _l-README:
+
+pyquickhelper
+=============
+
 .. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
     :target: https://travis-ci.org/sdpython/pyquickhelper
     :alt: Build status
@@ -50,11 +58,6 @@
 .. image:: https://img.shields.io/github/stars/sdpython/pyquickhelper.svg
     :target: https://github.com/sdpython/pyquickhelper/
     :alt: Stars
-
-.. _l-README:
-
-pyquickhelper
-=============
 
 `pyquickhelper <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
 is used to automate the release of the documentation such as automating *Jenkins*,

@@ -7,6 +7,7 @@
 import os
 import sys
 import datetime
+import warnings
 import xml.etree.ElementTree as ET
 import re
 from xml.sax.saxutils import escape
@@ -108,7 +109,7 @@ class RepoFile:
                         ex = os.path.exists(name0)
                     except ValueError as e:
                         ex = str(e)
-                    raise Exception(
+                    warnings.warn(
                         "The modification did not work\n'{0}'\nINTO\n'{1}'\n[{2}\nexists: {3}]".format(
                             name0, self.name, [self.name], ex))
 
