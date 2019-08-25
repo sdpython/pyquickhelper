@@ -533,16 +533,20 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 location = "\\Jenkins"
             else:
                 location = "/var/lib/jenkins/workspace"
+        if len(argv) > pos + 4:
+            server_url = argv[pos + 4]
+        else:
+            server_url = "http://localhost:8080/"
         from ..jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs
         modules = default_jenkins_jobs(
             github_owner=github_owner, module_name=project_var_name if module_name is None else module_name)
         key = "Python%d%d" % sys.version_info[:2]
         engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
-        js = JenkinsExt('http://localhost:8080/', user,
-                        password, engines=engines)
+        js = JenkinsExt(server_url, user, password, engines=engines)
         setup_jenkins_server_yml(js, github=github_owner, modules=modules, fLOG=fLOG, overwrite=True,
                                  delete_first=False, location=location)
         return True
+
     else:
         return False
 
@@ -848,7 +852,7 @@ def process_standard_options_for_setup_help(argv):
         "copy_dist": "copy documentation to folder dist",
         "copy_sphinx": "modify and copy sources to _doc/sphinxdoc/source/<module>",
         "history": "builds the history of the package in RST",
-        "local_jenkins": "sets up a local jenkins server",
+        "local_jenkins": "sets up jobs on a local jenkins server",
         "run27": "run the unit tests for the Python 2.7",
         "run_pylint": "run pylint on the sources, allowed parameters <pattern> <neg_pattern>",
         "setup_hook": "call function setup_hook which initializes the module before running unit tests",
@@ -897,8 +901,10 @@ def process_standard_options_for_setup_help(argv):
                         print()
                     elif k == "local_jenkins":
                         print()
-                        print("      {0} user password [location]".format(k))
-                        print("      server is http://localhost:8080/")
+                        print(
+                            "      {0} user password [location] [server]".format(k))
+                        print("      default location is /var/lib/jenkins/workspace")
+                        print("      default server is http://localhost:8080/")
                         print()
 
 
