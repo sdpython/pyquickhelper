@@ -47,8 +47,8 @@ pyquickhelper: automation of many things
     :target: http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/all_notebooks_coverage.html
     :alt: Notebook Coverage
 
-.. image:: https://pepy.tech/badge/pyquickhelper
-    :target: https://pypi.org/project/pyquickhelper/
+.. image:: https://pepy.tech/badge/pyquickhelper/month
+    :target: https://pepy.tech/project/pyquickhelper/month
     :alt: Downloads
 
 .. image:: https://img.shields.io/github/forks/sdpython/pyquickhelper.svg
