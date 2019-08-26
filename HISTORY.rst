@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2019-08-02 - 0.00Mb
+current - 2019-08-26 - 0.00Mb
 =============================
+
+* `267`: Skips a given list of issues when producing the history (2019-08-26)
+* `266`: add option to local_jenkins to specify a different jenkins server (2019-08-25)
+
+1.9.3186 - 2019-08-02 - 2.05Mb
+==============================
 
 * `264`: Implements function unittest_require_at_least to skip a unit test requiring a more recent version of a package (2019-08-02)
 * `263`: Skip type cells of type 'vnd.plotly.v1+json' when extracting snippets of a notebook (2019-07-30)
