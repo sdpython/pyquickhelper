@@ -77,7 +77,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
                                        file_filter_pep8=None, github_owner=None,
                                        existing_history=None, coverage_root='src',
-                                       fexclude=None, fLOG=noLOG):
+                                       fexclude=None, skip_issues=None, fLOG=noLOG):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -136,6 +136,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     @param      direct_call                 @see fn generate_help_sphinx
     @param      fexclude                    function which tells which file not to copy in the folder
                                             used to build the documentation
+    @param      skip_issues                 skip a given list of issues when building the history
     @return                                 True (an option was processed) or False,
                                             the file ``setup.py`` should call function ``setup``
 
@@ -333,7 +334,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             print('[history] existing ', existing_history)
         print('[history] ', dest)
         build_history_from_setup(dest, owner=github_owner, module=project_var_name,
-                                 existing_history=existing_history, fLOG=fLOG)
+                                 existing_history=existing_history,
+                                 skip_issues=skip_issues, fLOG=fLOG)
         return True
 
     elif "write_version" in argv:
@@ -1020,7 +1022,8 @@ def hash_list(argv, size=8):
         return res
 
 
-def build_history_from_setup(dest, owner, module, existing_history=None, fLOG=noLOG):
+def build_history_from_setup(dest, owner, module, existing_history=None,
+                             skip_issues=None, fLOG=noLOG):
     """
     Builds the history from :epkg:`github` and :epkg:`pypi`.
 
@@ -1029,6 +1032,7 @@ def build_history_from_setup(dest, owner, module, existing_history=None, fLOG=no
     @param      module              module name
     @param      existing_history    existing history, retrieves existing issues stored
                                     in that file
+    @param      skip_issues         skip a given list of issues when building the history
     @param      fLOG                logging function
     @return                         history
     """
@@ -1036,7 +1040,8 @@ def build_history_from_setup(dest, owner, module, existing_history=None, fLOG=no
         raise ValueError("owner must be specified")
     repo = module
     hist = build_history(owner, repo, unpublished=True,
-                         existing_history=existing_history, fLOG=fLOG)
+                         existing_history=existing_history,
+                         skip_issues=skip_issues, fLOG=fLOG)
     output = compile_history(hist)
     if dest is not None:
         with open(dest, "w", encoding="utf-8") as f:

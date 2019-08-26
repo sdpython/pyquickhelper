@@ -61,7 +61,7 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
 
 def build_history(owner, repo, name=None, since=None, issues=None, url=None,
                   max_issue=None, releases=None, unpublished=False,
-                  existing_history=None, fLOG=None):
+                  existing_history=None, skip_issues=None, fLOG=None):
     """
     Returns an history of a module.
 
@@ -77,6 +77,7 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
     @param      unpublished         keep unpublished released
     @param      existing_history    existing history, retrieves existing issues stored
                                     in that file
+    @param      skip_issues         skip a given list of issues when building the history
     @param      fLOG                logging function
     @return                         iterator on issues ``(number, date, title)``
     """
@@ -89,10 +90,14 @@ def build_history(owner, repo, name=None, since=None, issues=None, url=None,
     if existing_history is not None:
         res = extract_issue_from_history(existing_history)
         for k, v in sorted(res.items()):
+            if skip_issues is not None and k in skip_issues:
+                continue
             kept_issues.append((k, v[0], v[1]))
 
     for issue in enumerate_closed_issues(owner, repo, since, issues=issues,
                                          url=url, max_issue=max_issue):
+        if skip_issues is not None and issue[0] in skip_issues:
+            continue
         kept_issues.append(issue)
         if fLOG:
             fLOG("[build_history] ", name, issue[:2])
