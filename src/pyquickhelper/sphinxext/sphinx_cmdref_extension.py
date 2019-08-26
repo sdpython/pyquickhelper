@@ -94,6 +94,14 @@ class CmdRef(BlocRef):
                 out, err = run_script(
                     name, fLOG=noLOG, wait=True, change_path=path)
                 if err:
+                    lines = err.split('\n')
+                    err = []
+                    for line in lines:
+                        if 'is already registered, it will be overridden' in line:
+                            continue
+                        err.append(line)
+                    err = "\n".join(err).strip('\n\r\t ')
+                if err:
                     out = "--SCRIPT--{}\n--OUT--\n{}\n--ERR--\n{}\n--PATH--\n{}".format(
                         name, out, err, path)
                     logger = logging.getLogger("CmdRef")
