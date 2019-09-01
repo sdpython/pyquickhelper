@@ -181,14 +181,15 @@ def githublink_role(role, rawtext, text, lineno, inliner,
         elif doc == "src":
             path = docname
             source_doc = inliner.document.settings._source
-            source_doc = source_doc.replace("\\", "/")
-            spl = source_doc.split('/')
-            if '_doc' in source_doc:
-                sub_doc = source_doc[:source_doc.index('_doc')]
-                root_doc = "/".join(sub_doc)
-                root_doc_src = os.path.join(root_doc, 'src')
-                if os.path.exists(root_doc_src):
-                    path = os.path.join('src', docname)
+            if source_doc is not None:
+                source_doc = source_doc.replace("\\", "/")
+                spl = source_doc.split('/')
+                if '_doc' in source_doc:
+                    sub_doc = source_doc[:source_doc.index('_doc')]
+                    root_doc = "/".join(sub_doc)
+                    root_doc_src = os.path.join(root_doc, 'src')
+                    if os.path.exists(root_doc_src):
+                        path = os.path.join('src', docname)
         elif doc == "doc":
             path = os.path.join('_doc', 'sphinxdoc', 'source', docname)
         else:
