@@ -63,7 +63,8 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "Unable to import 'pyquickhelper.helpgen.sphinxm_mock_app'",
                      "No name 'sphinxm_mock_app' in module 'pyquickhelper.helpgen'",
                      "W0641: Possibly unused variable",
-                     "[E731] do not assign a lambda expression, use a def"
+                     "[E731] do not assign a lambda expression, use a def",
+                     "cli_helper.py:196",
                      ])
 
 
