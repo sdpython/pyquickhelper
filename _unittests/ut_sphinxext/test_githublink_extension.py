@@ -80,15 +80,15 @@ class TestGitHubLinkExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string.py#L7"
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/string.py#L7"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string#L11"
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/string#L11"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/src/string.py#L84"
+        t1 = "https://github.com/sdpython/pyquickhelper/blob/master/string.py#L84"
         if t1 not in html:
             raise Exception(html)
 
@@ -163,15 +163,15 @@ class TestGitHubLinkExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "[src/string.py:7]"
+        t1 = "[string.py:7]"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "[src/string:11]"
+        t1 = "[string:11]"
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "[src/string.py:84]"
+        t1 = "[string.py:84]"
         if t1 not in html:
             raise Exception(html)
 

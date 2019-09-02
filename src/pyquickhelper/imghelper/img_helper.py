@@ -32,6 +32,9 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
                     i = zoom_img(im, factor=factor, max_dim=max_dim,
                                  out_file=of, fLOG=fLOG)
                 res.append(i)
+            if len(res) == 0:
+                raise FileNotFoundError(
+                    "Unable to find anything in '{}'.".format(img))
             return res
         from PIL import Image
         obj = Image.open(img)
@@ -44,8 +47,8 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
     if max_dim is not None:
         if not isinstance(max_dim, int):
             max_dim = int(max_dim)
-        facx = dx * 1. / max_dim
-        facy = dy * 1. / max_dim
+        facx = max_dim * 1. / max(dx, 1)
+        facy = max_dim * 1. / max(dy, 1)
         factor = min(facx, facy)
     if factor is not None:
         if not isinstance(factor, float):
