@@ -328,8 +328,12 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import sphinx_readable_theme
         from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
+        import pyquickhelper  # replace by your module
+
         ext_locals = {}
-        set_sphinx_variables("this_file.py", "module_name", "module_author", 2019,
+        set_sphinx_variables("this_file_conf.py",
+                             "pyquickhelper",  # replace by your module
+                             "module_author", 2019,
                              "readable", sphinx_readable_theme.get_html_theme_path(),
                              ext_locals, extlinks=dict(
                                  issue=('https://github.com/sdpython/module_name/issues/%s', 'issue')),
