@@ -6,31 +6,66 @@
 import warnings
 
 
+def enumerate_split_df(df, common, subsets):
+    """
+    Splits a dataframe by columns to display shorter
+    dataframes.
+
+    @param      df      dataframe
+    @param      common  common columns
+    @param      subsets subsets of columns
+    @return             split dataframes
+
+    .. runpython::
+        :showcode:
+
+        from pandas import DataFrame
+        from pyquickhelper.pandashelper.tblformat import enumerate_split_df
+
+        df = DataFrame([{'A': 0, 'B': 'text'},
+                        {'A': 1e-5, 'C': 'longer text'}])
+        res = list(enumerate_split_df(df, ['A'], [['B'], ['C']]))
+        print(res[0])
+        print('-----')
+        print(res[1])
+    """
+    for sub in subsets:
+        if set(common) & set(sub):
+            raise ValueError("Common columns between common={} and subset={}.".format(
+                common, sub))
+        yield df[common + sub]
+
+
 def df2rst(df, add_line=True, align="l", column_size=None, index=False,
            list_table=False, title=None, header=True, sep=',',
-           number_format=None, replacements=None, split=None,
-           split_level="+"):
+           number_format=None, replacements=None, split_row=None,
+           split_row_level="+", split_col_common=None,
+           split_col_subsets=None):
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
-    @param      df              dataframe
-    @param      add_line        (bool) add a line separator between each row
-    @param      align           ``r`` or ``l`` or ``c``
-    @param      column_size     something like ``[1, 2, 5]`` to multiply the column size
-    @param      index           add the index
-    @param      list_table      use the `list_table <http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table>`_
-    @param      title           used only if *list_table* is True
-    @param      header          add one header
-    @param      sep             separator if *df* is a string and is a filename to load
-    @param      number_format   formats number in a specific way, if *number_format*
-                                is an integer, the pattern is replaced by
-                                ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
-                                see also :epkg:`pyformat.info`
-    @param      replacements    replacements just before converting into RST (dictionary)
-    @param      split           displays several table, one column is used as the
-                                name of each section
-    @param      split_level     title level if option split is used
-    @return                     string
+    @param      df                  dataframe
+    @param      add_line            (bool) add a line separator between each row
+    @param      align               ``r`` or ``l`` or ``c``
+    @param      column_size         something like ``[1, 2, 5]`` to multiply the column size
+    @param      index               add the index
+    @param      list_table          use the `list_table <http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table>`_
+    @param      title               used only if *list_table* is True
+    @param      header              add one header
+    @param      sep                 separator if *df* is a string and is a filename to load
+    @param      number_format       formats number in a specific way, if *number_format*
+                                    is an integer, the pattern is replaced by
+                                    ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
+                                    see also :epkg:`pyformat.info`
+    @param      replacements        replacements just before converting into RST (dictionary)
+    @param      split_row           displays several table, one column is used as the
+                                    name of each section
+    @param      split_row_level     title level if option *split_row* is used
+    @param      split_col_common    splits the dataframe by columns, see
+                                    @see fn enumerate_split_df
+    @param      split_col_subsets   splits the dataframe by columns, see
+                                    @see fn enumerate_split_df
+    @return                         string
 
     If *list_table* is False, the format is the following.
 
@@ -80,25 +115,40 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     .. versionchanged:: 1.9
         Nan value are replaced by empty string even if
         *number_format* is not None.
-        Parameters *replacements*, *split* were added.
+        Parameters *replacements*, *split_row*, *split_col_subsets*,
+        *split_col_common* were added.
     """
-    if split is not None:
-        gdf = df.groupby(split)
+    if split_row is not None:
+        gdf = df.groupby(split_row)
         rows = []
         for key, g in gdf:
             key = str(key).strip('()')
             rows.append("")
             rows.append(key)
-            rows.append(split_level * len(key))
+            rows.append(split_row_level * len(key))
             rows.append("")
             rg = df2rst(g, add_line=add_line, align=align,
                         column_size=column_size, index=index,
                         list_table=list_table,
                         title=title, header=header, sep=sep,
                         number_format=number_format, replacements=replacements,
-                        split=None, split_level=None)
+                        split_row=None, split_row_level=None,
+                        split_col_common=split_col_common,
+                        split_col_subsets=split_col_subsets)
             rows.append(rg)
             rows.append("")
+        return "\n".join(rows)
+
+    if split_col_common is not None:
+        rows = []
+        for sub in enumerate_split_df(df, split_col_common, split_col_subsets):
+            rg = df2rst(sub, add_line=add_line, align=align,
+                        column_size=column_size, index=index,
+                        list_table=list_table,
+                        title=title, header=header, sep=sep,
+                        number_format=number_format, replacements=replacements)
+            rows.append(rg)
+            rows.append('')
         return "\n".join(rows)
 
     import numpy
