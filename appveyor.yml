@@ -12,18 +12,12 @@ environment:
       PYTHON_VERSION: "3.7.x"
       PYTHON_ARCH: "64"
 
+cache:
+  - c:\miktex -> .\miktex-install.bat
+
 install:
-    # Install miktex to get pdflatex, if we don't get it from the cache
-    # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x86/miktex-portable.exe
-    # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x miktex-portable.exe -oC:\miktex >NUL
-    # - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://ctan.tetaneutral.net/systems/win32/miktex/setup/windows-x86/miktex-portable.exe
-    - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe appveyor DownloadFile http://www.xavierdupre.fr/enseignement/setup/miktex-portable.exe -FileName miktex-portable.exe
-    - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe 7z x miktex-portable.exe -oC:\miktex >NUL
-    - if not exist c:\miktex @echo Unable to find c:\miktex
-    - if not exist c:\miktex\texmfs\install\miktex\bin\pdflatex.exe @echo Unable to find c:\miktex\texmfs\install\miktex\bin\pdflatex.exe
-    - set "PATH=%PATH%;c:\miktex\texmfs\install\miktex\bin"
-    # Enable installing miktex  packages on the fly
-    - initexmf --set-config-value [MPM]AutoInstall=1
+    - set "PATH=%PATH%;c:\miktex\miktex\bin"
+    - if not exist c:\miktex\miktex\bin\pdflatex.exe .\miktex-install.bat    
     # Python
     - "%PYTHON%\\python -m pip install --upgrade pip"
     - "%PYTHON%\\Scripts\\pip install pymyinstall"
