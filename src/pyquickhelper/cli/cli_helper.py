@@ -193,7 +193,7 @@ def create_cli_argument(parser, param, doc, names, positional):
         default = None if p.default == inspect._empty else p.default
         if typ == bool:
             # see https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
-            typ = lambda s: s.lower() in {'true', 't', 'yes', '1'}
+            def typ(s): return s.lower() in {'true', 't', 'yes', '1'}
         if default is not None:
             parser.add_argument(*pnames, type=typ, help=doc, default=default)
         else:

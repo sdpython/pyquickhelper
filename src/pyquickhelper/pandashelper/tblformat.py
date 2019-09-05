@@ -8,7 +8,8 @@ import warnings
 
 def df2rst(df, add_line=True, align="l", column_size=None, index=False,
            list_table=False, title=None, header=True, sep=',',
-           number_format=None, replacements=None):
+           number_format=None, replacements=None, split=None,
+           split_level="+"):
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
@@ -26,6 +27,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                                 ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
                                 see also :epkg:`pyformat.info`
     @param      replacements    replacements just before converting into RST (dictionary)
+    @param      split           displays several table, one column is used as the
+                                name of each section
+    @param      split_level     title level if option split is used
     @return                     string
 
     If *list_table* is False, the format is the following.
@@ -60,14 +64,43 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
               - anythings
             ...
 
+    .. runpython::
+        :showcode:
+
+        from pandas import DataFrame
+        from pyquickhelper.pandashelper import df2rst
+
+        df = DataFrame([{'A': 0, 'B': 'text'},
+                        {'A': 1e-5, 'C': 'longer text'}])
+        print(df2rst(df))
+
     .. versionchanged:: 1.8
         Parameter *number_format* was added.
 
     .. versionchanged:: 1.9
         Nan value are replaced by empty string even if
         *number_format* is not None.
-        Parameters *replacements* was added.
+        Parameters *replacements*, *split* were added.
     """
+    if split is not None:
+        gdf = df.groupby(split)
+        rows = []
+        for key, g in gdf:
+            key = str(key).strip('()')
+            rows.append("")
+            rows.append(key)
+            rows.append(split_level * len(key))
+            rows.append("")
+            rg = df2rst(g, add_line=add_line, align=align,
+                        column_size=column_size, index=index,
+                        list_table=list_table,
+                        title=title, header=header, sep=sep,
+                        number_format=number_format, replacements=replacements,
+                        split=None, split_level=None)
+            rows.append(rg)
+            rows.append("")
+        return "\n".join(rows)
+
     import numpy
     typstr = str
 
