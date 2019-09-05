@@ -13,7 +13,12 @@ environment:
       PYTHON_ARCH: "64"
 
 cache:
+  # Use the appveyor cache to avoid re-downloading large archives such
+  # the MKL numpy and scipy wheels mirrored on a rackspace cloud
+  # container, speed up the appveyor jobs and reduce bandwidth.
+  # Tips taken from scikit-learn.
   - c:\miktex -> .\miktex-install.bat
+  - '%APPDATA%\pip\Cache'
 
 install:
     - set "PATH=%PATH%;c:\miktex\miktex\bin"
@@ -52,10 +57,3 @@ after_test:
 artifacts:
   - path: dist
     name: pyquickhelper
-
-cache:
-  # Use the appveyor cache to avoid re-downloading large archives such
-  # the MKL numpy and scipy wheels mirrored on a rackspace cloud
-  # container, speed up the appveyor jobs and reduce bandwidth.
-  # Tips taken from scikit-learn.
-  - '%APPDATA%\pip\Cache'
