@@ -37,7 +37,7 @@ jobs:
     displayName: 'uninstall pyquickhelper'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
-  - script: python -u setup.py unittests
+  - script: python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
   - script: python -u setup.py bdist_wheel
     displayName: 'Build Package'
