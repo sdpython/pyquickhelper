@@ -72,6 +72,43 @@ class TestPandasHelper_df2(ExtTestCase):
         self.assertIn("+++++++++", conv)
         self.assertIn("| STOCKOLM | 2007 | 8456    |", conv)
 
+    def test_df2rst_split_col_row_ref(self):
+        data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+        mara = os.path.join(data, "marathon.txt")
+        df = pandas.read_csv(
+            mara, names=["city", "year", "time", "seconds"], sep="\t")
+        df['city'] = df.city.apply(lambda v: ':ref:`{0} <{0}-h>`'.format(v))
+        conv = df2rst(df, split_row="city",
+                      split_col_common=["city", "year"],
+                      split_col_subsets=[['time'], ['seconds']])
+        self.assertIn("+++++++++", conv)
+        self.assertIn(
+            "| :ref:`AMSTERDAM <AMSTERDAM-h>` | 1982 | 02:12:15 |", conv)
+
+    def test_df2rst_split_col_row_ref2(self):
+        data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+        mara = os.path.join(data, "marathon.txt")
+        df = pandas.read_csv(
+            mara, names=["city", "year", "time", "seconds"], sep="\t")
+        df['city'] = df.city.apply(lambda v: ':ref:`{0}`'.format(v))
+        conv = df2rst(df, split_row="city",
+                      split_col_common=["city", "year"],
+                      split_col_subsets=[['time'], ['seconds']])
+        self.assertIn("+++++++++", conv)
+        self.assertIn("| :ref:`AMSTERDAM` | 1982 | 02:12:15 |", conv)
+
+    def test_df2rst_split_col_row_ref2_func(self):
+        data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+        mara = os.path.join(data, "marathon.txt")
+        df = pandas.read_csv(
+            mara, names=["city", "year", "time", "seconds"], sep="\t")
+        df['city'] = df.city.apply(lambda v: ':ref:`{0}`'.format(v))
+        conv = df2rst(df, split_row=lambda index: df.loc[index, "city"].split("`")[1],
+                      split_col_common=["city", "year"],
+                      split_col_subsets=[['time'], ['seconds']])
+        self.assertIn("+++++++++", conv)
+        self.assertIn("| :ref:`AMSTERDAM` | 1982 | 02:12:15 |", conv)
+
 
 if __name__ == "__main__":
     unittest.main()

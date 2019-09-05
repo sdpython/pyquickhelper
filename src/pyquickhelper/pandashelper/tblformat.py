@@ -123,6 +123,11 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         rows = []
         for key, g in gdf:
             key = str(key).strip('()')
+            if ':ref:' in key:
+                try:
+                    key = key.split("`")[1].split("<")[0].strip()
+                except IndexError:
+                    pass
             rows.append("")
             rows.append(key)
             rows.append(split_row_level * len(key))
