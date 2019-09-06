@@ -40,7 +40,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
            list_table=False, title=None, header=True, sep=',',
            number_format=None, replacements=None, split_row=None,
            split_row_level="+", split_col_common=None,
-           split_col_subsets=None):
+           split_col_subsets=None, filter_rows=None):
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
@@ -65,6 +65,8 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                                     @see fn enumerate_split_df
     @param      split_col_subsets   splits the dataframe by columns, see
                                     @see fn enumerate_split_df
+    @param      filter_rows         None or function to removes rows, signature
+                                    ``def filter_rows(df: DataFrame) -> DataFrame``
     @return                         string
 
     If *list_table* is False, the format is the following.
@@ -116,8 +118,12 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         Nan value are replaced by empty string even if
         *number_format* is not None.
         Parameters *replacements*, *split_row*, *split_col_subsets*,
-        *split_col_common* were added.
+        *split_col_common*, *filter_rows* were added.
     """
+    if isinstance(df, str):
+        import pandas
+        df = pandas.read_csv(df, encoding="utf-8", sep=sep)
+
     if split_row is not None:
         gdf = df.groupby(split_row)
         rows = []
@@ -139,7 +145,8 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                         number_format=number_format, replacements=replacements,
                         split_row=None, split_row_level=None,
                         split_col_common=split_col_common,
-                        split_col_subsets=split_col_subsets)
+                        split_col_subsets=split_col_subsets,
+                        filter_rows=filter_rows)
             rows.append(rg)
             rows.append("")
         return "\n".join(rows)
@@ -151,7 +158,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                         column_size=column_size, index=index,
                         list_table=list_table,
                         title=title, header=header, sep=sep,
-                        number_format=number_format, replacements=replacements)
+                        number_format=number_format,
+                        replacements=replacements,
+                        filter_rows=filter_rows)
             rows.append(rg)
             rows.append('')
         return "\n".join(rows)
@@ -159,9 +168,10 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     import numpy
     typstr = str
 
-    if isinstance(df, str):
-        import pandas
-        df = pandas.read_csv(df, encoding="utf-8", sep=sep)
+    if filter_rows is not None:
+        df = filter_rows(df).copy()
+        if df.shape[0] == 0:
+            return ""
     else:
         df = df.copy()
 
