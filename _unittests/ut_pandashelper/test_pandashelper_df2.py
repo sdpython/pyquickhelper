@@ -77,7 +77,8 @@ class TestPandasHelper_df2(ExtTestCase):
         mara = os.path.join(data, "marathon.txt")
         df = pandas.read_csv(
             mara, names=["city", "year", "time", "seconds"], sep="\t")
-        df['city'] = df.city.apply(lambda v: ':ref:`{0} <{0}-h>`'.format(v))  # pylint: disable=W0108
+        df['city'] = df.city.apply(
+            lambda v: ':ref:`{0} <{0}-h>`'.format(v))  # pylint: disable=W0108
         conv = df2rst(df, split_row="city",
                       split_col_common=["city", "year"],
                       split_col_subsets=[['time'], ['seconds']])
@@ -90,7 +91,8 @@ class TestPandasHelper_df2(ExtTestCase):
         mara = os.path.join(data, "marathon.txt")
         df = pandas.read_csv(
             mara, names=["city", "year", "time", "seconds"], sep="\t")
-        df['city'] = df.city.apply(lambda v: ':ref:`{0}`'.format(v))  # pylint: disable=W0108
+        df['city'] = df.city.apply(
+            lambda v: ':ref:`{0}`'.format(v))  # pylint: disable=W0108
         conv = df2rst(df, split_row="city",
                       split_col_common=["city", "year"],
                       split_col_subsets=[['time'], ['seconds']])
@@ -102,7 +104,8 @@ class TestPandasHelper_df2(ExtTestCase):
         mara = os.path.join(data, "marathon.txt")
         df = pandas.read_csv(
             mara, names=["city", "year", "time", "seconds"], sep="\t")
-        df['city'] = df.city.apply(lambda v: ':ref:`{0}`'.format(v))  # pylint: disable=W0108
+        df['city'] = df.city.apply(
+            lambda v: ':ref:`{0}`'.format(v))  # pylint: disable=W0108
         conv = df2rst(df, split_row=lambda index: df.loc[index, "city"].split("`")[1],
                       split_col_common=["city", "year"],
                       split_col_subsets=[['time'], ['seconds']])
@@ -160,6 +163,28 @@ class TestPandasHelper_df2(ExtTestCase):
                       "|               | ?       | ?      |", conv)
         spl = conv.split("+=============================")
         self.assertEqual(len(spl), 7)
+
+    def test_df2rst_column_size(self):
+        data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+        mara = os.path.join(data, "marathon.txt")
+        df = pandas.read_csv(
+            mara, names=["city", "year", "time", "seconds"], sep="\t")
+        conv = df2rst(df, column_size={'city': 40})
+        self.assertIn(
+            "| city                                     | year | time     | seconds |", conv)
+        self.assertIn(
+            "| PARIS                                    | 2006 | 02:08:03 | 7683    |", conv)
+
+    def test_df2rst_column_size_i(self):
+        data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+        mara = os.path.join(data, "marathon.txt")
+        df = pandas.read_csv(
+            mara, names=["city", "year", "time", "seconds"], sep="\t")
+        conv = df2rst(df, column_size={0: 40})
+        self.assertIn(
+            "| city                                     | year | time     | seconds |", conv)
+        self.assertIn(
+            "| PARIS                                    | 2006 | 02:08:03 | 7683    |", conv)
 
 
 if __name__ == "__main__":

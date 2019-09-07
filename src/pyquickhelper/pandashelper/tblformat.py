@@ -47,7 +47,10 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     @param      df                  dataframe
     @param      add_line            (bool) add a line separator between each row
     @param      align               ``r`` or ``l`` or ``c``
-    @param      column_size         something like ``[1, 2, 5]`` to multiply the column size
+    @param      column_size         something like ``[1, 2, 5]`` to multiply the column size,
+                                    a dictionary (if *list_table* is False) to overwrite
+                                    a column size like ``{'col_name1': 20}`` or
+                                    ``{3: 20}``
     @param      index               add the index
     @param      list_table          use the `list_table <http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table>`_
     @param      title               used only if *list_table* is True
@@ -300,14 +303,25 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             for i, v in enumerate(row):
                 length[i] = max(length[i], len(typstr(v).strip()))
         if column_size is not None:
-            if len(length) != len(column_size):
-                raise ValueError("length and column_size should have the same size {0} != {1}".format(
-                    len(length), len(column_size)))
-            for i in range(len(length)):
-                if not isinstance(column_size[i], int):
-                    raise TypeError(
-                        "column_size[{0}] is not an integer".format(i))
-                length[i] *= column_size[i]
+            if isinstance(column_size, list):
+                if len(length) != len(column_size):
+                    raise ValueError("length and column_size should have the same size {0} != {1}".format(
+                        len(length), len(column_size)))
+                for i in range(len(length)):
+                    if not isinstance(column_size[i], int):
+                        raise TypeError(
+                            "column_size[{0}] is not an integer".format(i))
+                    length[i] *= column_size[i]
+            elif isinstance(column_size, dict):
+                for i, c in enumerate(df.columns):
+                    if c in column_size:
+                        length[i] = column_size[c]
+                    elif i in column_size:
+                        length[i] = column_size[i]
+            else:
+                raise TypeError(
+                    "column_size must be a list or a dictionary not {}".format(
+                        type(column_size)))
 
         ic = 2
         length = [_ + ic for _ in length]
