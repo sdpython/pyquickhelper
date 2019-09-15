@@ -454,10 +454,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             html_theme_path = [theme_path]
 
     # static files
-    html_logo = "project_ico.png"
-    html_favicon = "project_ico.ico"
     html_static_path = ['phdoc_static']
     templates_path = ['phdoc_templates']
+    html_logo = os.path.join(html_static_path[0], "project_ico.png")
+    html_favicon = os.path.join(html_static_path[0], "project_ico.ico")
 
     # extensions, encoding
     source_suffix = '.rst'
