@@ -40,7 +40,8 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
            list_table=False, title=None, header=True, sep=',',
            number_format=None, replacements=None, split_row=None,
            split_row_level="+", split_col_common=None,
-           split_col_subsets=None, filter_rows=None):
+           split_col_subsets=None, filter_rows=None,
+           label_pattern=None):
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
@@ -70,6 +71,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                                     @see fn enumerate_split_df
     @param      filter_rows         None or function to removes rows, signature
                                     ``def filter_rows(df: DataFrame) -> DataFrame``
+    @param      label_pattern       if *split_row* is used, the function may insert
+                                    a label in front of every section,
+                                    example: ``".. _lpy-{section}:"``
     @return                         string
 
     If *list_table* is False, the format is the following.
@@ -137,6 +141,10 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                     key = key.split("`")[1].split("<")[0].strip()
                 except IndexError:
                     pass
+            if label_pattern is not None:
+                lab = label_pattern.format(section=key)
+                rows.append("")
+                rows.append(lab)
             rows.append("")
             rows.append(key)
             rows.append(split_row_level * len(key))
@@ -149,7 +157,8 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                         split_row=None, split_row_level=None,
                         split_col_common=split_col_common,
                         split_col_subsets=split_col_subsets,
-                        filter_rows=filter_rows)
+                        filter_rows=filter_rows,
+                        label_pattern=None)
             rows.append(rg)
             rows.append("")
         return "\n".join(rows)

@@ -49,6 +49,22 @@ class TestPandasHelper_df2(ExtTestCase):
         self.assertIn("'AMSTERDAM', 1975", conv)
         self.assertIn("| city      | year | time     | seconds |", conv)
 
+    def test_df2rst_split_row_label(self):
+        data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
+        mara = os.path.join(data, "marathon.txt")
+        df = pandas.read_csv(
+            mara, names=["city", "year", "time", "seconds"], sep="\t")
+        conv = df2rst(df, split_row="city")
+        self.assertIn("+++++++++", conv)
+        self.assertIn("| city      | year | time     | seconds |", conv)
+        self.assertIn("| PARIS | 2011 | 02:06:29 | 7589    |", conv)
+
+        conv = df2rst(df, split_row="year", label_pattern=".. _lpy-{section}:")
+        self.assertIn("++++", conv)
+        self.assertIn("| city      | year | time     | seconds |", conv)
+        self.assertIn("| FUKUOKA   | 1976 | 02:12:35 | 7955    |", conv)
+        self.assertIn(".. _lpy-1949:", conv)
+
     def test_df2rst_split_col(self):
         data = os.path.join(os.path.abspath(os.path.dirname(__file__)), "data")
         mara = os.path.join(data, "marathon.txt")
