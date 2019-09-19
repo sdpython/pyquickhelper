@@ -2,7 +2,7 @@
 @file
 @brief provides some functionalities to upload file to a website
 """
-from ftplib import FTP, error_perm
+from ftplib import FTP, FTP_TLS, error_perm
 import os
 import sys
 import time
@@ -58,25 +58,56 @@ class TransferFTP:
                 ftp.close()
             except Exception as e :
                 print ("unable to close FTP connection using ftp.close")
+
+    The class may access to a server using :epkg:`SFTP`
+    protocol but it relies on :epkg:`pysftp` and :epkg:`paramiko`.
     """
 
     errorNoDirectory = "Can't change directory"
     blockSize = 2 ** 20
 
-    def __init__(self, site, login, password, fLOG=noLOG):
+    def __init__(self, site, login, password, ftps='FTP', fLOG=noLOG):
         """
         constructor
 
         @param      site        website
         @param      login       login
         @param      password    password
+        @param      ftps        if ``'TLS'``, use class :epkg:`*py:ftplib:FTP_TLS`,
+                                if ``'FTP'``, use :epkg:`*py:ftplib:TLS`,
+                                if ``'SFTP'``, use :epkg:`pysftp`
         @param      fLOG        logging function
         """
         if site is not None:
-            self._ftp = FTP(site, login, password)
+            if ftps == 'TLS':
+                cls = FTP_TLS
+            elif ftps == 'SFTP':
+                import pysftp
+                import paramiko
+                import socket
+                sock = socket.socket()
+                sock.connect((site, 22))
+                trans = paramiko.transport.Transport(sock)
+                trans.start_client()
+                k = trans.get_remote_server_key()
+
+                hk = paramiko.hostkeys.HostKeys()
+                hk.add(site, 'ssh-rsa', k)
+                cnopts = pysftp.CnOpts()
+                cnopts.hostkeys = hk
+
+                def cls(si, lo, pw, cnopts=cnopts): return pysftp.Connection(
+                    si, username=lo, password=pw, cnopts=cnopts)
+
+            elif ftps == 'FTP':
+                cls = FTP
+            self._ftp = cls(site, login, password)
             self._logins = [(datetime.datetime.now(), site)]
         else:
             # mocking
+            if ftps:
+                raise NotImplementedError(
+                    "Option ftps is not implemented for mocking.")
             self._logins = []
             self._ftp = FTP(site)
         self.LOG = fLOG
