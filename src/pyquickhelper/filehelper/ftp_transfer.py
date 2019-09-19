@@ -29,8 +29,8 @@ class CannotCompleteWithoutNewLoginException(Exception):
 class TransferFTP:
 
     """
-    this class uploads files to a website,
-    if the remote does not exists, it creates it first
+    This class uploads files to a website,
+    if the remote does not exists, it creates it first.
 
     .. exref::
         :title: Transfer files to webste through FTP
@@ -68,8 +68,6 @@ class TransferFTP:
 
     def __init__(self, site, login, password, ftps='FTP', fLOG=noLOG):
         """
-        constructor
-
         @param      site        website
         @param      login       login
         @param      password    password
@@ -119,6 +117,7 @@ class TransferFTP:
                     "Option ftps is not implemented for mocking.")
             self._logins = []
             self._ftp = FTP(site)
+            self.is_sftp = False
         self.LOG = fLOG
         self._atts = dict(site=site, login=login, password=password)
 

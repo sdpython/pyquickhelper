@@ -11,13 +11,12 @@ class MockTransferFTP(TransferFTP):
     mock @see cl TransferFTP
     """
 
-    def __init__(self, fLOG=noLOG):
+    def __init__(self, ftps='FTP', fLOG=noLOG):
         """
-        constructor
-
+        @param      ftps        protocol
         @param      fLOG        logging function
         """
-        TransferFTP.__init__(self, None, "login", "password")
+        TransferFTP.__init__(self, None, "login", "password", ftps=ftps)
         self._store = {}
 
     def run_command(self, command, *args, **kwargs):

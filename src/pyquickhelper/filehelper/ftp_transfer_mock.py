@@ -13,7 +13,7 @@ class MockTransferFTP (TransferFTP):
     mock @see cl TransferFTP
     """
 
-    def __init__(self, site, login, password, fLOG=noLOG):  # pylint: disable=W0231
+    def __init__(self, site, login, password, fLOG=noLOG, ftps='FTP'):  # pylint: disable=W0231
         """
         same signature as @see cl TransferFTP
         """
@@ -21,6 +21,7 @@ class MockTransferFTP (TransferFTP):
         self._ftp = FTP(None)
         self.LOG = fLOG
         self._atts = dict(site=site, login=login, password=password)
+        self.ftps = ftps
 
     def transfer(self, file, to, name, debug=False, blocksize=None, callback=None):
         """

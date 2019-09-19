@@ -16,7 +16,8 @@ class TransferAPIFtp(TransferAPI):
     through :epkg:`FTP`.
     """
 
-    def __init__(self, site, login, password, root="backup", fLOG=noLOG):
+    def __init__(self, site, login, password, root="backup",
+                 ftps='FTP', fLOG=noLOG):
         """
         @param      site        website
         @param      login       login
@@ -26,8 +27,8 @@ class TransferAPIFtp(TransferAPI):
         @param      fLOG        logging function
         """
         TransferAPI.__init__(self, fLOG=fLOG)
-        self._ftp = TransferFTP(
-            site, login, password, fLOG=fLOG, ftps=ftps) if site else MockTransferFTP(fLOG=fLOG)
+        self._ftp = (TransferFTP(site, login, password, fLOG=fLOG, ftps=ftps)
+                     if site else MockTransferFTP(ftps=ftps, fLOG=fLOG))
         self._root = root
 
     def connect(self):
