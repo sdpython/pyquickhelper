@@ -5,8 +5,18 @@
 History
 =======
 
-current - 2019-08-26 - 0.00Mb
+current - 2019-09-19 - 0.00Mb
 =============================
+
+* `273`: Extend FTP functionalities to SFTP (2019-09-19)
+* `272`: Improves df2rst by splitting into columns to have smaller dataframes to display (2019-09-05)
+* `271`: Add parameter split to function df2rst to introduce section in the output (2019-09-05)
+* `270`: Adds a function to zoom in, zoom out images + command line (2019-09-01)
+* `269`: Fix github links if the sources are not inside a subfolder src (2019-09-01)
+* `268`: Fix bool parsing in create_cli_parser (2019-08-27)
+
+1.9.3192 - 2019-08-26 - 2.05Mb
+==============================
 
 * `267`: Skips a given list of issues when producing the history (2019-08-26)
 * `266`: add option to local_jenkins to specify a different jenkins server (2019-08-25)

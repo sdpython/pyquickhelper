@@ -12,23 +12,22 @@ from .ftp_mock import MockTransferFTP
 
 class TransferAPIFtp(TransferAPI):
     """
-    defines an API to transfer files over a remote location
-    through FTP
+    Defines an API to transfer files over a remote location
+    through :epkg:`FTP`.
     """
 
     def __init__(self, site, login, password, root="backup", fLOG=noLOG):
         """
-        constructor
-
         @param      site        website
         @param      login       login
         @param      password    password
         @param      root        root on the website
+        @param      ftps        protocol, see @see cl TransferFTP
         @param      fLOG        logging function
         """
         TransferAPI.__init__(self, fLOG=fLOG)
         self._ftp = TransferFTP(
-            site, login, password, fLOG=fLOG) if site else MockTransferFTP(fLOG=fLOG)
+            site, login, password, fLOG=fLOG, ftps=ftps) if site else MockTransferFTP(fLOG=fLOG)
         self._root = root
 
     def connect(self):
