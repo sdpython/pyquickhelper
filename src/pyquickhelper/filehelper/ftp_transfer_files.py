@@ -388,6 +388,18 @@ class FolderTransferFTP:
                     issues.append(
                         (file.fullname, "ConnectionResetError", eeeeee))
                     self.fLOG("[FolderTransferFTP] - issue", eeeeee)
+                except Exception as e7:
+                    try:
+                        import paramiko
+                    except ImportError:
+                        raise e7
+                    if isinstance(e7, paramiko.sftp.SFTPError):
+                        r = False
+                        issues.append(
+                            (file.fullname, "ConnectionResetError", e7))
+                        self.fLOG("[FolderTransferFTP] - issue", e7)
+                    else:
+                        raise e7
 
             self.close_stream(data)
 

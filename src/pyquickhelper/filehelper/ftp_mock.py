@@ -20,7 +20,7 @@ class MockTransferFTP(TransferFTP):
         TransferFTP.__init__(self, None, "login", "password")
         self._store = {}
 
-    def run_command(self, command, *args):
+    def run_command(self, command, *args, **kwargs):
         """
         Mock method :meth:`run_command <pyquickhelper.filehelper.ftp_transfer.TransferFTP.run_commnad>`
         """

@@ -82,6 +82,7 @@ class TransferFTP:
         if site is not None:
             if ftps == 'TLS':
                 cls = FTP_TLS
+                self.is_sftp = False
             elif ftps == 'SFTP':
                 import pysftp
                 import paramiko
@@ -97,15 +98,18 @@ class TransferFTP:
                 cnopts = pysftp.CnOpts()
                 cnopts.hostkeys = hk
 
-                cls = lambda si, lo, pw, cnopts=cnopts: pysftp.Connection(
+                def cls(si, lo, pw, cnopts=cnopts): return pysftp.Connection(
                     si, username=lo, password=pw, cnopts=cnopts)
-                self._login_ = lambda si=site, lo=login, pw=password: cls(si, lo, pw)
+                self._login_ = lambda si=site, lo=login, pw=password: cls(
+                    si, lo, pw)
+                self.is_sftp = True
 
             elif ftps == 'FTP':
                 cls = FTP
+                self.is_sftp = False
             else:
                 raise RuntimeError("No implementation for '{}'.".format(ftps))
-            if hasattr(cls, 'login'):
+            if not hasattr(cls, 'login'):
                 self._ftp = cls(site, login, password)
             self._logins = [(datetime.datetime.now(), site)]
         else:
@@ -117,6 +121,10 @@ class TransferFTP:
             self._ftp = FTP(site)
         self.LOG = fLOG
         self._atts = dict(site=site, login=login, password=password)
+
+    def _check_can_logged(self):
+        if not hasattr(self, '_ftp'):
+            self._ftp = self._login_()
 
     @property
     def Site(self):
@@ -131,8 +139,8 @@ class TransferFTP:
         """
         self.LOG("reconnecting to ", self.Site, " - ", len(self._logins))
         try:
-            if hasattr(self, '_login_'):
-                self._login_()
+            if self.is_sftp:
+                self._ftp = self._login_()
             else:
                 self._ftp.login()
             self._logins.append((datetime.datetime.now(), self.Site))
@@ -140,7 +148,7 @@ class TransferFTP:
             se = str(e)
             if "You're already logged in" in se:
                 return
-            elif (not hasattr(self, '_login_') and (
+            elif (not self.is_sftp and (
                   "An existing connection was forcibly closed by the remote host" in se or
                   "An established connection was aborted by the software in your host machine" in se)):
                 # it starts a new connection
@@ -152,7 +160,7 @@ class TransferFTP:
             else:
                 raise e
 
-    def run_command(self, command, *args):
+    def run_command(self, command, *args, **kwargs):
         """
         Runs a FTP command.
 
@@ -161,14 +169,18 @@ class TransferFTP:
         @return                 output of the command or True for success, False for failure
         """
         try:
-            t = command(*args)
-            if command == self._ftp.pwd or command == self._ftp.dir or \
-                    command == self._ftp.mlsd or command == self._ftp.nlst:
+            t = command(*args, **kwargs)
+            if (command == self._ftp.pwd or
+                    command == getattr(self._ftp, 'dir', None) or
+                    command == getattr(self._ftp, 'mlsd', 'listdir')):
                 return t
             elif command != self._ftp.cwd:
                 pass
             return True
         except Exception as e:
+            if self.is_sftp and 'No such file' in str(e):
+                raise FileNotFoundError(
+                    "Unable to find {}.".format(args)) from e
             if TransferFTP.errorNoDirectory in str(e):
                 raise e
             self.LOG(e)
@@ -177,7 +189,7 @@ class TransferFTP:
             if command == self._ftp.pwd or command is self._ftp.pwd:
                 t = command(self)
             else:
-                t = command(self, *args)
+                t = command(self, *args, **kwargs)
             self.LOG("    ** run ", str(command), str(args))
             return t
 
@@ -188,9 +200,11 @@ class TransferFTP:
 
         @return         output of the command or True for success, False for failure
         """
+        self._check_can_logged()
         if hasattr(self._ftp, 'retrlines'):
             return self.run_command(self._ftp.retrlines, 'LIST')
-        raise NotImplementedError("Not implemented for ftps='{}'.".format(self._ftps_))
+        raise NotImplementedError(
+            "Not implemented for ftps='{}'.".format(self._ftps_))
 
     def mkd(self, path):
         """
@@ -199,6 +213,7 @@ class TransferFTP:
         @param        path      path to the directory
         @return                 True or False
         """
+        self._check_can_logged()
         self.LOG("[mkd]", path)
         cmd = self._ftp.mkd if hasattr(self._ftp, 'mkd') else self._ftp.mkdir
         return self.run_command(cmd, path)
@@ -212,10 +227,17 @@ class TransferFTP:
         @param      create      True to create it
         @return                 True or False
         """
+        self._check_can_logged()
         try:
             self.run_command(self._ftp.cwd, path)
         except EOFError as e:
             raise EOFError("unable to go to: {0}".format(path)) from e
+        except FileNotFoundError as e:
+            if create:
+                self.mkd(path)
+                self.cwd(path, create)
+            else:
+                raise e
         except Exception as e:
             if create and TransferFTP.errorNoDirectory in str(e):
                 self.mkd(path)
@@ -229,7 +251,12 @@ class TransferFTP:
 
         @return         pathname
         """
-        return self.run_command(self._ftp.pwd)
+        self._check_can_logged()
+        if hasattr(self._ftp, 'getcwd'):
+            r = self._ftp.getcwd()
+            return self._ftp.pwd
+        else:
+            return self.run_command(self._ftp.pwd)
 
     def dir(self, path='.'):
         """
@@ -283,11 +310,16 @@ class TransferFTP:
              'unix.gid': '000',
              'modify': '111111'}
         """
-        cmd = self._ftp.mlsd if hasattr(self._ftp, 'mlsd') else self._ftp.listdir
-        for a in self.run_command(cmd, path):
-            r = dict(name=a[0])
-            r.update(a[1])
-            yield r
+        self._check_can_logged()
+        if hasattr(self._ftp, 'mlsd'):
+            for a in self.run_command(self._ftp.mlsd, path):
+                r = dict(name=a[0])
+                r.update(a[1])
+                yield r
+        else:
+            with self._ftp.cd(path):
+                for name in self._ftp.listdir():
+                    yield name
 
     def transfer(self, file, to, name, debug=False, blocksize=None, callback=None):
         """
@@ -303,6 +335,7 @@ class TransferFTP:
 
         When an error happens, the original current directory is restored.
         """
+        self._check_can_logged()
         path = to.split("/")
         path = [_ for _ in path if len(_) > 0]
         nb_logins = len(self._logins)
@@ -310,9 +343,10 @@ class TransferFTP:
 
         done = []
         exc = None
-        for p in path:
+        for i, p in enumerate(path):
+            p_ = ('/' + '/'.join(path[:i + 1])) if self.is_sftp else p
             try:
-                self.cwd(p, True)
+                self.cwd(p_, True)
             except Exception as e:
                 exc = e
                 break
@@ -324,11 +358,11 @@ class TransferFTP:
 
         bs = blocksize if blocksize else TransferFTP.blockSize
         if hasattr(self._ftp, 'storbinary'):
-            runc = lambda name, f, bs, callback: self.run_command(
+            def runc(name, f, bs, callback): return self.run_command(
                 self._ftp.storbinary, 'STOR ' + name, f, bs, callback)
         else:
-            runc = lambda name, f, bs, callback: self.run_command(
-                self._ftp.putfo, name, f, bs, callback=None)
+            def runc(name, f, bs, callback): return self.run_command(
+                self._ftp.putfo, remotepath=name, flo=f, file_size=bs, callback=None)
         if exc is None:
             try:
                 if isinstance(file, str):
@@ -384,7 +418,7 @@ class TransferFTP:
         else:
             return r
 
-    def retrieve(self, fold, name, file, debug=False):
+    def retrieve(self, fold, name, file=None, debug=False):
         """
         Downloads a file.
 
@@ -394,26 +428,32 @@ class TransferFTP:
         @param      debug       if True, displays more information
         @return                 status
         """
-        path = fold.split("/")
-        path = [_ for _ in path if len(_) > 0]
+        self._check_can_logged()
 
-        for p in path:
-            self.cwd(p, True)
+        if self.is_sftp:
+            self.cwd(fold, False)
+        else:
+            path = fold.split("/")
+            path = [_ for _ in path if len(_) > 0]
+
+            for p in path:
+                self.cwd(p, True)
 
         raise_exc = None
 
         if hasattr(self._ftp, 'retrbinary'):
 
             def _retrbinary_(name, callback, size, f):
-                r = self.run_command(self._ftp.retrbinary, 'RETR ' + name, callback, size)
+                r = self.run_command(self._ftp.retrbinary,
+                                     'RETR ' + name, callback, size)
                 if isinstance(r, (bytes, str)):
                     f.write(r)
                 return r
 
             runc = _retrbinary_
         else:
-            runc = lambda name, callback, size, f: self.run_command(
-                self._ftp.getfo, name, f, bs, callback=None)
+            def runc(name, callback, size, f): return self.run_command(
+                self._ftp.getfo, remotepath=name, flo=f, callback=None)
 
         if isinstance(file, str):
             with open(file, "wb") as f:
@@ -445,8 +485,9 @@ class TransferFTP:
 
             r = b.getvalue()
 
-        for p in path:
-            self.cwd("..")
+        if not self.is_sftp:
+            for p in path:
+                self.cwd("..")
 
         if raise_exc:
             raise raise_exc
@@ -457,4 +498,7 @@ class TransferFTP:
         """
         Closes the connection.
         """
+        self._check_can_logged()
         self._ftp.close()
+        if hasattr(self._ftp, 'listdir'):
+            self._ftp = None

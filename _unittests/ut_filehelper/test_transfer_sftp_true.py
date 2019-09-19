@@ -8,7 +8,7 @@ import os
 import unittest
 import warnings
 import datetime
-import ftplib
+from io import StringIO
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
@@ -18,17 +18,11 @@ from pyquickhelper.loghelper.os_helper import get_machine, get_user
 
 class TestTransferFTPTrue(ExtTestCase):
 
-    @unittest.skipIf(sys.version_info[0] == 2, "issue with strings")
-    def test_transfer_ftp_true(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
+    def get_web(self):
         with warnings.catch_warnings():
             warnings.simplefilter('ignore', DeprecationWarning)
             import keyring
-        prefix = "pyquickhelper,"
+        prefix = "pyquickhelper2,"
         try:
             user = keyring.get_password("web", prefix + "user")
             pwd = keyring.get_password("web", prefix + "pwd")
@@ -43,40 +37,32 @@ class TestTransferFTPTrue(ExtTestCase):
                     zoo.append("{0}={1}".format(k, v))
                 raise Exception("user password is empty, prefix='{0}', username='{1}'\n{2}".format(
                     prefix, get_user(), "\n".join(zoo)))
-            return
+            return None
 
-        try:
-            web = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
-        except ftplib.error_temp as e:
-            if "421 Home directory not available" in str(e):
-                return
+        web = TransferFTP(ftpsite, user, pwd, fLOG=fLOG, ftps='SFTP')
+        return web
+
+    def test_transfer_ftp_true(self):
+        fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
+
+        web = self.get_web()
+        if web is None:
+            return
+        pf = web.pwd()
+        self.assertIn("home/", pf)
         r = web.ls(".")
-        fLOG(r)
         self.assertTrue(isinstance(r, list))
         web.close()
+        fLOG([pf])
 
-    @unittest.skipIf(sys.version_info[0] == 2, "issue with strings")
     def test_transfer_ftp_start_transfering(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore', DeprecationWarning)
-            import keyring
-        prefix = "pyquickhelper,"
-        try:
-            user = keyring.get_password("web", prefix + "user")
-            pwd = keyring.get_password("web", prefix + "pwd")
-            ftpsite = keyring.get_password("web", prefix + "ftp")
-        except RuntimeError:
-            user = None
-            pwd = None
-        if user is None:
-            if not is_travis_or_appveyor():
-                raise Exception("user password is empty, prefix='{0}', username='{1}'".format(
-                    prefix, get_user()))
+        ftp = self.get_web()
+        if ftp is None:
             return
 
         # Transfering
@@ -88,32 +74,35 @@ class TestTransferFTPTrue(ExtTestCase):
         sfile = os.path.join(temp, "status_ut.txt")
         ftn = FileTreeNode(temp)
 
-        # one
-        try:
-            ftp = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
-        except ftplib.error_temp as e:
-            if "421 Home directory not available" in str(e):
-                return
-
         web = FolderTransferFTP(ftn, ftp, sfile,
-                                root_web="/www/htdocs/apptest/",
-                                fLOG=fLOG)
+                                root_web="/home/ftpuser/ftp/web/apptest",
+                                fLOG=fLOG, exc=True)
 
         done = web.start_transfering(delay=0.1)
         ftp.close()
+
         names = [os.path.split(f.filename)[-1] for f in done]
         self.assertEqual(names, ['essai.txt'])
 
         # two, same file, should not be done again
-        ftp = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
+        ftp = self.get_web()
+        if ftp is None:
+            return
 
         web = FolderTransferFTP(ftn, ftp, sfile,
-                                root_web="/www/htdocs/apptest/",
+                                root_web="/home/ftpuser/ftp/web/apptest/",
                                 fLOG=fLOG)
 
         done = web.start_transfering(delay=0.1)
         ftp.close()
         self.assertEmpty(done)
+
+        ftp = self.get_web()
+        if ftp is None:
+            return
+        content = ftp.retrieve("/home/ftpuser/ftp/web/apptest/", "essai.txt")
+        self.assertNotEmpty(content)
+        ftp.close()
 
 
 if __name__ == "__main__":
