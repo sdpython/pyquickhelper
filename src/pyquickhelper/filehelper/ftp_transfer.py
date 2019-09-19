@@ -323,7 +323,7 @@ class TransferFTP:
                 "Cannot reach folder '{0}' without new login".format(to))
 
         bs = blocksize if blocksize else TransferFTP.blockSize
-        if hasattr(self._ftp, 'storebinary'):
+        if hasattr(self._ftp, 'storbinary'):
             runc = lambda name, f, bs, callback: self.run_command(
                 self._ftp.storbinary, 'STOR ' + name, f, bs, callback)
         else:
@@ -403,8 +403,14 @@ class TransferFTP:
         raise_exc = None
 
         if hasattr(self._ftp, 'retrbinary'):
-            runc = lambda name, callback, size, f: f.write(self.run_command(
-                self._ftp.retrbinary, 'RETR ' + name, callback, size))
+
+            def _retrbinary_(name, callback, size, f):
+                r = self.run_command(self._ftp.retrbinary, 'RETR ' + name, callback, size)
+                if isinstance(r, (bytes, str)):
+                    f.write(r)
+                return r
+
+            runc = _retrbinary_
         else:
             runc = lambda name, callback, size, f: self.run_command(
                 self._ftp.getfo, name, f, bs, callback=None)
@@ -433,7 +439,7 @@ class TransferFTP:
             def callback(block):
                 b.write(block)
             try:
-                runc(name, callback, TransferFTP.blockSize)
+                runc(name, callback, TransferFTP.blockSize, b)
             except error_perm as e:
                 raise_exc = e
 
