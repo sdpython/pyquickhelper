@@ -96,11 +96,13 @@ class TransferFTP:
                 cnopts = pysftp.CnOpts()
                 cnopts.hostkeys = hk
 
-                def cls(si, lo, pw, cnopts=cnopts): return pysftp.Connection(
+                cls = lambda si, lo, pw, cnopts=cnopts: pysftp.Connection(
                     si, username=lo, password=pw, cnopts=cnopts)
 
             elif ftps == 'FTP':
                 cls = FTP
+            else:
+                raise RuntimeError("No implementation for '{}'.".format(ftps))
             self._ftp = cls(site, login, password)
             self._logins = [(datetime.datetime.now(), site)]
         else:
