@@ -107,7 +107,7 @@ class TransferFTP:
                 self.is_sftp = False
             else:
                 raise RuntimeError("No implementation for '{}'.".format(ftps))
-            if not hasattr(cls, 'login'):
+            if not self.is_sftp:
                 self._ftp = cls(site, login, password)
             self._logins = [(datetime.datetime.now(), site)]
         else:
@@ -122,7 +122,7 @@ class TransferFTP:
         self._atts = dict(site=site, login=login, password=password)
 
     def _check_can_logged(self):
-        if not hasattr(self, '_ftp'):
+        if self.is_sftp and not hasattr(self, '_ftp'):
             self._ftp = self._login_()
 
     @property
@@ -310,7 +310,7 @@ class TransferFTP:
              'modify': '111111'}
         """
         self._check_can_logged()
-        if hasattr(self._ftp, 'mlsd'):
+        if not self.is_sftp:
             for a in self.run_command(self._ftp.mlsd, path):
                 r = dict(name=a[0])
                 r.update(a[1])
@@ -356,7 +356,7 @@ class TransferFTP:
                 "Cannot reach folder '{0}' without new login".format(to))
 
         bs = blocksize if blocksize else TransferFTP.blockSize
-        if hasattr(self._ftp, 'storbinary'):
+        if not self.is_sftp:
             def runc(name, f, bs, callback): return self.run_command(
                 self._ftp.storbinary, 'STOR ' + name, f, bs, callback)
         else:
@@ -440,7 +440,7 @@ class TransferFTP:
 
         raise_exc = None
 
-        if hasattr(self._ftp, 'retrbinary'):
+        if not self.is_sftp:
 
             def _retrbinary_(name, callback, size, f):
                 r = self.run_command(self._ftp.retrbinary,
@@ -499,5 +499,5 @@ class TransferFTP:
         """
         self._check_can_logged()
         self._ftp.close()
-        if hasattr(self._ftp, 'listdir'):
+        if self.is_sftp:
             self._ftp = None
