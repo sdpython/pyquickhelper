@@ -8,6 +8,7 @@ import os
 import unittest
 import warnings
 import datetime
+import ftplib
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
@@ -43,7 +44,11 @@ class TestTransferFTPTrue(ExtTestCase):
                     prefix, get_user(), "\n".join(zoo)))
             return
 
-        web = TransferFTP("ftp.xavierdupre.fr", user, pwd, fLOG=fLOG)
+        try:
+            web = TransferFTP("ftp.xavierdupre.fr", user, pwd, fLOG=fLOG)
+        except ftplib.error_temp as e:
+            if "421 Home directory not available" in str(e):
+                return
         r = web.ls(".")
         fLOG(r)
         self.assertTrue(isinstance(r, list))
@@ -82,7 +87,11 @@ class TestTransferFTPTrue(ExtTestCase):
         ftn = FileTreeNode(temp)
 
         # one
-        ftp = TransferFTP("ftp.xavierdupre.fr", user, pwd, fLOG=fLOG)
+        try:
+            ftp = TransferFTP("ftp.xavierdupre.fr", user, pwd, fLOG=fLOG)
+        except ftplib.error_temp as e:
+            if "421 Home directory not available" in str(e):
+                return
 
         web = FolderTransferFTP(ftn, ftp, sfile,
                                 root_web="/www/htdocs/apptest/",

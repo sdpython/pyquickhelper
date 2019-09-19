@@ -105,7 +105,7 @@ class TransferFTP:
             self._logins = [(datetime.datetime.now(), site)]
         else:
             # mocking
-            if ftps:
+            if ftps != 'FTP':
                 raise NotImplementedError(
                     "Option ftps is not implemented for mocking.")
             self._logins = []
