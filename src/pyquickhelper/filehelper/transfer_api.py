@@ -11,12 +11,12 @@ from ..loghelper.convert_helper import str2datetime, datetime2str
 
 class TransferAPI_FileInfo:
     """
-    keeps tracks of transferred files
+    Keeps tracks of transferred files.
     """
 
     def __init__(self, name, pieces, last_update):
         """
-        information about a transferred file
+        Information about a transferred file.
 
         @param      name            name of the file
         @param      pieces          list of pieces contributing to the file
@@ -35,7 +35,7 @@ class TransferAPI_FileInfo:
 
     def add_piece(self, piece):
         """
-        add a piece
+        Adds a piece.
 
         @param      piece       add piece
         """
@@ -44,7 +44,7 @@ class TransferAPI_FileInfo:
     @staticmethod
     def read_json(s):
         """
-        retrieves information from a json string
+        Retrieves information from a :epkg:`json` string.
         """
         st = StringIO(s)
         js = json.load(st)
@@ -53,7 +53,7 @@ class TransferAPI_FileInfo:
 
     def to_json(self):
         """
-        serializes this class info JSON
+        Serializes this class info JSON.
         """
         li = [self.name, self.pieces, datetime2str(self.last_update)]
         return json.dumps(li)
@@ -61,21 +61,19 @@ class TransferAPI_FileInfo:
 
 class TransferAPI:
     """
-    defines an API to transfer files over a remote location
+    Defines an API to transfer files over a remote location.
     """
 
     def __init__(self, fLOG=noLOG):
         """
-        constructor
-
         @param      fLOG        logging function
         """
         self.fLOG = fLOG if fLOG else noLOG
 
     def transfer(self, path, data):
         """
-        we assume a data holds in memory,
-        tansfer data to path
+        It assumes a data holds in memory,
+        tansfer data to path.
 
         @param      data        bytes
         @param      path        path to remove location
@@ -85,7 +83,7 @@ class TransferAPI:
 
     def retrieve(self, path, exc=True):
         """
-        retrieve data from path
+        Retrieves data from path.
 
         @param      path        remove location
         @param      exc         keep exception
@@ -95,7 +93,7 @@ class TransferAPI:
 
     def retrieve_mapping(self, decrypt):
         """
-        returns the mapping
+        Returns the mapping.
 
         @param      decrypt     decrypt function
         @return                 list of key,value pair
@@ -108,7 +106,7 @@ class TransferAPI:
 
     def transfer_mapping(self, mapping, encrypt, filename=None):
         """
-        transfer the mapping
+        Transfers the mapping.
 
         @param      mapping     mapping
         @param      encrypt     encryption function
@@ -124,7 +122,7 @@ class TransferAPI:
     @staticmethod
     def mapping2bytes(mapping):
         """
-        serializes a mapping
+        Serializes a mapping.
 
         @param  mapping     dictionary  { str, @see cl TransferAPI_FileInfo }
         @return             bytes
@@ -138,7 +136,7 @@ class TransferAPI:
     @staticmethod
     def bytes2mapping(byt):
         """
-        deserializes a mapping
+        Deserializes a mapping.
 
         @param      byt     bytes
         @return             dictionary  { str, @see cl TransferAPI_FileInfo }
@@ -153,7 +151,7 @@ class TransferAPI:
     @staticmethod
     def checksum_md5(data):
         """
-        computes MD5 for a file
+        Computes MD5 for a file.
 
         @param      data            some data
         @return                     string
@@ -164,14 +162,14 @@ class TransferAPI:
 
     def get_remote_path(self, data, name, piece=0):
         """
-        produces a remote path
+        Produces a remote path.
 
         @param      data        binary data to transfer (to be hashed)
         @param      name        local name
         @param      piece       pieces
         @return                 remote path
 
-        hash of everything
+        *~ hash of everything*
         """
         m1 = TransferAPI.checksum_md5(name.encode() + str(piece).encode())
         m2 = TransferAPI.checksum_md5(data)
@@ -180,13 +178,11 @@ class TransferAPI:
 
 class MockTransferAPI(TransferAPI):
     """
-    class used for unit test purposes, simple key, value storage
+    Class used for unit test purposes, simple key, value storage.
     """
 
     def __init__(self, fLOG=noLOG):
         """
-        constructor
-
         @param      fLOG        logging function
         """
         TransferAPI.__init__(self, fLOG)
@@ -194,8 +190,8 @@ class MockTransferAPI(TransferAPI):
 
     def transfer(self, path, data):
         """
-        we assume a data holds in memory,
-        tansfer data to path
+        It assumes a data holds in memory,
+        tansfer data to path.
 
         @param      data        bytes
         @param      path        path to remove location
@@ -206,7 +202,7 @@ class MockTransferAPI(TransferAPI):
 
     def retrieve(self, path, exc=True):
         """
-        retrieve data from path
+        Retrieves data from path.
 
         @param      path        remove location
         @param      exc         keep exception

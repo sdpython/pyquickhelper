@@ -13,6 +13,7 @@ from time import sleep
 from random import random
 from .files_status import FilesStatus
 from ..loghelper.flog import noLOG
+from .ftp_transfer import CannotCompleteWithoutNewLoginException
 
 
 class FolderTransferFTPException(Exception):
@@ -388,6 +389,11 @@ class FolderTransferFTP:
                     issues.append(
                         (file.fullname, "ConnectionResetError", eeeeee))
                     self.fLOG("[FolderTransferFTP] - issue", eeeeee)
+                except CannotCompleteWithoutNewLoginException as e8:
+                    r = False
+                    issues.append(
+                        (file.fullname, "CannotCompleteWithoutNewLoginException", e8))
+                    self.fLOG("[FolderTransferFTP] - issue", e8)
                 except Exception as e7:
                     try:
                         import paramiko

@@ -9,13 +9,11 @@ from .transfer_api import TransferAPI
 
 class TransferAPIFile(TransferAPI):
     """
-    defines an API to transfer files over another location
+    Defines an API to transfer files over another location.
     """
 
     def __init__(self, location, fLOG=noLOG):
         """
-        constructor
-
         @param      location    location
         @param      fLOG        logging function
         """
@@ -41,7 +39,7 @@ class TransferAPIFile(TransferAPI):
 
     def retrieve(self, path, exc=True):
         """
-        retrieve data from path
+        Retrieves data from path.
 
         @param      path        remove location
         @param      exc         keep exception
