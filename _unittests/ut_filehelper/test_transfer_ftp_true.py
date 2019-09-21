@@ -9,6 +9,7 @@ import unittest
 import warnings
 import datetime
 import ftplib
+import socket
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
@@ -49,6 +50,9 @@ class TestTransferFTPTrue(ExtTestCase):
             web = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
         except ftplib.error_temp as e:
             if "421 Home directory not available" in str(e):
+                return
+        except socket.gaierror as ee:
+            if "Name or service not known" in str(ee):
                 return
         r = web.ls(".")
         fLOG(r)
@@ -93,6 +97,9 @@ class TestTransferFTPTrue(ExtTestCase):
             ftp = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
         except ftplib.error_temp as e:
             if "421 Home directory not available" in str(e):
+                return
+        except socket.gaierror as ee:
+            if "Name or service not known" in str(ee):
                 return
 
         web = FolderTransferFTP(ftn, ftp, sfile,
