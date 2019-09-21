@@ -318,7 +318,7 @@ class TransferFTP:
         else:
             with self._ftp.cd(path):
                 for name in self._ftp.listdir():
-                    yield name
+                    yield dict(name=name)
 
     def transfer(self, file, to, name, debug=False, blocksize=None, callback=None):
         """
