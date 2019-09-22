@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2019-09-19 - 0.00Mb
+current - 2019-09-22 - 0.00Mb
 =============================
+
+* `274`: Add parameter min_size to check wrong downloads in function read_content_ufs (2019-09-22)
+
+1.9.3221 - 2019-09-20 - 2.05Mb
+==============================
 
 * `273`: Extend FTP functionalities to SFTP (2019-09-19)
 * `272`: Improves df2rst by splitting into columns to have smaller dataframes to display (2019-09-05)
