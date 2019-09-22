@@ -117,7 +117,8 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
         return res
 
 
-def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source=False):
+def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
+                     add_source=False, min_size=None):
     """
     Reads the content of a source, whether it is a url, a file, a stream
     or a string (in that case, it returns the string itself),
@@ -127,6 +128,8 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
     @param      encoding            encoding
     @param      asbytes             return bytes instead of chars
     @param      add_source          also return the way the content was obtained
+    @param      min_size            if not empty, the function raises an exception
+                                    if the size is below that theshold
     @return                         content of the source (str) or *(content, type)*
 
     Type can be:
@@ -143,28 +146,39 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
 
     The function can return bytes.
     """
+    def check_size(cont):
+        if min_size is not None and len(cont) < min_size:
+            raise RuntimeError(
+                "File '{}' is smaller than {}.".format(
+                    file_url_stream, min_size))
+
     if isinstance(file_url_stream, str):
         if is_file_string(file_url_stream) and os.path.exists(file_url_stream):
             if asbytes:
                 with open(file_url_stream, "rb") as f:
                     content = f.read()
+                    check_size(content)
                     return (content, "rb") if add_source else content
             else:
                 with open(file_url_stream, "r", encoding=encoding) as f:
                     content = f.read()
+                    check_size(content)
                     return (content, "r") if add_source else content
         elif len(file_url_stream) < 5000 and file_url_stream.startswith("http"):
             content = read_url(file_url_stream, encoding=encoding)
+            check_size(content)
             return (content, "u") if add_source else content
         elif is_url_string(file_url_stream):
             if asbytes:
                 content = read_url(file_url_stream)
+                check_size(content)
                 return (content, "ub") if add_source else content
             else:
                 if encoding is None:
                     raise ValueError(
                         "cannot return bytes if encoding is None for url: " + file_url_stream)
                 content = read_url(file_url_stream, encoding=encoding)
+                check_size(content)
                 return (content, "u") if add_source else content
         else:
             # the string should the content itself
@@ -183,11 +197,13 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
             return (file_url_stream, "b") if add_source else file_url_stream
         else:
             content = file_url_stream.encode(encoding=encoding)
+            check_size(content)
             return (content, "b") if add_source else content
     elif isinstance(file_url_stream, StringIO):
         v = file_url_stream.getvalue()
         if asbytes and v:
             content = v.encode(encoding=encoding)
+            check_size(content)
             return (content, "Sb") if add_source else content
         else:
             return (v, "S") if add_source else v
@@ -197,6 +213,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False, add_source
             return (v, "SBb") if add_source else v
         else:
             content = v.decode(encoding=encoding)
+            check_size(content)
             return (content, "SB") if add_source else content
     else:
         raise TypeError(
