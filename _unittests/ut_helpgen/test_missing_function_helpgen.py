@@ -7,7 +7,7 @@ import sys
 import os
 import unittest
 
-from pyquickhelper.pycode import ExtTestCase, skipif_vless, skipif_azure
+from pyquickhelper.pycode import ExtTestCase, skipif_vless, skipif_azure, skipif_appveyor
 from pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage
 from pyquickhelper.helpgen.post_process import remove_character_under32
 from pyquickhelper.helpgen.utils_sphinx_doc import useless_class_UnicodeStringIOThreadSafe, doc_checking
@@ -64,6 +64,7 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
     @skipif_vless((3, 6), "AttributeError: 'PosixPath' object has no attribute 'rfind'")
     @skipif_vless((3, 7), "TypeError: __new__() missing 2 required positional")
     @skipif_azure("ModuleNotFoundError: No module named 'pyquickhelper'")
+    @skipif_appveyor("missing miktex")
     def test_sphinx_main(self):
         all_tocs, build_paths, parameters, html_static_paths = [], [], [], []
         root = os.path.join(os.path.dirname(__file__), '..',

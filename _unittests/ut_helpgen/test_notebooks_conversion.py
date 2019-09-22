@@ -8,12 +8,13 @@ import os
 import unittest
 
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen.sphinx_main import process_notebooks
 
 
 class TestNotebookConversion2(ExtTestCase):
 
+    @skipif_appveyor("missing miktex")
     def test_notebook_conversion_replacements(self):
         fLOG(
             __file__,
