@@ -8,12 +8,16 @@ import unittest
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.helpgen.sphinx_main import process_notebooks
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_travis
+from pyquickhelper.pycode import (
+    get_temp_folder, ExtTestCase, skipif_travis,
+    skipif_appveyor
+)
 
 
 class TestNoteBooksExporter(ExtTestCase):
 
     @skipif_travis('pandoc is not installed on travis')
+    @skipif_appveyor('miktex is missing')
     def test_notebook_rst_svg(self):
         fLOG(
             __file__,
@@ -41,6 +45,7 @@ class TestNoteBooksExporter(ExtTestCase):
         self.assertGreater(nb, 0)
 
     @skipif_travis('pandoc is not installed on travis')
+    @skipif_appveyor('miktex is missing')
     def test_notebook_rst_contents(self):
         fLOG(
             __file__,
