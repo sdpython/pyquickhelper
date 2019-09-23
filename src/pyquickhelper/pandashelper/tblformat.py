@@ -142,7 +142,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 except IndexError:
                     pass
             if label_pattern is not None:
-                lab = label_pattern.format(section=key)
+                lab = label_pattern.format(section=key.replace(".", "D"))
                 rows.append("")
                 rows.append(lab)
             rows.append("")
