@@ -112,7 +112,7 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
     elif algo == "AES":
         from Cryptodome.Cipher import AES
         ksize = {16, 32, 64, 128, 256}
-        chunksize = chunksize
+        chunksize = chunksize  # pylint: disable=W0127
         if len(key) not in ksize:
             raise EncryptionError(
                 "len(key)=={0} should be of length {1}".format(len(key), str(ksize)))
@@ -168,7 +168,7 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
         chunk = in_stream.read(chunksize)
         if len(chunk) == 0:
             break
-        elif len(chunk) % 16 != 0 and origsize is not None:
+        if len(chunk) % 16 != 0 and origsize is not None:
             chunk += b' ' * (16 - len(chunk) % 16)
 
         out_stream.write(encryptor.encrypt(chunk))

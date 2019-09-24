@@ -398,9 +398,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     pygments_style = 'sphinx'
 
     # personnalization
-    project_var_name = module_name
-    author = author
-    nblayout = nblayout
+    project_var_name = module_name  # pylint: disable=W0127
+    author = author  # pylint: disable=W0127
+    nblayout = nblayout  # pylint: disable=W0127
     year = str(year)
     modindex_common_prefix = [project_var_name + ".", ]
     project = (project_var_name + ' documentation') if title is None else title
@@ -409,7 +409,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     html_title = ("%s %s" % (project_var_name, release)
                   ) if title is None else title
     htmlhelp_basename = '%s_doc' % project_var_name
-    enable_disabled_parts = enable_disabled_parts
+    enable_disabled_parts = enable_disabled_parts  # pylint: disable=W0127
 
     # personnalization latex
     _proj = project_var_name.replace("_", "\\_")
@@ -471,7 +471,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # blogs (custom parameter)
     blog_background = True
     blog_background_page = False
-    sharepost = sharepost
+    sharepost = sharepost  # pylint: disable=W0127
 
     # jupyter_sphinx
     # See https://thebelab.readthedocs.io/en/latest/config_reference.html

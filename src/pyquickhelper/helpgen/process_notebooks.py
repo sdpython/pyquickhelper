@@ -373,12 +373,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     if pandoco is None:
                         skipped.append(trueoutputfile)
                         continue
-                    else:
-                        out2 = os.path.splitext(
-                            trueoutputfile)[0] + "." + pandoco
-                        if os.path.exists(out2):
-                            skipped.append(trueoutputfile)
-                            continue
+                    out2 = os.path.splitext(
+                        trueoutputfile)[0] + "." + pandoco
+                    if os.path.exists(out2):
+                        skipped.append(trueoutputfile)
+                        continue
 
             # if the format is slides, we update the metadata
             options_args = {}

@@ -317,8 +317,7 @@ class FileTreeNode:
                         continue
                 if n.isdir() and len(n._children) == 0:
                     continue
-                else:
-                    self._children.append(n)
+                self._children.append(n)
 
     def get(self):
         """

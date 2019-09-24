@@ -327,7 +327,7 @@ def get_relative_path(folder, file, exists=True, absolute=True):
     while i < len(sd):
         if i >= len(sf):
             break
-        elif sf[i] != sd[i]:
+        if sf[i] != sd[i]:
             break
         i += 1
     if absolute:
@@ -360,7 +360,7 @@ def download(httpfile, path_unzip=None, outfile=None, flatten=True, fLOG=None):
     if fLOG is None:
         fLOG = noLOG
     if fLOG == "fLOG":
-        fLOG = fLOG
+        fLOG = fLOG  # pylint: disable=W0127
     if path_unzip is None:
         path_unzip = GetPath()
     file = _check_source(httpfile, path_unzip=path_unzip,

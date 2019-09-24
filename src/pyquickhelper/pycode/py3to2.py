@@ -215,7 +215,7 @@ def py3to2_future(content):
                 incomment = None
                 position += 1
                 break
-            elif lines[position].endswith('"""'):
+            if lines[position].endswith('"""'):
                 incomment = None
                 position += 1
                 break

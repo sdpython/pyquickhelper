@@ -29,7 +29,7 @@ def get_jenkins_mappings(root, loc="dist"):
         if isinstance(ro, tuple):
             prefix, ro = ro
         else:
-            prefix, ro = "", ro
+            prefix, ro = "", ro  # pylint: disable=W0127
         ro = os.path.abspath(ro)
         sub = os.listdir(ro)
         for s in sub:

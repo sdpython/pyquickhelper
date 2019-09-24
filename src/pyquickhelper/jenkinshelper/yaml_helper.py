@@ -240,7 +240,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
             if value != "python":
                 raise NotImplementedError("language must be python")
             continue
-        elif value is not None:
+        if value is not None:
             if key in {'python', 'script'} and not isinstance(value, list):
                 value = [value]
             count[key] = len(value)

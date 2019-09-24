@@ -160,7 +160,7 @@ class StaticInteract(object):
 
         @return     string
         """
-        names = [name for name in self.widgets]
+        names = list(self.widgets)
         values = [widget.values() for widget in self.widgets.values()]
         defaults = tuple([widget.default for widget in self.widgets.values()])
 

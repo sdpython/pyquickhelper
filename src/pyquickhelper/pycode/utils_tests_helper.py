@@ -150,7 +150,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                pylint_ignore=('C0103', 'C1801',
                               'R0201', 'R1705',
                               'W0108', 'W0613',
-                              'W0107'),
+                              'W0107', 'C0415'),
                recursive=True, neg_pattern=None, extended=None,
                max_line_length=143, pattern=".*[.]py$",
                run_lint=True, verbose=False, run_cmd_filter=None):

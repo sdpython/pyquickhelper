@@ -360,7 +360,7 @@ class NotebookRunner(object):
                       for _ in reply['content']['traceback']]
             except KeyError:
                 tr = ["No traceback, available keys in reply['content']"] + \
-                    [_ for _ in reply['content']]
+                    list(reply['content'])
             traceback_text = '\n'.join(tr)
             self.fLOG("[nberror]\n", traceback_text)
             if self.detailed_log:
@@ -414,7 +414,7 @@ class NotebookRunner(object):
             if msg_type in ('status', 'pyin', 'execute_input'):
                 continue
 
-            elif msg_type == 'stream':
+            if msg_type == 'stream':
                 out.stream = content['name']
                 # in msgspec 5, this is name, text
                 # in msgspec 4, this is name, data
@@ -968,7 +968,7 @@ class NotebookRunner(object):
                 r = valid(codei)
                 if r is None:
                     break
-                elif not r:
+                if not r:
                     continue
             try:
                 nbrun += 1

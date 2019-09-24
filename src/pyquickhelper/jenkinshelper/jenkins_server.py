@@ -111,17 +111,17 @@ class JenkinsExt(jenkins.Jenkins):
     A job can send a mail at the end of the job execution.
     """
 
-    _config_job = _config_job
-    _trigger_up = _trigger_up
-    _trigger_time = _trigger_time
-    _trigger_startup = _trigger_startup
-    _git_repo = _git_repo
-    _task_batch_win = _task_batch_win
-    _task_batch_lin = _task_batch_lin
-    _publishers = _publishers
-    _wipe_repo = _wipe_repo
-    _artifacts = _artifacts
-    _cleanup_repo = _cleanup_repo
+    _config_job = _config_job  # pylint: disable=W0127
+    _trigger_up = _trigger_up  # pylint: disable=W0127
+    _trigger_time = _trigger_time  # pylint: disable=W0127
+    _trigger_startup = _trigger_startup  # pylint: disable=W0127
+    _git_repo = _git_repo  # pylint: disable=W0127
+    _task_batch_win = _task_batch_win  # pylint: disable=W0127
+    _task_batch_lin = _task_batch_lin  # pylint: disable=W0127
+    _publishers = _publishers  # pylint: disable=W0127
+    _wipe_repo = _wipe_repo  # pylint: disable=W0127
+    _artifacts = _artifacts  # pylint: disable=W0127
+    _cleanup_repo = _cleanup_repo  # pylint: disable=W0127
 
     def __init__(self, url, username=None, password=None, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
                  mock=False, engines=None, platform=None, pypi_port=8067, fLOG=noLOG,

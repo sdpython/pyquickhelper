@@ -89,7 +89,7 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
             if os.path.isdir(il):
                 temp = get_test_file(
                     filter, il, no_subfolder=True, fLOG=fLOG, root=root)
-                temp = [t for t in temp]
+                temp = list(temp)
                 li.extend(temp)
 
     # we restore sys.path
@@ -294,7 +294,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     if len(li) == 0:
         raise FileNotFoundError("no test files in " + path_test)
     est = [get_estimation_time(l) for l in li]
-    co = [(e, short_name(l), l) for e, l in zip(est, li)]
+    co = [(e, short_name(l), l)
+          for e, l in zip(est, li)]  # pylint: disable=R1721
     co.sort()
 
     # we check we do not run twice the same file
