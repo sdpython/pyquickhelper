@@ -24,6 +24,7 @@ from sphinx.util.build_phase import BuildPhase
 from sphinx.util.logging import prefixed_warnings
 from sphinx.project import Project
 from sphinx.errors import ApplicationError
+from sphinx.util.logging import getLogger
 from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
 from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
@@ -640,7 +641,6 @@ class _MemoryBuilder:
         try:
             output = self.templates.render(templatename, ctx)
         except UnicodeError:
-            from sphinx.util.logging import getLogger
             logger = getLogger("MockSphinxApp")
             logger.warning("[_CustomSphinx] A unicode error occurred when rendering the page %s. "
                            "Please make sure all config values that contain "
@@ -974,7 +974,6 @@ class _CustomSphinx(Sphinx):
             'doctree': ('doctree', 'DocTreeBuilder')}
         '''
         # own purpose (to monitor)
-        from sphinx.util.logging import getLogger
         self._logger = getLogger("_CustomSphinx")
         self._added_objects = []
         self._added_collectors = []
@@ -1351,6 +1350,10 @@ class _CustomSphinx(Sphinx):
     def setup_extension(self, extname):
         self._added_objects.append(('extension', extname))
 
+        logger = getLogger('sphinx.application')
+        disa = logger.logger.disabled
+        logger.logger.disabled = True
+
         # delayed import to speed up time
         try:
             with warnings.catch_warnings():
@@ -1360,6 +1363,8 @@ class _CustomSphinx(Sphinx):
         except Exception as e:
             raise ExtensionError(
                 "Unable to setup extension '{0}'".format(extname)) from e
+        finally:
+            logger.logger = disa
 
     def add_directive(self, name, obj, content=None, arguments=None, override=True, **options):
         self._added_objects.append(('directive', name))
