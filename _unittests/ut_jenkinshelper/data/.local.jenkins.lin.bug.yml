@@ -12,7 +12,7 @@ virtualenv:
   
 before_script:
     # regular expression for Jenkins view: ((.*PUBLISH.*)|(.*PYPI.*))|(.*37.*.*((std)|(STD)).*)
-  -  $PYINT -c "from pip._internal import main;main(\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyquickhelper jyquickhelper mlinsights --extra-index-url=https://pypi.python.org/simple/\".split())"
+  -  $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyquickhelper jyquickhelper mlinsights --extra-index-url=https://pypi.python.org/simple/
 
 script:
   - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
