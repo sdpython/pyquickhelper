@@ -67,6 +67,7 @@ def _filter_out_warning(out):
             skip = skip or "RuntimeWarning: Config variable 'Py_DEBUG'" in line
             skip = skip or "RuntimeWarning: Config variable 'WITH_PYMALLOC'" in line
             skip = skip or "UserWarning: Unbuilt egg for Unknown" in line
+            skip = skip or "pkg_resources.working_set.add" in line
             for mod in ['pyquickhelper', 'nbconvert', 'six']:
                 skip = skip or "UserWarning: Module {} was already imported".format(
                     mod) in line
