@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2019-09-22 - 0.00Mb
+current - 2019-10-21 - 0.00Mb
 =============================
+
+* `275`: Add six to the module to ignore in _filter_out_warning (2019-10-21)
+* `255`: Moves blog generation inside sphinx (2019-10-09)
+
+1.9.3227 - 2019-09-22 - 2.05Mb
+==============================
 
 * `274`: Add parameter min_size to check wrong downloads in function read_content_ufs (2019-09-22)
 
