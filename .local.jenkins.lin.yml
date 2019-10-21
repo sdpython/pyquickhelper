@@ -19,7 +19,7 @@ install:
   - $PYINT -m pip install -r requirements.txt
   - $PYINT --version
   - $PYINT -m pip uninstall -y pyquickhelper
-  - $PYINT -c "from pip._internal import main;main([\"freeze\"])"
+  - $PYINT -m pip freeze
 
 # The script to run.
 # Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
