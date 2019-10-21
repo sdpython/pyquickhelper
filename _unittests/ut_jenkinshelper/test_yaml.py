@@ -338,11 +338,11 @@ class TestYaml(unittest.TestCase):
 
             echo INSTALL
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
-            $PYINT -c "from pip._internal import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/\\".split())"
+            $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -c "from pip._internal import main;main(\\"install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyrsslocal --no-deps --extra-index-url=https://pypi.python.org/simple/\\".split())"
+            $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyrsslocal --no-deps --extra-index-url=https://pypi.python.org/simple/
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -c "from pip._internal import main;main(\\"install -r requirements.txt\\".split())"
+            $PYINT -m pip install -r requirements.txt
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT --version
             if [ $? -ne 0 ]; then exit $?; fi
