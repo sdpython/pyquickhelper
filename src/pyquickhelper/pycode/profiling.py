@@ -58,7 +58,8 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
     @param      as_df           return the results as a dataframe and not text
     @param      pyinst_format   format for :epkg:`pyinstrument`, if not empty,
                                 the function uses this module or raises an exception if not
-                                installed
+                                installed, the options are *text*, *textu* (text with colors),
+                                *json*, *html*
     @param      kwargs          additional parameters used to create the profiler
     @return                     raw results, statistics text dump (or dataframe is *as_df* is True)
 
