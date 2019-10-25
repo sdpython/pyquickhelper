@@ -10,7 +10,7 @@ import unittest
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
-from pyquickhelper.imghelper.img_helper import zoom_img
+from pyquickhelper.imghelper.img_helper import zoom_img, white_to_transparency
 
 
 class TestImgHelper(ExtTestCase):
@@ -33,6 +33,14 @@ class TestImgHelper(ExtTestCase):
         dest = os.path.join(temp, "{}")
         obj = zoom_img(data, factor=0.5, out_file=dest)
         dest = os.path.join(temp, "image.png")
+        self.assertExists(dest)
+        self.assertNotEmpty(obj)
+
+    def test_transparency(self):
+        temp = get_temp_folder(__file__, "temp_transparency")
+        data = os.path.join(temp, "..", "data", "image.png")
+        dest = os.path.join(temp, "image2.png")
+        obj = white_to_transparency(data, out_file=dest)
         self.assertExists(dest)
         self.assertNotEmpty(obj)
 
