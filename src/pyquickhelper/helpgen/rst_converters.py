@@ -218,7 +218,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
         :epkg:`Sphinx` calls :epkg:`latex` through command line.
         On :epkg:`Windows`, a command line window
-        can annoyingly show up anytime a formula is compile.
+        can annoyingly show up anytime a formula is compiled.
         The following can be added to hide it:
 
         ::

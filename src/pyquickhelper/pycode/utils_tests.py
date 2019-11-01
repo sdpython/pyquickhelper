@@ -82,7 +82,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             build_setup_help_on_windows.bat
 
         This works if you installed Jenkins with your credentials.
-        Otherwise the path to ``pandoc.exe`` needs to be changed.
+        Otherwise, the path to ``pandoc.exe`` needs to be changed.
         And you can also read `Schedule builds with Jenkins
         <http://www.xavierdupre.fr/blog/2014-12-06_nojs.html>`_.
         :epkg:`node.js` might be required if a notebooks contain javascript.
