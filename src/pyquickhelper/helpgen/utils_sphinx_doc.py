@@ -411,7 +411,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
 
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
-    if not_expected not in ("jenkins", 'vsts') and not_expected in fullnamenoext:
+    if not_expected not in ("jenkins", 'vsts', 'runner') and not_expected in fullnamenoext:
         mes = "The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'" + \
             "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
         raise HelpGenException(mes.format(
