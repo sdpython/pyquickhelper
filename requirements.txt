@@ -8,6 +8,7 @@ coverage
 cryptography
 docformatter
 git-pandas
+img2pdf
 ipython>=5.0.0
 js2py
 jupyter

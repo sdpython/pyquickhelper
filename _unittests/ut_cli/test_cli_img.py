@@ -21,6 +21,12 @@ class TestCliImgHelper(ExtTestCase):
         res = str(st)
         self.assertIn("zoom_img [-h]", res)
 
+    def test_images2pdf_help(self):
+        st = BufferedPrint()
+        main(args=['images2pdf', '--help'], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn("images2pdf [-h]", res)
+
     def test_zoom_img_do(self):
         temp = get_temp_folder(__file__, 'temp_img_zoom')
         dest = os.path.join(temp, '{}')
