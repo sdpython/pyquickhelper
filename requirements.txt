@@ -37,6 +37,7 @@ pylint
 pylzma
 python-jenkins>=1.0.0
 PyYAML
+scipy
 semantic_version
 setuptools
 Sphinx>=2.1

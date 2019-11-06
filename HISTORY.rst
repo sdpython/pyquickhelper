@@ -5,8 +5,16 @@
 History
 =======
 
-current - 2019-10-21 - 0.00Mb
+current - 2019-11-06 - 0.00Mb
 =============================
+
+* `279`: Add method assertEqualSparseArray (2019-11-06)
+* `277`: Grammar and spelling fixes. (2019-11-06)
+* `278`: Add simple command line to merge multiple images into one PDF (2019-11-04)
+* `276`: Add function to make white transparent in an image. (2019-10-28)
+
+1.9.3240 - 2019-10-21 - 2.05Mb
+==============================
 
 * `275`: Add six to the module to ignore in _filter_out_warning (2019-10-21)
 * `255`: Moves blog generation inside sphinx (2019-10-09)
