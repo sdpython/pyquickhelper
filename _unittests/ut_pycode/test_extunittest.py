@@ -223,6 +223,45 @@ class TestExtTestCase(ExtTestCase):
         except Exception as e:
             self.assertIn('older than', str(e))
 
+    def test_sparse_arr(self):
+        from numpy import array
+        from scipy.sparse import coo_matrix, csc_matrix, csr_matrix
+        df = coo_matrix(array([[0, 1], [1, 2]]))
+        df1 = coo_matrix(array([[0, 1], [1, 2]]))
+        df2 = coo_matrix(array([[0, 1], [3, 2]]))
+        self.assertEqualSparseArray(df, df1)
+        self.assertEqualSparseArray(None, None)
+        self.assertRaise(lambda: self.assertEqualSparseArray(df, df2),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualSparseArray(df, None),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualSparseArray(None, df),
+                         AssertionError)
+
+        df = csr_matrix(array([[0, 1], [1, 2]]))
+        df1 = csr_matrix(array([[0, 1], [1, 2]]))
+        df2 = csr_matrix(array([[0, 1], [3, 2]]))
+        self.assertEqualSparseArray(df, df1)
+        self.assertEqualSparseArray(None, None)
+        self.assertRaise(lambda: self.assertEqualSparseArray(df, df2),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualSparseArray(df, None),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualSparseArray(None, df),
+                         AssertionError)
+
+        df = csc_matrix(array([[0, 1], [1, 2]]))
+        df1 = csc_matrix(array([[0, 1], [1, 2]]))
+        df2 = csc_matrix(array([[0, 1], [3, 2]]))
+        self.assertEqualSparseArray(df, df1)
+        self.assertEqualSparseArray(None, None)
+        self.assertRaise(lambda: self.assertEqualSparseArray(df, df2),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualSparseArray(df, None),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualSparseArray(None, df),
+                         AssertionError)
+
 
 if __name__ == "__main__":
     unittest.main()

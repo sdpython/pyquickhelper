@@ -137,6 +137,31 @@ class ExtTestCase(unittest.TestCase):
         from numpy.testing import assert_almost_equal
         assert_almost_equal(d1, d2, **kwargs)
 
+    def assertEqualSparseArray(self, d1, d2, **kwargs):
+        if type(d1) != type(d2):  # pylint: disable=C0123
+            raise AssertionError("d1 and d2 have difference types {} != {}.".format(
+                type(d1), type(d2)))
+        if d1 is None and d2 is None:
+            return
+        if (hasattr(d1, 'data') and hasattr(d1, 'row') and hasattr(d1, 'col') and
+                hasattr(d2, 'data') and hasattr(d2, 'row') and hasattr(d2, 'col')):
+            # coo_matrix
+            self.assertEqual(d1.shape, d2.shape)
+            self.assertEqualArray(d1.data, d2.data)
+            self.assertEqualArray(d1.row, d2.row)
+            self.assertEqualArray(d1.col, d2.col)
+            return
+        if (hasattr(d1, 'data') and hasattr(d1, 'indices') and hasattr(d1, 'indptr') and
+                hasattr(d2, 'data') and hasattr(d2, 'indices') and hasattr(d2, 'indptr')):
+            # coo_matrix
+            self.assertEqual(d1.shape, d2.shape)
+            self.assertEqualArray(d1.data, d2.data)
+            self.assertEqualArray(d1.indices, d2.indices)
+            self.assertEqualArray(d1.indptr, d2.indptr)
+            return
+        raise NotImplementedError("Comparison not implemented for types {} and {}.".format(
+            type(d1), type(d2)))
+
     def assertNotEqualArray(self, d1, d2, **kwargs):
         """
         Checks that two arrays are equal.
