@@ -638,7 +638,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         should be used instead:
         see `How to input Traditional Chinese in pdfLaTeX
         <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
-        Until this is being implemeted, the unicode will unfortunately be removed
+        Until this is being implemented, the unicode will unfortunately be removed
         in this function.
     """
     if fLOG:

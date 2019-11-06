@@ -61,7 +61,7 @@ class NotebookRunner(object):
         If the class is instantiated with *kernel=True*, a kernel will
         be started. It must be shutdown otherwise the program might
         be waiting for it for ever. That is one of the reasons why the
-        travis build does not complete. The build finished but cannot temrinate
+        travis build does not complete. The build finished but cannot terminate
         until all kernels are shutdown.
     """
 
