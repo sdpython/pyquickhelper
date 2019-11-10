@@ -82,7 +82,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          filter_commit=lambda c: c.strip() != "documentation",
                          extra_ext=None,
                          nbformats=("ipynb", "slides", "html", "python",
-                                    "rst", "pdf", "present", "github"),
+                                    "rst", "pdf", "github"),
                          layout=None,
                          module_name=None, from_repo=True, add_htmlhelp=False,
                          copy_add_ext=None, direct_call=False, fLOG=fLOG,
@@ -235,8 +235,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     The function automatically adds custom role and custom directive ``sharenet``.
     The function directly calls
     `sphinx <http://www.sphinx-doc.org/en/stable/>`_,
-    `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_,
-    `nbpresent <https://github.com/Anaconda-Platform/nbpresent>`_.
+    `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_.
     When there are too many notebooks, the notebook index is difficult to read.
     It does not require to get script location.
     Not enough stable from virtual environment.
@@ -874,7 +873,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                            'pydoc', 'py', 'pygments', 'requests', 'runpy', 'simplegeneric',
                            'sphinx', 'sqlite3', 'tornado', 'traitlets', 'typing', 'wcwidth',
                            'pythoncom', 'distutils', 'six', 'webbrowser', 'win32api', 'win32com',
-                           'sphinxcontrib', 'zmq', 'nbformat', 'nbpresent', 'nbconvert',
+                           'sphinxcontrib', 'zmq', 'nbformat', 'nbconvert',
                            'encodings', 'entrypoints', 'html', 'ipykernel', 'isodate',
                            'jsonschema', 'jupyter_client', 'mistune', 'nbbrowserpdf',
                            'notebook', 'pyparsing', 'zmq', 'jupyter_core',

@@ -24,7 +24,7 @@ class TestNoteBooksBugJs(ExtTestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks_js"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["slides", "present", "ipynb", "html",
+        formats = ["slides", "ipynb", "html",
                    "python", "rst", "pdf"]
         if sys.platform.startswith("win"):
             formats.append("docx")

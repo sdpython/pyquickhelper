@@ -23,7 +23,7 @@ class TestNoteBooksBugRaw(ExtTestCase):
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if "TD_2A" in _]
         self.assertGreater(len(nbs), 0)
-        formats = ["latex", "present", "ipynb", "html",
+        formats = ["latex", "ipynb", "html",
                    "python", "rst", "pdf"]
         if sys.platform.startswith("win"):
             formats.append("docx")

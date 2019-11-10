@@ -119,64 +119,6 @@ def nb2slides(nb_file, outfile, add_tag=True):
     return res
 
 
-def _nbpresent_export(ipynb=None, outfile=None, out_format=None, verbose=None):
-    if out_format in ["pdf"]:
-        raise NotImplementedError(
-            "format {0} is not allowed".format(out_format))
-    if out_format in ["html"]:
-        from nbpresent.exporters.html import PresentExporter as Exporter
-
-    from nbpresent.exporters import APP_ROOT
-
-    exp = Exporter(
-        template_file="nbpresent",
-        template_path=[os.path.join(APP_ROOT, "templates")]
-    )
-
-    output = exp.from_file(ipynb)[0]
-    if outfile is None:
-        return output
-    else:
-        with open(outfile, "w", encoding="utf-8") as fp:
-            fp.write(output)
-    return output
-
-
-def nb2present(nb_file, outfile, add_tag=True):
-    """
-    Converts a notebooks into slides with *format=present*.
-
-    @param      nb_file         notebook file or a stream or a @see fn read_nb
-    @param      outfile         output file (a string)
-    @param      add_tag         call @see me add_tag_slide
-    @return                     impacted files
-    """
-    from ..ipythonhelper import NotebookRunner, read_nb
-
-    if isinstance(nb_file, NotebookRunner):
-        nb = nb_file.nb
-    else:
-        nbr = read_nb(nb_file, kernel=False)
-        nb = nbr.nb
-
-    run = NotebookRunner(nb, kernel=False)
-    if add_tag:
-        run.add_tag_slide()
-
-    # to be implemented
-    js = run.to_json()
-    st = StringIO(js)
-    content = _nbpresent_export(st, outfile, out_format="html")
-    if outfile is None:
-        outfile = content
-
-    # post_processing
-    from .post_process import post_process_slides_output
-    post_process_slides_output(outfile, False, False, False, False)
-    res = [outfile]
-    return res
-
-
 def nb2html(nb_file, outfile, exc=True):
     """
     Converts a notebook into HTML.

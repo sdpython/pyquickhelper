@@ -68,8 +68,6 @@ notebook
 
 .. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2html
 
-.. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2present
-
 .. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2slides
 
 .. autosignature:: pyquickhelper.helpgen.process_notebook_api.nb2rst

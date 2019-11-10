@@ -70,7 +70,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                        additional_notebook_path=None, additional_local_path=None, copy_add_ext=None,
                                        nbformats=(
                                            "ipynb", "html", "python", "rst", "slides",
-                                           "pdf", "present", "github"),
+                                           "pdf", "github"),
                                        layout=None, direct_call=False,
                                        additional_ut_path=None,
                                        skip_function=default_skip_function, covtoken=None, hook_print=True,
@@ -657,7 +657,7 @@ def clean_notebooks_for_numbers(file_or_folder):
 def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=None, extra_ext=None,
                             add_htmlhelp=False, copy_add_ext=None,
                             nbformats=("ipynb", "html", "python",
-                                       "rst", "slides", "pdf", "present"),
+                                       "rst", "slides", "pdf"),
                             layout=None, use_run_cmd=False, direct_call=False,
                             fexclude=None, fLOG=noLOG):
     """

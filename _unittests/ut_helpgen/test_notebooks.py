@@ -48,7 +48,7 @@ class TestNotebookConversion(ExtTestCase):
             p1 = "."
             p2 = "."
 
-        formats = ["slides", "ipynb", "html", "python", "rst", "present"]
+        formats = ["slides", "ipynb", "html", "python", "rst"]
         exp = ["example_pyquickhelper2html.html",
                "example_pyquickhelper.ipynb",
                "example_pyquickhelper.py",

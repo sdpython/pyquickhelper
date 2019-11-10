@@ -257,7 +257,6 @@ if not r:
             "multi_key_dict",
             # see https://github.com/sdpython/pyquickhelper/issues/216
             # "nbconvert @ git+https://github.com/sdpython/nbconvert.git@fixes",
-            "nbpresent",
             "notebook>=4.2.0",
             "numpy>=1.16.0",
             "pandas>=0.20.0",

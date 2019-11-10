@@ -276,8 +276,6 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
     @param      html                    if True, add a link to the :epkg:`html` conversion
     @param      python                  if True, add a link to the :epkg:`Python` conversion
     @param      slides                  if True, add a link to the slides conversion
-    @param      present                 if True, add a link to the slides conversion
-                                        (with :epkg:`nbpresent`)
     @param      is_notebook             does something more if the file is a notebook
     @param      exc                     raises an exception (True) or a warning (False)
     @param      github                  add a link to the notebook on :epkg:`github`
@@ -402,9 +400,6 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         links.append(':download:`python <{0}.py>`'.format(noext))
     if slides:
         links.append(':downloadlink:`slides <{0}.slides.html>`'.format(noext))
-    if present:
-        links.append(
-            ':downloadlink:`slides(2) <{0}.slides2p.html>`'.format(noext))
 
     if github:
         if notebook is None:
@@ -498,7 +493,7 @@ def post_process_rst_output(file, html, pdf, python, slides, present, is_noteboo
         f.write(content)
 
 
-def post_process_html_output(file, pdf, python, slides, present, exc=True,
+def post_process_html_output(file, pdf, python, slides, exc=True,
                              nblinks=None, fLOG=None,
                              notebook_replacements=None):
     """
@@ -509,7 +504,6 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True,
                                         at the same location
     @param      python                  if True, add a link to the Python conversion
     @param      slides                  if True, add a link to the slides conversion
-    @param      present                 if True, add a link to the slides conversion (with *nbpresent*)
     @param      exc                     raises an exception (True) or a warning (False)
     @param      nblinks                 dictionary ``{ref: url}``
     @param      notebook_replacements   string replacement in notebooks
@@ -538,7 +532,7 @@ def post_process_html_output(file, pdf, python, slides, present, exc=True,
         f.write(text)
 
 
-def post_process_slides_output(file, pdf, python, slides, present, exc=True,
+def post_process_slides_output(file, pdf, python, slides, exc=True,
                                nblinks=None, fLOG=None,
                                notebook_replacements=None):
     """
@@ -549,7 +543,6 @@ def post_process_slides_output(file, pdf, python, slides, present, exc=True,
                                         exists at the same location
     @param      python                  if True, add a link to the Python conversion
     @param      slides                  if True, add a link to the slides conversion
-    @param      present                 if True, add a link to the slides conversion (with *nbpresent*)
     @param      exc                     raises an exception (True) or a warning (False)
     @param      nblinks                 dictionary ``{ref: url}``
     @param      notebook_replacements   string replacement in notebooks

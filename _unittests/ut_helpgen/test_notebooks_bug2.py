@@ -24,7 +24,7 @@ class TestNoteBooksBug2(ExtTestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks2"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["present", "ipynb", "html",
+        formats = ["ipynb", "html",
                    "python", "rst", "pdf"]
         if sys.platform.startswith("win"):
             formats.append("docx")

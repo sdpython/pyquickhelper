@@ -21,7 +21,6 @@ matplotlib
 mistune
 git+https://github.com/sdpython/nbconvert.git@fixes
 nbformat
-nbpresent
 notebook>=5.0.0
 numpy>=1.16
 openpyxl

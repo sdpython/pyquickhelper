@@ -75,7 +75,7 @@ class TestNoteBooksFind(ExtTestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks_find"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["slides", "rst", "present", "ipynb", "html",
+        formats = ["slides", "rst", "ipynb", "html",
                    "python", "pdf"]
         if sys.platform.startswith("win"):
             formats.append("docx")

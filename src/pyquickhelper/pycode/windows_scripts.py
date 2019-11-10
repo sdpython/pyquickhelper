@@ -640,7 +640,6 @@ setup(
         "codecov",
         "docutils",
         "matplotlib>=1.5.1",
-        "nbpresent",
         "numpy>=1.11.1",
         "sphinx>=1.4.5",
         "pandas>=0.18.1",
