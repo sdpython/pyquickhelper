@@ -6,7 +6,7 @@
 import sys
 import os
 import unittest
-
+import shutil
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen.sphinx_main import process_notebooks
