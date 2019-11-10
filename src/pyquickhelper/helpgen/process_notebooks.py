@@ -634,7 +634,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
             elif format in ("tex", "elatex", "latex", "pdf"):
                 thisfiles += add_link_to_notebook(outputfile, notebook, False, False,
-                                                  False, False, False, exc=exc, nblinks=nblinks,
+                                                  False, False, exc=exc, nblinks=nblinks,
                                                   fLOG=fLOG, notebook_replacements=nb_replacements)
 
             elif format in ("py", "python"):

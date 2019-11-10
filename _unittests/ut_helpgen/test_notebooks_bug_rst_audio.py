@@ -26,6 +26,16 @@ class TestNoteBooksBugRstAudio(ExtTestCase):
         clog = CustomLog(temp)
         clog("test_notebook_rst_audio")
 
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        sty = os.path.join(fold, 'rst.tpl')
+        if not os.path.exists(sty):
+            sr = os.path.join(temp, '..', 'data', 'rst.tpl')
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            shutil.copy(sr, fold)
+
         clog("process_notebooks: begin")
         process_notebooks(nbs, temp, temp, formats=formats, fLOG=clog)
         clog("process_notebooks: end")

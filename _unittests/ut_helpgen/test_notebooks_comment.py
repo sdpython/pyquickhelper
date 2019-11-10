@@ -33,6 +33,16 @@ class TestNoteBooksComment(ExtTestCase):
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
 
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        sty = os.path.join(fold, 'rst.tpl')
+        if not os.path.exists(sty):
+            sr = os.path.join(temp, '..', 'data', 'rst.tpl')
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            shutil.copy(sr, fold)
+
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
         for _ in res:

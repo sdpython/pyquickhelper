@@ -25,6 +25,15 @@ class TestProcessNotebook(unittest.TestCase):
 
         temp = get_temp_folder(__file__, "temp_process_notebook")
         source = os.path.join(temp, "..", "data", "td1a_unit_test_ci.ipynb")
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        sty = os.path.join(fold, 'rst.tpl')
+        if not os.path.exists(sty):
+            sr = os.path.join(temp, '..', 'data', 'rst.tpl')
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            shutil.copy(sr, fold)
 
         st = BufferedPrint()
         main(args=["process_notebooks", "-n", source, "-o",

@@ -23,6 +23,17 @@ class TestNotebookConversion2(ExtTestCase):
 
         temp = get_temp_folder(
             __file__, "temp_notebook_conversion_replacements")
+
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        sty = os.path.join(fold, 'rst.tpl')
+        if not os.path.exists(sty):
+            sr = os.path.join(temp, '..', 'data', 'rst.tpl')
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            shutil.copy(sr, fold)
+
         this = os.path.join(temp, '..', "data", "TD_2A_Eco_Web_Scraping.ipynb")
         notebook_replacements = {'html': [('1ere page HTML', '2nd page-WWW')]}
         process_notebooks(this, build=temp, outfold=temp, formats=['html', 'slides'],
