@@ -227,6 +227,17 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
 
     The function does not work from a virtual environment.
     """
+    def filter_err(err):
+        lis = err.split("\n")
+        lines = []
+        for li in lis:
+            if "missing dependencies" in li:
+                continue
+            if "' misses '" in li:
+                continue
+            lines.append(li)
+        return "\n".join(lines).strip(" \r\n\t")
+
     if is_virtual_environment():
         raise NotImplementedErrorFromVirtualEnvironment()
 
@@ -240,9 +251,11 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
     if is_cmd:
         cmd = " ".join([exe] + script)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
+        err = filter_err(err)
         if len(err) > 0 and (skip_err_if is None or skip_err_if not in out):
             raise VirtualEnvError(
-                "unable to run cmd at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, venv, cmd))
+                "unable to run cmd at {2}\n--CMD--\n{3}\n--OUT--\n{0}\n[pyqerror]"
+                "\n{1}".format(out, err, venv, cmd))
         return out
     else:
         script = ";".join(script.split("\n"))
@@ -253,9 +266,11 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
         else:
             cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
+        err = filter_err(err)
         if len(err) > 0:
             raise VirtualEnvError(
-                "unable to run script at {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, venv, cmd))
+                "Unable to run script at {2}\n--CMD--\n{3}\n--OUT--\n{0}\n"
+                "[pyqerror]\n{1}".format(out, err, venv, cmd))
         return out
 
 
@@ -381,7 +396,7 @@ def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
               "with open('{0}', 'r', encoding='utf8') as g: s = g.read()".format(
                   readme.replace("\\", "\\\\")),
               "settings_overrides = {'output_encoding': 'unicode', 'doctitle_xform': True,",
-              "            initial_header_level': 2, 'warning_stream': io.StringIO()}",
+              "            'initial_header_level': 2, 'warning_stream': io.StringIO()}",
               "parts = core.publish_parts(source=s, parser=Parser(), reader=Reader(), source_path=None,",
               "            destination_path=None, writer=Writer(),",
               "            settings_overrides=settings_overrides)",
