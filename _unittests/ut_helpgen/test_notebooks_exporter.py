@@ -28,6 +28,19 @@ class TestNoteBooksExporter(ExtTestCase):
             temp, '..', "data", "rst_notebooks", "notebook_with_svg.ipynb"))]
         formats = ["rst"]
 
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        for tpl in ['rst', 'display_priority', 'null']:
+            sty = os.path.join(fold, '%s.tpl' % tpl)
+            sr = os.path.join(temp, '..', 'data', '%s.tpl' % tpl)
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            if not os.path.exists(sty):
+                shutil.copy(sr, fold)
+            if not os.path.exists('%s.tpl' % tpl):
+                shutil.copy(sr, '.')
+
         res = process_notebooks(nbs, temp, temp, formats=formats, fLOG=fLOG)
         name = res[0][0]
         with open(name, 'r', encoding='utf-8') as f:
@@ -55,6 +68,19 @@ class TestNoteBooksExporter(ExtTestCase):
         nbs = [os.path.normpath(os.path.join(
             temp, '..', "data", "rst_notebooks", "exemple_of_fix_menu.ipynb"))]
         formats = ["rst"]
+
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        for tpl in ['rst', 'display_priority', 'null']:
+            sty = os.path.join(fold, '%s.tpl' % tpl)
+            sr = os.path.join(temp, '..', 'data', '%s.tpl' % tpl)
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            if not os.path.exists(sty):
+                shutil.copy(sr, fold)
+            if not os.path.exists('%s.tpl' % tpl):
+                shutil.copy(sr, '.')
 
         res = process_notebooks(nbs, temp, temp, formats=formats, fLOG=fLOG)
         name = res[0][0]

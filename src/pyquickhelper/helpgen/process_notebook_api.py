@@ -150,7 +150,7 @@ def nb2html(nb_file, outfile, exc=True):
 
 def nb2rst(nb_file, outfile, exc=True, post_process=True):
     """
-    Converts a notebook into RST.
+    Converts a notebook into :epkg:`RST`.
 
     @param      nb_file         notebook file or a stream or a @see fn read_nb
     @param      outfile         output file (a string)

@@ -36,12 +36,15 @@ class TestNoteBooksComment(ExtTestCase):
         fold = 'static'
         if not os.path.exists(fold):
             os.mkdir(fold)
-        sty = os.path.join(fold, 'rst.tpl')
-        if not os.path.exists(sty):
-            sr = os.path.join(temp, '..', 'data', 'rst.tpl')
+        for tpl in ['rst', 'display_priority', 'null']:
+            sty = os.path.join(fold, '%s.tpl' % tpl)
+            sr = os.path.join(temp, '..', 'data', '%s.tpl' % tpl)
             if not os.path.exists(sr):
                 raise FileNotFoundError(sr)
-            shutil.copy(sr, fold)
+            if not os.path.exists(sty):
+                shutil.copy(sr, fold)
+            if not os.path.exists('%s.tpl' % tpl):
+                shutil.copy(sr, '.')
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
         fLOG("*****", len(res))
