@@ -6,6 +6,7 @@
 import sys
 import os
 import unittest
+import shutil
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
@@ -41,6 +42,16 @@ class TestNotebookAPI(ExtTestCase):
             self.assertExists(r)
 
         outfile = os.path.join(temp, "out_nb_slides.html")
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        sty = os.path.join(fold, 'style.css')
+        if not os.path.exists(sty):
+            sr = os.path.join(temp, '..', 'data', 'style.css')
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            shutil.copy(sr, fold)
+
         res = nb2html(nbr, outfile)
         self.assertEqual(len(res), 1)
         for r in res:
@@ -69,6 +80,17 @@ class TestNotebookAPI(ExtTestCase):
         nbr = read_nb(nb, kernel=False)
 
         temp = get_temp_folder(__file__, "temp_nb_api_rst")
+        outfile = os.path.join(temp, "out_nb_slides.html")
+        fold = 'static'
+        if not os.path.exists(fold):
+            os.mkdir(fold)
+        sty = os.path.join(fold, 'rst.tpl')
+        if not os.path.exists(sty):
+            sr = os.path.join(temp, '..', 'data', 'rst.tpl')
+            if not os.path.exists(sr):
+                raise FileNotFoundError(sr)
+            shutil.copy(sr, fold)
+
         outfile = os.path.join(temp, "out_nb_slides.rst")
         res = nb2rst(nbr, outfile)
         self.assertEqual(len(res), 1)

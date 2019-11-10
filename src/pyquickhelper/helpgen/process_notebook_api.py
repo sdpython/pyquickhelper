@@ -4,7 +4,6 @@
 @brief Direct calls to IPython API without running a command line
 """
 import os
-from io import StringIO
 
 
 def get_exporter(format, add_writer=False):
@@ -144,7 +143,7 @@ def nb2html(nb_file, outfile, exc=True):
 
     # post_processing
     from .post_process import post_process_html_output
-    post_process_html_output(outfile, False, False, False, False, exc=exc)
+    post_process_html_output(outfile, False, False, False, exc=exc)
     res = [outfile]
     return res
 

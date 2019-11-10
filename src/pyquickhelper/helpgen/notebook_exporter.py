@@ -9,8 +9,8 @@ import os
 from textwrap import indent
 from traitlets import default
 from traitlets.config import Config
-from nbconvert.exporters import RSTExporter
 from jinja2 import DictLoader
+from nbconvert.exporters import RSTExporter
 from nbconvert.filters.pandoc import convert_pandoc
 
 

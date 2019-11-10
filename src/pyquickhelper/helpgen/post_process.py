@@ -264,7 +264,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
         f.write(content)
 
 
-def post_process_rst_output(file, html, pdf, python, slides, present, is_notebook=False,
+def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                             exc=True, github=False, notebook=None, nblinks=None, fLOG=None,
                             notebook_replacements=None):
     """
