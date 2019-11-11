@@ -7,7 +7,7 @@ import sys
 import os
 import unittest
 from io import StringIO
-
+import shutil
 from pyquickhelper.loghelper import fLOG, BufferedPrint
 from pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor
 from pyquickhelper.__main__ import main

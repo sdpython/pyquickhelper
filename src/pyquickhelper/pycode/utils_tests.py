@@ -232,7 +232,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     content = [_ for _ in os.listdir(folder) if selec_name(folder, _)]
     if len(content) != 1:
         raise FileNotFoundError(
-            "Unable to guess the project name in {0}\n{1}".format(folder, "\n".join(content)))
+            "Unable to guess the project name in '{0}', content=\n{1}\n---\n{2}\n---".format(
+                folder, "\n".join(content), "\n".join(os.listdir(folder))))
 
     project_var_name = content[0]
     src_abs = os.path.normpath(os.path.abspath(
