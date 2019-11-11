@@ -256,7 +256,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
     if not os.path.exists(file):
         raise FileNotFoundError(
             "Unable to find '{}', other files in the same folder\n{}".format(
-                file, "\n".join(os.listdir(os.dirname(file)))))
+                file, "\n".join(os.listdir(os.path.dirname(file)))))
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
     with open(file + ".tex3.u{0}~".format(1 if remove_unicode else 0), "w", encoding="utf8") as f:

@@ -11,7 +11,7 @@
 
     ::
 
-        echo "deb http://ftp.debian.org/debian sid main" | sudo tee /etc/apt/sources.list.d/textlive-sid.list
+        echo "deb http://ftp.debian.org/debian sid main" | sudo tee /etc/apt/sources.list.d/texlive-sid.list
         sudo apt-get update
         sudo apt-get install texlive texlive-latex-extra texlive-xetex
 
