@@ -608,16 +608,6 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                                                   "slides" in formats, exc=exc,
                                                   nblinks=nblinks, fLOG=fLOG, notebook_replacements=nb_replacements)
 
-            elif format == "slides2p.html":
-                # we add a link to the notebook
-                if not os.path.exists(outputfile):
-                    raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
-                thisfiles += add_link_to_notebook(outputfile, notebook,
-                                                  "pdf" in formats, False, "python" in formats,
-                                                  "slides" in formats, exc=exc,
-                                                  nblinks=nblinks, fLOG=fLOG, notebook_replacements=nb_replacements)
-
             elif format == "ipynb":
                 # we just copy the notebook
                 thisfiles += add_link_to_notebook(outputfile, notebook,

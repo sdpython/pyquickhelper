@@ -8,7 +8,6 @@ matrix:
     env: sphinxconstraint=">=2.1"
 install: 
     - pip install -r requirements.txt
-    - pip install git+https://github.com/fancycode/pylzma.git --upgrade --no-deps
     - npm install
     - pip install sphinx$sphinxconstraint
     - pip install tkinterquickhelper --no-deps
