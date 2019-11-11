@@ -19,7 +19,7 @@ keyring
 Mako
 matplotlib
 mistune
-git+https://github.com/sdpython/nbconvert.git@fixes
+nbconvert
 nbformat
 notebook>=5.0.0
 numpy>=1.16
