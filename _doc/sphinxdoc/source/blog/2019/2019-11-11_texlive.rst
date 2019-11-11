@@ -1,0 +1,19 @@
+
+.. blogpost::
+    :title: Nbconvert requires recent version of latex
+    :keywords: nbconvert, texlive
+    :date: 2019-11-11
+    :categories: installation
+
+    The latest version of nbconvert which converts
+    notebooks into latex requires recent version latex > 2016.
+    To install a more recent version on debian:
+
+    ::
+
+        echo "deb http://ftp.debian.org/debian sid main" | sudo tee /etc/apt/sources.list.d/textlive-sid.list
+        sudo apt-get update
+        sudo apt-get install texlive texlive-latex-extra texlive-xetex
+
+    OR you can follow `TeX Live - Quick install
+    <https://www.tug.org/texlive/quickinstall.html>`_.

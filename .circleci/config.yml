@@ -22,8 +22,10 @@ jobs:
                     sudo dpkg -i pandoc-2.7.3-1-amd64.deb
           
       - run:
-          name: Install tex
+          name: Install tex (unstable)
           command: |
+                    sudo echo "deb http://ftp.debian.org/debian sid main" | sudo tee /etc/apt/sources.list.d/textlive-sid.list
+                    sudo apt-get update
                     sudo apt-get install -y texlive
                     sudo apt-get install -y texlive-latex-extra
                     sudo apt-get install -y texlive-xetex
