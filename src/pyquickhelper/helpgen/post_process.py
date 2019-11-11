@@ -637,6 +637,11 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         <http://tex.stackexchange.com/questions/200449/how-to-input-traditional-chinese-in-pdflatex>`_.
         Until this is being implemented, the unicode will unfortunately be removed
         in this function.
+
+    .. versionchanged:: 1.9
+        Removes the uses of package `parskip
+        <https://ctan.org/pkg/parskip?lang=en>`_, it uses command
+        ``\\DeclareRelease`` which is not always recognized.
     """
     if fLOG:
         fLOG("[post_process_latex]   ** enter post_process_latex",
@@ -735,6 +740,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     if not latex_book:
         st = st.replace("\\chapter", "\\section")
         st = st.replace("\\newchapter", "\\chapter")
+    if "\\usepackage{parskip}" in st:
+        st = st.replace("\\usepackage{parskip}", "%\\usepackage{parskip}")
     if "\\usepackage{multirow}" in st:
         st = st.replace(
             "\\usepackage{svg}\\usepackage{multirow}",
