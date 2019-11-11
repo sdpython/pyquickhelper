@@ -27,7 +27,7 @@ class TestNotebookConversion2(ExtTestCase):
         fold = 'static'
         if not os.path.exists(fold):
             os.mkdir(fold)
-        for tpl in ['rst', 'display_priority', 'null']:
+        for tpl in ['rst', 'display_priority', 'null', 'full']:
             sty = os.path.join(fold, '%s.tpl' % tpl)
             sr = os.path.join(temp, '..', 'data', '%s.tpl' % tpl)
             if not os.path.exists(sr):
