@@ -5,10 +5,8 @@
 import sys
 import os
 import unittest
-import shutil
 import warnings
 from textwrap import dedent
-
 from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.loghelper import run_cmd
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder

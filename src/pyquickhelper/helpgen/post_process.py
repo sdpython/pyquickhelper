@@ -255,7 +255,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
         fLOG("[post_process_latex_output_any]   ** post_process_latex_output_any ", file)
     if not os.path.exists(file):
         raise FileNotFoundError(
-            "Unable to find '{}', other files in the same folder\n{}".formmat(
+            "Unable to find '{}', other files in the same folder\n{}".format(
                 file, "\n".join(os.listdir(os.dirname(file)))))
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
