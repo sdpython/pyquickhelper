@@ -11,8 +11,8 @@ jobs:
 
       - restore_cache:
           keys:
-          - v2-dependencies-{{ checksum "requirements.txt" }}
-          - v2-dependencies-
+          - v3-dependencies-{{ checksum "requirements.txt" }}
+          - v3-dependencies-
 
       - run:
           name: Install pandoc
@@ -54,13 +54,13 @@ jobs:
             pip install -r requirements.txt
             pip install tkinterquickhelper --no-deps
             pip install scipy scikit-learn
-            pip install sphinx --upgrade
+            pip install nbconvert==5.6.1
             pip uninstall -y pyquickhelper
 
       - save_cache:
           paths:
             - ./venv
-          key: v2-dependencies-{{ checksum "requirements.txt" }}
+          key: v3-dependencies-{{ checksum "requirements.txt" }}
         
       - run:
           name: run tests

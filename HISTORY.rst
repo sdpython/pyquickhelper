@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2019-11-06 - 0.00Mb
+current - 2019-11-11 - 0.00Mb
 =============================
+
+* `281`: Removes use of specific versions of nbconvert and pylzma. (2019-11-11)
+* `280`: Removes conversion from notebook to nbpresent (2019-11-10)
+
+1.9.3248 - 2019-11-06 - 2.05Mb
+==============================
 
 * `279`: Add method assertEqualSparseArray (2019-11-06)
 * `277`: Grammar and spelling fixes. (2019-11-06)
