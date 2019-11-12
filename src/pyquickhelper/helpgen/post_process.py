@@ -742,6 +742,8 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
         st = st.replace("\\newchapter", "\\chapter")
     if "\\usepackage{parskip}" in st:
         st = st.replace("\\usepackage{parskip}", "%\\usepackage{parskip}")
+    if "\\usepackage{fontspec}" in st:
+        st = st.replace("\\usepackage{fontspec}", "%\\usepackage{fontspec}")
     if "\\usepackage{multirow}" in st:
         st = st.replace(
             "\\usepackage{svg}\\usepackage{multirow}",

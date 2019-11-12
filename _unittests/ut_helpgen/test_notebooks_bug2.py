@@ -15,7 +15,7 @@ from pyquickhelper.ipythonhelper import upgrade_notebook
 
 class TestNoteBooksBug2(ExtTestCase):
 
-    def test_notebook(self):
+    def ctest_notebook(self, name):
         fLOG(
             __file__,
             self._testMethodName,
@@ -23,13 +23,13 @@ class TestNoteBooksBug2(ExtTestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks2"))
         nbs = [os.path.join(fold, _)
-               for _ in os.listdir(fold) if ".ipynb" in _]
+               for _ in os.listdir(fold) if ".ipynb" in _ and name in _]
         formats = ["ipynb", "html",
                    "python", "rst", "pdf"]
         if sys.platform.startswith("win"):
             formats.append("docx")
 
-        temp = get_temp_folder(__file__, "temp_nb_bug2")
+        temp = get_temp_folder(__file__, "temp_nb_bug2_" + name)
 
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             return
@@ -47,10 +47,16 @@ class TestNoteBooksBug2(ExtTestCase):
             fLOG(_)
             self.assertExists(os.path.exists(_[0]))
 
-        check = os.path.join(temp, "miparcours.tex")
+        check = os.path.join(temp, name + ".tex")
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
         self.assertIn("\\end{document}", content)
+
+    def test_notebook_miparcours(self):
+        self.ctest_notebook('miparcours')
+
+    def test_notebook_td2a_eco_sql(self):
+        self.ctest_notebook('td2a_eco_sql')
 
 
 if __name__ == "__main__":
