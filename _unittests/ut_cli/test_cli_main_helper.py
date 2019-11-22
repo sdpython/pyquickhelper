@@ -92,6 +92,12 @@ class TestCliMainHelper(ExtTestCase):
         self.assertIn(
             "run_notebook [-h] [-f FILENAME] [-p PROFILE_DIR] [-w WORKING_DIR]", res)
 
+        st = BufferedPrint()
+        main(args=["repeat_script", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "epeat_script [-h] [-s SCRIPT] [-e EVERY_SECOND]", res)
+
     def test_main_epkg(self):
         st = BufferedPrint()
         main(args=["clean_files", "--help"], fLOG=st.fprint)

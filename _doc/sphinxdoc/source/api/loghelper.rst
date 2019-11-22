@@ -10,6 +10,13 @@ command line
 
 .. autosignature:: pyquickhelper.loghelper.run_cmd.run_cmd
 
+execution
++++++++++
+
+.. autosignature:: pyquickhelper.loghelper.time_helper.repeat_execution
+
+.. autosignature:: pyquickhelper.loghelper.time_helper.repeat_script_execution
+
 github
 ++++++
 
