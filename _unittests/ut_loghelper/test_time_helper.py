@@ -5,7 +5,7 @@ import os
 import unittest
 import time
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_travis
 from pyquickhelper.loghelper.time_helper import repeat_execution, repeat_script_execution
 
 
@@ -52,6 +52,7 @@ class TestTimeHelper(ExtTestCase):
         res = repeat_execution(fct_count)
         self.assertLess(len(res), 4)
 
+    @skipif_travis("stuck")
     def test_repeat_execution_script(self):
         temp = get_temp_folder(__file__, "temp_repeat_execution_script")
         outfile = os.path.join(temp, "out.txt")

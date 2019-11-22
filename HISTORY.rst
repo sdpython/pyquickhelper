@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2019-11-11 - 0.00Mb
+current - 2019-11-22 - 0.00Mb
 =============================
 
+* `282`: Write a function to run a function every n seconds (2019-11-22)
 * `281`: Removes use of specific versions of nbconvert and pylzma. (2019-11-11)
 * `280`: Removes conversion from notebook to nbpresent (2019-11-10)
 
