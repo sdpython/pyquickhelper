@@ -96,7 +96,13 @@ class TestCliMainHelper(ExtTestCase):
         main(args=["repeat_script", "--help"], fLOG=st.fprint)
         res = str(st)
         self.assertIn(
-            "epeat_script [-h] [-s SCRIPT] [-e EVERY_SECOND]", res)
+            "repeat_script [-h] [-s SCRIPT] [-e EVERY_SECOND]", res)
+
+        st = BufferedPrint()
+        main(args=["ftp_upload", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "ftp_upload [-h] [-f FILES] [-d DEST] [-ho HOST] [-u USER]", res)
 
     def test_main_epkg(self):
         st = BufferedPrint()
