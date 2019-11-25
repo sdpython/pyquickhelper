@@ -268,8 +268,8 @@ if not r:
             "sphinxcontrib-imagesvg",
         ],
         extras_require={
-            'cli': ['tkinterquickhelper'],
-            'filehelper': ['cffi', 'cryptography', 'pylzma'],  # cryptography
+            'cli': ['tkinterquickhelper', 'pysftp'],
+            'filehelper': ['cffi', 'cryptography', 'pylzma', 'pysftp'],  # cryptography
             'jenkinshelper': ['python-jenkins>=1.0.0', 'pyyaml'],
             'loghelper': ['psutil'],
         },

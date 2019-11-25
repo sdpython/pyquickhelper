@@ -34,6 +34,7 @@ pydocstyle
 pyinstrument
 pylint
 pylzma
+pysftp
 python-jenkins>=1.0.0
 PyYAML
 scipy

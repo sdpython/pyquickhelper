@@ -13,7 +13,10 @@ if "temp_" in os.path.abspath(__file__):
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder
-from pyquickhelper.filehelper import gzip_files, zip_files, zip7_files, download, unzip_files, ungzip_files, un7zip_files, unrar_files
+from pyquickhelper.filehelper import (
+    gzip_files, zip_files, zip7_files, download, unzip_files,
+    ungzip_files, un7zip_files, unrar_files, untar_files
+)
 from pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless, skipif_azure
 from pyquickhelper.pycode import is_travis_or_appveyor
 
@@ -146,6 +149,25 @@ class TestCompressHelper(unittest.TestCase):
         res[0] = res[0].replace("\\", "/")
         if not res[0].endswith("ut_filehelper/temp_compress_rar/stest1.txt"):
             raise Exception(res[0])
+
+    def test_uncompress_tar(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        typbytes = bytes
+        fold = get_temp_folder(__file__, "temp_compress_tar")
+        rz = os.path.join(fold, "..", "data", "pystrat2048-0.1.tar.gz")
+        res = untar_files(rz, where_to=fold, fLOG=fLOG)
+        self.assertTrue(isinstance(res, list))
+        res.sort()
+        self.assertEqual(len(res), 10)
+        if not isinstance(res[0], (typbytes, str)):
+            raise TypeError(type(res[0]))
+        res[-1] = res[-1].replace("\\", "/")
+        if not res[-1].endswith("ut_filehelper/temp_compress_tar/pystrat2048-0.1/setup.py"):
+            raise Exception(res[-1])
 
 
 if __name__ == "__main__":

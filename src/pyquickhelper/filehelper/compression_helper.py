@@ -9,6 +9,7 @@ import datetime
 import gzip
 import sys
 import warnings
+import tarfile
 from io import BytesIO
 
 from ..loghelper.flog import noLOG, run_cmd
@@ -458,7 +459,7 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
 
         if where_to is None:
             where_to = os.path.abspath(".")
-        cmd = '"{0}" x "{1}" -o{2}'.format(exe, zipf, where_to)
+        cmd = '"{0}" x "{1}" "-o{2}"'.format(exe, zipf, where_to)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         if len(err) > 0 or "Error:" in out:
             raise FileException(
@@ -477,3 +478,39 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
                 "Unable to unrar file '{0}'\n--CMD--\n{3}\n--OUT--\n{1}\n--ERR--\n{2}".format(zipf, out, err, cmd))
 
         return explore_folder(where_to)[1]
+
+
+def untar_files(filename, where_to=None, fLOG=noLOG, encoding=None):
+    """
+    Uncompresses files from a tar file.
+
+    @param      filename        final tar file (double compression, extension should something like .zip.gz)
+    @param      where_to        destination folder (can be None, the result is a list of tuple)
+    @param      fLOG            logging function
+    @param      encoding        encoding
+    @return                     list of unzipped files
+    """
+    if isinstance(filename, bytes):
+        fileobj = filename
+        name = None
+        targz = True
+    else:
+        name = filename
+        fileobj = None
+        targz = name.endswith(".tar.gz")
+
+    if targz:
+        tar = tarfile.open(name=name, fileobj=fileobj,
+                           mode="r:gz", encoding=encoding)
+        names = tar.getnames()
+        tar.extractall(where_to)
+        tar.close()
+    else:
+        tar = tarfile.open(name=name, fileobj=fileobj,
+                           mode="r:", encoding=encoding)
+        names = tar.getnames()
+        tar.extractall(where_to)
+        tar.close()
+    if where_to is not None:
+        return [os.path.join(where_to, name) for name in names]
+    return names
