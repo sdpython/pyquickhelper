@@ -269,7 +269,8 @@ if not r:
         ],
         extras_require={
             'cli': ['tkinterquickhelper', 'pysftp'],
-            'filehelper': ['cffi', 'cryptography', 'pylzma', 'pysftp'],  # cryptography
+            # cryptography
+            'filehelper': ['cffi', 'cryptography', 'pylzma', 'pysftp'],
             'jenkinshelper': ['python-jenkins>=1.0.0', 'pyyaml'],
             'loghelper': ['psutil'],
         },

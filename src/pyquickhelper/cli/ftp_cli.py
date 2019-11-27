@@ -20,6 +20,14 @@ def ftp_upload(files, dest, host, user, pwd, ftps=False, fLOG=print):
     :param ftps: use :epkg:`SFTP` or :epkg:`FTP`
     :param fLOG: logging function
     :return: status
+
+    .. cmdref::
+        :title: Upload one or several files to a FTP server
+        :cmd: -m pyquickhelper ftp_upload --help
+
+        Uploads a file, a list of files, files defined
+        by a pattern to a FTP server using FTP or SFTP
+        protocol.
     """
     if isinstance(files, str):
         files = [files]

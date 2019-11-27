@@ -71,7 +71,7 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
                layout='sphinx', output="output"):
     """
     Converts a string from *RST*
-    to *HTML* to *RST* format.
+    to *HTML* or *RST* format.
 
     @param      input               text of filename
     @param      writer              ``'html'`` for :epkg:`HTML` format,
@@ -86,6 +86,12 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
     @param      layout              ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
     @param      output              document name, the function adds the extension
     @return                         output
+
+    .. cmdref::
+        :title: Convert RST document into HTML
+        :cmd: -m pyquickhelper sphinx_rst --help
+
+        Converts RST documents into HTML or even RST.
     """
     from ..helpgen import rst2html
     from ..helpgen.default_conf import get_epkg_dictionary

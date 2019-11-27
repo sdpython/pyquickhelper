@@ -21,6 +21,13 @@ def repeat_script(script, every_second=20, stop_after_second=-1,
     :param exc: True to stop if an exception is raised, False to continue
     :param verbose: prints out every execution
     :param fLOG: logging function
+
+    .. cmdref::
+        :title: Repeat script execution every n seconds
+        :cmd: -m pyquickhelper repeat_script --help
+
+        The command lines runs the execution a script
+        on a regular basis.
     """
     every_second = int(every_second)
     stop_after_second = int(stop_after_second)

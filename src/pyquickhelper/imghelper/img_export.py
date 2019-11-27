@@ -15,6 +15,13 @@ def images2pdf(images, output, fLOG=None):
     @param      images      images to merge, it can be a comma separated values
     @param      output      output filename or stream
     @param      fLOG        logging function
+
+    .. cmdref::
+        :title: Merge images into PDF
+        :cmd: -m pyquickhelper images2pdf --help
+
+        Merges one or several images into a single
+        PDF document.
     """
     from img2pdf import convert
 
