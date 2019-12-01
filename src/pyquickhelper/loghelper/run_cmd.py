@@ -147,7 +147,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             from pyquickhelper.loghelper import run_cmd
             out, err = run_cmd("python setup.py install", wait=True)
 
-    If you are using this function to run :ekpg:`git` function, parameter ``shell`` must be True.
+    If you are using this function to run :epkg:`git` function, parameter ``shell`` must be True.
     The function catches *SystemExit* exception.
     See `Constantly print Subprocess output while process is running
     <http://stackoverflow.com/questions/4417546/constantly-print-subprocess-output-while-process-is-running/4417735>`_.
