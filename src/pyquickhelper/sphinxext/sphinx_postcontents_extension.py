@@ -9,6 +9,7 @@ from docutils.parsers.rst import directives
 from sphinx.util import logging
 
 import sphinx
+from sphinx.util.logging import getLogger
 from docutils.parsers.rst import Directive
 from .sphinx_ext_helper import traverse, NodeLeave, WrappedNode
 
@@ -93,20 +94,76 @@ def process_postcontents(app, doctree):
     Look for the section or document which contain them.
     Put them into the variable *postcontents_all_postcontents* in the config.
     """
+    logger = getLogger('postcontents')
     env = app.builder.env
     attr = 'postcontents_all_postcontents'
     if not hasattr(env, attr):
         setattr(env, attr, [])
     attr_list = getattr(env, attr)
     for node in doctree.traverse(postcontents_node):
-
-        # It looks for a section or documenti which contains the directive.
+        # It looks for a section or document which contains the directive.
         parent = node
         while not isinstance(parent, (nodes.document, nodes.section)):
             parent = node.parent
         node["node_section"] = WrappedNode(parent)
         node["pcprocessed"] += 1
+        node["processed"] = 1
         attr_list.append(node)
+        logger.info("[postcontents] in '{}.rst' line={} found:{}".format(
+            node['pcdocname'], node['pclineno'], node['pcprocessed']))
+        _modify_postcontents(node, "postcontentsP")
+
+
+def _modify_postcontents(node, event):
+    node["transformed"] = 1
+    logger = getLogger('postcontents')
+    logger.info("[{}] in '{}.rst' line={} found:{}".format(
+        event, node['pcdocname'], node['pclineno'], node['pcprocessed']))
+    parent = node["node_section"]
+    sections = []
+    main_par = nodes.paragraph()
+    node += main_par
+    roots = [main_par]
+    # depth = int(node["depth"]) if node["depth"] != '*' else 20
+    memo = {}
+    level = 0
+
+    for _, subnode in traverse(parent):
+        if isinstance(subnode, nodes.section):
+            if len(subnode["ids"]) == 0:
+                subnode["ids"].append("postid-{}".format(id(subnode)))
+            nid = subnode["ids"][0]
+            if nid in memo:
+                raise KeyError("node was already added '{0}'".format(nid))
+            logger.info("[{}]  {}section id '{}'".format(
+                event, "  " * level, nid))
+            level += 1
+            memo[nid] = subnode
+            bli = nodes.bullet_list()
+            roots[-1] += bli
+            roots.append(bli)
+            sections.append(subnode)
+        elif isinstance(subnode, nodes.title):
+            logger.info("[{}]  {}title '{}'".format(
+                event, "  " * level, subnode.astext()))
+            par = nodes.paragraph()
+            ref = nodes.reference(refid=sections[-1]["ids"][0],
+                                  reftitle=subnode.astext(),
+                                  text=subnode.astext())
+            par += ref
+            bullet = nodes.list_item()
+            bullet += par
+            roots[-1] += bullet
+        elif isinstance(subnode, NodeLeave):
+            parent = subnode.parent
+            if isinstance(parent, nodes.section):
+                ids = None if len(parent["ids"]) == 0 else parent["ids"][0]
+                if ids in memo:
+                    level -= 1
+                    logger.info("[{}]  {}end of section '{}'".format(
+                        event, "  " * level, parent["ids"]))
+                    sections.pop()
+                    roots.pop()
 
 
 def transform_postcontents(app, doctree, fromdocname):
@@ -125,6 +182,8 @@ def transform_postcontents(app, doctree, fromdocname):
     which was dynamically added by another one. For example @see cl RunPythonDirective
     calls function ``nested_parse_with_titles``. ``.. postcontents::`` will capture the
     new section this function might eventually add to the page.
+    For some reason, this function does not seem to be able to change
+    the doctree (any creation of nodes is not taken into account).
     """
     logger = logging.getLogger("postcontents")
 
@@ -134,7 +193,6 @@ def transform_postcontents(app, doctree, fromdocname):
     if not hasattr(env, attr_name):
         setattr(env, attr_name, [])
     post_list = getattr(env, attr_name)
-
     if len(post_list) == 0:
         # No postcontents found.
         return
@@ -144,43 +202,11 @@ def transform_postcontents(app, doctree, fromdocname):
             logger.warning("[postcontents] no first loop was ever processed: 'pcprocessed'={0} , File '{1}', line {2}".format(
                 node["pcprocessed"], node["pcdocname"], node["pclineno"]))
             continue
+        if len(node.children) > 0:
+            # already processed
+            continue
 
-        parent = node["node_section"]
-        sections = []
-        main_par = nodes.paragraph()
-        node += main_par
-        roots = [main_par]
-        # depth = int(node["depth"]) if node["depth"] != '*' else 20
-        memo = {}
-
-        for _, subnode in traverse(parent):
-            if isinstance(subnode, nodes.title):
-                par = nodes.paragraph()
-                ref = nodes.reference(refid=sections[-1]["ids"][0],
-                                      reftitle=subnode.astext(),
-                                      text=subnode.astext())
-                par += ref
-                bullet = nodes.list_item()
-                bullet += par
-                roots[-1] += bullet
-            elif isinstance(subnode, nodes.section):
-                if len(subnode["ids"]) == 0:
-                    subnode["ids"].append("postid-{}".format(id(subnode)))
-                nid = subnode["ids"][0]
-                if nid in memo:
-                    raise KeyError("node was already added '{0}'".format(nid))
-                memo[nid] = subnode
-                bli = nodes.bullet_list()
-                roots[-1] += bli
-                roots.append(bli)
-                sections.append(subnode)
-            elif isinstance(subnode, NodeLeave):
-                parent = subnode.parent
-                if isinstance(parent, nodes.section):
-                    ids = None if len(parent["ids"]) == 0 else parent["ids"][0]
-                    if ids in memo:
-                        sections.pop()
-                        roots.pop()
+        _modify_postcontents(node, "postcontentsT")
 
 
 def visit_postcontents_node(self, node):

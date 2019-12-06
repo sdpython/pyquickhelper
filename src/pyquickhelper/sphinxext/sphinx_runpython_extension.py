@@ -365,7 +365,9 @@ class RunPythonDirective(Directive):
     it is able to interpret
     `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_
     and `Sphinx directives <http://sphinx-doc.org/rest.html>`_
-    with function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_
+    with function `nested_parse_with_titles <http://sphinx-doc.org/extdev/
+    markupapi.html?highlight=nested_parse>`_. However, if this text contains
+    titles, it is better to use option ``:sphinx: false``.
     Unless *process* option is enabled, global variables cannot be used.
     `sphinx-autorun <https://pypi.org/project/sphinx-autorun/>`_ offers a similar
     service except it cannot produce compile :epkg:`RST` content,
@@ -382,12 +384,6 @@ class RunPythonDirective(Directive):
         :showcode:
 
         print("Hide or unhide this output.")
-
-    .. versionchanged:: 1.7
-        Options *warningout*, *toggle* were added.
-
-    .. versionchanged:: 1.8
-        Options *current*, *assert*, *store*, *restore* were added.
 
     .. versionchanged:: 1.9
         Options *store_in_file* was added.
