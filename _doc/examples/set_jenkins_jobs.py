@@ -16,7 +16,7 @@ import os
 import warnings
 
 from pyquickhelper.jenkinshelper import setup_jenkins_server_yml, JenkinsExt
-from pyquickhelper.loghelper import fLOG, get_machine, get_user
+from pyquickhelper.loghelper import fLOG, get_user
 
 #################################
 # Starts logging.
@@ -28,8 +28,8 @@ fLOG("start")
 with warnings.catch_warnings():
     warnings.simplefilter('ignore', DeprecationWarning)
     import keyring
-user = keyring.get_password("jenkins", get_machine() + "user")
-pwd = keyring.get_password("jenkins", get_machine() + "pwd")
+user = keyring.get_password("jenkins", "user")
+pwd = keyring.get_password("jenkins", "pwd")
 
 #################################
 # local path

@@ -28,6 +28,11 @@ def ftp_upload(files, dest, host, user, pwd, ftps=False, fLOG=print):
         Uploads a file, a list of files, files defined
         by a pattern to a FTP server using FTP or SFTP
         protocol.
+
+    The user and the password can be prefix by
+    `keyring,`. The module :epkg:`keyring` is then used
+    to retrieve the values. Example:
+    ``--user=keyring,user,site``.
     """
     if isinstance(files, str):
         files = [files]
@@ -45,6 +50,24 @@ def ftp_upload(files, dest, host, user, pwd, ftps=False, fLOG=print):
         else:
             new_files.append(name)
     files = new_files
+
+    if user.startswith("keyring,"):
+        spl = user[len("keyring,"):].split(',')
+        if len(spl) != 2:
+            raise ValueError("Unable to get user '{}'.".format(user))
+        import keyring
+        user = keyring.get_password(spl[0], spl[1])
+        if user is None:
+            raise ValueError("No stored user for '{}'.".format(user))
+
+    if pwd.startswith("keyring,"):
+        spl = pwd[len("keyring,"):].split(',')
+        if len(spl) != 2:
+            raise ValueError("Unable to get user '{}'.".format(pwd))
+        import keyring
+        pwd = keyring.get_password(spl[0], spl[1])
+        if pwd is None:
+            raise ValueError("No stored user for '{}'.".format(pwd))
 
     ftps = 'SFTP' if ftps in ('1', 'True', 'true', 1, True) else 'FTP'
     ftp = TransferFTP(host, user, pwd, ftps=ftps, fLOG=fLOG)
