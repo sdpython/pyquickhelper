@@ -1281,6 +1281,15 @@ class _CustomSphinx(Sphinx):
         for node in doctree.traverse(node_type):
             yield node
 
+    def _add_missing_ids(self, doctree):
+        for i, node in enumerate(self._lookup_doctree(doctree, None)):
+            try:
+                node['ids'][0]
+            except IndexError:
+                node['ids'] = ['missing%d' % i]
+            except TypeError:
+                pass
+
     def finalize(self, doctree, external_docnames=None):
         """
         Finalizes the documentation after it was parsed.
@@ -1313,6 +1322,7 @@ class _CustomSphinx(Sphinx):
         # If a path startswith('/'), it is removed.
         from sphinx.environment.collectors.asset import logger as logger_asset
         logger_asset.setLevel(40)  # only errors
+        self._add_missing_ids(doctree)
         self.events.emit('doctree-read', doctree)
         logger_asset.setLevel(30)  # back to warnings
 
