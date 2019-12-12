@@ -5,9 +5,11 @@
 import logging
 import warnings
 from docutils.parsers.rst.directives import directive as rst_directive
-from .sphinxm_convert_doc_sphinx_helper import HTMLWriterWithCustomDirectives, _CustomSphinx
-from .sphinxm_convert_doc_sphinx_helper import MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives
-from .sphinxm_convert_doc_sphinx_helper import LatexWriterWithCustomDirectives, DocTreeWriterWithCustomDirectives
+from .sphinxm_convert_doc_sphinx_helper import (
+    HTMLWriterWithCustomDirectives, _CustomSphinx,
+    MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives,
+    LatexWriterWithCustomDirectives, DocTreeWriterWithCustomDirectives
+)
 from ..sphinxext import get_default_extensions
 
 
@@ -248,18 +250,20 @@ class MockSphinxApp:
 
     @staticmethod
     def create(writer="html", directives=None, confoverrides=None,
-               new_extensions=None, load_bokeh=False, fLOG=None):
+               new_extensions=None, load_bokeh=False,
+               destination_path=None, fLOG=None):
         """
         Creates a @see cl MockSphinxApp for :epkg:`Sphinx`.
 
-        @param      writer          ``'sphinx'`` is the only allowed value
-        @param      directives      new directives to add (see below)
-        @param      confoverrides   initial options
-        @param      new_extensions  additional extensions to setup
-        @param      load_bokeh      load :epkg:`bokeh` extension,
-                                    disabled by default as it is slow
-        @param      fLOG            logging function
-        @return                     mockapp, writer, list of added nodes
+        @param      writer              ``'sphinx'`` is the only allowed value
+        @param      directives          new directives to add (see below)
+        @param      confoverrides       initial options
+        @param      new_extensions      additional extensions to setup
+        @param      load_bokeh          load :epkg:`bokeh` extension,
+                                        disabled by default as it is slow
+        @param      destination_path    some extension requires it
+        @param      fLOG                logging function
+        @return                         mockapp, writer, list of added nodes
 
         *directives* is None or a list of 2 or 5-uple:
 
@@ -290,7 +294,8 @@ class MockSphinxApp:
                     load_bokeh=load_bokeh)
 
             if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
-                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,
+                                    doctreedir=None,
                                     buildername='memoryhtml', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
                 writer = HTMLWriterWithCustomDirectives(
@@ -298,7 +303,8 @@ class MockSphinxApp:
                 mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
                                         new_extensions=new_extensions)
             elif writer == "rst":
-                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,
+                                    doctreedir=None,
                                     buildername='memoryrst', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
                 writer = RSTWriterWithCustomDirectives(
@@ -306,7 +312,8 @@ class MockSphinxApp:
                 mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
                                         new_extensions=new_extensions)
             elif writer == "md":
-                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,
+                                    doctreedir=None,
                                     buildername='memorymd', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
                 writer = MDWriterWithCustomDirectives(
@@ -322,7 +329,8 @@ class MockSphinxApp:
                 mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,
                                         new_extensions=new_extensions)
             elif writer == "doctree":
-                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,
+                                    doctreedir=None,
                                     buildername='memorydoctree', confoverrides=confoverrides,
                                     new_extensions=new_extensions)
                 writer = DocTreeWriterWithCustomDirectives(
@@ -331,7 +339,8 @@ class MockSphinxApp:
                                         new_extensions=new_extensions)
             elif isinstance(writer, tuple):
                 # We expect ("builder_name", builder_class)
-                app = _CustomSphinx(srcdir=None, confdir=None, outdir=None, doctreedir=None,
+                app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,
+                                    doctreedir=None,
                                     buildername=writer, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
                 if not hasattr(writer[1], "_writer_class"):

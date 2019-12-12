@@ -1368,6 +1368,28 @@ class _CustomSphinx(Sphinx):
 
     def add_directive(self, name, obj, content=None, arguments=None, override=True, **options):
         self._added_objects.append(('directive', name))
+        if name == 'plot' and obj.__name__ == 'PlotDirective':
+
+            old_run = obj.run
+
+            def run(self):
+                """Run the plot directive."""
+                logger = getLogger("MockSphinxApp")
+                logger.info(
+                    '[MockSphinxApp] PlotDirective: {}'.format(self.content))
+                try:
+                    res = old_run(self)
+                    logger.info(
+                        '[MockSphinxApp] PlotDirective ok'.format(self.content))
+                    return res
+                except OSError as e:
+                    logger = getLogger("MockSphinxApp")
+                    logger.info(
+                        '[MockSphinxApp] PlotDirective failed: {}'.format(e))
+                return []
+
+            obj.run = run
+
         try:
             # Sphinx >= 1.8
             Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,

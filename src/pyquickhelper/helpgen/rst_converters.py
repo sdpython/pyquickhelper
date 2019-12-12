@@ -86,7 +86,9 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              layout='docutils', document_name="<<string>>",
              external_docnames=None, filter_nodes=None,
              new_extensions=None, update_builder=None,
-             ret_doctree=False, load_bokeh=False, **options):
+             ret_doctree=False, load_bokeh=False,
+             destination=None, destination_path=None,
+             **options):
     """
     Converts a string from :epkg:`RST`
     into :epkg:`HTML` format or transformed :epkg:`RST`.
@@ -113,6 +115,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      ret_doctree         returns the doctree
     @param      load_bokeh          load :epkg:`bokeh` extensions,
                                     disabled by default as it takes a few seconds
+    @param      destination         set a destination (requires for some extension)
+    @param      destination_path    set a destination path (requires for some extension)
     @param      options             :epkg:`Sphinx` options see
                                     `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
                                     a subset of options is used, see @see fn default_sphinx_options.
@@ -257,21 +261,27 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         defopt['latex_documents'] = latex_documents
 
     if writer in ["custom", "sphinx", "HTMLWriterWithCustomDirectives", "html"]:
-        mockapp, writer, title_names = MockSphinxApp.create("sphinx", directives, confoverrides=defopt,
-                                                            new_extensions=new_extensions,
-                                                            load_bokeh=load_bokeh, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create(
+            "sphinx", directives, confoverrides=defopt,
+            new_extensions=new_extensions,
+            load_bokeh=load_bokeh, fLOG=fLOG,
+            destination_path=destination_path)
         writer_name = "HTMLWriterWithCustomDirectives"
     elif writer in ("rst", "md", "latex", "elatex", 'text', 'doctree'):
         writer_name = writer
-        mockapp, writer, title_names = MockSphinxApp.create(writer, directives, confoverrides=defopt,
-                                                            new_extensions=new_extensions,
-                                                            load_bokeh=load_bokeh, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create(
+            writer, directives, confoverrides=defopt,
+            new_extensions=new_extensions,
+            load_bokeh=load_bokeh, fLOG=fLOG,
+            destination_path=destination_path)
     elif isinstance(writer, tuple):
         # We extect something like ("builder_name", builder_class)
         writer_name = writer
-        mockapp, writer, title_names = MockSphinxApp.create(writer, directives, confoverrides=defopt,
-                                                            new_extensions=new_extensions,
-                                                            load_bokeh=load_bokeh, fLOG=fLOG)
+        mockapp, writer, title_names = MockSphinxApp.create(
+            writer, directives, confoverrides=defopt,
+            new_extensions=new_extensions,
+            load_bokeh=load_bokeh, fLOG=fLOG,
+            destination_path=destination_path)
     else:
         raise ValueError(
             "Unexpected writer '{0}', should be 'rst' or 'html' or 'md' or 'elatex' or 'text'.".format(writer))
@@ -301,6 +311,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         writer.add_configuration_options(mockapp.new_options)
     for k in {'outdir', 'imagedir', 'confdir', 'doctreedir'}:
         setattr(writer.builder, k, settings_overrides.get(k, ''))
+    if destination_path is not None:
+        writer.builder.outdir = destination_path
     if update_builder:
         update_builder(writer.builder)
 
@@ -326,12 +338,13 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         if hasattr(writer.builder.config, k) and writer.builder.config[k] != v:
             writer.builder.config[k] = v
 
-    _, pub = core.publish_programmatically(source=s, source_path=None, destination_path=None, writer=writer,
-                                           writer_name=writer_name, settings_overrides=settings_overrides,
-                                           source_class=StringInput, destination_class=StringOutput,
-                                           destination=None, reader=None, reader_name='standalone',
-                                           parser=None, parser_name='restructuredtext', settings=None,
-                                           settings_spec=None, config_section=None, enable_exit_status=False)
+    _, pub = core.publish_programmatically(
+        source=s, source_path=None, destination_path=destination_path, writer=writer,
+        writer_name=writer_name, settings_overrides=settings_overrides,
+        source_class=StringInput, destination_class=StringOutput,
+        destination=destination, reader=None, reader_name='standalone',
+        parser=None, parser_name='restructuredtext', settings=None,
+        settings_spec=None, config_section=None, enable_exit_status=False)
 
     doctree = pub.document
 
