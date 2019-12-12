@@ -1283,6 +1283,10 @@ class _CustomSphinx(Sphinx):
 
     def _add_missing_ids(self, doctree):
         for i, node in enumerate(self._lookup_doctree(doctree, None)):
+            stype = str(type(node))
+            if ('section' not in stype and 'title' not in stype and
+                'reference' not in stype):
+                continue
             try:
                 node['ids'][0]
             except IndexError:

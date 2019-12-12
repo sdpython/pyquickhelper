@@ -56,7 +56,8 @@ class TestBlogExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_blog.html"), "w", encoding="utf8") as f:
             f.write(text)
 
-        self.assertIn('</span><h2>2018-03-24 first', text)
+        self.assertIn('</span><h2 id=', text)
+        self.assertIn('>2018-03-24 first', text)
 
         text = rst2html(content,  # fLOG=fLOG,
                         layout="sphinx", writer="rst", keep_warnings=True,
