@@ -99,11 +99,11 @@ class TestEpkgExtension(unittest.TestCase):
         if t1 in html:
             raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
 
-        t1 = 'href="http://www.7-zip.org/">7z'
+        t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
             raise Exception(html)
 
-        t1 = 'href="http://pandas.pydata.org/pandas-docs/stable/generated/DataFrame.to_html.html">pandas.DataFrame.to_html'
+        t1 = 'href="http://pandas.pydata.org/pandas-docs/stable/generated/DataFrame.to_html.html"'
         if t1 not in html:
             raise Exception(html)
 
@@ -149,11 +149,11 @@ class TestEpkgExtension(unittest.TestCase):
         if t1 in html:
             raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
 
-        t1 = 'href="http://www.7-zip.org/">7z'
+        t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
             raise Exception(html)
 
-        t1 = 'href="pandas|DataFrame|to_html">MYA</a>'
+        t1 = 'href="pandas|DataFrame|to_html"'
         if t1 not in html:
             raise Exception(html)
 
@@ -200,11 +200,11 @@ class TestEpkgExtension(unittest.TestCase):
         if t1 in html:
             raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
 
-        t1 = 'href="http://www.7-zip.org/">7z'
+        t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
             raise Exception(html)
 
-        t1 = 'href="pandas|DataFrame|to_html">MYA</a>'
+        t1 = 'href="pandas|DataFrame|to_html"'
         if t1 not in html:
             raise Exception(html)
 
@@ -247,11 +247,11 @@ class TestEpkgExtension(unittest.TestCase):
         if t1 in html:
             raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
 
-        t1 = 'href="http://www.7-zip.org/">7z'
+        t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
             raise Exception(html)
 
-        t1 = 'href="pandas|DataFrame|to_html">MYA</a>'
+        t1 = 'href="pandas|DataFrame|to_html"'
         if t1 not in html:
             raise Exception(html)
 
@@ -276,7 +276,11 @@ class TestEpkgExtension(unittest.TestCase):
                         writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx")
 
-        t1 = 'href="http://first.part/secondpart">one link on two lines</a>'
+        t1 = 'href="http://first.part/secondpart"'
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = '>one link on two lines</a>'
         if t1 not in html:
             raise Exception(html)
 

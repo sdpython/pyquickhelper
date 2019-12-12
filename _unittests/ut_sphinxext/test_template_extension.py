@@ -90,7 +90,11 @@ class TestTemplateExtension(unittest.TestCase):
         if t1 in html:
             raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
 
-        t1 = 'href="http://boo">zoo</a> aaftera</p>'
+        t1 = 'href="http://boo"'
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = '>zoo</a> aaftera</p>'
         if t1 not in html:
             raise Exception(html)
 
@@ -134,7 +138,11 @@ class TestTemplateExtension(unittest.TestCase):
         if t1 in html:
             raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
 
-        t1 = 'href="https://docs.python.org/3/library/io.html">io</a>'
+        t1 = 'href="https://docs.python.org/3/library/io.html"'
+        if t1 not in html:
+            raise Exception(html)
+
+        t1 = '>io</a>'
         if t1 not in html:
             raise Exception(html)
 
