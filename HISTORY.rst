@@ -5,9 +5,12 @@
 History
 =======
 
-current - 2019-11-22 - 0.00Mb
+current - 2019-12-13 - 0.00Mb
 =============================
 
+* `285`: Make ftp command line work with keyring (2019-12-08)
+* `284`: Implements untar_files for .tar.gz extensions (2019-11-25)
+* `283`: Add a command line to publish a file through ftp and ftps (2019-11-25)
 * `282`: Write a function to run a function every n seconds (2019-11-22)
 * `281`: Removes use of specific versions of nbconvert and pylzma. (2019-11-11)
 * `280`: Removes conversion from notebook to nbpresent (2019-11-10)
@@ -244,6 +247,3 @@ current - 2019-11-22 - 0.00Mb
 
 * `100`: fix indentation when copying the sources in documentation repository (2018-02-04)
 * `99`: bug with galleries of examples with multiple subfolders (2018-01-30)
-
-1.5.2275 - 2017-11-28 - 0.50Mb
-==============================

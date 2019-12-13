@@ -1285,7 +1285,7 @@ class _CustomSphinx(Sphinx):
         for i, node in enumerate(self._lookup_doctree(doctree, None)):
             stype = str(type(node))
             if ('section' not in stype and 'title' not in stype and
-                'reference' not in stype):
+                    'reference' not in stype):
                 continue
             try:
                 node['ids'][0]
