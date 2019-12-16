@@ -61,7 +61,7 @@ class TestLatexBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "--help"
+        t1 = "\\PYGZhy{}"
         if t1 not in html:
             raise Exception(html)
 
@@ -112,7 +112,7 @@ class TestLatexBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
-        t1 = "--help"
+        t1 = "\\PYGZhy{}"
         if t1 not in html:
             raise Exception(html)
 

@@ -4,7 +4,7 @@ bokeh
 cairosvg
 cffi
 codecov
-coverage
+coverage>=5.0
 cryptography
 docformatter
 git-pandas

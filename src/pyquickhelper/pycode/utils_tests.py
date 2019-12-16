@@ -7,6 +7,7 @@ import sys
 import unittest
 from datetime import datetime
 import warnings
+import sqlite3
 
 from ..loghelper.flog import noLOG
 from ..loghelper.os_helper import get_user
@@ -21,6 +22,24 @@ from .utils_tests_stringio import StringIOAndFile
 class TestWrappedException(Exception):
     "Raised by @see fn main_wrapper_tests"
     pass
+
+
+def _modifies_coverage_report(name, bsrcp, bproj):
+    conn = sqlite3.connect(name)
+    sql = []
+    for row in conn.execute("select * from file"):
+        name = row[1]
+        for b in bsrcp:
+            name = name.replace(b, bproj)
+        name = name.replace('\\', '/')
+        s = "UPDATE file SET path='{}' WHERE id={};".format(name, row[0])
+        sql.append(s)
+
+    c = conn.cursor()
+    for s in sql:
+        c.execute(s)
+    conn.commit()
+    conn.close()
 
 
 def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
@@ -326,12 +345,17 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 bproj = bytes(project_var_name, encoding="utf-8")
                 for afile in os.listdir(report_folder):
                     full = os.path.join(report_folder, afile)
-                    with open(full, "rb") as f:
-                        content = f.read()
-                    for b in bsrcp:
-                        content = content.replace(b, bproj)
-                    with open(full, "wb") as f:
-                        f.write(content)
+                    if '.coverage' in afile:
+                        # sqlite3 format
+                        _modifies_coverage_report(
+                            full, srcp_s, project_var_name)
+                    else:
+                        with open(full, "rb") as f:
+                            content = f.read()
+                        for b in bsrcp:
+                            content = content.replace(b, bproj)
+                        with open(full, "wb") as f:
+                            f.write(content)
 
             clean_absolute_path()
 

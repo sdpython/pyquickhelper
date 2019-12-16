@@ -244,7 +244,7 @@ if not r:
         cmdclass=cmdclass,
         install_requires=[
             "autopep8",     # part of the minimal list
-            "coverage",
+            "coverage>=5.0",
             "docformatter",
             "docutils",
             "IPython>=5.0.0",

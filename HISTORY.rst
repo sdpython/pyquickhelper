@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2019-12-13 - 0.00Mb
+current - 2019-12-16 - 0.00Mb
 =============================
+
+* `286`: pyquickhelper breaks with sphinx 2.3.0 (2019-12-16)
+
+1.9.3280 - 2019-12-13 - 2.06Mb
+==============================
 
 * `285`: Make ftp command line work with keyring (2019-12-08)
 * `284`: Implements untar_files for .tar.gz extensions (2019-11-25)
