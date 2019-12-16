@@ -8,7 +8,8 @@ History
 current - 2019-12-16 - 0.00Mb
 =============================
 
-* `286`: pyquickhelper breaks with sphinx 2.3.0 (2019-12-16)
+* `287`: Fix pyquickhelper for coverage 5.0 (2019-12-16)
+* `286`: Fix pyquickhelper for sphinx 2.3.0 (2019-12-16)
 
 1.9.3280 - 2019-12-13 - 2.06Mb
 ==============================

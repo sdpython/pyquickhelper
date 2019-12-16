@@ -163,8 +163,6 @@ def coverage_combine(data_files, output_path, source, process=None):
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source,
                   dests, inter, cov, infos):
 
-        from coverage.data import CoverageData
-
         def shorten(t):
             if len(t) > 2000:
                 return t[:2000] + "\n..."
@@ -216,7 +214,6 @@ def coverage_combine(data_files, output_path, source, process=None):
     if get_source(cov) is None or len(get_source(cov)) == 0:
         raise_exc(FileNotFoundError("Probably unable to find '{0}'".format(source)),
                   "", [], [], "", destcov, source, [], [], cov, [])
-    module_name = source.replace("\\", "/").split('/')[-1]
 
     inter = []
 
