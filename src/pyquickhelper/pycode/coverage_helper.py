@@ -265,7 +265,7 @@ def coverage_combine(data_files, output_path, source, process=None):
             s = "UPDATE file SET path='{}' WHERE id={};".format(name, row[0])
             sql.append(s)
 
-        keep_infos['root_common'] = find_longest_common_root(names)
+        keep_infos['root_common'] = find_longest_common_root(names, begin)
 
         c = conn.cursor()
         for s in sql:
