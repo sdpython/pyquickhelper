@@ -1003,12 +1003,6 @@ class _CustomSphinx(Sphinx):
             srcdir = "IMPOSSIBLE:TOFIND"
         update_docutils_languages()
 
-        from sphinx import __version__ as sphinx_version
-        from ..texthelper import compare_module_version
-        sphinx_version_less_18 = compare_module_version(sphinx_version, '1.8')
-        if sphinx_version_less_18 < 0:
-            self.enumerable_nodes = {}          # type: Dict[nodes.Node, Tuple[unicode, Callable]]  # NOQA
-
         self.srcdir = os.path.abspath(srcdir)
         self.confdir = os.path.abspath(
             confdir) if confdir is not None else None
@@ -1028,6 +1022,7 @@ class _CustomSphinx(Sphinx):
             self.quiet = False
 
         from sphinx.events import EventManager
+        # logging.setup(self, self._status, self._warning)
         self.events = EventManager(self)
 
         # keep last few messages for traceback
@@ -1038,32 +1033,36 @@ class _CustomSphinx(Sphinx):
         from sphinx import __display_version__
         self.info('Running Sphinx v%s' % __display_version__)
 
+        # notice for parallel build on macOS and py38+
+        if sys.version_info > (3, 8) and platform.system() == 'Darwin' and parallel > 1:
+            logger.info(bold(__("For security reason, parallel mode is disabled on macOS and "
+                                "python3.8 and above.  For more details, please read "
+                                "https://github.com/sphinx-doc/sphinx/issues/6803")))
+
         # status code for command-line application
         self.statuscode = 0
 
         # delayed import to speed up time
-        from sphinx.application import CONFIG_FILENAME, Config
+        from sphinx.application import CONFIG_FILENAME, Config, Tags, builtin_extensions
 
         # read config
-        from sphinx.application import Tags
         self.tags = Tags(tags)
         with warnings.catch_warnings():
             warnings.simplefilter(
                 "ignore", (DeprecationWarning, PendingDeprecationWarning))
             if self.confdir is None:
-                try:
-                    self.config = Config({}, confoverrides or {})
-                except TypeError:
-                    # Sphinx 1.7
-                    self.config = Config(confdir, CONFIG_FILENAME,
-                                         confoverrides or {}, self.tags)
+                self.config = Config({}, confoverrides or {})
             else:
                 try:
-                    self.config = Config(
-                        confdir, confoverrides or {}, self.tags)
-                except TypeError:
-                    self.config = Config(confdir, CONFIG_FILENAME,
-                                         confoverrides or {}, self.tags)
+                    self.config = Config.read(
+                        self.confdir, confoverrides or {}, self.tags)
+                except AttributeError:
+                    try:
+                        self.config = Config(
+                            confdir, confoverrides or {}, self.tags)
+                    except TypeError:
+                        self.config = Config(confdir, CONFIG_FILENAME,
+                                             confoverrides or {}, self.tags)
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
@@ -1090,7 +1089,6 @@ class _CustomSphinx(Sphinx):
             self.confdir = self.srcdir
 
         # load all built-in extension modules
-        from sphinx.application import builtin_extensions
         for extension in builtin_extensions:
             try:
                 with warnings.catch_warnings():
@@ -1144,7 +1142,7 @@ class _CustomSphinx(Sphinx):
             prefix = 'while setting up extension %s:' % "conf.py"
             if prefixed_warnings:
                 with prefixed_warnings(prefix):
-                    if hasattr(self.config.setup, '__call__'):
+                    if callable(self.config.setup):
                         self.config.setup(self)
                     else:
                         from sphinx.locale import _
@@ -1154,7 +1152,7 @@ class _CustomSphinx(Sphinx):
                               "Please modify its definition to make it a callable function. This is "
                               "needed for conf.py to behave as a Sphinx extension.")
                         )
-            elif hasattr(self.config.setup, '__call__'):
+            elif callable(self.config.setup):
                 self.config.setup(self)
 
         # now that we know all config values, collect them from conf.py
@@ -1162,7 +1160,7 @@ class _CustomSphinx(Sphinx):
         rem = []
         for k in confoverrides:
             if k in {'initial_header_level', 'doctitle_xform', 'input_encoding',
-                     'outdir', 'warnings_log'}:
+                     'outdir', 'warnings_log', 'extensions'}:
                 continue
             if k == 'override_image_directive':
                 self.config.images_config["override_image_directive"] = True
@@ -1173,9 +1171,11 @@ class _CustomSphinx(Sphinx):
         for k in rem:
             del confoverrides[k]
         if len(noallowed) > 0:
-            raise ValueError("The following configuration values are declared in any extension.\n{0}\n--DECLARED--\n{1}".format(
-                "\n".join(sorted(noallowed)),
-                "\n".join(sorted(self.config.values))))
+            raise ValueError(
+                "The following configuration values are declared in any extension.\n--???--\n"
+                "{0}\n--DECLARED--\n{1}".format(
+                    "\n".join(sorted(noallowed)),
+                    "\n".join(sorted(self.config.values))))
 
         # now that we know all config values, collect them from conf.py
         self.config.init_values()
@@ -1192,22 +1192,6 @@ class _CustomSphinx(Sphinx):
 
             self.config.items = _citems
 
-        if sphinx_version_less_18 >= 0:
-
-            # delayed import to speed up time
-            try:
-                # Sphinx 1.8.0
-                from sphinx.extension import verify_needs_extensions as verify_extensions
-            except ImportError as e:
-                # Sphinx 1.7.6
-                try:
-                    from sphinx.extension import verify_required_extensions as verify_extensions
-                except ImportError as ee:
-                    raise ImportError(
-                        "Unable to import sphinx due to:\n{0}\n{1}".format(e, ee))
-
-            verify_extensions(self, self.config)
-
         # /2 end of addition
 
         # create the project
@@ -1218,9 +1202,6 @@ class _CustomSphinx(Sphinx):
         self._init_env(freshenv)
         # set up the builder
         self._init_builder()
-
-        # set up the build environment
-        self._init_env(freshenv)
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(
