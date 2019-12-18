@@ -104,7 +104,7 @@ def verification_html_file(item, fLOG=noLOG):
             errors.append((i, "wrong :meth:` in " + line.strip("\n\r ")))
         if ":method:`" in line:
             errors.append((i, "wrong :method:` in " + line.strip("\n\r ")))
-        if ">`" in line:
+        if ">`" in line and "`</span></a>-" not in line:
             errors.append((i, "wrong >`, missing _ in " + line.strip("\n\r ")))
         find = reg.findall(line)
         if len(find) > 0:
