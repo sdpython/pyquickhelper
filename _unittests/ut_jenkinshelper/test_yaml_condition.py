@@ -22,6 +22,7 @@ class TestYamlCondition(ExtTestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         yml = os.path.abspath(os.path.join(this, "data", "local_linux.yml"))
         context = dict(Python37=os.path.dirname(sys.executable),
+                       Python38=os.path.dirname(sys.executable),
                        project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]

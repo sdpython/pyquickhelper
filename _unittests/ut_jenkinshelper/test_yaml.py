@@ -30,6 +30,7 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34=None, Python35=os.path.dirname(sys.executable),
                        Python36=os.path.dirname(sys.executable),
                        Python37=os.path.dirname(sys.executable),
+                       Python38=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -129,6 +130,7 @@ class TestYaml(unittest.TestCase):
         context = dict(Python34="fake", Python35="C:/Python35_x64",
                        Python36="C:/Python36_x64",
                        Python37="C:/Python37_x64",
+                       Python38="C:/Python38_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
