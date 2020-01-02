@@ -45,4 +45,4 @@ after_script:
 # Same as after script.
 documentation:
   - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx fi
-  - if [ ${NAME} == "UT" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
+  - if [ ${NAME} == "UT" and ${VERSION} == "3.7" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
