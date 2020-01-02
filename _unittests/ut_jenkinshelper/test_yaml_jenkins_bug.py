@@ -24,7 +24,8 @@ class TestYamlJenkinsBug(ExtTestCase):
 
         modules = [("yml", yml, "H H(10-11) * * 0")]
 
-        engines = dict(Python37="/usr/bin/python3.7",
+        engines = dict(Python38="/usr/bin/python3.8",
+                       Python37="/usr/bin/python3.7",
                        Python36="/usr/bin/python3.6",
                        root_path="./rootpath/")
         vers = "%d%d" % sys.version_info[:2]
@@ -52,6 +53,9 @@ class TestYamlJenkinsBug(ExtTestCase):
             elif "3.7" in last:
                 self.assertIn(
                     "export LD_LIBRARY_PATH=/usr/local/Python-3.7.2", last)
+            elif "3.8" in last:
+                self.assertIn(
+                    "export LD_LIBRARY_PATH=/usr/local/Python-3.8.1", last)
             else:
                 raise Exception(
                     "Unknown python in job\n----------\n" + last + "\n-------")

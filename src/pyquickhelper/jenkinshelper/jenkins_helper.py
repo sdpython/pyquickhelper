@@ -55,16 +55,19 @@ def default_engines(platform=None):
     if platform == "win32":
         res = dict(Anaconda2="d:\\Anaconda",
                    Anaconda3="d:\\Anaconda3",
+                   Python38="c:\\Python38_x64",
                    Python37="c:\\Python37_x64",
                    Python36="c:\\Python36_x64",
                    Python35="c:\\Python35_x64",
                    Python34="c:\\Python34_x64",
                    Python27="c:\\Python27",
+                   WinPython38="c:\\APythonENSAE\\python38",
                    WinPython37="c:\\APythonENSAE\\python37",
                    WinPython36="c:\\APythonENSAE\\python36",
                    WinPython35="c:\\APythonENSAE\\python35")
     elif platform == "linux":
         res = dict(Anaconda3="/usr/local/miniconda3",
+                   Python38="/usr/local/python38",
                    Python37="/usr/local/python37",
                    Python36="/usr/local/python36")
     else:

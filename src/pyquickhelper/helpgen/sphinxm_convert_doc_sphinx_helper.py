@@ -7,6 +7,7 @@ import sys
 from collections import deque
 import warnings
 import pickle
+import platform
 from html import escape as htmlescape
 from io import StringIO
 from docutils.parsers.rst import roles
