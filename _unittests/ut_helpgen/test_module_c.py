@@ -111,8 +111,9 @@ class TestModuleC(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
         path = os.path.abspath(os.path.split(__file__)[0])
+        vers = "%d%d" % sys.version_info[:2]
         file = os.path.join(path, "data", "pyd",
-                            "stdchelper.cp37-win_amd64.pyd")
+                            "stdchelper.cp%s-win_amd64.pyd" % vers)
         self.assertExists(file)
         mo = import_module(
             None, file, fLOG, additional_sys_path=None, first_try=True)
