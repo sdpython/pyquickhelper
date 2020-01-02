@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2019-12-16 - 0.00Mb
+current - 2020-01-02 - 0.00Mb
 =============================
+
+* `288`: Fix build for python 3.8 (2020-01-02)
+
+1.9.3289 - 2019-12-16 - 2.06Mb
+==============================
 
 * `287`: Fix pyquickhelper for coverage 5.0 (2019-12-16)
 * `286`: Fix pyquickhelper for sphinx 2.3.0 (2019-12-16)
