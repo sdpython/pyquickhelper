@@ -172,7 +172,10 @@ class TestModuleC(ExtTestCase):
         elif sys.platform == "darwin":
             name = "stdchelper_demo.cpython-%d%dm-darwin.so" % sys.version_info[:2]
         else:
-            name = "stdchelper_demo.cpython-%d%dm-x86_64-linux-gnu.so" % sys.version_info[:2]
+            if sys.version_info[:2] <= (3, 7):
+                name = "stdchelper_demo.cpython-%d%dm-x86_64-linux-gnu.so" % sys.version_info[:2]
+            else:
+                name = "stdchelper_demo.cpython-%d%d-x86_64-linux-gnu.so" % sys.version_info[:2]
         fullname = os.path.join(temp, name)
         if not os.path.exists(fullname):
             files = os.listdir(os.path.dirname(fullname))
