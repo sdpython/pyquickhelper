@@ -244,14 +244,13 @@ class JenkinsExt(jenkins.Jenkins):
             job = job.split("<--")[0]
         if job.startswith("custom "):
             return job.replace(" ", "_").replace("[", "").replace("]", "").strip("_")
-        else:
-            def_prefix = ["doc", "setup", "setup_big"]
-            def_prefix.extend(self.engines.keys())
-            for prefix in def_prefix:
-                p = "[%s]" % prefix
-                if p in job:
-                    job = p + " " + job.replace(" " + p, "")
-            return job.replace(" ", "_").replace("[", "").replace("]", "").strip("_")
+        def_prefix = ["doc", "setup", "setup_big"]
+        def_prefix.extend(self.engines.keys())
+        for prefix in def_prefix:
+            p = "[%s]" % prefix
+            if p in job:
+                job = p + " " + job.replace(" " + p, "")
+        return job.replace(" ", "_").replace("[", "").replace("]", "").strip("_")
 
     def get_engine_from_job(self, job, return_key=False):
         """
@@ -1202,7 +1201,7 @@ class JenkinsExt(jenkins.Jenkins):
                 options = job[2]
                 if not isinstance(options, dict):
                     raise JenkinsJobException(
-                        "the last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
+                        "The last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
             else:
                 options = {}
 

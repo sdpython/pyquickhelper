@@ -18,5 +18,4 @@ def yaml_load(content):
     """
     if Loader is None:
         return yaml.load(content)
-    else:
-        return yaml.load(content, Loader=Loader)
+    return yaml.load(content, Loader=Loader)

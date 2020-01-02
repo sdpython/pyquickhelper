@@ -40,8 +40,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     def replace(val, rep, into):
         if val is None:
             return val
-        else:
-            return val.replace(rep, into)
+        return val.replace(rep, into)
     content, source = read_content_ufs(file_or_buffer, add_source=True)
     if "project_name" not in context:
         project_name = infer_project_name(file_or_buffer, source)
@@ -115,12 +114,11 @@ def evaluate_condition(cond, variables=None):
     if cond.startswith("[") and cond.endswith("]"):
         e = eval(cond)
         return all(e)
-    else:
-        try:
-            return eval(cond)
-        except SyntaxError as e:
-            raise SyntaxError(
-                "Unable to interpret '{0}'\nvariables: {1}".format(cond, variables)) from e
+    try:
+        return eval(cond)
+    except SyntaxError as e:
+        raise SyntaxError(
+            "Unable to interpret '{0}'\nvariables: {1}".format(cond, variables)) from e
 
 
 def interpret_instruction(inst, variables=None):
@@ -156,8 +154,7 @@ def interpret_instruction(inst, variables=None):
         res = [interpret_instruction(_, variables) for _ in inst]
         if any(res):
             return [_ for _ in res if _ is not None]
-        else:
-            return None
+        return None
     elif isinstance(inst, tuple):
         if len(inst) != 2 or inst[1] is None:
             raise ValueError("Unable to interpret '{}'.".format(inst))
@@ -225,6 +222,9 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
         def_variables = {}
     else:
         def_variables = variables.copy()
+    if 'Python37' in def_variables and 'Python38' not in def_variables:
+        raise RuntimeError(
+            "Key 'Python38' is missing in {}.".format(def_variables))
     if add_environ:
         for k, v in os.environ.items():
             if k not in def_variables:
@@ -305,13 +305,18 @@ def ospathjoin(*args, **kwargs):
                             *platform* (win32 or ...)
     @return                 path
     """
-    platform = kwargs.get('platform', None)
-    if platform is None:
-        return os.path.join(*args)
-    elif platform.startswith("win"):
-        return "\\".join(args)
-    else:
+    def build_value(*args, **kwargs):
+        platform = kwargs.get('platform', None)
+        if platform is None:
+            return os.path.join(*args)
+        elif platform.startswith("win"):
+            return "\\".join(args)
         return "/".join(args)
+
+    value = build_value(*args, **kwargs)
+    if value == "/$PYINT":
+        raise RuntimeError("Impossible values {} - {}.".format(args, kwargs))
+    return value
 
 
 def ospathdirname(lp, platform=None):
@@ -326,8 +331,7 @@ def ospathdirname(lp, platform=None):
         return os.path.dirname(lp)
     elif platform.startswith("win"):
         return "\\".join(lp.replace("/", "\\").split("\\")[:-1])
-    else:
-        return "/".join(lp.replace("\\", "/").split("/")[:-1])
+    return "/".join(lp.replace("\\", "/").split("/")[:-1])
 
 
 def convert_sequence_into_batch_file(seq, variables=None, platform=None):
