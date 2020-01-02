@@ -512,13 +512,10 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     @param      first_try               first call to the function (to avoid infinite loop)
     @return                             module object, prefix
 
-    @warning It adds the file path at the first position in ``sys.path`` and then deletes it.
+    The function can also import compiled modules.
 
-    .. versionchanged:: 1.7
-        Add parameter *first_try*.
-
-    .. versionchanged:: 1.8
-        Can import compiled modules.
+    .. warning:: It adds the file path at the first
+        position in ``sys.path`` and then deletes it.
     """
     if additional_sys_path is None:
         additional_sys_path = []
@@ -566,6 +563,12 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     else:
         cpxx = ".cpython-%d%dm-" % sys.version_info[:2]
         search = li.rfind(cpxx)
+        if search == -1:
+            cpxx = ".cpython-%d%d-" % sys.version_info[:2]
+            search = li.rfind(cpxx)
+            if search == -1:
+                raise ImportErrorHelpGen(
+                    "Unable to guess extension from '{}'.".format(li))
         ext_rem = li[search:]
     if not ext_rem:
         raise ValueError("Unable to guess file extension '{0}'".format(li))
