@@ -588,7 +588,7 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             # linux
             engine, namee = self.get_engine_from_job(job, True)
-            python = "python%d%d" % sys.version_info[:2]
+            python = "python%d.%d" % sys.version_info[:2]
 
             if len(spl) == 1:
                 script = _modified_linux_jenkins(
