@@ -114,6 +114,7 @@ def get_epkg_dictionary():
         'Java': 'http://www.java.com/fr/download/',
         'javascript': 'https://en.wikipedia.org/wiki/JavaScript',
         'Jenkins': 'https://jenkins-ci.org/',
+        'Jenkins API': 'https://python-jenkins.readthedocs.org/en/latest/api.html',
         'jinja2': 'http://jinja.pocoo.org/docs/',
         'js2py': 'https://github.com/PiotrDabkowski/Js2Py',
         'json': 'https://docs.python.org/3/library/json.html',

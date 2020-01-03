@@ -29,9 +29,11 @@ _default_engine_paths = {
         "__PY35__": "__PY35__",
         "__PY36__": "__PY36__",
         "__PY37__": "__PY37__",
+        "__PY38__": "__PY38__",
         "__PY35_X64__": "__PY35_X64__",
         "__PY36_X64__": "__PY36_X64__",
         "__PY37_X64__": "__PY37_X64__",
+        "__PY38_X64__": "__PY38_X64__",
         "__PY27_X64__": "__PY27_X64__",
     },
 }
@@ -172,9 +174,9 @@ class JenkinsExt(jenkins.Jenkins):
         Overloads the same method from module :epkg:`python-jenkins`
         to replace string by bytes.
 
-        @param      req             see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
-        @param      add_crumb       see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
-        @param      resolve_auth    see `jenkins API <https://python-jenkins.readthedocs.org/en/latest/api.html>`_
+        @param      req             see :epkg:`Jenkins API`
+        @param      add_crumb       see :epkg:`Jenkins API`
+        @param      resolve_auth    see :epkg:`Jenkins API`
         '''
         if self._mock:
             raise JenkinsExtException("mocking server, cannot be open")
@@ -211,7 +213,9 @@ class JenkinsExt(jenkins.Jenkins):
     def get_jobs(self, folder_depth=0, folder_depth_per_request=10, view_name=None):
         """
         Gets the list of all jobs recursively to the given folder depth,
-        see `get_all_jobs <https://python-jenkins.readthedocs.org/en/latest/api.html#jenkins.Jenkins.get_all_jobs>`_.
+        see `get_all_jobs
+        <https://python-jenkins.readthedocs.org/en/latest/api.html
+        #jenkins.Jenkins.get_all_jobs>`_.
 
         @return                     list of jobs, ``[ { str: str} ]``
         """
@@ -584,7 +588,7 @@ class JenkinsExt(jenkins.Jenkins):
         else:
             # linux
             engine, namee = self.get_engine_from_job(job, True)
-            python = os.path.join(engine, "python.exe")
+            python = "python%d%d" % sys.version_info[:2]
 
             if len(spl) == 1:
                 script = _modified_linux_jenkins(
