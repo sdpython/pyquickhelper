@@ -125,8 +125,7 @@ def execute_script_get_local_variables(script, folder=None,
             raise RuntimeError("Something went wrong with content\n{}".format(
                 content))
         return res[0]
-    else:
-        return execute_script(content, folder, filename, check=check)
+    return execute_script(content, folder, filename, check=check)
 
 
 def dictionary_as_class(dico):

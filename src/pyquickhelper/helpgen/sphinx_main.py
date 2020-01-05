@@ -425,8 +425,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 "unable to import 'conf.py' which defines the help generation")
         if 'ERROR' in module_conf:
             msg = "\n".join(["paths:"] + conf_paths + [
-                "-----------------------",
-                module_conf['ERROR']])
+                "----------------------- ERROR:",
+                module_conf['ERROR'],
+                "------------------------ root_source:",
+                root_source])
             raise ImportError(msg)
         if len(module_conf) == 0:
             raise ImportError("No extracted local variable.")
