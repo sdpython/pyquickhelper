@@ -155,7 +155,7 @@ def _notebook_replacements(nbtext, notebook_replacements, fLOG=None):
                '"nbformat_minor": 2']
         for r in rep:
             if r in nbtext:
-                nbtext = nbtext.replace(k, '"nbformat_minor": 4')
+                nbtext = nbtext.replace(r, '"nbformat_minor": 4')
     return nbtext
 
 
