@@ -150,6 +150,12 @@ def _notebook_replacements(nbtext, notebook_replacements, fLOG=None):
             fLOG(
                 "[_notebook_replacements] replace '{0}' -> '{1}'".format(k, v))
             nbtext = nbtext.replace(k, v)
+    if '"nbformat": 4,' in nbtext:
+        rep = ['"nbformat_minor": 0', '"nbformat_minor": 1',
+               '"nbformat_minor": 2']
+        for r in rep:
+            if r in nbtext:
+                nbtext = nbtext.replace(k, '"nbformat_minor": 4')
     return nbtext
 
 
