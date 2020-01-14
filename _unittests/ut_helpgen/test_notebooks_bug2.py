@@ -58,6 +58,9 @@ class TestNoteBooksBug2(ExtTestCase):
     def test_notebook_td2a_eco_sql(self):
         self.ctest_notebook('td2a_eco_sql')
 
+    def test_notebook_custom_widget(self):
+        self.ctest_notebook('custom_widget')
+
 
 if __name__ == "__main__":
     unittest.main()

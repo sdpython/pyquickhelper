@@ -244,6 +244,33 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
     return run_cmd(cmd, wait=True, fLOG=fLOG)
 
 
+def _preprocess_notebook(notebook_content):
+    """
+    Preprocesses the content of a notebook.
+
+    @param  notebook_content    notebook content
+    @return                     modified content
+    """
+    def walk_through(field):
+        if isinstance(field, list):
+            for f in field:
+                walk_through(f)
+        elif isinstance(field, dict):
+            if (field.get('version_major', -1) == 2 and
+                    field.get('version_minor', -1) == 0):
+                field['version_minor'] = 2
+            elif (field.get('nbformat', -1) == 4 and
+                    field.get('nbformat_minor', -1) in (0, 1)):
+                field['nbformat_minor'] = 2
+            for _, v in field.items():
+                walk_through(v)
+
+    content = json.loads(notebook_content)
+    walk_through(content)
+    new_content = json.dumps(content)
+    return new_content
+
+
 def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_path=None,
                           formats=("ipynb", "html", "python", "rst",
                                    "slides", "pdf", "github"),
@@ -309,12 +336,12 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
     copied_images = dict()
 
-    for notebook in notebooks:
+    for notebook_in in notebooks:
         thisfiles = []
 
-        # we copy available images (only notebook folder) in case they are used
-        # in latex
-        currentdir = os.path.dirname(notebook)
+        # we copy available images (only notebook folder)
+        # in case they are used in latex
+        currentdir = os.path.dirname(notebook_in)
         for curfile in os.listdir(currentdir):
             ext = os.path.splitext(curfile)[1]
             if ext in {'.png', '.jpg', '.bmp', '.gif', '.jpeg', '.svg', '.mp4'}:
@@ -322,14 +349,29 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 if src not in copied_images:
                     dest = os.path.join(build, curfile)
                     shutil.copy(src, build)
-                    fLOG("[_process_notebooks_in] copy ", src, " to ", build)
+                    fLOG("[_process_notebooks_in] copy '{}' to '{}'.".format(
+                        src, build))
                     copied_images[src] = dest
+
+        # copy of the notebook into the build folder
+        # and changes the source
+        _name = os.path.splitext(os.path.split(notebook_in)[-1])[0]
+        _name += '.ipynb'
+        notebook = os.path.join(build, _name)
+        fLOG("[_process_notebooks_in] -- copy notebook '{}' to '{}'.".format(
+            notebook_in, notebook))
+        with open(notebook_in, "r", encoding="utf-8") as _f:
+            content = _f.read()
+        content = _preprocess_notebook(content)
+        with open(notebook, "w", encoding="utf-8") as _f:
+            _f.write(content)
 
         # next
         nbout = os.path.split(notebook)[-1]
         if " " in nbout:
             raise HelpGenException(
-                "spaces are not allowed in notebooks file names: {0}".format(notebook))
+                "spaces are not allowed in notebooks file names: "
+                "{0}".format(notebook))
         nbout = os.path.splitext(nbout)[0]
         for format in formats:
 
@@ -338,8 +380,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 continue
 
             if format not in extensions:
-                raise NotebookConvertError("unable to find format: {} in {}".format(
-                    format, ", ".join(extensions.keys())))
+                raise NotebookConvertError(
+                    "Unable to find format: '{}' in {}".format(
+                        format, ", ".join(extensions.keys())))
 
             # output
             format_ = format
