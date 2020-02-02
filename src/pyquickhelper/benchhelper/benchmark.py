@@ -588,7 +588,7 @@ class BenchMark:
         # RST
         if template_rst is not None and len(template_rst) > 0:
             old_width = pandas.get_option('display.max_colwidth')
-            pandas.set_option('display.max_colwidth', -1)
+            pandas.set_option('display.max_colwidth', None)
 
             res = apply_template(template_rst, dict(description=description,
                                                     title=title, bench=self, df2rst=df2rst))
