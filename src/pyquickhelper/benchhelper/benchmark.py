@@ -574,7 +574,7 @@ class BenchMark:
         # HTML
         if template_html is not None and len(template_html) > 0:
             old_width = pandas.get_option('display.max_colwidth')
-            pandas.set_option('display.max_colwidth', -1)
+            pandas.set_option('display.max_colwidth', None)
             res = apply_template(template_html, dict(description=description, title=title,
                                                      css=css, bench=self, params_html=params_html))
             # Restore previous value.
