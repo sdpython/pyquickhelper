@@ -191,6 +191,8 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install --upgrade pip
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
@@ -269,6 +271,8 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install --upgrade pip
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt
@@ -340,6 +344,8 @@ class TestYaml(unittest.TestCase):
 
             echo INSTALL
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
+            $PYINT -m pip install --upgrade pip
+            if [ $? -ne 0 ]; then exit $?; fi
             $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT -m pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyrsslocal --no-deps --extra-index-url=https://pypi.python.org/simple/
@@ -451,6 +457,8 @@ class TestYaml(unittest.TestCase):
 
             @echo INSTALL
             set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
+            pip install --upgrade pip
+            if %errorlevel% neq 0 exit /b %errorlevel%
             pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if %errorlevel% neq 0 exit /b %errorlevel%
             pip install -r requirements.txt

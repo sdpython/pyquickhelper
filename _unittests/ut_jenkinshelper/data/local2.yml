@@ -8,6 +8,7 @@ python:
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
 install:
+  - pip install --upgrade pip
   - pip freeze
 before_script:
   - if [ ${VERSION} == "2.7" ] then {{Python35}}\python -u setup.py copy27 fi

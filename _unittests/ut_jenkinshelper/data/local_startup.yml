@@ -5,6 +5,7 @@ python:
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}
 install:
+  - $PYINT -m pip install --upgrade pip
   - pip freeze
 script:
   - { CMD: "python -u setup.py unittests", NAME: "UT", SCHEDULER: "STARTUP" }
