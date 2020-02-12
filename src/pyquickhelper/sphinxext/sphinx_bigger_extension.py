@@ -50,7 +50,6 @@ def bigger_role(role, rawtext, text, lineno, inliner, options=None, content=None
         size = "4"
     node = bigger_node(text=text, size=size)
     node['classes'] += ["bigger"]
-    node['bigger'] = node
     return [node], []
 
 

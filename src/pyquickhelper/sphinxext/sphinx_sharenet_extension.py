@@ -80,7 +80,6 @@ class ShareNetDirective(Directive):
                                              size=self.options.get('size', 20),
                                              inhead=self.options.get('head', True) in bool_set)
         node['classes'] += ["sharenet"]
-        node['sharenet'] = node
         ns = [node]
         return ns
 
@@ -140,7 +139,6 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
     # set_classes(options)
     node = sharenet_node(networks=networks, size=size, inhead=inhead)
     node['classes'] += ["sharenet"]
-    node['sharenet'] = node
     return [node], []
 
 

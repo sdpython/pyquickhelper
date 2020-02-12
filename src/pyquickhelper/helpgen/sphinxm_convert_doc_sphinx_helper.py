@@ -18,6 +18,7 @@ from sphinx.application import Sphinx
 from sphinx.builders.html import SingleFileHTMLBuilder  # pylint: disable=E0611
 from sphinx.environment import BuildEnvironment
 from sphinx.errors import ExtensionError
+from sphinx.ext.extlinks import setup_link_roles
 from sphinx.transforms import SphinxTransformer
 from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
@@ -1256,7 +1257,6 @@ class _CustomSphinx(Sphinx):
             self._events = {}
 
         # Otherwise, role issue is missing.
-        from sphinx.ext.extlinks import setup_link_roles
         setup_link_roles(self)
 
     def _lookup_doctree(self, doctree, node_type):
