@@ -9,13 +9,14 @@ import os
 import unittest
 
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.imghelper.svg_helper import svg2img, guess_svg_size
 
 
 class TestSvg2Image(ExtTestCase):
 
     @unittest.skipIf(sys.version_info[:2] < (3, 6), "Python 3.5- returns false results.")
+    @skipif_appveyor("cannot load library 'libcairo.so': error 0x7e")
     def test_svg2img(self):
         fLOG(
             __file__,

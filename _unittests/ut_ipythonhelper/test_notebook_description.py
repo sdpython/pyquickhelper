@@ -8,7 +8,7 @@ import unittest
 import warnings
 
 from pyquickhelper.ipythonhelper import read_nb
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.loghelper import fLOG
 
 
@@ -28,6 +28,7 @@ class TestNotebookDescription(ExtTestCase):
         exp = "Converting a flat file to a table can be tricky sometimes. Most of the time, it goes well as follows:"
         self.assertEqual(desc, exp)
 
+    @skipif_appveyor("cannot load library 'libcairo.so': error 0x7e")
     def test_notebook_thumbnail(self):
         fLOG(
             __file__,
