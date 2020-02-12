@@ -398,9 +398,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     #################################################
     for t3 in layout:
         lay, build, override, newconf = lay_build_override_newconf(t3)
-        fLOG("[generate_help_sphinx] newconf: '{}' - {}".format(newconf, t3))
         if newconf is None:
             continue
+        fLOG("[generate_help_sphinx] newconf: '{}' - {}".format(newconf, t3))
         # we need to import this file to guess the template directory and
         # add missing templates
         folds = os.path.join(root_sphinxdoc, newconf)

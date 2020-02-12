@@ -416,8 +416,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     _proj = project_var_name.replace("_", "\\_")
     latex_book = book
     latex_use_parts = False
-    latex_documents = [('index', '%s_doc.tex' % project_var_name, _proj if title is None else title,
+    latex_documents = [('index', '%s_doc.tex' % project_var_name,
+                        _proj if title is None else title,
                         author, 'manual', True), ]
+    latex_docclass = dict(manual='report', howto='report')
     man_pages = [('index', '%s_doc' % project_var_name,
                   ('%s Documentation' % _proj) if title is None else title,
                   [author], 1)]
@@ -438,6 +440,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'papersize': 'a4',
         'pointsize': '10pt',
         'preamble': preamble,
+        'docclass': 'book',
+        'title': title,
     }
 
     # pyquickhelper automation

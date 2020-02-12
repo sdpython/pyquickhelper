@@ -661,10 +661,15 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
             return "..."
         if ord(c) >= 255 or c in weird_character:
             return "\\textquestiondown "
-        else:
-            return c
+        return c
+
+    def clean_line(line):
+        if line.startswith("\\documentclass"):
+            line = line.replace("{None}", "{report}")
+        return line
 
     lines = st.split("\n")
+    lines = list(map(clean_line, lines))
     st = "\n".join("".join(map(clean_unicode, line)) for line in lines)
 
     # we count the number of times we have \$ (which is unexpected unless the
