@@ -455,7 +455,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         if self._table:
             raise NotImplementedError('Nested tables are not supported.')
         self.new_state(0)
-        self._table = []
+        self._table = [[]]
 
     def depart_table(self, node):
         lines = self._table[1:]

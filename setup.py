@@ -67,7 +67,7 @@ package_data = {project_var_name + ".sphinxext": ["*.png"],
                 project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
                 project_var_name + ".sphinxext.sphinximages.sphinxtrib": ["*.png"],
                 project_var_name + ".sphinxext.templates": ["*.txt"],
-}
+                }
 
 ############
 # functions

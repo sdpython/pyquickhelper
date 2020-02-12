@@ -143,9 +143,9 @@ class TestRstBuilder(ExtTestCase):
                     before
 
                     +------+--------+
-                    | a    | b1     |
+                    | a1   | b1     |
                     +------+--------+
-                    | a    | b2     |
+                    | a2   | b2     |
                     +------+--------+
 
                     .. list-table::
@@ -437,4 +437,5 @@ class TestRstBuilder(ExtTestCase):
 
 
 if __name__ == "__main__":
+    TestRstBuilder().test_rst_builder_sphinx_table()
     unittest.main()

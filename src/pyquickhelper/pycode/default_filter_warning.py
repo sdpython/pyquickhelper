@@ -37,6 +37,8 @@ def default_filter_warning(w):  # pragma: no cover
             if "The ishold function was deprecated in version 2.0." in str(w.message):
                 return False
     elif isinstance(w.message, DeprecationWarning):
+        if "RemovedInSphinx40Warning" in str(w):
+            return False
         if w.filename.endswith("kernelspec.py"):
             return False
         if "jupyter_client" in w.filename:
