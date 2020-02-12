@@ -7,7 +7,6 @@
 import sys
 import os
 import site
-import warnings
 
 
 def getsitepackages():
