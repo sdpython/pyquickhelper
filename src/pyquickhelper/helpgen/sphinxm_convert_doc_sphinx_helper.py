@@ -183,14 +183,12 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
         self.base_class = HTMLTranslator
 
     def visit_field(self, node):
-        # type: (nodes.Node) -> None
         if not hasattr(self, '_fieldlist_row_index'):
             # needed when a docstring starts with :param:
             self._fieldlist_row_index = 0
         return HTMLTranslator.visit_field(self, node)
 
     def visit_pending_xref(self, node):
-        # type: (nodes.Node) -> None
         self.visit_Text(node)
         raise nodes.SkipNode
 
@@ -349,8 +347,6 @@ class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
             self, HTMLWriter, HTMLTranslatorWithCustomDirectives, app)
 
     def translate(self):
-        # type: () -> None
-        # sadly, this is mostly copied from parent class
         self.visitor = visitor = self.translator_class(
             self.builder, self.document)
         self.document.walkabout(visitor)
@@ -557,7 +553,6 @@ class _MemoryBuilder:
         """
         Overwrites *get_target_uri* to control the page name.
         """
-        # type: (unicode, unicode) -> unicode
         if docname in self.env.all_docs:
             # all references are on the same page...
             return self.config.master_doc + '#document-' + docname
@@ -595,7 +590,6 @@ class _MemoryBuilder:
         default_baseuri = default_baseuri.rsplit('#', 1)[0]
 
         def pathto(otheruri, resource=False, baseuri=default_baseuri):
-            # type: (unicode, bool, unicode) -> unicode
             if resource and '://' in otheruri:
                 # allow non-local resources given by scheme
                 return otheruri
@@ -608,7 +602,6 @@ class _MemoryBuilder:
         ctx['pathto'] = pathto
 
         def css_tag(css):
-            # type: (Stylesheet) -> unicode
             attrs = []
             for key in sorted(css.attributes):
                 value = css.attributes[key]
@@ -620,7 +613,6 @@ class _MemoryBuilder:
         ctx['css_tag'] = css_tag
 
         def hasdoc(name):
-            # type: (unicode) -> bool
             if name in self.env.all_docs:
                 return True
             elif name == 'search' and self.search:
@@ -840,7 +832,6 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
         _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app)
 
     def write_stylesheet(self):
-        # type: () -> None
         from sphinx.highlighting import PygmentsBridge
         highlighter = PygmentsBridge('latex', self.config.pygments_style)
         rows = []
@@ -882,7 +873,6 @@ class _CustomBuildEnvironment(BuildEnvironment):
         self.doctree_ = {}
 
     def get_doctree(self, docname):
-        # type: (unicode) -> nodes.Node
         """Read the doctree for a file from the pickle and return it."""
         if hasattr(self, "doctree_") and docname in self.doctree_:
             from sphinx.util.docutils import WarningStream
@@ -904,7 +894,6 @@ class _CustomBuildEnvironment(BuildEnvironment):
             # return BuildEnvironment.get_doctree(self, docname)
 
     def apply_post_transforms(self, doctree, docname):
-        # type: (nodes.Node, unicode) -> None
         """Apply all post-transforms."""
         # set env.docname during applying post-transforms
         self.temp_data['docname'] = docname
@@ -1213,7 +1202,6 @@ class _CustomSphinx(Sphinx):
         self._extended_init_()
 
     def _init_env(self, freshenv):
-        # type: (bool) -> None
         if freshenv:
             self.env = _CustomBuildEnvironment(self)
             self.env.setup(self)
