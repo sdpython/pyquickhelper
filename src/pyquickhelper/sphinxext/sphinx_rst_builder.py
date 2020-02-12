@@ -473,13 +473,15 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
                 for i, cell in enumerate(line):
                     try:
                         par = self.wrap(cell, width=int(colwidths[i]))
-                    except ValueError:
+                    except (IndexError, ValueError):
                         par = self.wrap(cell)
                     if par:
                         maxwidth = max(map(len, par))
                     else:
                         maxwidth = 0
-                    if isinstance(realwidths[i], str):
+                    if i >= len(realwidths):
+                        realwidths.append(maxwidth)
+                    elif isinstance(realwidths[i], str):
                         realwidths[i] = maxwidth
                     else:
                         realwidths[i] = max(realwidths[i], maxwidth)
