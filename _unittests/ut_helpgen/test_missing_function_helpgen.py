@@ -8,7 +8,7 @@ import os
 import unittest
 
 from pyquickhelper.pycode import ExtTestCase, skipif_vless, skipif_azure, skipif_appveyor
-from pyquickhelper.helpgen.utils_sphinx_config import ie_layout_html, NbImage
+from pyquickhelper.helpgen.utils_sphinx_config import NbImage
 from pyquickhelper.helpgen.post_process import remove_character_under32
 from pyquickhelper.helpgen.utils_sphinx_doc import useless_class_UnicodeStringIOThreadSafe, doc_checking
 from pyquickhelper.helpgen.default_conf import get_default_stylesheet, get_default_javascript, custom_setup
@@ -21,14 +21,6 @@ from pyquickhelper.helpgen.sphinxm_mock_app import MockSphinxApp
 
 
 class TestMissingFunctionsHelpgen(ExtTestCase):
-
-    def test_ie(self):
-        if not sys.platform.startswith("win"):
-            return
-
-        if not ie_layout_html():
-            self.fLOG(OutputPrint=__name__ == "__main__")
-            self.fLOG("The output is not optimized for IE.")
 
     def test_nb_image(self):
         r = NbImage("completion.png")

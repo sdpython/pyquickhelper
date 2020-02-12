@@ -24,48 +24,6 @@ def getsitepackages():
         return [os.path.normpath(os.path.join(os.path.dirname(sphinx.__file__), ".."))]
 
 
-def ie_layout_html():
-    """
-    The layout produced by sphinx does not always work with Internet Explorer.
-    See `Issue with some Sphinx themes and Internet Explorer <http://www.xavierdupre.fr/blog/2014-10-30_nojs.html>`_.
-
-    @return         boolean
-
-    If False, raises a warning.
-    """
-    tofind = '<meta http-equiv="X-UA-Compatible" content="IE=edge" />'
-
-    sitep = [_ for _ in getsitepackages() if "packages" in _]
-    if len(sitep) == 1:
-        sitep = sitep[0]
-    else:
-        raise FileNotFoundError(
-            "unable to find site-packages\n{0}".format(
-                "\n".join(getsitepackages())))  # pylint: disable=E1101
-
-    if not os.path.exists(sitep):
-        raise FileNotFoundError("unable to find site-packages, tried: {0}\nALL:\n{1}".format(
-            sitep, "\n".join(site.getsitepackages())))  # pylint: disable=E1101
-
-    layout = os.path.join(sitep, "sphinx", "themes", "basic", "layout.html")
-    if os.path.exists(layout):
-        with open(layout, "r", encoding="utf-8") as f:
-            content = f.read()
-        if tofind not in content:
-            alls = ["unable to find: " + tofind + " in ",
-                    '  File "{0}", line 1'.format(layout),
-                    'see http://www.xavierdupre.fr/blog/2014-10-30_nojs.html']
-            warnings.warn("\n".join(alls), UserWarning)
-            return False
-        else:
-            return True
-    else:
-        warnings.warn(
-            "Sphinx does not seem to be properly installed, unable to find: " + layout +
-            ".\nThis happens on virtual environment for Anaconda on Windows", ImportWarning)
-        return False
-
-
 def locate_image_documentation(image_name):
     """
     Tries to local an image in the module for help generation in a folder ``_doc``.
@@ -164,7 +122,3 @@ def NbImage(name, repository=None, force_github=False, width=None):
     url = repository + "/" + loc
     url = url.replace("github.com", "raw.githubusercontent.com")
     return Image(url, width=width)
-
-
-if __name__ == "__main__":
-    ie_layout_html()

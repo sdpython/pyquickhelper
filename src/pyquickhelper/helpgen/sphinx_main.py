@@ -20,7 +20,6 @@ from .utils_sphinx_doc import prepare_file_for_sphinx_help_generation
 from .utils_sphinx_doc_helpers import HelpGenException, ImportErrorHelpGen
 from .conf_path_tools import find_latex_path, find_pandoc_path
 from ..filehelper.synchelper import explore_folder
-from .utils_sphinx_config import ie_layout_html
 from ..filehelper import synchronize_folder
 from .post_process import post_process_latex_output
 from .process_notebooks import process_notebooks, build_notebooks_gallery, build_all_notebooks_coverage
@@ -1269,12 +1268,6 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
 
     tocs = add_missing_files(root, thenewconf, "__INSERT__", fLOG)
     all_tocs.extend(tocs)
-
-    # check if we need to run ie_layout_html
-    check_ie_layout_html = thenewconf.__dict__.get(
-        "check_ie_layout_html", True)
-    if check_ie_layout_html:
-        ie_layout_html()
 
     # we store the html_static_path in html_static_paths
     html_static_path = thenewconf.__dict__.get(

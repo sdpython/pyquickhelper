@@ -733,9 +733,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     except ImportError:
         pass
 
-    # disable some checkings
-    check_ie_layout_html = False
-
     # information about code
     def linkcode_resolve_function(domain, info):
         if link_resolve is None:
