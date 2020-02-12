@@ -4,7 +4,7 @@
 """
 import yaml
 try:
-    from yaml import CLoader as Loader
+    from yaml import FullLoader as Loader
 except ImportError:
     Loader = None
 
