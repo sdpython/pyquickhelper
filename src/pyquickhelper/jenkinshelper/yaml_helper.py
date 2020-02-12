@@ -445,8 +445,8 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     rows.append("export KEEPPATH=$PATH")
                     rows.append(
                         "export PATH={0}:$PATH".format(venv_interpreter))
-                pat = '"{0}" -c "from virtualenv import create_environment;create_environment(\\\"{1}\\\", site_packages=True)"'
-                rows.append(pat.format(interpreter, p.replace("\\", "\\\\")))
+                pat = '"{0}" -m virtualenv {1} --system-site-packages'
+                rows.append(pat.format(interpreter, p))
                 if iswin:
                     rows.append("set PATH=%KEEPPATH%")
                     interpreter = ospathjoin(

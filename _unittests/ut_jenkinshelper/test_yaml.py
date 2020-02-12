@@ -185,7 +185,7 @@ class TestYaml(unittest.TestCase):
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=C:\\Python__VERS___x64;%PATH%
-            "C:\\Python__VERS___x64\\python" -c "from virtualenv import create_environment;create_environment(\\"ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\", site_packages=True)"
+            "C:\\Python__VERS___x64\\python" -m virtualenv ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv --system-site-packages
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -265,7 +265,7 @@ class TestYaml(unittest.TestCase):
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=C:\\Python__VERS___x64;%PATH%
-            "C:\\Python__VERS___x64\\python" -c "from virtualenv import create_environment;create_environment(\\"ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\", site_packages=True)"
+            "C:\\Python__VERS___x64\\python" -m virtualenv ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv --system-site-packages
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
@@ -338,7 +338,7 @@ class TestYaml(unittest.TestCase):
             if [-f ROOT/pyquickhelper/$NAME_JENKINS/_venv]; then mkdir "ROOT/pyquickhelper/$NAME_JENKINS/_venv"; fi
             export KEEPPATH=$PATH
             export PATH=C:/Python__VERS___x64:$PATH
-            "C:/Python__VERS___x64/$PYINT" -c "from virtualenv import create_environment;create_environment(\\"ROOT/pyquickhelper/$NAME_JENKINS/_venv\\", site_packages=True)"
+            "C:/Python__VERS___x64/$PYINT" -m virtualenv ROOT/pyquickhelper/$NAME_JENKINS/_venv --system-site-packages
             export PATH=$KEEPPATH
             if [ $? -ne 0 ]; then exit $?; fi
 
@@ -451,7 +451,7 @@ class TestYaml(unittest.TestCase):
             if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
             set KEEPPATH=%PATH%
             set PATH=C:\\Python27_x64;%PATH%
-            "C:\\Python27_x64\\python" -c "from virtualenv import create_environment;create_environment(\\"ROOT\\\\pyquickhelper\\\\%NAME_JENKINS%\\\\_venv\\", site_packages=True)"
+            "C:\\Python27_x64\\python" -m virtualenv ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv --system-site-packages
             set PATH=%KEEPPATH%
             if %errorlevel% neq 0 exit /b %errorlevel%
 
