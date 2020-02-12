@@ -976,17 +976,16 @@ class _CustomSphinx(Sphinx):
         # from sphinx.domains.rst import ReSTDomain
         # from sphinx.domains.c import CDomain
 
-        # type: Dict[unicode, Extension]
         from sphinx.registry import SphinxComponentRegistry
         self.phase = BuildPhase.INITIALIZATION
         self.verbosity = verbosity
         self.extensions = {}
-        self.builder = None                     # type: Builder
-        self.env = None                         # type: BuildEnvironment
-        self.project = None                     # type: Project
+        self.builder = None
+        self.env = None
+        self.project = None
         self.registry = SphinxComponentRegistry()
-        self.post_transforms = []               # type: List[Transform]
-        self.html_themes = {}                   # type: Dict[unicode, unicode]
+        self.post_transforms = []
+        self.html_themes = {}
 
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"
@@ -1006,7 +1005,7 @@ class _CustomSphinx(Sphinx):
                                    'directory cannot be identical')
 
         if status is None:
-            self._status = StringIO()      # type: IO
+            self._status = StringIO()
             self.quiet = True
         else:
             self._status = status
@@ -1018,7 +1017,7 @@ class _CustomSphinx(Sphinx):
 
         # keep last few messages for traceback
         # This will be filled by sphinx.util.logging.LastMessagesWriter
-        self.messagelog = deque(maxlen=10)  # type: deque
+        self.messagelog = deque(maxlen=10)
 
         # say hello to the world
         from sphinx import __display_version__

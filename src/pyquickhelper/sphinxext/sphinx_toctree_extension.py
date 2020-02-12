@@ -45,7 +45,6 @@ class CustomTocTree(TocTree):
     }
 
     def run(self):
-        # type: () -> List[nodes.Node]
         env = self.state.document.settings.env
         suffixes = env.config.source_suffix
         glob = 'glob' in self.options
@@ -53,7 +52,7 @@ class CustomTocTree(TocTree):
         ret = []
         # (title, ref) pairs, where ref may be a document, or an external link,
         # and title may be None if the document's title is to be used
-        entries = []        # type: List[Tuple[unicode, unicode]]
+        entries = []
         includefiles = []
         all_docnames = env.found_docs.copy()
         # don't add the currently visited file in catch-all patterns
@@ -144,8 +143,6 @@ class CustomTocTreeCollector(TocTreeCollector):
     #    assert self.listener_ids is None
 
     def enable(self, app):
-        # It disables
-        # type: (Sphinx) -> None
         # It needs to disable TocTreeCollector.
         app.disconnect_env_collector("TocTreeCollector", exc=False)
         assert self.listener_ids is None
@@ -158,7 +155,6 @@ class CustomTocTreeCollector(TocTreeCollector):
         }
 
     def process_doc(self, app, doctree):
-        # type: (Sphinx, nodes.Node) -> None
         """Build a TOC from the doctree and store it in the inventory."""
         docname = app.env.docname
         numentries = [0]  # nonlocal again...

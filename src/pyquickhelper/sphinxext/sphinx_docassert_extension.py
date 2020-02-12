@@ -12,15 +12,14 @@ from .import_object_helper import import_any_object
 
 
 def check_typed_make_field(self,
-                           types,     # type: Dict[unicode, List[nodes.Node]]
-                           domain,    # type: unicode
-                           items,     # type: Tuple
-                           env=None,  # type: BuildEnvironment
-                           # type inspect.Parameters (to check that all parameters are documented)
+                           types,
+                           domain,
+                           items,
+                           env=None,
                            parameters=None,
-                           function_name=None,  # str
-                           docname=None,  # str
-                           kind=None   # str
+                           function_name=None,
+                           docname=None,
+                           kind=None
                            ):
     """
     Overwrites function
@@ -117,8 +116,8 @@ class OverrideDocFieldTransformer:
         """
         typemap = other_self.typemap
         entries = []
-        groupindices = {}  # type: Dict[unicode, int]
-        types = {}  # type: Dict[unicode, Dict]
+        groupindices = {}
+        types = {}
 
         # step 1: traverse all fields and collect field types and content
         for field in node:

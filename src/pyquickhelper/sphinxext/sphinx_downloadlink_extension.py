@@ -236,7 +236,6 @@ class DownloadLinkFileCollector(EnvironmentCollector):
         env.dllinkfiles.merge_other(docnames, other.dllinkfiles)
 
     def process_doc(self, app, doctree):
-        # type: (Sphinx, nodes.Node) -> None
         """Process downloadable file paths. """
         self.check_attr(app.env)
         nb = 0
@@ -269,7 +268,6 @@ def copy_download_files(app, exc):
         return
 
     def to_relpath(f):
-        # type: (unicode) -> unicode
         return relative_path(app.srcdir, f)
     # copy downloadable files
     builder = app.builder

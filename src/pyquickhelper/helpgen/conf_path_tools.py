@@ -134,7 +134,6 @@ def find_pandoc_path(exc=True):
 
 
 def custom_ensuredir(path):
-    # type: (unicode) -> None
     """Ensure that a path exists."""
     if "IMPOSSIBLE:TOFIND" in path:
         return

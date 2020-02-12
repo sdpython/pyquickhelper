@@ -122,8 +122,7 @@ class AutoSignatureDirective(Directive):
     autosignature_class = autosignature_node
 
     def run(self):
-        # type: () -> List[nodes.Node]
-        self.filename_set = set()   # type: Set[unicode]
+        self.filename_set = set()
         # a set of dependent filenames
         self.reporter = self.state.document.reporter
         self.env = self.state.document.settings.env

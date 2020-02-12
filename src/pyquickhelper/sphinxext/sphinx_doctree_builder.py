@@ -229,7 +229,6 @@ class DocTreeBuilder(Builder):
         return "{0}/{1}.doctree.txt".format(self.outdir, pagename).replace("\\", "/")
 
     def write_doc(self, docname, doctree):
-        # type: (unicode, nodes.Node) -> None
         destination = StringOutput(encoding='utf-8')
         self.current_docname = docname
         self.writer.write(doctree, destination)

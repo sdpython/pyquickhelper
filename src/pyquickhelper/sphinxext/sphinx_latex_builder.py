@@ -57,9 +57,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
         LaTeXTranslator.visit_document(self, node)
 
     def visit_enumerated_list(self, node):
-        # type: (nodes.Node) -> None
+
         def get_enumtype(node):
-            # type: (nodes.Node) -> unicode
             enumtype = node.get('enumtype', 'arabic')
             if 'alpha' in enumtype and 26 < node.get('start', 0) + len(node):  # pylint: disable=C0122
                 # fallback to arabic if alphabet counter overflows
@@ -68,7 +67,6 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             return enumtype
 
         def get_nested_level(node):
-            # type: (nodes.Node) -> int
             if node is None:
                 return 0
             elif isinstance(node, nodes.enumerated_list):
@@ -124,7 +122,6 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             pass
 
     def latex_image_length(self, width_str, scale=100):
-        # type: (nodes.Node) -> unicode
         try:
             return rstdim_to_latexdim(width_str, scale)
         except ValueError:
@@ -171,7 +168,6 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
         return renderer.render(template_name, variables)
 
     def unknown_visit(self, node):
-        # type: (nodes.Node) -> None
         raise NotImplementedError("Unknown node '{0}' detected in '{1}'".format(
             node.__class__.__name__, self.__class__.__name__))
 
@@ -235,7 +231,6 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
                                           encoding=encoding, overwrite_if_changed=overwrite_if_changed)
 
     def write(self, *ignored):
-        # type: (Any) -> None
         docwriter = EnhancedLaTeXWriter(self)
         docsettings = OptionParser(
             defaults=self.env.settings,

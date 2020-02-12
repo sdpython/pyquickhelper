@@ -167,7 +167,6 @@ class MockSphinxApp:
         self.app.domains[domain.name] = domain
 
     def require_sphinx(self, version):
-        # type: (unicode) -> None
         # check the Sphinx version if requested
         # delayed import to speed up import time
         from sphinx import __display_version__ as sphinx__display_version__
