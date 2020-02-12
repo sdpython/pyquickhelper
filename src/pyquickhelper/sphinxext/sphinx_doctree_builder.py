@@ -46,6 +46,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
             width=STDINDENT, break_long_words=False, break_on_hyphens=False)
         self.dowrap = self.builder.config.doctree_wrap
         self.inline = self.builder.config.doctree_inline
+        self._table = []
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("DocTreeBuilder")

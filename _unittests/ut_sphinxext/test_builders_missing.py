@@ -70,10 +70,12 @@ class TestBuildersMissing(ExtTestCase):
         for cl in cls:
             inst = cl(builder, document)
             inst._footnote = 'nofootnote'
-            inst.table = []
             inst.rst_image_dest = ''
+            if hasattr(inst, 'visit_table'):
+                inst.visit_table(element)
             for k in cl.__dict__:
-                if k.startswith("visit_") or k.startswith("depart_"):
+                if (k.startswith("visit_") or k.startswith("depart_") and
+                        k not in ('visit_table', 'depart_table')):
                     fct = getattr(cl, k)
                     try:
                         fct(inst, element)
@@ -101,6 +103,8 @@ class TestBuildersMissing(ExtTestCase):
                         else:
                             raise Exception(
                                 "Unable to run '{0}'".format(k)) from e
+            if hasattr(inst, 'depart_table'):
+                inst.depart_table(element)
 
 
 if __name__ == "__main__":

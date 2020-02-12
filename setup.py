@@ -54,16 +54,19 @@ package_data = {project_var_name + ".sphinxext": ["*.png"],
                 project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.template": ["*.scss"],
                 project_var_name + ".sphinxext.revealjs.templates.revealjs.static.js": ["*.js"],
                 project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.css": ["*.css"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.font": ["league-gothic/*.*", "source-sans-pro/*.*"],
+                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.font": [
+                    "league-gothic/*.*", "source-sans-pro/*.*"],
                 project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.js": ["*.js"],
                 project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin": [
-    "highlight/*.js", "markdown/*.*", "math/*.js", "multiplex/*.*",
-    "notes/*.*", "notes-server/*.*", "print-pdf/*.js", "search/*js", "zoom-js/*.js"],
-    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
-    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
-    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
-    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
-    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
+                    "highlight/*.js", "markdown/*.*", "math/*.js", "multiplex/*.*",
+                    "notes/*.*", "notes-server/*.*", "print-pdf/*.js", "search/*js", "zoom-js/*.js"],
+                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
+                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
+                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
+                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
+                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
+                project_var_name + ".sphinxext.sphinximages.sphinxtrib": ["*.png"],
+                project_var_name + ".sphinxext.templates": ["*.txt"],
 }
 
 ############

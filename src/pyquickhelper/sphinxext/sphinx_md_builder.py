@@ -73,7 +73,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.stateindent = [0]
         self.list_counter = []
         self.sectionlevel = 0
-        self.table = None
+        self._table = []
         if self.builder.config.md_indent:
             self.indent = self.builder.config.md_indent
         else:
@@ -407,7 +407,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         raise nodes.SkipNode
 
     def visit_colspec(self, node):
-        self.table[0].append(node['colwidth'])
+        self._table[0].append(node['colwidth'])
         raise nodes.SkipNode
 
     def visit_tgroup(self, node):
@@ -425,13 +425,13 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         pass
 
     def visit_tbody(self, node):
-        self.table.append('sep')
+        self._table.append('sep')
 
     def depart_tbody(self, node):
         pass
 
     def visit_row(self, node):
-        self.table.append([])
+        self._table.append([])
 
     def depart_row(self, node):
         pass
@@ -445,18 +445,18 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_entry(self, node):
         text = self.nl.join(self.nl.join(x[1]) for x in self.states.pop())
         self.stateindent.pop()
-        self.table[-1].append(text)
+        self._table[-1].append(text)
 
     def visit_table(self, node):
-        if self.table:
+        if self._table:
             raise NotImplementedError('Nested tables are not supported.')
         self.new_state(0)
-        self.table = [[]]
+        self._table = [[]]
 
     def depart_table(self, node):
-        lines = self.table[1:]
+        lines = self._table[1:]
         fmted_rows = []
-        colwidths = self.table[0]
+        colwidths = self._table[0]
         realwidths = colwidths[:]
         separator = 0
         # don't allow paragraphs in table cells for now
@@ -466,12 +466,20 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
             else:
                 cells = []
                 for i, cell in enumerate(line):
-                    par = self.wrap(cell, width=colwidths[i])
+                    try:
+                        par = self.wrap(cell, width=int(colwidths[i]))
+                    except (IndexError, ValueError):
+                        par = self.wrap(cell)
                     if par:
                         maxwidth = max(map(len, par))
                     else:
                         maxwidth = 0
-                    realwidths[i] = max(realwidths[i], maxwidth)
+                    if i >= len(realwidths):
+                        realwidths.append(maxwidth)
+                    elif isinstance(realwidths[i], str):
+                        realwidths[i] = maxwidth
+                    else:
+                        realwidths[i] = max(realwidths[i], maxwidth)
                     cells.append(par)
                 fmted_rows.append(cells)
 
@@ -496,7 +504,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
             if separator and i == separator:
                 writesep('-')
             writerow(row)
-        self.table = None
+        self._table = []
         self.end_state(wrap=False)
 
     def visit_acks(self, node):

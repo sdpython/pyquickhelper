@@ -5,8 +5,15 @@
 History
 =======
 
-current - 2020-01-02 - 0.00Mb
+current - 2020-02-12 - 0.00Mb
 =============================
+
+* `291`: Sphinx extension bigger fails with sphinx 2.4.1 (2020-02-12)
+* `290`: Issue raised with pandas.set_option in class BenchMark (2020-02-02)
+* `289`: Fix notebook conversion after nbconvert update (minor_version=0, ...) (2020-01-14)
+
+1.9.3299 - 2020-01-02 - 2.06Mb
+==============================
 
 * `288`: Fix build for python 3.8 (2020-01-02)
 

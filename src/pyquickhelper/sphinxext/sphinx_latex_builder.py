@@ -10,13 +10,13 @@ from docutils import nodes
 from docutils.frontend import OptionParser
 from sphinx.locale import __
 from sphinx.builders.latex import LaTeXBuilder
-from sphinx.writers.latex import LaTeXWriter, LaTeXTranslator
-from sphinx.writers.latex import rstdim_to_latexdim
+from sphinx.writers.latex import (
+    LaTeXWriter, LaTeXTranslator, rstdim_to_latexdim)
 from sphinx.util import logging
 from sphinx import addnodes
-from sphinx.writers.latex import toRoman
-from sphinx.writers.latex import ENUMERATE_LIST_STYLE
+from sphinx.writers.latex import toRoman, ENUMERATE_LIST_STYLE
 from sphinx.util.docutils import SphinxFileOutput
+from sphinx.util.template import LaTeXRenderer
 
 
 class CustomizedSphinxFileOutput(SphinxFileOutput):
@@ -151,6 +151,24 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
 
     def depart_inheritance_diagram(self, node):
         pass
+
+    def render(self, template_name, variables):
+        renderer = LaTeXRenderer(latex_engine=self.config.latex_engine)
+        if self.builder.config.templates_path is None:
+            tpls = [os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                                 "templates")]
+        else:
+            tpls = self.builder.config.templates_path
+        for template_dir in tpls:
+            if os.path.exists(template_dir):
+                template = os.path.join(template_dir, template_name)
+            else:
+                template = os.path.join(self.builder.confdir, template_dir,
+                                        template_name)
+            if os.path.exists(template):
+                return renderer.render(template, variables)
+
+        return renderer.render(template_name, variables)
 
     def unknown_visit(self, node):
         # type: (nodes.Node) -> None

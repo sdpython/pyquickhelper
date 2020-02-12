@@ -78,7 +78,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.stateindent = [0]
         self.list_counter = []
         self.sectionlevel = 0
-        self.table = None
+        self._table = None
         if self.builder.config.rst_indent:
             self.indent = self.builder.config.rst_indent
         else:
@@ -411,7 +411,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         raise nodes.SkipNode
 
     def visit_colspec(self, node):
-        self.table[0].append(node['colwidth'])
+        self._table[0].append(node['colwidth'])
         raise nodes.SkipNode
 
     def visit_tgroup(self, node):
@@ -429,13 +429,13 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         pass
 
     def visit_tbody(self, node):
-        self.table.append('sep')
+        self._table.append('sep')
 
     def depart_tbody(self, node):
         pass
 
     def visit_row(self, node):
-        self.table.append([])
+        self._table.append([])
 
     def depart_row(self, node):
         pass
@@ -449,19 +449,20 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_entry(self, node):
         text = self.nl.join(self.nl.join(x[1]) for x in self.states.pop())
         self.stateindent.pop()
-        self.table[-1].append(text)
+        self._table[-1].append(text)
 
     def visit_table(self, node):
-        if self.table:
+        if self._table:
             raise NotImplementedError('Nested tables are not supported.')
         self.new_state(0)
-        self.table = [[]]
+        self._table = []
 
     def depart_table(self, node):
-        lines = self.table[1:]
+        lines = self._table[1:]
         fmted_rows = []
-        colwidths = self.table[0]
-        realwidths = colwidths[:]
+        colwidths = self._table[0]
+        realwidths = list(map(lambda x: x if isinstance(x, int) else 1,
+                              colwidths[:]))
         separator = 0
         # don't allow paragraphs in table cells for now
         for line in lines:
@@ -470,14 +471,21 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             else:
                 cells = []
                 for i, cell in enumerate(line):
-                    par = self.wrap(cell, width=colwidths[i])
+                    try:
+                        par = self.wrap(cell, width=int(colwidths[i]))
+                    except ValueError:
+                        par = self.wrap(cell)
                     if par:
                         maxwidth = max(map(len, par))
                     else:
                         maxwidth = 0
-                    realwidths[i] = max(realwidths[i], maxwidth)
+                    if isinstance(realwidths[i], str):
+                        realwidths[i] = maxwidth
+                    else:
+                        realwidths[i] = max(realwidths[i], maxwidth)
                     cells.append(par)
                 fmted_rows.append(cells)
+        self._table = None
 
         def writesep(char='-'):
             out = ['+']
@@ -505,7 +513,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
                 writesep('-')
             writerow(row)
         writesep('-')
-        self.table = None
+        self._table = None
         self.end_state(wrap=False)
 
     def visit_acks(self, node):
