@@ -90,7 +90,7 @@ class TestHistoryHelper(ExtTestCase):
         self.assertGreater(nb, 1)
 
         output = compile_history(history)
-        self.assertIn('* `101`:', output)
+        self.assertIn('* `113`:', output)
         self.assertIn('1.7.2482 - 2018-03-22 - 1.99Mb', output)
 
     def test_history_existing(self):
@@ -115,7 +115,7 @@ class TestHistoryHelper(ExtTestCase):
         self.assertGreater(nb, 1)
 
         output = compile_history(history)
-        self.assertIn('* `101`:', output)
+        self.assertIn('* `113`:', output)
         self.assertIn('1.7.2482 - 2018-03-22 - 1.99Mb', output)
         nb = 0
         for h in history:
