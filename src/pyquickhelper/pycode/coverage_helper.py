@@ -39,7 +39,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     @param      fLOG            logging function
     @return                     out, err from function @see fn run_cmd
     """
-    if os.path.isfile(path):
+    if os.path.isfile(path) or path.endswith(".xml"):
         report = path
     else:
         report = os.path.join(path, "_doc", "sphinxdoc",
@@ -47,7 +47,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
 
     report = os.path.normpath(report)
     if not os.path.exists(report):
-        raise FileNotFoundError(report)
+        raise FileNotFoundError("Unable to find '{}'.".format(report))
 
     proj = os.path.normpath(os.path.join(
         os.path.dirname(report), "..", "..", "..", ".."))
@@ -69,8 +69,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
             raise Exception(
                 "Unable to run:\nCMD:\n{0}\nOUT:\n{1}\n[pyqerror]\n{2}".format(cmd, out, err))
         return out, err
-    else:
-        return cmd
+    return cmd
 
 
 def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
