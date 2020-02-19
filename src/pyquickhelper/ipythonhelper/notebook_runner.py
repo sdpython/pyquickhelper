@@ -392,7 +392,7 @@ class NotebookRunner(object):
             if self.detailed_log:
                 self.detailed_log('    msg_type={0}'.format(msg_type))
 
-            out = NotebookNode(output_type=msg_type)
+            out = NotebookNode(output_type=msg_type, metadata=dict())
 
             if 'execution_count' in content:
                 if iscell:
