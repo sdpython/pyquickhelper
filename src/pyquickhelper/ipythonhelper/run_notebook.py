@@ -179,7 +179,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                     s = writes(nb_runner.nb)
                 except NotebookException as e:
                     raise NotebookException(
-                        "issue with notebook: " + filename) from e
+                        "issue with notebook: '{}'".format(filename)) from e
                 if isinstance(s, bytes):
                     s = s.decode('utf8')
                 f.write(s)

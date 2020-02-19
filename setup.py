@@ -219,14 +219,20 @@ if not r:
         process_standard_options_for_setup_help(sys.argv)
     else:
         pyquickhelper = import_pyquickhelper()
-    from pyquickhelper.pycode import clean_readme
+    try:
+        from pyquickhelper.pycode import clean_readme
+    except ImportError:
+        clean_readme = lambda v: v
     from pyquickhelper import __version__ as sversion
     long_description = clean_readme(long_description)
 
-    from pyquickhelpersetup import SetupCommandDisplay, SetupCommandHistory
     cmdclass = {}
-    cmdclass.update({'display': SetupCommandDisplay,
-                     'history': SetupCommandHistory})
+    try:
+        from pyquickhelpersetup import SetupCommandDisplay, SetupCommandHistory
+        cmdclass.update({'display': SetupCommandDisplay,
+                         'history': SetupCommandHistory})
+    except ImportError:
+        pass
 
     setup(
         name=project_var_name,
@@ -265,6 +271,7 @@ if not r:
             "numpy>=1.16.0",
             "pandas>=0.20.0",
             "pylint",
+            "requests",
             "semantic_version",
             "sphinx>=2.1",
             "sphinx-gallery",

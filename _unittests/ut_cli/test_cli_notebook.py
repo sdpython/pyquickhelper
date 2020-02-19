@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=7s)
+@brief      test tree node (time=20s)
 """
 
 
@@ -42,7 +42,7 @@ class TestProcessNotebook(ExtTestCase):
         with self.subTest(cmd="process_notebooks"):
             st = BufferedPrint()
             main(args=["process_notebooks", "-n", source, "-o",
-                       temp, "-b", temp, '-f', 'rst'], fLOG=st.fprint)
+                       temp, "-b", temp, '-f', 'rst,html'], fLOG=st.fprint)
             res = str(st)
             self.assertIn("convert into  rst", res)
 
@@ -53,6 +53,13 @@ class TestProcessNotebook(ExtTestCase):
                        '-o', outname], fLOG=st.fprint)
             res = str(st)
             self.assertExists(outname)
+
+            temp2 = get_temp_folder(__file__, "temp_process_notebook_next")
+            st = BufferedPrint()
+            main(args=["process_notebooks", "-n", source, "-o",
+                       temp2, "-b", temp2, '-f', 'rst,html'], fLOG=st.fprint)
+            res = str(st)
+            self.assertIn("convert into  rst", res)
 
     def test_run_notebook_help(self):
         st = BufferedPrint()

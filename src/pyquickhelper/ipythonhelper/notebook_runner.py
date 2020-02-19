@@ -13,8 +13,7 @@ from queue import Empty
 from time import sleep
 from collections import Counter
 from io import StringIO, BytesIO
-from nbformat import NotebookNode
-from nbformat import writes
+from nbformat import NotebookNode, writes
 from nbformat.reader import reads
 from ..imghelper.svg_helper import svg2img, PYQImageException
 from ..loghelper.flog import noLOG
@@ -83,8 +82,6 @@ class NotebookRunner(object):
                  kernel=False, filename=None, replacements=None, detailed_log=None,
                  startup_timeout=300):
         """
-        constuctor
-
         @param      nb              notebook as :epkg:`JSON`
         @param      profile_dir     profile directory
         @param      working_dir     working directory
@@ -395,21 +392,12 @@ class NotebookRunner(object):
             if self.detailed_log:
                 self.detailed_log('    msg_type={0}'.format(msg_type))
 
-            # IPython 3.0.0-dev writes pyerr/pyout in the notebook format but uses
-            # error/execute_result in the message spec. This does the translation
-            # needed for tests to pass with IPython 3.0.0-dev
-            notebook3_format_conversions = {
-                'error': 'pyerr',
-                'execute_result': 'pyout'
-            }
-            msg_type = notebook3_format_conversions.get(msg_type, msg_type)
-
             out = NotebookNode(output_type=msg_type)
 
             if 'execution_count' in content:
                 if iscell:
-                    cell['prompt_number'] = content['execution_count']
-                out.prompt_number = content['execution_count']
+                    cell['execution_count'] = content['execution_count']
+                out.execution_count = content['execution_count']
 
             if msg_type in ('status', 'pyin', 'execute_input'):
                 continue
@@ -423,7 +411,7 @@ class NotebookRunner(object):
                 else:
                     out.data = content['data']
 
-            elif msg_type in ('display_data', 'pyout'):
+            elif msg_type in ('display_data', 'pyout', 'execute_result'):
                 out.data = content['data']
 
             elif msg_type == 'pyerr':
