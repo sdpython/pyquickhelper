@@ -1025,9 +1025,10 @@ class _CustomSphinx(Sphinx):
 
         # notice for parallel build on macOS and py38+
         if sys.version_info > (3, 8) and platform.system() == 'Darwin' and parallel > 1:
-            logger.info(bold(__("For security reason, parallel mode is disabled on macOS and "
-                                "python3.8 and above.  For more details, please read "
-                                "https://github.com/sphinx-doc/sphinx/issues/6803")))
+            self._logger.info(bold(__(
+                "For security reason, parallel mode is disabled on macOS and "
+                "python3.8 and above.  For more details, please read "
+                "https://github.com/sphinx-doc/sphinx/issues/6803")))
 
         # status code for command-line application
         self.statuscode = 0
@@ -1130,7 +1131,7 @@ class _CustomSphinx(Sphinx):
         # the config file itself can be an extension
         if self.config.setup:
             prefix = 'while setting up extension %s:' % "conf.py"
-            if prefixed_warnings:
+            if prefixed_warnings is not None:
                 with prefixed_warnings(prefix):
                     if callable(self.config.setup):
                         self.config.setup(self)
@@ -1363,7 +1364,7 @@ class _CustomSphinx(Sphinx):
                 try:
                     res = old_run(self)
                     logger.info(
-                        '[MockSphinxApp] PlotDirective ok'.format(self.content))
+                        '[MockSphinxApp] PlotDirective ok')
                     return res
                 except OSError as e:
                     logger = getLogger("MockSphinxApp")
