@@ -1025,10 +1025,10 @@ class _CustomSphinx(Sphinx):
 
         # notice for parallel build on macOS and py38+
         if sys.version_info > (3, 8) and platform.system() == 'Darwin' and parallel > 1:
-            self._logger.info(bold(__(
+            self._logger.info(
                 "For security reason, parallel mode is disabled on macOS and "
                 "python3.8 and above.  For more details, please read "
-                "https://github.com/sphinx-doc/sphinx/issues/6803")))
+                "https://github.com/sphinx-doc/sphinx/issues/6803")
 
         # status code for command-line application
         self.statuscode = 0
