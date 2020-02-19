@@ -414,7 +414,7 @@ class NotebookRunner(object):
             elif msg_type in ('display_data', 'pyout', 'execute_result'):
                 out.data = content['data']
 
-            elif msg_type == 'pyerr':
+            elif msg_type in ('pyerr', 'error'):
                 out.ename = content['ename']
                 out.evalue = content['evalue']
                 out.traceback = content['traceback']
