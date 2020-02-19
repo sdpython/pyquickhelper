@@ -26,11 +26,11 @@ def main(args, fLOG=print):
         from .filehelper import create_visual_diff_through_html_files
         from .filehelper import explore_folder
         from .cli.simplified_fct import sphinx_rst
-        from .ipythonhelper import run_notebook
         from .imghelper.img_helper import zoom_img
         from .imghelper.img_export import images2pdf
         from .script_exec import repeat_script
         from .ftp_cli import ftp_upload
+        from .cli.notebook import run_notebook
     except ImportError:  # pragma: no cover
         from pyquickhelper.cli.pyq_sync_cli import pyq_sync
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
@@ -42,11 +42,11 @@ def main(args, fLOG=print):
         from pyquickhelper.filehelper import create_visual_diff_through_html_files
         from pyquickhelper.filehelper import explore_folder
         from pyquickhelper.cli.simplified_fct import sphinx_rst
-        from pyquickhelper.ipythonhelper import run_notebook
         from pyquickhelper.imghelper.img_helper import zoom_img
         from pyquickhelper.imghelper.img_export import images2pdf
         from pyquickhelper.cli.script_exec import repeat_script
         from pyquickhelper.cli.ftp_cli import ftp_upload
+        from pyquickhelper.cli.notebook import run_notebook
 
     fcts = dict(synchronize_folder=pyq_sync, encrypt_file=encrypt_file,
                 decrypt_file=decrypt_file, encrypt=encrypt,

@@ -9,11 +9,11 @@ import unittest
 from io import StringIO
 import shutil
 from pyquickhelper.loghelper import fLOG, BufferedPrint
-from pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor
+from pyquickhelper.pycode import get_temp_folder, skipif_travis, skipif_appveyor, ExtTestCase
 from pyquickhelper.__main__ import main
 
 
-class TestProcessNotebook(unittest.TestCase):
+class TestProcessNotebook(ExtTestCase):
 
     @skipif_travis("No latex installed.")
     @skipif_appveyor("No latex installed.")
@@ -39,11 +39,26 @@ class TestProcessNotebook(unittest.TestCase):
             if not os.path.exists('%s.tpl' % tpl):
                 shutil.copy(sr, '.')
 
+        with self.subTest(cmd="process_notebooks"):
+            st = BufferedPrint()
+            main(args=["process_notebooks", "-n", source, "-o",
+                       temp, "-b", temp, '-f', 'rst'], fLOG=st.fprint)
+            res = str(st)
+            self.assertIn("convert into  rst", res)
+
+        with self.subTest(cmd="run_notebook"):
+            outname = os.path.join(temp, "out_nb.ipynb")
+            st = BufferedPrint()
+            main(args=['run_notebook', '-f', source,
+                       '-o', outname], fLOG=st.fprint)
+            res = str(st)
+            self.assertExists(outname)
+
+    def test_run_notebook_help(self):
         st = BufferedPrint()
-        main(args=["process_notebooks", "-n", source, "-o",
-                   temp, "-b", temp, '-f', 'rst'], fLOG=st.fprint)
+        main(args=['run_notebook', '--help'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("convert into  rst", res)
+        self.assertIn("run_notebook [-h]", res)
 
 
 if __name__ == "__main__":

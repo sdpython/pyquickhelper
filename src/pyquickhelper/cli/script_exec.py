@@ -26,7 +26,7 @@ def repeat_script(script, every_second=20, stop_after_second=-1,
         :title: Repeat script execution every n seconds
         :cmd: -m pyquickhelper repeat_script --help
 
-        The command lines runs the execution a script
+        The command line runs the execution a script
         on a regular basis.
     """
     every_second = int(every_second)

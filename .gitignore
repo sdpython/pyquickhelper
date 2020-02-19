@@ -298,3 +298,5 @@ _unittests/ut_helpgen/static
 _unittests/ut_helpgen/article.tplx
 _unittests/ut_pycode/data/pyq.coverage0
 _unittests/ut_pycode/data/.coverage
+_unittests/ut_cli/*.tpl
+_unittests/ut_cli/static/*.tpl
