@@ -22,7 +22,6 @@ def main(args, fLOG=print):
         from .pandashelper import df2rst
         from .pycode import clean_files, run_test_function
         from .cli import cli_main_helper
-        from .helpgen.process_notebooks import process_notebooks
         from .filehelper import create_visual_diff_through_html_files
         from .filehelper import explore_folder
         from .cli.simplified_fct import sphinx_rst
@@ -30,7 +29,7 @@ def main(args, fLOG=print):
         from .imghelper.img_export import images2pdf
         from .script_exec import repeat_script
         from .ftp_cli import ftp_upload
-        from .cli.notebook import run_notebook
+        from .cli.notebook import run_notebook, convert_notebook
     except ImportError:  # pragma: no cover
         from pyquickhelper.cli.pyq_sync_cli import pyq_sync
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
@@ -38,7 +37,6 @@ def main(args, fLOG=print):
         from pyquickhelper.pandashelper import df2rst
         from pyquickhelper.pycode import clean_files, run_test_function
         from pyquickhelper.cli import cli_main_helper
-        from pyquickhelper.helpgen.process_notebooks import process_notebooks
         from pyquickhelper.filehelper import create_visual_diff_through_html_files
         from pyquickhelper.filehelper import explore_folder
         from pyquickhelper.cli.simplified_fct import sphinx_rst
@@ -46,12 +44,12 @@ def main(args, fLOG=print):
         from pyquickhelper.imghelper.img_export import images2pdf
         from pyquickhelper.cli.script_exec import repeat_script
         from pyquickhelper.cli.ftp_cli import ftp_upload
-        from pyquickhelper.cli.notebook import run_notebook
+        from pyquickhelper.cli.notebook import run_notebook, convert_notebook
 
     fcts = dict(synchronize_folder=pyq_sync, encrypt_file=encrypt_file,
                 decrypt_file=decrypt_file, encrypt=encrypt,
                 decrypt=decrypt, df2rst=df2rst, clean_files=clean_files,
-                process_notebooks=process_notebooks,
+                convert_notebook=convert_notebook,
                 visual_diff=create_visual_diff_through_html_files,
                 ls=explore_folder, run_test_function=run_test_function,
                 sphinx_rst=sphinx_rst, run_notebook=run_notebook,

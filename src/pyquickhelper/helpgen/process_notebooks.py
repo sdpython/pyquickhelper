@@ -136,9 +136,9 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
 
             from pyquickhelper.ipythonhelper import process_notebooks
             process_notebooks("td1a_correction_session7.ipynb",
-                            "dest_folder", "dest_folder",
-                            formats=("ipynb", "html", "python", "rst", "slides", "pdf",
-                                     "docx", "github")])
+                              "dest_folder", "dest_folder",
+                              formats=("ipynb", "html", "python", "rst", "slides", "pdf",
+                                       "docx", "github")])
 
     For latex and pdf, a custom processor was added to handle raw data
     and add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
@@ -196,7 +196,8 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
     except SystemExit as e:
         exc = e
     except IndentationError as e:
-        # This is change in IPython 6.0.0. The conversion fails on IndentationError.
+        # This is change in IPython 6.0.0.
+        # The conversion fails on IndentationError.
         # We switch to another one.
         i = list_args.index("--template")
         format = list_args[i + 1]
@@ -214,7 +215,7 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
         else:
             # We do nothing in this case.
             exc = e
-    except AttributeError as e:
+    except (AttributeError, FileNotFoundError) as e:
         exc = e
     sys.stdout = memo_out
     sys.stderr = memo_err
@@ -288,9 +289,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
         a cell outputting *svg*
         (see `PR 910 <https://github.com/jupyter/nbconvert/pull/910>`_).
 
-    .. versionchanged:: 1.7
-        Change default value of *remove_unicode_latex* to False.
-        Use `xelatex <https://doc.ubuntu-fr.org/xelatex>`_ if possible.
+    Use `xelatex <https://doc.ubuntu-fr.org/xelatex>`_ if possible.
     """
     from nbconvert.nbconvertapp import main as nbconvert_main
     if pandoc_path is None:
@@ -341,7 +340,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
         # we copy available images (only notebook folder)
         # in case they are used in latex
-        currentdir = os.path.dirname(notebook_in)
+        currentdir = os.path.abspath(os.path.dirname(notebook_in))
         for curfile in os.listdir(currentdir):
             ext = os.path.splitext(curfile)[1]
             if ext in {'.png', '.jpg', '.bmp', '.gif', '.jpeg', '.svg', '.mp4'}:
@@ -456,8 +455,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             # output
             templ = {'html': 'full', 'latex': 'article',
                      'elatex': 'article'}.get(format, format)
-            fLOG("[_process_notebooks_in] ### convert into ", format_, " NB: ", notebook,
-                 " ### ", os.path.exists(outputfile), ":", outputfile)
+            fLOG("[_process_notebooks_in] ### convert into '{}' (done: {}): '{}' -> '{}'".format(
+                format_, os.path.exists(outputfile), notebook, outputfile))
 
             list_args.extend(["--output", outputfile_noext_fixed])
             if templ is not None and format != "slides":
@@ -479,8 +478,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     else:
                         list_args.extend(["--to", format,
                                           notebook if nb_slide is None else nb_slide])
-                        fLOG("[_process_notebooks_in] NBc*:", format, list_args)
-                        fLOG("[_process_notebooks_in]", os.getcwd())
+                        fLOG(
+                            "[_process_notebooks_in] NBc* format='{}' args={}".format(format, list_args))
+                        fLOG("[_process_notebooks_in] cwd='{}'".format(os.getcwd()))
 
                     c = " ".join(list_args)
                     out, err = _process_notebooks_in_private(

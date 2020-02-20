@@ -17,13 +17,13 @@ class TestProcessNotebook(ExtTestCase):
 
     @skipif_travis("No latex installed.")
     @skipif_appveyor("No latex installed.")
-    def test_process_notebook(self):
+    def test_convert_notebook(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_process_notebook")
+        temp = get_temp_folder(__file__, "temp_convert_notebook")
         source = os.path.join(temp, "..", "data", "td1a_unit_test_ci.ipynb")
 
         fold = 'static'
@@ -39,12 +39,12 @@ class TestProcessNotebook(ExtTestCase):
             if not os.path.exists('%s.tpl' % tpl):
                 shutil.copy(sr, '.')
 
-        with self.subTest(cmd="process_notebooks"):
+        with self.subTest(cmd="convert_notebook"):
             st = BufferedPrint()
-            main(args=["process_notebooks", "-n", source, "-o",
-                       temp, "-b", temp, '-f', 'rst,html'], fLOG=st.fprint)
+            main(args=["convert_notebook", "-f", source, "-o",
+                       temp, "-b", temp, '-fo', 'rst,html'], fLOG=st.fprint)
             res = str(st)
-            self.assertIn("convert into  rst", res)
+            self.assertIn("convert into 'rst'", res)
 
         with self.subTest(cmd="run_notebook"):
             outname = os.path.join(temp, "out_nb.ipynb")
@@ -55,12 +55,13 @@ class TestProcessNotebook(ExtTestCase):
             self.assertExists(outname)
             source = outname
 
-            temp2 = get_temp_folder(__file__, "temp_process_notebook_next")
+            temp2 = get_temp_folder(__file__, "temp_convert_notebook_next")
             st = BufferedPrint()
-            main(args=["process_notebooks", "-n", source, "-o",
-                       temp2, "-b", temp2, '-f', 'rst,html'], fLOG=st.fprint)
+            main(args=["convert_notebook", "-f", source, "-o",
+                       temp2, "-b", temp2, '-fo', 'rst,html'], fLOG=st.fprint)
             res = str(st)
-            self.assertIn("convert into  rst", res)
+            self.assertIn("convert into 'rst'", res)
+            self.assertExists(os.path.join(temp2, "out_nb2html.html"))
 
     def test_run_notebook_help(self):
         st = BufferedPrint()
@@ -70,22 +71,22 @@ class TestProcessNotebook(ExtTestCase):
 
     @skipif_travis("No latex installed.")
     @skipif_appveyor("No latex installed.")
-    def test_process_notebook2(self):
+    def test_convert_notebook2(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_process_notebook2")
+        temp = get_temp_folder(__file__, "temp_convert_notebook2")
         source = os.path.join(temp, "..", "data",
                               "onnx_tree_ensemble_parallel.ipynb")
 
-        with self.subTest(cmd="process_notebooks"):
+        with self.subTest(cmd="convert_notebook"):
             st = BufferedPrint()
-            main(args=["process_notebooks", "-n", source, "-o",
-                       temp, "-b", temp, '-f', 'rst,html'], fLOG=st.fprint)
+            main(args=["convert_notebook", "-f", source, "-o",
+                       temp, "-b", temp, '-fo', 'rst,html'], fLOG=st.fprint)
             res = str(st)
-            self.assertIn("convert into  rst", res)
+            self.assertIn("convert into 'rst'", res)
 
         with self.subTest(cmd="run_notebook"):
             outname = os.path.join(temp, "out_nb.ipynb")
@@ -96,12 +97,13 @@ class TestProcessNotebook(ExtTestCase):
             self.assertExists(outname)
             source = outname
 
-            temp2 = get_temp_folder(__file__, "temp_process_notebook2_next")
+            temp2 = get_temp_folder(__file__, "temp_convert_notebook2_next")
             st = BufferedPrint()
-            main(args=["process_notebooks", "-n", source, "-o",
-                       temp2, "-b", temp2, '-f', 'rst,html'], fLOG=st.fprint)
+            main(args=["convert_notebook", "-f", source, "-o",
+                       temp2, "-b", temp2, '-fo', 'rst,html'], fLOG=st.fprint)
             res = str(st)
-            self.assertIn("convert into  rst", res)
+            self.assertIn("convert into 'rst'", res)
+            self.assertExists(os.path.join(temp2, "out_nb2html.html"))
 
 
 if __name__ == "__main__":
