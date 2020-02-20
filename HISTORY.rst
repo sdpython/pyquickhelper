@@ -5,8 +5,14 @@
 History
 =======
 
-current - 2020-02-12 - 0.00Mb
+current - 2020-02-20 - 0.00Mb
 =============================
+
+* `293`: Fix notebook format after execution (function run_notebook) (2020-02-20)
+* `292`: Add command line to run notebook (2020-02-19)
+
+1.9.3325 - 2020-02-12 - 2.06Mb
+==============================
 
 * `291`: Sphinx extension bigger fails with sphinx 2.4.1 (2020-02-12)
 * `290`: Issue raised with pandas.set_option in class BenchMark (2020-02-02)
@@ -259,9 +265,5 @@ current - 2020-02-12 - 0.00Mb
 * `104`: implement visit, depart for pending_xref and rst translator (2018-03-01)
 * `103`: fix import issue for Sphinx 1.7.1 (2018-03-01)
 * `102`: fix sphinx command line (2018-02-24)
-
-1.6.2413 - 2018-02-13 - 1.98Mb
-==============================
-
 * `100`: fix indentation when copying the sources in documentation repository (2018-02-04)
 * `99`: bug with galleries of examples with multiple subfolders (2018-01-30)
