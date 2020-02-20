@@ -8,6 +8,7 @@ History
 current - 2020-02-20 - 0.00Mb
 =============================
 
+* `294`: Rename command line process_notebook into convert_notebook (2020-02-20)
 * `293`: Fix notebook format after execution (function run_notebook) (2020-02-20)
 * `292`: Add command line to run notebook (2020-02-19)
 

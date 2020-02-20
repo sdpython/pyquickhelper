@@ -57,10 +57,16 @@ class TestCliMainHelper(ExtTestCase):
             "synchronize_folder [-h] [--p1 P1] [--p2 P2] [-ha HASH_SIZE]", res)
 
         st = BufferedPrint()
-        main(args=["process_notebooks", "--help"], fLOG=st.fprint)
+        main(args=["convert_notebook", "--help"], fLOG=st.fprint)
         res = str(st)
         self.assertIn(
-            "process_notebooks [-h] [-n NOTEBOOKS] [-o OUTFOLD] [-b BUILD]", res)
+            "convert_notebook [-h] [-f FILENAME] [-o OUTFOLD] [-b BUILD]", res)
+
+        st = BufferedPrint()
+        main(args=["run_notebook", "--help"], fLOG=st.fprint)
+        res = str(st)
+        self.assertIn(
+            "run_notebook [-h] [-f FILENAME]", res)
 
         st = BufferedPrint()
         main(args=["visual_diff", "--help"], fLOG=st.fprint)
