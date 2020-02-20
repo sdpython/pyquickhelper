@@ -403,7 +403,7 @@ class NotebookRunner(object):
                 continue
 
             if msg_type == 'stream':
-                out.stream = content['name']
+                out.name = content['name']
                 # in msgspec 5, this is name, text
                 # in msgspec 4, this is name, data
                 if 'text' in content:

@@ -1,5 +1,5 @@
 """
-@brief      test tree node (time=20s)
+@brief      test tree node (time=62s)
 """
 
 
@@ -53,6 +53,7 @@ class TestProcessNotebook(ExtTestCase):
                        '-o', outname], fLOG=st.fprint)
             res = str(st)
             self.assertExists(outname)
+            source = outname
 
             temp2 = get_temp_folder(__file__, "temp_process_notebook_next")
             st = BufferedPrint()
@@ -93,6 +94,7 @@ class TestProcessNotebook(ExtTestCase):
                        '-o', outname], fLOG=st.fprint)
             res = str(st)
             self.assertExists(outname)
+            source = outname
 
             temp2 = get_temp_folder(__file__, "temp_process_notebook2_next")
             st = BufferedPrint()
