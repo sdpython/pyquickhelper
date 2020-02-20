@@ -53,7 +53,7 @@ jobs:
             . venv/bin/activate
             pip install -r requirements.txt
             pip install tkinterquickhelper pyensae --no-deps
-            pip install scipy scikit-learn
+            pip install scipy scikit-learn blockdiag
             pip install nbconvert==5.6.1
             pip uninstall -y pyquickhelper
 

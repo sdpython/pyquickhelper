@@ -122,7 +122,11 @@ def import_pyquickhelper():
     except ImportError:
         sys.path.append(os.path.join(os.path.dirname(
             pyquickhelper.__file__), '..', 'pyquicksetup'))
-        from pyquickhelpersetup import SetupCommandDisplay
+        try:
+            from pyquickhelpersetup import SetupCommandDisplay
+        except ImportError:
+            SetupCommandDisplay = None
+            pass
 
     return pyquickhelper
 

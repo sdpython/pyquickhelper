@@ -67,6 +67,40 @@ class TestProcessNotebook(ExtTestCase):
         res = str(st)
         self.assertIn("run_notebook [-h]", res)
 
+    @skipif_travis("No latex installed.")
+    @skipif_appveyor("No latex installed.")
+    def test_process_notebook2(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        temp = get_temp_folder(__file__, "temp_process_notebook2")
+        source = os.path.join(temp, "..", "data",
+                              "onnx_tree_ensemble_parallel.ipynb")
+
+        with self.subTest(cmd="process_notebooks"):
+            st = BufferedPrint()
+            main(args=["process_notebooks", "-n", source, "-o",
+                       temp, "-b", temp, '-f', 'rst,html'], fLOG=st.fprint)
+            res = str(st)
+            self.assertIn("convert into  rst", res)
+
+        with self.subTest(cmd="run_notebook"):
+            outname = os.path.join(temp, "out_nb.ipynb")
+            st = BufferedPrint()
+            main(args=['run_notebook', '-f', source,
+                       '-o', outname], fLOG=st.fprint)
+            res = str(st)
+            self.assertExists(outname)
+
+            temp2 = get_temp_folder(__file__, "temp_process_notebook2_next")
+            st = BufferedPrint()
+            main(args=["process_notebooks", "-n", source, "-o",
+                       temp2, "-b", temp2, '-f', 'rst,html'], fLOG=st.fprint)
+            res = str(st)
+            self.assertIn("convert into  rst", res)
+
 
 if __name__ == "__main__":
     unittest.main()

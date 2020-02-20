@@ -418,6 +418,7 @@ class NotebookRunner(object):
                 out.ename = content['ename']
                 out.evalue = content['evalue']
                 out.traceback = content['traceback']
+                out.name = 'stderr'
 
             elif msg_type == 'clear_output':
                 outs = list()
