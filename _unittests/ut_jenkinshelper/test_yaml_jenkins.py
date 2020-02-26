@@ -157,7 +157,8 @@ class TestYamlJenkins(unittest.TestCase):
 
         if sys.version_info[0] != 2:
             self.assertTrue(i > 0)
-            self.assertTrue(nb > 0)
+            if nb == 0:
+                raise AssertionError("\n#######\n".join(r[-1] for r in res))
             self.assertTrue(nb_jen > 0)
             self.assertTrue(to > 0)
             if disable_schedule:

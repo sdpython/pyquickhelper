@@ -114,14 +114,14 @@ class TestModuleC(ExtTestCase):
         vers = "%d%d" % sys.version_info[:2]
         file = os.path.join(path, "data", "pyd",
                             "stdchelper.cp%s-win_amd64.pyd" % vers)
-        self.assertExists(file)
-        mo = import_module(
-            None, file, fLOG, additional_sys_path=None, first_try=True)
-        self.assertIsInstance(mo, tuple)
-        self.assertEqual(len(mo), 2)
-        self.assertTrue(hasattr(mo[0], '__doc__'))
-        if 'stdchelper' in sys.modules:
-            del sys.modules['stdchelper']
+        if os.path.exists(file):
+            mo = import_module(
+                None, file, fLOG, additional_sys_path=None, first_try=True)
+            self.assertIsInstance(mo, tuple)
+            self.assertEqual(len(mo), 2)
+            self.assertTrue(hasattr(mo[0], '__doc__'))
+            if 'stdchelper' in sys.modules:
+                del sys.modules['stdchelper']
 
         temp = get_temp_folder(__file__, "temp_module_c")
         store_obj = {}

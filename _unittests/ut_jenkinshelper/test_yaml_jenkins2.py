@@ -82,7 +82,8 @@ class TestYamlJenkins2(unittest.TestCase):
 
         self.assertTrue(i > 0)
         if use_url:
-            self.assertTrue(nb > 0)
+            if nb == 0:
+                raise AssertionError("\n##############\n".join(r[-1] for r in res))
         self.assertEqual(sch, 2)
 
 
