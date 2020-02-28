@@ -9,19 +9,6 @@ import re
 import warnings
 import hashlib
 import datetime
-from ..loghelper.pyrepo_helper import SourceRepository
-from ..loghelper.flog import noLOG
-from ..filehelper import get_url_content_timeout, explore_folder_iterfile
-from .code_helper import remove_extra_spaces_folder
-from .py3to2 import py3to2_convert_tree
-from .build_helper import get_build_script, get_script_command, get_extra_script_command, get_script_module, get_pyproj_project
-from .call_setup_hook import call_setup_hook
-from .tkinter_helper import fix_tkinter_issues_virtualenv
-from .default_regular_expression import _setup_pattern_copy
-# from ..ipythonhelper import upgrade_notebook, remove_execution_number
-from .utils_tests import main_wrapper_tests, default_skip_function
-from ..loghelper.history_helper import build_history, compile_history
-from .utils_tests_helper import check_pep8
 
 
 def get_available_setup_commands():
@@ -63,7 +50,7 @@ def available_commands_list(argv):
 
 
 def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
-                                       pattern_copy=_setup_pattern_copy,
+                                       pattern_copy=None,
                                        requirements=None, port=8067, blog_list=None, default_engine_paths=None,
                                        extra_ext=None, add_htmlhelp=False, setup_params=None, coverage_options=None,
                                        coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
@@ -73,11 +60,11 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                            "pdf", "github"),
                                        layout=None, direct_call=False,
                                        additional_ut_path=None,
-                                       skip_function=default_skip_function, covtoken=None, hook_print=True,
+                                       skip_function=None, covtoken=None, hook_print=True,
                                        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
                                        file_filter_pep8=None, github_owner=None,
                                        existing_history=None, coverage_root='src',
-                                       fexclude=None, skip_issues=None, fLOG=noLOG):
+                                       fexclude=None, skip_issues=None, fLOG=None):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -177,6 +164,17 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     .. versionchanged:: 1.8
         Parameters *coverage_root*, *direct_call* were added.
     """
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
+    if skip_function is None:
+        from .utils_tests_private import default_skip_function
+        skip_function = default_skip_function
+    if pattern_copy is None:
+        # delayed import
+        from .default_regular_expression import _setup_pattern_copy
+        pattern_copy = _setup_pattern_copy
+
     if layout is None:
         layout = ["html", "pdf"]
 
@@ -349,6 +347,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "build_sphinx" in argv:
+        # delayed import
+        from .call_setup_hook import call_setup_hook
         if setup_params is None:
             setup_params = {}
         out, err = call_setup_hook(folder,
@@ -444,9 +444,10 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "build_script" in argv:
+        # delayed import
+        from .build_helper import get_extra_script_command, get_script_command, get_build_script
 
         # script running setup.py
-
         script = get_build_script(
             project_var_name, requirements=requirements, port=port,
             default_engine_paths=default_engine_paths)
@@ -509,6 +510,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "copy27" in argv:
+        # delayed import
+        from .py3to2 import py3to2_convert_tree
         root = os.path.abspath(os.path.dirname(file_or_folder))
         root = os.path.normpath(root)
         dest = os.path.join(root, "dist_module27")
@@ -517,6 +520,8 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         return True
 
     elif "test_local_pypi" in argv:
+        # delayed import
+        from ..filehelper import get_url_content_timeout
         url = "http://localhost:{0}/".format(port)
         content = get_url_content_timeout(url, timeout=5)
         if content is None or len(content) == 0:
@@ -592,6 +597,8 @@ def write_version_for_setup(file_or_folder, exc=False):
     .. versionchanged:: 1.8
         Parameter *exc* was added.
     """
+    # delayed import to speed up import of pycode
+    from ..loghelper.pyrepo_helper import SourceRepository
     src = SourceRepository(commandline=True)
     ffolder = get_folder(file_or_folder)
     try:
@@ -621,6 +628,8 @@ def clean_space_for_setup(file_or_folder, file_filter=None):
     @param      file_filter         file filter (see @see fn remove_extra_spaces_folder)
     @return                         impacted files
     """
+    # delayed import
+    from .code_helper import remove_extra_spaces_folder
     ffolder = get_folder(file_or_folder)
     rem = remove_extra_spaces_folder(
         ffolder, extensions=[".py", ".rst", ".md", ".bat", ".sh"],
@@ -639,6 +648,7 @@ def clean_notebooks_for_numbers(file_or_folder):
     .. index:: notebooks
     """
     from ..ipythonhelper.notebook_helper import upgrade_notebook, remove_execution_number
+    from ..filehelper import explore_folder_iterfile
     ffolder = get_folder(file_or_folder)
     fold2 = os.path.normpath(
         os.path.join(ffolder, "_doc", "notebooks"))
@@ -659,7 +669,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                             nbformats=("ipynb", "html", "python",
                                        "rst", "slides", "pdf"),
                             layout=None, use_run_cmd=False, direct_call=False,
-                            fexclude=None, fLOG=noLOG):
+                            fexclude=None, fLOG=None):
     """
     Standard function which generates help assuming they follow the same design
     as *pyquickhelper*.
@@ -685,6 +695,9 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
     A page will be added for each extra file extension mentioned in *extra_ext* if
     some of these were found.
     """
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
     if "--help" in argv:
         from ..helpgen.help_usage import get_help_usage
         print(get_help_usage())
@@ -718,11 +731,11 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                              direct_call=direct_call, fexclude=fexclude)
 
 
-def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function, setup_params=None,
+def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=None,
                             only_setup_hook=False, coverage_options=None, coverage_exclude_lines=None,
                             additional_ut_path=None, covtoken=None, hook_print=True, stdout=None,
                             stderr=None, filter_warning=None, dump_coverage=None,
-                            add_coverage_folder=None, coverage_root='src', fLOG=noLOG):
+                            add_coverage_folder=None, coverage_root='src', fLOG=None):
     """
     Runs the unit tests and computes the coverage, stores
     the results in ``_doc/sphinxdoc/source/coverage``
@@ -756,11 +769,21 @@ def run_unittests_for_setup(file_or_folder, skip_function=default_skip_function,
     .. versionchanged:: 1.8
         Parameter *coverage_root* was added.
     """
+    # delayed import
+    from .tkinter_helper import fix_tkinter_issues_virtualenv
+    from .utils_tests import main_wrapper_tests
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
     if not os.path.exists(funit):
         raise FileNotFoundError(
             "You must get the whole source to run the unittests,\nfolder {0} should exist".format(funit))
+
+    if skip_function is None:
+        from .utils_tests_private import default_skip_function
+        skip_function = default_skip_function
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
 
     fix_tkinter_issues_virtualenv(fLOG=fLOG)
 
@@ -789,6 +812,8 @@ def copy27_for_setup(file_or_folder):
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     """
+    # delayed import
+    from .py3to2 import py3to2_convert_tree
     root = get_folder(file_or_folder)
     root = os.path.normpath(root)
     dest = os.path.join(root, "dist_module27")
@@ -807,6 +832,10 @@ def write_pyproj(file_or_folder, location=None):
 
     This functionality fails with :epkg:`Python` 2.7 (encoding).
     """
+    # delayed import
+    from ..filehelper import explore_folder_iterfile
+    from .build_helper import get_pyproj_project
+
     avoid = ["dist", "build", "dist_module27",
              "_doc", "_virtualenv", "_virtualenv27", "_venv"]
 
@@ -941,6 +970,8 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
             from pyquickhelper.pycode import write_module_scripts, __blog__
             write_module_scripts(".", blog_list=__blog__, command="blog")
     """
+    # delayed import
+    from .build_helper import get_script_module
     default_set = {"blog", "doc"}
     if command is not None:
         if command not in default_set:
@@ -1023,7 +1054,7 @@ def hash_list(argv, size=8):
 
 
 def build_history_from_setup(dest, owner, module, existing_history=None,
-                             skip_issues=None, fLOG=noLOG):
+                             skip_issues=None, fLOG=None):
     """
     Builds the history from :epkg:`github` and :epkg:`pypi`.
 
@@ -1036,8 +1067,13 @@ def build_history_from_setup(dest, owner, module, existing_history=None,
     @param      fLOG                logging function
     @return                         history
     """
+    # delayed import
+    from ..loghelper.history_helper import build_history, compile_history
     if owner is None:
         raise ValueError("owner must be specified")
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
     repo = module
     hist = build_history(owner, repo, unpublished=True,
                          existing_history=existing_history,
@@ -1050,7 +1086,7 @@ def build_history_from_setup(dest, owner, module, existing_history=None,
 
 
 def run_pylint_for_setup(folder, pattern=".*[.]py$", neg_pattern=None,
-                         verbose=False, pylint_ignore=None, fLOG=noLOG):
+                         verbose=False, pylint_ignore=None, fLOG=None):
     """
     Applies :epkg:`pylint` on subfolder *folder*.
 
@@ -1061,5 +1097,10 @@ def run_pylint_for_setup(folder, pattern=".*[.]py$", neg_pattern=None,
     @param      verbose         verbose
     @param      fLOG            logging function
     """
+    # delayed import
+    from .utils_tests_helper import check_pep8
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
     check_pep8(folder, pattern=pattern, neg_pattern=neg_pattern,
                pylint_ignore=pylint_ignore, verbose=verbose, fLOG=fLOG)

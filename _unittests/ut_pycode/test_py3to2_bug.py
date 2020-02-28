@@ -8,7 +8,7 @@ import os
 import unittest
 
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import py3to2_convert
+from pyquickhelper.pycode.py3to2 import py3to2_convert
 
 
 class TestPy3to2Bug(unittest.TestCase):

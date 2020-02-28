@@ -8,7 +8,8 @@ import os
 import unittest
 
 from pyquickhelper.loghelper import fLOG, run_cmd
-from pyquickhelper.pycode import get_temp_folder, py3to2_convert_tree
+from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode.py3to2 import py3to2_convert_tree
 
 
 class TestPy3to2(unittest.TestCase):

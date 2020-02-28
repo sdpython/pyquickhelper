@@ -2,10 +2,7 @@
 @file
 @brief Various function to clean the code.
 """
-
 import os
-import autopep8
-from ..filehelper.synchelper import explore_folder
 
 
 def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is_string=None):
@@ -90,6 +87,8 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
     if filename is not None:
         ext = os.path.splitext(filename)[-1]
     if ext in (".py", ) and apply_pep8:
+        # delayed import to speed up import of pycode
+        import autopep8
         options = ['', '-a'] if aggressive else ['']
         options.extend(["--ignore=E402,E731"])
         r = autopep8.fix_code(
@@ -190,6 +189,8 @@ def remove_extra_spaces_folder(
         def file_filter(filename):
             return True or False
     """
+    # delayed import to speed up import of .pycode
+    from ..filehelper.synchelper import explore_folder
     neg_pattern = "|".join("[/\\\\]{0}[/\\\\]".format(_) for _ in ["build", "build2", "build3",
                                                                    "dist", "_venv", "_todo", "dist_module27", "_virtualenv"])
     files = explore_folder(folder, neg_pattern=neg_pattern, fullname=True)[1]

@@ -12,7 +12,6 @@ from contextlib import redirect_stdout, redirect_stderr
 from .ci_helper import is_travis_or_appveyor
 from .profiling import profile
 from ..texthelper import compare_module_version
-from ..loghelper import fLOG
 
 
 class ExtTestCase(unittest.TestCase):
@@ -383,7 +382,9 @@ class ExtTestCase(unittest.TestCase):
         Prints out some information.
         @see fn fLOG.
         """
-        fLOG(*args, **kwargs)
+        # delayed import
+        from ..loghelper import fLOG as _flog
+        _flog(*args, **kwargs)
 
     def profile(self, fct, sort='cumulative', rootrem=None):
         """

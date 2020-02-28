@@ -8,14 +8,8 @@ import unittest
 from datetime import datetime
 import warnings
 import sqlite3
-
-from ..loghelper.flog import noLOG
-from ..loghelper.os_helper import get_user
-from ..filehelper import synchronize_folder
-from .call_setup_hook import call_setup_hook
 from .code_exceptions import CoverageException, SetupHookException
 from .coverage_helper import publish_coverage_on_codecov, find_coverage_report, coverage_combine
-from .utils_tests_private import default_skip_function, main_run_test
 from .utils_tests_stringio import StringIOAndFile
 
 
@@ -43,10 +37,10 @@ def _modifies_coverage_report(name, bsrcp, bproj):
 
 
 def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
-                       skip_function=default_skip_function, setup_params=None, only_setup_hook=False,
+                       skip_function=None, setup_params=None, only_setup_hook=False,
                        coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
                        covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
-                       dump_coverage=None, add_coverage_folder=None, coverage_root="src", fLOG=noLOG):
+                       dump_coverage=None, add_coverage_folder=None, coverage_root="src", fLOG=None):
     """
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
     and throws an exception if it fails.
@@ -143,6 +137,17 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     .. versionchanged:: 1.8
         Parameter *coverage_root* was added.
     """
+    # delayed import
+    from ..loghelper.os_helper import get_user
+
+    if skip_function is None:
+        from .utils_tests_private import default_skip_function
+        skip_function = default_skip_function
+
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
+
     whole_ouput = StringIOAndFile(logfile)
     runner = unittest.TextTestRunner(verbosity=0, stream=whole_ouput)
     path = os.path.abspath(os.path.join(os.path.split(logfile)[0]))
@@ -161,6 +166,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         return os.path.normpath(os.path.abspath(fold))
 
     def run_main():
+        # delayed import to speed up import of pycode
+        from .utils_tests_private import main_run_test
         res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
                             processes=processes, skip_function=skip_function,
                             additional_ut_path=additional_ut_path, stdout=stdout, stderr=stderr,
@@ -201,6 +208,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
 
     def tested_module(folder, project_var_name, setup_params):
         # module mod
+        # delayed import
+        from .call_setup_hook import call_setup_hook
         if setup_params is None:
             setup_params = {}
         out, err = call_setup_hook(
@@ -407,6 +416,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             write_covlog(None)
 
             if dump_coverage is not None:
+                # delayed import
+                from ..filehelper import synchronize_folder
                 src = os.path.dirname(outfile)
                 stdout_this.write("[main_wrapper_tests] dump coverage from '{1}' to '{0}'\n".format(
                     dump_coverage, outfile))

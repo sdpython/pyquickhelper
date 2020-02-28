@@ -10,8 +10,6 @@ import pprint
 import sqlite3
 from contextlib import redirect_stderr, redirect_stdout
 from io import StringIO
-from ..loghelper import SourceRepository, noLOG
-from ..filehelper import explore_folder_iterfile
 
 
 def _attr_(var, name1, name2):
@@ -28,7 +26,7 @@ def get_source(cov):
     return cov.config.source
 
 
-def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
+def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
     """
     Publishes the coverage report on `codecov <https://codecov.io/>`_.
     See blog post :ref:`blogpost_coverage_codecov`.
@@ -39,6 +37,11 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=noLOG):
     @param      fLOG            logging function
     @return                     out, err from function @see fn run_cmd
     """
+    if fLOG is None:
+        from ..loghelper import noLOG
+        fLOG = noLOG
+    # delayed import to speed up import of pycode
+    from ..loghelper import SourceRepository
     if os.path.isfile(path) or path.endswith(".xml"):
         report = path
     else:
@@ -95,6 +98,8 @@ def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
                +- date
                     +- .coverage - selected
     """
+    # delayed import to speed up import of pycode
+    from ..filehelper import explore_folder_iterfile
     regexp = re.compile('data_file=([0-9a-zA-Z_]+)')
     regcov = re.compile(
         '<h1>Coveragereport:<spanclass=.?pc_cov.?>([0-9]+)%</span>')

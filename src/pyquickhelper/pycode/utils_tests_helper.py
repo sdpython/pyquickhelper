@@ -2,8 +2,6 @@
 @file
 @brief This extension contains various functionalities to help unittesting.
 """
-from __future__ import print_function
-
 import os
 import stat
 import sys
@@ -13,11 +11,6 @@ import time
 import importlib
 from contextlib import redirect_stdout, redirect_stderr
 from io import StringIO
-import pycodestyle
-
-from ..filehelper.synchelper import remove_folder, explore_folder_iterfile
-from ..loghelper.flog import noLOG
-from ..loghelper import run_cmd, sys_path_append
 
 
 def _get_PyLinterRunV():
@@ -102,6 +95,8 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
                 os.chmod(local, nmode)
     else:
         if (callable(clean) and clean(local)) or (not callable(clean) and clean):
+            # delayed import to speed up import time of pycode
+            from ..filehelper.synchelper import remove_folder
             remove_folder(local)
             time.sleep(0.1)
         if create and not os.path.exists(local):
@@ -146,7 +141,7 @@ class PEP8Exception(Exception):
 
 
 def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
-               complexity=-1, stop_after=100, fLOG=noLOG,
+               complexity=-1, stop_after=100, fLOG=None,
                pylint_ignore=('C0103', 'C1801',
                               'R0201', 'R1705',
                               'W0108', 'W0613',
@@ -230,6 +225,13 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         which skips unnecessary folders:
         ``".*[/\\\\\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)).*"``.
     """
+    # delayed import to speed up import time of pycode
+    import pycodestyle
+    from ..filehelper.synchelper import explore_folder_iterfile
+    if fLOG is None:
+        from ..loghelper.flog import noLOG
+        fLOG = noLOG
+
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
             for name, fu in extended:
@@ -392,6 +394,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                                 "[check_pep8] lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
                             PyLinterRunV(cop, do_exit=False)
                         else:
+                            # delayed import to speed up import time of pycode
+                            from ..loghelper import run_cmd
                             # runs from command line
                             myprint(
                                 "[check_pep8] cmd-lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
@@ -430,6 +434,8 @@ def add_missing_development_version(names, root, hide=False):
     @return                     added paths
     """
     # delayed import to speed up import time
+    from ..loghelper import sys_path_append
+
     if not isinstance(names, list):
         names = [names]
     root = os.path.abspath(root)

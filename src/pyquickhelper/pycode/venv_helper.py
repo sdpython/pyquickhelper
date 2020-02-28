@@ -4,7 +4,6 @@
 """
 import os
 import sys
-from ..loghelper import noLOG, run_cmd
 
 
 class VirtualEnvError(Exception):
@@ -55,7 +54,7 @@ def build_venv_cmd(params, posparams):
 
 
 def create_virtual_env(where, symlinks=False, system_site_packages=False,
-                       clear=True, packages=None, fLOG=noLOG,
+                       clear=True, packages=None, fLOG=None,
                        temp_folder=None, platform=None):
     """
     Creates a virtual environment.
@@ -90,6 +89,10 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
 
     The function does not work from a virtual environment.
     """
+    from ..loghelper import run_cmd
+    if fLOG is None:
+        from ..loghelper import noLOG
+        fLOG = noLOG
     if is_virtual_environment():
         raise NotImplementedErrorFromVirtualEnvironment()
 
@@ -144,7 +147,7 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     return out
 
 
-def venv_install(venv, packages, fLOG=noLOG, temp_folder=None, platform=None):
+def venv_install(venv, packages, fLOG=None, temp_folder=None, platform=None):
     """
     Installs a package or a list of packages in a virtual environment.
 
@@ -157,15 +160,16 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None, platform=None):
 
     The function does not work from a virtual environment.
     """
+    from ..loghelper import run_cmd
+    if fLOG is None:
+        from ..loghelper import noLOG
+        fLOG = noLOG
     if is_virtual_environment():
         raise NotImplementedErrorFromVirtualEnvironment()
-
     if temp_folder is None:
         temp_folder = os.path.join(venv, "download")
-
     if isinstance(packages, str):
         packages = [packages]
-
     if platform is None:
         platform = sys.platform
 
@@ -210,7 +214,7 @@ def venv_install(venv, packages, fLOG=noLOG, temp_folder=None, platform=None):
         return run_venv_script(venv, "\n".join(script), fLOG=fLOG, platform=platform)
 
 
-def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
+def run_venv_script(venv, script, fLOG=None, file=False, is_cmd=False,
                     skip_err_if=None, platform=None, **kwargs):
     """
     Runs a script on a vritual environment (the script should be simple).
@@ -227,6 +231,11 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
 
     The function does not work from a virtual environment.
     """
+    from ..loghelper import run_cmd
+    if fLOG is None:
+        from ..loghelper import noLOG
+        fLOG = noLOG
+
     def filter_err(err):
         lis = err.split("\n")
         lines = []
@@ -274,7 +283,7 @@ def run_venv_script(venv, script, fLOG=noLOG, file=False, is_cmd=False,
         return out
 
 
-def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
+def run_base_script(script, fLOG=None, file=False, is_cmd=False,
                     skip_err_if=None, argv=None, platform=None, **kwargs):
     """
     Runs a script with the original intepreter even if this function
@@ -299,6 +308,11 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
 
         OK
     """
+    from ..loghelper import run_cmd
+    if fLOG is None:
+        from ..loghelper import noLOG
+        fLOG = noLOG
+
     def true_err(err):
         if "Ran 1 test" in err and "OK" in err:
             return False
@@ -350,7 +364,7 @@ def run_base_script(script, fLOG=noLOG, file=False, is_cmd=False,
         return out
 
 
-def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
+def check_readme_syntax(readme, folder, version="0.8", fLOG=None):
     """
     Checks the syntax of the file ``readme.rst``
     which describes a python project.
@@ -370,9 +384,11 @@ def check_readme_syntax(readme, folder, version="0.8", fLOG=noLOG):
     Unfortunately, this functionality does not work yet
     from a virtual environment.
     """
+    if fLOG is None:
+        from ..loghelper import noLOG
+        fLOG = noLOG
     if is_virtual_environment():
         raise NotImplementedErrorFromVirtualEnvironment()
-
     if not os.path.exists(folder):
         os.makedirs(folder)
 
