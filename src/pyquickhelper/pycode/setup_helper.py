@@ -338,7 +338,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     elif "write_version" in argv:
         fLOG("---- JENKINS BEGIN WRITE VERSION ----")
-        write_version_for_setup(file_or_folder)
+        write_version_for_setup(file_or_folder, module_name=module_name)
         fLOG("---- JENKINS BEGIN END VERSION ----")
         return True
 
@@ -585,13 +585,14 @@ def get_folder(file_or_folder):
     return folder
 
 
-def write_version_for_setup(file_or_folder, exc=False):
+def write_version_for_setup(file_or_folder, exc=False, module_name=None):
     """
     Extracts the version number,
     the function writes the files ``version.txt`` in this folder.
 
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      exc                 raises an exception if cannot look into git folder
+    @param      module_name         module name
     @return                         version number
 
     .. versionchanged:: 1.8
@@ -615,6 +616,7 @@ def write_version_for_setup(file_or_folder, exc=False):
         with open(os.path.join(ffolder, "version.txt"), "w") as f:
             f.write(str(version) + "\n")
 
+    modifies_init_file(ffolder, version, module_name=module_name)
     return version
 
 
@@ -1104,3 +1106,73 @@ def run_pylint_for_setup(folder, pattern=".*[.]py$", neg_pattern=None,
         fLOG = noLOG
     check_pep8(folder, pattern=pattern, neg_pattern=neg_pattern,
                pylint_ignore=pylint_ignore, verbose=verbose, fLOG=fLOG)
+
+
+def modifies_init_file(folder, version, module_name=None):
+    """
+    Automatically modifies the init file.
+
+    @param      folder      where to find the init file
+    @param      version     commit number
+    @return                 modified init file
+    """
+    def _update_version(v, nv):
+        vs = v.split('.')
+        if len(vs) <= 2:
+            return '.'.join(list(vs) + [nv])
+        if len(vs) >= 3:
+            vs = list(vs)
+            vs[-1] = nv
+            return '.'.join(vs)
+        raise ValueError(
+            "Unable to process '{}' with new version '{}'.".format(v, nv))
+
+    filename = None
+    if os.path.exists(folder):
+        if os.path.isdir(folder):
+            src = os.path.join(folder, 'src')
+            if module_name is None:
+                module_name = os.path.split(folder)[-1]
+            if os.path.exists(src) and module_name is not None:
+                filename = os.path.join(src, module_name, '__init__.py')
+            elif module_name is not None:
+                filename = os.path.join(module_name, '__init__.py')
+            else:
+                raise FileNotFoundError(
+                    "Unable to find '__init__.py' in '{}' (module_name is None).".format(folder))
+        if not os.path.exists(filename):
+            raise FileNotFoundError(
+                "Unable to find '__init__.py' in '{}' (got '{}').".format(folder, filename))
+        with open(filename, 'r', encoding='utf-8') as f:
+            content = f.read()
+    elif '__version__' in folder:
+        content = folder
+    else:
+        raise ValueError("Unable to process '{}'.".format(folder))
+
+    reg = re.compile("(__version__ = ['\\\"]([0-9.]+)['\\\"])")
+    lines = content.split('\n')
+    modif = []
+    rep = []
+    for line in lines:
+        if line.startswith("__version__"):
+            find = reg.findall(line)
+            if len(find) != 1:
+                raise ValueError(
+                    "Unable to find __version__ in '{}'".format(line))
+            v = find[0][1]
+            nv = _update_version(v, str(version))
+            newline = line.replace(v, nv)
+            modif.append(newline)
+            rep.append((line, newline))
+        else:
+            modif.append(line)
+    if len(rep) == 0:
+        raise ValueError(
+            "Unable to find '__version__' in \n{}".format(content))
+
+    content = '\n'.join(modif)
+    if filename is not None:
+        with open(filename, 'w', encoding='utf-8') as f:
+            f.write(content)
+    return content
