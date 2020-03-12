@@ -1137,15 +1137,15 @@ def modifies_init_file(folder, version, module_name=None):
                     raise FileNotFoundError(
                         "Unable to find 'setup.py' in '{}' and module_name is None.".format(
                             folder, filename))
-                    reg = re.compile("(project_var_name = ['\\\"]([0-9.]+)['\\\"])")
-                    with open(setu, 'r', encoding='utf-8') as f:
-                        cst = f.read()
-                    find = reg.findall(cst)
-                    if len(find) == 0:
-                        raise FileNotFoundError(
-                            "Unable to find 'project_var_name' in 'setup.py' in '{}' "
-                            "and module_name is None.".format(folder, filename))
-                    module_name = find[0][1]
+                reg = re.compile("(project_var_name = ['\\\"]([a-zA-Z][a-zA-Z_0-9]+)['\\\"])")
+                with open(setu, 'r', encoding='utf-8') as f:
+                    cst = f.read()
+                find = reg.findall(cst)
+                if len(find) == 0:
+                    raise FileNotFoundError(
+                        "Unable to find 'project_var_name' in 'setup.py' in '{}' "
+                        "and module_name is None.".format(folder, filename))
+                module_name = find[0][1]
             if os.path.exists(src) and module_name is not None:
                 filename = os.path.join(src, module_name, '__init__.py')
             elif module_name is not None:
