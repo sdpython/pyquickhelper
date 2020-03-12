@@ -48,13 +48,13 @@ class TestConfSphinx(unittest.TestCase):
                 # we skip unless we install graphviz --> too long automated
                 # build
                 return
-            else:
-                raise e
+            raise e
 
         for k, v in sorted(d.items()):
             fLOG(k, "\t=", v)
             if k == 'version':
-                self.assertEqual(v, pyquickhelper.__version__)
+                self.assertEqual(v.split('.')[:2],
+                                 pyquickhelper.__version__.split('.')[:2])
 
 
 if __name__ == "__main__":

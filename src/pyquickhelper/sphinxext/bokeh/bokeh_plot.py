@@ -84,9 +84,8 @@ from bokeh.settings import settings
 from bokeh.resources import Resources
 from bokeh.document import Document
 from bokeh.embed import autoload_static
-from bokeh.util.string import decode_utf8
 from bokeh.sphinxext.example_handler import ExampleHandler
-from bokeh.sphinxext.templates import PLOT_PAGE
+from bokeh.sphinxext.templates import GALLERY_PAGE
 
 
 docs_cdn = settings.docs_cdn()
@@ -185,10 +184,10 @@ class PlotScriptParser(Parser):
 
         env.bokeh_plot_files[env.docname] = (script, js, js_path, source)
 
-        rst = PLOT_PAGE.render(source=source,
-                               filename=basename(filename),
-                               docstring=docstring,
-                               script=script)
+        rst = GALLERY_PAGE.render(source=source,
+                                  filename=basename(filename),
+                                  docstring=docstring,
+                                  script=script)
 
         document['bokeh_plot_include_bokehjs'] = True
 
@@ -244,7 +243,6 @@ class BokehPlotDirective(Directive):
             # handle examples external to the docs source, e.g. gallery examples
             else:
                 source = open(self.arguments[0]).read()
-                source = decode_utf8(source)
                 docname = env.docname.replace("/", "-")
                 js_name = "bokeh-plot-%s-external-%s.js" % (
                     docname, uuid4().hex)
