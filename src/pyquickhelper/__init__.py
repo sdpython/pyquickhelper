@@ -6,7 +6,7 @@ Helpers to produce documentation, test notebooks, walk through files,
 sphinx extension, jenkins helpers...
 """
 
-__version__ = "1.9.3350"
+__version__ = "1.9.3351"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
