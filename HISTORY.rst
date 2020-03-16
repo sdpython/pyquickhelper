@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2020-02-20 - 0.00Mb
+current - 2020-03-16 - 0.00Mb
 =============================
 
+* `296`: Automatically modifies __init__.py with git number version (2020-03-12)
+* `295`: Speed up import time of ExtTestCase (2020-02-28)
 * `294`: Rename command line process_notebook into convert_notebook (2020-02-20)
 * `293`: Fix notebook format after execution (function run_notebook) (2020-02-20)
 * `292`: Add command line to run notebook (2020-02-19)
