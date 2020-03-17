@@ -1149,8 +1149,10 @@ def modifies_init_file(folder, version, module_name=None):
                 module_name = find[0][1]
             if os.path.exists(src) and module_name is not None:
                 filename = os.path.join(src, module_name, '__init__.py')
+            elif os.path.exists(src) and module_name is not None:
+                filename = os.path.join(src, module_name, '__init__.py')
             elif module_name is not None:
-                filename = os.path.join(module_name, '__init__.py')
+                filename = os.path.join(folder, module_name, '__init__.py')
             else:
                 raise FileNotFoundError(
                     "Unable to find '__init__.py' in '{}' (module_name is None).".format(folder))
