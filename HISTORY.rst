@@ -5,8 +5,11 @@
 History
 =======
 
-current - 2020-03-16 - 0.00Mb
+current - 2020-03-28 - 0.00Mb
 =============================
+
+1.9.3350 - 2020-03-16 - 2.06Mb
+==============================
 
 * `296`: Automatically modifies __init__.py with git number version (2020-03-12)
 * `295`: Speed up import time of ExtTestCase (2020-02-28)

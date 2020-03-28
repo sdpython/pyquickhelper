@@ -14,6 +14,9 @@ def default_filter_warning(w):  # pragma: no cover
 
     Interesting fields: ``w.message``, ``w.category``, ``w.filename``, ``w.lineno``.
     """
+    if "RemovedInSphinx40Warning" in str(w):
+        return False
+
     class UnusedException(Exception):
         pass
 

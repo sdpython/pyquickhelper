@@ -423,6 +423,23 @@ class ExtTestCase(unittest.TestCase):
         with open(filename, mode, encoding=encoding) as f:
             return f.write(content)
 
+    def assertIn(self, sub, ensemble, msg=None):
+        """
+        Checks that substring *sub* is in *text*.
+
+        @param      sub         sub set
+        @param      ensemble    full set
+        @param      msg         error message
+        @raises                 AssertionError
+        """
+        if sub is None:
+            return
+        if ensemble is None:
+            raise AssertionError(msg or "'text' is None")
+        if sub not in ensemble:
+            raise AssertionError(
+                msg or "Unable to find '{}' in\n{}".format(sub, ensemble))
+
 
 def skipif_appveyor(msg):
     """
