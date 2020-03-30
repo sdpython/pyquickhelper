@@ -8,6 +8,7 @@ import sys
 import unittest
 import warnings
 import decimal
+import pprint
 from contextlib import redirect_stdout, redirect_stderr
 from .ci_helper import is_travis_or_appveyor
 from .profiling import profile
@@ -423,7 +424,7 @@ class ExtTestCase(unittest.TestCase):
         with open(filename, mode, encoding=encoding) as f:
             return f.write(content)
 
-    def assertIn(self, sub, ensemble, msg=None):
+    def assertIn(self, sub, ensemble, msg=None):  # pylint: disable=W0221
         """
         Checks that substring *sub* is in *text*.
 
@@ -438,7 +439,8 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(msg or "'text' is None")
         if sub not in ensemble:
             raise AssertionError(
-                msg or "Unable to find '{}' in\n{}".format(sub, ensemble))
+                msg or "Unable to find '{}' in\n{}".format(
+                    sub, pprint.pformat(ensemble)))
 
 
 def skipif_appveyor(msg):
