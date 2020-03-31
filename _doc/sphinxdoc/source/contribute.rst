@@ -338,7 +338,8 @@ Jenkins extensions:
 * `Git <https://plugins.jenkins.io/git>`_
 * `Next Executions <https://wiki.jenkins-ci.org/display/JENKINS/Next+Executions>`_
 * `Text File <https://wiki.jenkins-ci.org/display/JENKINS/Text+File+Operations+Plugin>`_
-* `Startup Trigger <https://wiki.jenkins.io/display/JENKINS/Startup+Trigger>`_ : automatisation de build
+* `Startup Trigger <https://wiki.jenkins.io/display/JENKINS/Startup+Trigger>`_: automatisation de build
+* `Exclusive Execution <https://plugins.jenkins.io/exclusive-execution/>`_
 
 The module will convert :epkg:`SVG` into images,
  it can handle :epkg:`javascript` with module
