@@ -11,7 +11,12 @@ import sphinx
 from docutils import nodes
 from sphinx import addnodes
 from sphinx.environment.collectors import EnvironmentCollector
-from sphinx.util import status_iterator, relative_path, ensuredir, copyfile
+from sphinx.util import status_iterator, ensuredir, copyfile
+try:
+    from sphinx.util import relative_path
+except ImportError:
+    # Sphinx >= 3.0.0
+    from docutils.utils import relative_path
 from sphinx.util import logging
 from sphinx.locale import __
 
