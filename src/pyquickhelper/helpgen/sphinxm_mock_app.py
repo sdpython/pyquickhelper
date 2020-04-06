@@ -48,7 +48,11 @@ class MockSphinxApp:
         with warnings.catch_warnings():
             warnings.simplefilter(
                 "ignore", (DeprecationWarning, PendingDeprecationWarning))
-            self.config = Config(None, None, confoverrides, None)
+            try:
+                self.config = Config(None, None, confoverrides, None)
+            except TypeError:
+                # Sphinx>=3.0.0
+                self.config = Config({}, confoverrides)
         self.confdir = "."
         self.doctreedir = "."
         self.srcdir = "."

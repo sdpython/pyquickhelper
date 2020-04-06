@@ -1034,7 +1034,14 @@ class _CustomSphinx(Sphinx):
         self.statuscode = 0
 
         # delayed import to speed up time
-        from sphinx.application import CONFIG_FILENAME, Config, Tags, builtin_extensions
+        from sphinx.application import builtin_extensions
+        try:
+            from sphinx.application import CONFIG_FILENAME, Config, Tags
+            sphinx_version = 2
+        except ImportError:
+            # Sphinx 3.0.0
+            from sphinx.config import CONFIG_FILENAME, Config, Tags
+            sphinx_version = 3
 
         # read config
         self.tags = Tags(tags)
@@ -1057,10 +1064,11 @@ class _CustomSphinx(Sphinx):
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
-        with warnings.catch_warnings():
-            warnings.simplefilter(
-                "ignore", (DeprecationWarning, PendingDeprecationWarning, ImportWarning))
-            self.config.check_unicode()
+        if sphinx_version == 2:
+            with warnings.catch_warnings():
+                warnings.simplefilter(
+                    "ignore", (DeprecationWarning, PendingDeprecationWarning, ImportWarning))
+                self.config.check_unicode()
         self.config.pre_init_values()
 
         # set up translation infrastructure
@@ -1378,6 +1386,9 @@ class _CustomSphinx(Sphinx):
             # Sphinx >= 1.8
             Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
                                  override=override, **options)
+        except TypeError:
+            # Sphinx >= 3.0.0
+            Sphinx.add_directive(self, name, obj, override=override, **options)
         except ExtensionError:
             # Sphinx < 1.8
             Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,

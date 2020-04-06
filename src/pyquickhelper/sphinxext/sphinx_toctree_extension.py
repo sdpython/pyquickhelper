@@ -256,7 +256,7 @@ def setup(app):
         if compare_module_version(sphinx.__version__, '1.8') < 0:
             app.add_directive('toctree', CustomTocTree)
         else:
-            app.add_directive('toctree', CustomTocTree, overrides=True)
+            app.add_directive('toctree', CustomTocTree, override=True)
         app.add_env_collector(CustomTocTreeCollector)
 
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}
