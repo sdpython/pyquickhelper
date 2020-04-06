@@ -35,13 +35,14 @@ The ``bokeh-plot`` directive can be used by either supplying,
 
 This directive also works in conjunction with Sphinx autodoc, when
 used in docstrings.
+
 The ``bokeh-plot`` directive accepts the following options:
 
-source-position : enum('above', 'below', 'none')
+source-position (enum('above', 'below', 'none')):
     Where to locate the the block of formatted source
     code (if anywhere).
 
-linenos : flag
+linenos (bool):
     Whether to display line numbers along with the source.
 
 Examples
@@ -64,141 +65,55 @@ The inline example code above produces the following output:
 
     show(p)
 """
-from __future__ import absolute_import
 
-import warnings
-import ast
+# -----------------------------------------------------------------------------
+# Boilerplate
+# -----------------------------------------------------------------------------
+# use the wrapped sphinx logger
+from sphinx.util import logging  # isort:skip
+log = logging.getLogger(__name__)
+
+# -----------------------------------------------------------------------------
+# Imports
+# -----------------------------------------------------------------------------
+
+# Standard library imports
+from os import getenv
 from os.path import basename, dirname, join
-import re
-import logging
 from uuid import uuid4
 
+# External imports
 from docutils import nodes
-from docutils.parsers.rst import Directive, Parser
+from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives import choice, flag
 from sphinx.errors import SphinxError
-from sphinx.util import console, copyfile, ensuredir, status_iterator
+from sphinx.util import copyfile, ensuredir, status_iterator
 from sphinx.util.nodes import set_source_info
 
-from bokeh.settings import settings
-from bokeh.resources import Resources
+# Bokeh imports
 from bokeh.document import Document
 from bokeh.embed import autoload_static
+from bokeh.model import Model
+
+# Bokeh imports
 from bokeh.sphinxext.example_handler import ExampleHandler
-from bokeh.sphinxext.templates import GALLERY_PAGE
+from bokeh.sphinxext.util import get_sphinx_resources
 
+# -----------------------------------------------------------------------------
+# Globals and constants
+# -----------------------------------------------------------------------------
 
-docs_cdn = settings.docs_cdn()
-if docs_cdn is None:
-    resources = Resources(mode="cdn")
-else:
-    if docs_cdn == "local":
-        # "BOKEH_DOCS_CDN=local" is used for building and displaying the docs locally
-        resources = Resources(mode="server", root_url="/en/latest/")
-    elif docs_cdn.startswith("test:"):
-        # "BOKEH_DOCS_CDN=test:newthing" is used for building and deploying test docs to
-        # a one-off location "en/newthing" on the docs site
-        resources = Resources(
-            mode="server", root_url="/en/%s/" % docs_cdn.split(":")[1])
-    else:
-        # Otherwise assume it is a dev/rc/full release version and use CDN for it
-        resources = Resources(mode="cdn", version=docs_cdn)
+__all__ = (
+    'BokehPlotDirective',
+    'setup',
+)
 
-GOOGLE_API_KEY = "MISSING_API_KEY"
-CODING = re.compile(r"^# -\*- coding: (.*) -\*-$", re.M)
-
-
-class PlotScriptError(SphinxError):
-    """
-    Error during script parsing.
-    """
-
-    category = 'PlotScript error'
-
-
-def _process_script(source, filename, auxdir, js_name):
-    # This is lame, but seems to be required for python 2
-    source = CODING.sub("", source)
-
-    # quick and dirty way to inject Google API key
-    if "GOOGLE_API_KEY" in source:
-        run_source = source.replace("GOOGLE_API_KEY", GOOGLE_API_KEY)
-    else:
-        run_source = source
-
-    c = ExampleHandler(source=run_source, filename=filename)
-    d = Document()
-    c.modify_document(d)
-    if c.error:
-        raise PlotScriptError(c.error_detail)
-
-    script_path = join("/scripts", js_name).replace('<<string>>', 'string')
-    js_path = join(auxdir, js_name).replace('<<string>>', 'string')
-    js, script = autoload_static(d.roots[0], resources, script_path)
-
-    if "IMPOSSIBLE:TOFIND" not in js_path:
-        with open(js_path, "w") as f:
-            f.write(js)
-    else:
-        logger = logging.getLogger(
-            "[bokeh] unable to write '{0}'".format(js_path))
-
-    return (script, js, js_path, source)
-
-
-class PlotScriptParser(Parser):
-    """
-    This Parser recognizes .py files in the Sphinx source tree,
-    assuming that they contain bokeh examples
-
-    Note: it is important that the .py files are parsed first. This is
-    accomplished by reordering the doc names in the env_before_read_docs callback.
-    """
-
-    supported = ('python',)
-
-    def parse(self, source, document):
-        """ Parse ``source``, write results to ``document``.
-
-        """
-        # This is lame, but seems to be required for python 2
-        source = CODING.sub("", source)
-
-        env = document.settings.env
-        # e.g. full path to docs/user_guide/examples/layout_vertical
-        filename = env.doc2path(env.docname)
-
-        # This code splits the source into two parts: the docstring (or None if
-        # there is not one), and the remaining source code after
-        m = ast.parse(source)
-        docstring = ast.get_docstring(m)
-        if docstring is not None:
-            lines = source.split("\n")
-            lineno = m.body[0].lineno  # assumes docstring is m.body[0]
-            source = "\n".join(lines[lineno:])
-
-        js_name = "bokeh-plot-%s.js" % uuid4().hex
-
-        (script, js, js_path, source) = _process_script(
-            source, filename, env.bokeh_plot_auxdir, js_name)
-
-        env.bokeh_plot_files[env.docname] = (script, js, js_path, source)
-
-        rst = GALLERY_PAGE.render(source=source,
-                                  filename=basename(filename),
-                                  docstring=docstring,
-                                  script=script)
-
-        document['bokeh_plot_include_bokehjs'] = True
-
-        # can't use super, Sphinx Parser classes don't inherit object
-        Parser.parse(self, rst, document)
+# -----------------------------------------------------------------------------
+# General API
+# -----------------------------------------------------------------------------
 
 
 class BokehPlotDirective(Directive):
-    """
-    Sphinx directive.
-    """
 
     has_content = True
     optional_arguments = 2
@@ -211,44 +126,40 @@ class BokehPlotDirective(Directive):
     def run(self):
 
         env = self.state.document.settings.env
-        app = env.app
 
         # filename *or* python code content, but not both
         if self.arguments and self.content:
             raise SphinxError(
                 "bokeh-plot:: directive can't have both args and content")
 
-        # process inline examples here
+        # need docname not to look like a path
+        docname = env.docname.replace("/", "-")
+
         if self.content:
+            log.debug("[bokeh-plot] handling inline example in %r", env.docname)
+            path = env.bokeh_plot_auxdir  # code runner just needs any real path
             source = '\n'.join(self.content)
-            # need docname not to look like a path
-            docname = env.docname.replace("/", "-")
-            js_name = "bokeh-plot-%s-inline-%s.js" % (docname, uuid4().hex)
-            # the code runner just needs a real path to cd to, this will do
-            path = join(env.bokeh_plot_auxdir, js_name)
-
-            (script, js, js_path, source) = _process_script(
-                source, path, env.bokeh_plot_auxdir, js_name)
-            env.bokeh_plot_files[js_name] = (script, js, js_path, source)
-
-        # process example files here
         else:
-            example_path = self.arguments[0][:-3]  # remove the ".py"
+            try:
+                log.debug("[bokeh-plot] handling external example in %r: %s",
+                          env.docname, self.arguments[0])
+                path = self.arguments[0]
+                if not path.startswith("/"):
+                    path = join(env.app.srcdir, path)
+                source = open(path).read()
+            except Exception as e:
+                raise SphinxError(f"{env.docname}: {e!r}")
 
-            # if it's an "internal" example, the python parser has already handled it
-            if example_path in env.bokeh_plot_files:
-                (script, js, js_path,
-                 source) = env.bokeh_plot_files[example_path]
+        js_name = "bokeh-plot-%s-external-%s.js" % (uuid4().hex, docname)
 
-            # handle examples external to the docs source, e.g. gallery examples
-            else:
-                source = open(self.arguments[0]).read()
-                docname = env.docname.replace("/", "-")
-                js_name = "bokeh-plot-%s-external-%s.js" % (
-                    docname, uuid4().hex)
-                (script, js, js_path, source) = _process_script(
-                    source, self.arguments[0], env.bokeh_plot_auxdir, js_name)
-                env.bokeh_plot_files[js_name] = (script, js, js_path, source)
+        try:
+            (script, js, js_path, source) = _process_script(
+                source, path, env, js_name)
+        except Exception as e:
+            raise RuntimeError(
+                "Sphinx bokeh-plot exception: \n\n%s\n\n Failed on:\n\n %s" % (e, source))
+        env.bokeh_plot_files[js_name] = (
+            script, js, js_path, source, dirname(env.docname))
 
         # use the source file name to construct a friendly target_id
         target_id = "%s.%s" % (env.docname, basename(js_path))
@@ -272,47 +183,48 @@ class BokehPlotDirective(Directive):
 
         return result
 
-
-def env_before_read_docs(app, env, docnames):
-    docnames.sort(key=lambda x: 0 if "examples" in x else 1)
-    for name in [x for x in docnames if env.doc2path(x).endswith(".py")]:
-        if not name.startswith(tuple(env.app.config.bokeh_plot_pyfile_include_dirs)):
-            env.found_docs.remove(name)
-            docnames.remove(name)
+# -----------------------------------------------------------------------------
+# Dev API
+# -----------------------------------------------------------------------------
 
 
 def builder_inited(app):
     app.env.bokeh_plot_auxdir = join(app.env.doctreedir, 'bokeh_plot')
     if app.env.srcdir is not None and "IMPOSSIBLE:TOFIND" not in app.env.srcdir:
         # sphinx/_build/doctrees/bokeh_plot
+        # sphinx/_build/doctrees/bokeh_plot
         ensuredir(app.env.bokeh_plot_auxdir)
+
     if not hasattr(app.env, 'bokeh_plot_files'):
         app.env.bokeh_plot_files = {}
-
-
-def html_page_context(app, pagename, templatename, context, doctree):
-    """
-    Add BokehJS to pages that contain plots.
-    """
-    if doctree and doctree.get('bokeh_plot_include_bokehjs'):
-        context['bokeh_css_files'] = resources.css_files
-        context['bokeh_js_files'] = resources.js_files
 
 
 def build_finished(app, exception):
     files = set()
 
-    for (script, js, js_path, source) in app.env.bokeh_plot_files.values():
-        files.add(js_path)
+    # Sphinx 3.0.0
+    for docpath, element in app.env.bokeh_plot_files.items():
+        if len(element) == 4:
+            script, js, js_path, source = element
+        elif len(element) == 5:
+            script, js, js_path, source, docpath = element
+        else:
+            raise ValueError("\n".join([
+                str(type(element)),
+                str(len(element)),
+                str(element),
+            ])) from e
+        files.add((js_path, docpath))
 
     files_iter = status_iterator(sorted(files),
                                  'copying bokeh-plot files... ',
-                                 console.brown,
+                                 'brown',
                                  len(files),
-                                 lambda x: basename(x))
+                                 app.verbosity,
+                                 stringify_func=lambda x: basename(x[0]))
 
-    for file in files_iter:
-        target = join(app.builder.outdir, "scripts", basename(file))
+    for (file, docpath) in files_iter:
+        target = join(app.builder.outdir, docpath, basename(file))
         ensuredir(dirname(target))
         try:
             copyfile(file, target)
@@ -321,27 +233,53 @@ def build_finished(app, exception):
                 'cannot copy local file %r, reason: %s' % (file, e))
 
 
-def env_purge_doc(app, env, docname):
-    """ Remove local files for a given document.
-
-    """
-    if docname in env.bokeh_plot_files:
-        del env.bokeh_plot_files[docname]
-
-
 def setup(app):
-    """ sphinx config variable to scan .py files in provided directories only """
+    ''' Required Sphinx extension setup function. '''
     app.add_config_value('bokeh_plot_pyfile_include_dirs', [], 'html')
-
-    with warnings.catch_warnings():
-        warnings.simplefilter(
-            "ignore", (DeprecationWarning, PendingDeprecationWarning))
-        app.add_source_parser('.py', PlotScriptParser)
-
     app.add_directive('bokeh-plot', BokehPlotDirective)
-
-    app.connect('env-before-read-docs', env_before_read_docs)
+    app.add_config_value('bokeh_missing_google_api_key_ok', True, 'html')
     app.connect('builder-inited', builder_inited)
-    app.connect('html-page-context', html_page_context)
     app.connect('build-finished', build_finished)
-    app.connect('env-purge-doc', env_purge_doc)
+
+# -----------------------------------------------------------------------------
+# Private API
+# -----------------------------------------------------------------------------
+
+
+def _process_script(source, filename, env, js_name, use_relative_paths=False):
+    # Explicitly make sure old extensions are not included until a better
+    # automatic mechanism is available
+    Model._clear_extensions()
+
+    # quick and dirty way to inject Google API key
+    if "GOOGLE_API_KEY" in source:
+        GOOGLE_API_KEY = getenv('GOOGLE_API_KEY')
+        if GOOGLE_API_KEY is None:
+            if env.config.bokeh_missing_google_api_key_ok:
+                GOOGLE_API_KEY = "MISSING_API_KEY"
+            else:
+                raise SphinxError("The GOOGLE_API_KEY environment variable is not set. Set GOOGLE_API_KEY to a valid API key, "
+                                  "or set bokeh_missing_google_api_key_ok=True in conf.py to build anyway (with broken GMaps)")
+        run_source = source.replace("GOOGLE_API_KEY", GOOGLE_API_KEY)
+    else:
+        run_source = source
+
+    c = ExampleHandler(source=run_source, filename=filename)
+    d = Document()
+    c.modify_document(d)
+    if c.error:
+        raise RuntimeError(c.error_detail)
+
+    resources = get_sphinx_resources()
+    js_path = join(env.bokeh_plot_auxdir, js_name)
+    js, script = autoload_static(d.roots[0], resources, js_name)
+
+    if "IMPOSSIBLE:TOFIND" not in js_path:
+        with open(js_path, "w") as f:
+            f.write(js)
+
+    return (script, js, js_path, source)
+
+# -----------------------------------------------------------------------------
+# Code
+# -----------------------------------------------------------------------------

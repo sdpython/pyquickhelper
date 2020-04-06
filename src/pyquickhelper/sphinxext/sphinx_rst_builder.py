@@ -43,7 +43,11 @@ from sphinx.builders import Builder
 from sphinx.util.osutil import ensuredir
 from docutils import nodes, writers
 from sphinx import addnodes
-from sphinx.locale import admonitionlabels, versionlabels, _
+from sphinx.locale import admonitionlabels, _
+try:
+    from sphinx.domains.changeset import versionlabels
+except ImportError:
+    from sphinx.locale import versionlabels
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from .sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
 from .sphinx_gitlog_extension import visit_gitlog_node_rst, depart_gitlog_node_rst

@@ -66,12 +66,7 @@ class TestBokehExtension(unittest.TestCase):
         if 'Unknown directive type' in html:
             raise Exception(html)
 
-        if '<<string>>#document-<<string>>' in html:
-            pass
-        else:
-            raise Exception(html)
-
-        if 'bokeh-plot-string-inline' not in html:
+        if 'bokeh-plot-' not in html:
             raise Exception(html)
 
 

@@ -49,7 +49,8 @@ class MockSphinxApp:
             warnings.simplefilter(
                 "ignore", (DeprecationWarning, PendingDeprecationWarning))
             try:
-                self.config = Config(None, None, confoverrides, None)
+                self.config = Config(  # pylint: disable=E1121
+                    None, None, confoverrides, None)  # pylint: disable=E1121
             except TypeError:
                 # Sphinx>=3.0.0
                 self.config = Config({}, confoverrides)
@@ -236,6 +237,9 @@ class MockSphinxApp:
 
             try:
                 self.app.add_source_parser(ext, parser)
+            except TypeError as e:
+                # Sphinx==3.0.0
+                self.app.add_source_parser(parser)
             except ExtensionError as e:
                 if exc:
                     raise

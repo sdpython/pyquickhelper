@@ -1056,11 +1056,15 @@ class _CustomSphinx(Sphinx):
                         self.confdir, confoverrides or {}, self.tags)
                 except AttributeError:
                     try:
-                        self.config = Config(
+                        self.config = Config(  # pylint: disable=E1121
                             confdir, confoverrides or {}, self.tags)
                     except TypeError:
-                        self.config = Config(confdir, CONFIG_FILENAME,
-                                             confoverrides or {}, self.tags)
+                        try:
+                            self.config = Config(confdir, CONFIG_FILENAME,  # pylint: disable=E1121
+                                                 confoverrides or {}, self.tags)
+                        except TypeError:
+                            # Sphinx==3.0.0
+                            self.config = Config({}, confoverrides or {})
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
@@ -1358,7 +1362,8 @@ class _CustomSphinx(Sphinx):
         finally:
             logger.logger = disa
 
-    def add_directive(self, name, obj, content=None, arguments=None, override=True, **options):
+    def add_directive(self, name, obj, content=None, arguments=None,  # pylint: disable=W0221
+                      override=True, **options):
         self._added_objects.append(('directive', name))
         if name == 'plot' and obj.__name__ == 'PlotDirective':
 
@@ -1384,15 +1389,16 @@ class _CustomSphinx(Sphinx):
 
         try:
             # Sphinx >= 1.8
-            Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
+            Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
+                                 arguments=arguments,
                                  override=override, **options)
         except TypeError:
             # Sphinx >= 3.0.0
             Sphinx.add_directive(self, name, obj, override=override, **options)
         except ExtensionError:
             # Sphinx < 1.8
-            Sphinx.add_directive(self, name, obj, content=content, arguments=arguments,
-                                 **options)
+            Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
+                                 arguments=arguments, **options)
 
     def add_domain(self, domain, override=True):
         self._added_objects.append(('domain', domain))
@@ -1417,7 +1423,12 @@ class _CustomSphinx(Sphinx):
 
     def override_domain(self, domain):
         self._added_objects.append(('domain-over', domain))
-        Sphinx.override_domain(self, domain)
+        try:
+            Sphinx.override_domain(self, domain)
+        except AttributeError:
+            # Sphinx==3.0.0
+            raise AttributeError(
+                "override_domain not available in sphinx==3.0.0")
 
     def add_role(self, name, role, override=True):
         self._added_objects.append(('role', name))
@@ -1478,12 +1489,17 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('config_value', name))
         Sphinx.add_config_value(self, name, default, rebuild, types_)
 
-    def add_directive_to_domain(self, domain, name, obj, has_content=None,
+    def add_directive_to_domain(self, domain, name, obj, has_content=None,  # pylint: disable=W0221
                                 argument_spec=None, override=False, **option_spec):
         self._added_objects.append(('directive_to_domain', domain, name))
-        Sphinx.add_directive_to_domain(self, domain, name, obj,
-                                       has_content=has_content, argument_spec=argument_spec,
-                                       override=override, **option_spec)
+        try:
+            Sphinx.add_directive_to_domain(self, domain, name, obj,  # pylint: disable=E1123
+                                           has_content=has_content, argument_spec=argument_spec,
+                                           override=override, **option_spec)
+        except TypeError:
+            # Sphinx==3.0.0
+            Sphinx.add_directive_to_domain(self, domain, name, obj,
+                                           override=override, **option_spec)
 
     def add_role_to_domain(self, domain, name, role, override=False):
         self._added_objects.append(('roles_to_domain', domain, name))
