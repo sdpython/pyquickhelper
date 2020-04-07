@@ -15,7 +15,6 @@ from docutils.languages import en as docutils_en
 from docutils import nodes
 from docutils.utils import Reporter
 from sphinx.application import Sphinx
-from sphinx.builders.html import SingleFileHTMLBuilder  # pylint: disable=E0611
 from sphinx.environment import BuildEnvironment
 from sphinx.errors import ExtensionError
 from sphinx.ext.extlinks import setup_link_roles
@@ -31,6 +30,7 @@ from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, Do
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
 from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
 from ..sphinxext.sphinx_rst_builder import RstBuilder, RstWriter, RstTranslator
+from ._single_file_html_builder import CustomSingleFileHTMLBuilder
 
 
 def _get_LaTeXTranslator():
@@ -650,7 +650,7 @@ class _MemoryBuilder:
         self.built_pages[outfilename].write(output)
 
 
-class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
+class MemoryHTMLBuilder(_MemoryBuilder, CustomSingleFileHTMLBuilder):
     """
     Builds :epkg:`HTML` output in memory.
     The API is defined by the page
@@ -675,7 +675,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, SingleFileHTMLBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, SingleFileHTMLBuilder, app)
+        _MemoryBuilder._init(self, CustomSingleFileHTMLBuilder, app)
 
 
 class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
