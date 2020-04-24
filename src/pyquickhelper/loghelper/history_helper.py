@@ -55,8 +55,14 @@ def enumerate_closed_issues(owner, repo, since=None, issues=None,
         number = content['number']
         if closed < since:
             break
-        if ("[WIP]" not in title and "[remove]" not in title and
-                "[removed]" not in title and "[won't fix]" not in title):
+        if ("[WIP]" not in title and
+                "[remove]" not in title.lower() and
+                "[removed]" not in title.lower() and
+                "[DEL]" not in title and
+                "[WONT]" not in title and
+                "[SKIP]" not in title and
+                "[won't fix]" not in title.lower() and
+                "[WONTDO]" not in title):
             yield number, closed, title
 
 
