@@ -406,7 +406,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     modindex_common_prefix = [project_var_name + ".", ]
     project = (project_var_name + ' documentation') if title is None else title
     copyright = str(year) + ", " + author
-    release = version if len(version.split('.')) < 3 else "%s.%s" (version, first_line)
+    release = (version if len(version.split('.')) < 3
+               else "%s.%s" % (version, first_line))
     html_title = ("%s %s" % (project_var_name, release)
                   ) if title is None else title
     htmlhelp_basename = '%s_doc' % project_var_name
