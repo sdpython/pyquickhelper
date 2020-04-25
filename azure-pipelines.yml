@@ -87,7 +87,7 @@ jobs:
   - bash: conda update conda --yes --quiet
     displayName: Update conda.
   - bash: conda info -a
-  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint scikit-learn
+  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
     displayName: Create Anaconda environment.
   - bash: conda list
   - bash: |
