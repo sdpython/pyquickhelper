@@ -54,35 +54,47 @@ jobs:
   strategy:
     matrix:
       Python37:
-        python.version: '3.7'
-    maxParallel: 3
+        python.version: "3.7"
 
   steps:
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '$(python.version)'
       architecture: 'x64'
-  - script: export
-    displayName: 'export'
+  - script: gcc --version
+    displayName: 'gcc version'
+
   - script: |
           brew update
     displayName: 'brew update'
+  - script: export
+    displayName: 'export'
+  - script: gcc --version
+    displayName: 'gcc version'
   - script: brew install p7zip
     displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
   - script: brew install graphviz
     displayName: 'Install Graphviz'
-  - script: brew cask install basictex
-    displayName: 'Install latex'
   - script: brew install cairo pango gdk-pixbuf libffi
     displayName: 'Install cairo pango gdk-pixbuf libffi'
-  - script: python -m pip install --upgrade pip setuptools wheel
-    displayName: 'Install tools'
+
+  - bash: echo "##vso[task.prependpath]$CONDA/bin"
+    displayName: Add conda to PATH.
+  - bash: sudo chown -R $USER $CONDA
+    displayName: Take ownership of conda installation
+  - bash: conda update conda --yes --quiet
+    displayName: Update conda.
+  - bash: conda info -a
+  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint scikit-learn
+    displayName: Create Anaconda environment.
+  - bash: conda list
+  - bash: |
+      source activate pyenv
+
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
-  - script: python -m pip install scikit-learn
-    displayName: 'Install scipy scikit-learn'
   - script: python -m pip install tkinterquickhelper --no-deps
     displayName: 'Install tkinterquickhelper'    
   - script: pip uninstall -y pyquickhelper
