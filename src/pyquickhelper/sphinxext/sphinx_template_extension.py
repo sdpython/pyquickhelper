@@ -71,7 +71,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
     ::
 
-        tpl_template = {'py':python_link_doc}
+        tpl_template = {'py': python_link_doc}
 
     And the corresponding line in the documentation:
 
