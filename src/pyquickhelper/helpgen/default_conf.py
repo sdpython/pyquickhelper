@@ -812,6 +812,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'gallery_dirs': gallery_dirs,
             'backreferences_dir': example_dir,
             'expected_failing_examples': [],
+            'capture_repr': ('_repr_html_', '__repr__'),
+            'ignore_repr_types': r'matplotlib.text|matplotlib.axes',
         }
 
         sphinx_gallery_conf['show_memory'] = False
