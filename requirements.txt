@@ -7,6 +7,7 @@ codecov
 coverage>=5.0
 cryptography
 docformatter
+fire
 git-pandas
 img2pdf
 ipython>=5.0.0

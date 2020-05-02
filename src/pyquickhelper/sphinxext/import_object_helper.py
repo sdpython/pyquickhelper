@@ -80,7 +80,8 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
         if inspect.isfunction(myfunc) or inspect.ismethod(myfunc):
             raise TypeError(
                 "'{0}' is not a property - {1}".format(docname, myfunc))
-        if myfunc.__class__ is not _Types.prop.__class__:
+        if (hasattr(_Types.prop, '__class__') and
+                myfunc.__class__ is not _Types.prop.__class__):  # pylint: disable=E1101
             raise TypeError(
                 "'{0}' is not a property(*) - {1}".format(docname, myfunc))
         if not isinstance(myfunc, property):

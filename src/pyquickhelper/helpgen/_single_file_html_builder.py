@@ -146,7 +146,7 @@ class CustomSingleFileHTMLBuilder(StandaloneHTMLBuilder):
             'display_toc': display_toc,
         }
 
-    def write(self, *ignored: Any) -> None:  # pylint: disable=W0221
+    def write(self, *ignored: Any) -> None:  # pylint: disable=W0221,W0222
         docnames = self.env.all_docs
 
         with progress_message(__('preparing documents')):

@@ -6,25 +6,18 @@ import sys
 import os
 import unittest
 
-from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.ipythonhelper.magic_class_example import MagicClassExample
 
 
-class TestMagicCommands (unittest.TestCase):
+class TestMagicCommands(ExtTestCase):
 
     def test_magic_commands(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         mg = MagicClassExample()
         mg.add_context({"MagicClassExample": MagicClassExample})
         cmd = "MagicClassExample -f text --no-print"
-        fLOG("**", cmd)
         res = mg.htmlhelp(cmd)
-        fLOG(res)
-        assert "@NB(example of a magic command)"
+        self.assertIn("@NB(example of a magic command)", res)
 
 
 if __name__ == "__main__":

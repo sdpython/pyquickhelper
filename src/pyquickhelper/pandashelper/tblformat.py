@@ -45,36 +45,33 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
     """
     Builds a string in :epkg:`RST` format from a :epkg:`dataframe`.
 
-    @param      df                  dataframe
-    @param      add_line            (bool) add a line separator between each row
-    @param      align               ``r`` or ``l`` or ``c``
-    @param      column_size         something like ``[1, 2, 5]`` to multiply the column size,
-                                    a dictionary (if *list_table* is False) to overwrite
-                                    a column size like ``{'col_name1': 20}`` or
-                                    ``{3: 20}``
-    @param      index               add the index
-    @param      list_table          use the `list_table <http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table>`_
-    @param      title               used only if *list_table* is True
-    @param      header              add one header
-    @param      sep                 separator if *df* is a string and is a filename to load
-    @param      number_format       formats number in a specific way, if *number_format*
-                                    is an integer, the pattern is replaced by
-                                    ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
-                                    see also :epkg:`pyformat.info`
-    @param      replacements        replacements just before converting into RST (dictionary)
-    @param      split_row           displays several table, one column is used as the
-                                    name of each section
-    @param      split_row_level     title level if option *split_row* is used
-    @param      split_col_common    splits the dataframe by columns, see
-                                    @see fn enumerate_split_df
-    @param      split_col_subsets   splits the dataframe by columns, see
-                                    @see fn enumerate_split_df
-    @param      filter_rows         None or function to removes rows, signature
-                                    ``def filter_rows(df: DataFrame) -> DataFrame``
-    @param      label_pattern       if *split_row* is used, the function may insert
-                                    a label in front of every section,
-                                    example: ``".. _lpy-{section}:"``
-    @return                         string
+    :param df: dataframe
+    :param add_line: (bool) add a line separator between each row
+    :param align: ``r`` or ``l`` or ``c``
+    :param column_size: something like ``[1, 2, 5]`` to multiply the column size,
+        a dictionary (if *list_table* is False) to overwrite
+        a column size like ``{'col_name1': 20}`` or ``{3: 20}``
+    :param index: add the index
+    :param list_table: use the
+        `list_table <http://docutils.sourceforge.net/docs/ref/rst/directives.html#list-table>`_
+    :param title: used only if *list_table* is True
+    :param header: add one header
+    :param sep: separator if *df* is a string and is a filename to load
+    :param number_format: formats number in a specific way, if *number_format*
+        is an integer, the pattern is replaced by
+        ``{numpy.float64: '{:.2g}'}`` (if *number_format* is 2),
+        see also :epkg:`pyformat.info`
+    :param replacements: replacements just before converting into RST (dictionary)
+    :param split_row: displays several table, one column is used as the
+        name of each section
+    :param split_row_level: title level if option *split_row* is used
+    :param split_col_common: splits the dataframe by columns, see @see fn enumerate_split_df
+    :param split_col_subsets: splits the dataframe by columns, see @see fn enumerate_split_df
+    :param filter_rows: None or function to removes rows, signature
+        ``def filter_rows(df: DataFrame) -> DataFrame``
+    :param label_pattern: if *split_row* is used, the function may insert
+        a label in front of every section, example: ``".. _lpy-{section}:"``
+    :return: string
 
     If *list_table* is False, the format is the following.
 

@@ -73,19 +73,19 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
     Converts a string from *RST*
     to *HTML* or *RST* format.
 
-    @param      input               text of filename
-    @param      writer              ``'html'`` for :epkg:`HTML` format,
-                                    ``'rst'`` for :epkg:`RST` format,
-                                    ``'md'`` for :epkg:`MD` format,
-                                    ``'elatex'`` for :epkg:`latex` format,
-                                    ``'doctree'`` to get the doctree, *writer* can also be a tuple
-                                    for custom formats and must be like ``('buider_name', builder_class)``.
-    @param      keep_warnings       keep_warnings in the final HTML
-    @param      directives          new directives to add, comma separated values
-    @param      language            language
-    @param      layout              ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
-    @param      output              document name, the function adds the extension
-    @return                         output
+    :param input: text of filename
+    :param writer: ``'html'`` for :epkg:`HTML` format,
+        ``'rst'`` for :epkg:`RST` format,
+        ``'md'`` for :epkg:`MD` format,
+        ``'elatex'`` for :epkg:`latex` format,
+        ``'doctree'`` to get the doctree, *writer* can also be a tuple
+        for custom formats and must be like ``('buider_name', builder_class)``.
+    :param keep_warnings: keep_warnings in the final HTML
+    :param directives: new directives to add, comma separated values
+    :param language: language
+    :param layout: ``'docutils'``, ``'sphinx'``, ``'sphinx_body'``, see below.
+    :param output: document name, the function adds the extension
+    :return: output
 
     .. cmdref::
         :title: Convert RST document into HTML

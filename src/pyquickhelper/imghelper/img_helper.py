@@ -13,13 +13,13 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
     """
     Zooms an image.
 
-    @param      img         image or filename or pattern
-    @param      factor      multiplies the image by this factor if not None
-    @param      max_dim     modifies the image, the highest dimension
-                            should below this number
-    @param      out_file    stores the image into this file if not None
-    @param      fLOG        logging function
-    @return                 image
+    :param img: image or filename or pattern
+    :param factor: multiplies the image by this factor if not None
+    :param max_dim: modifies the image, the highest dimension
+        should below this number
+    :param out_file: stores the image into this file if not None
+    :param fLOG: logging function
+    :return: image
     """
     if isinstance(img, str):
         if '*' in img:

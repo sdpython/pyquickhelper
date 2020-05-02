@@ -29,7 +29,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'R0912', 'W0123', 'R0913', 'R0912',
                               'R0911', 'R0916', 'C0200', 'W0223',
                               'W0122', 'E1003', 'R0205', 'E0001',
-                              'W0143', 'W0107', 'C0415'),
+                              'W0143', 'W0107', 'C0415', 'W1202'),
                skip=["windows_scripts.py",
                      "Redefining built-in 'format'",
                      "bokeh_plot.py",
@@ -65,6 +65,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "W0641: Possibly unused variable",
                      "[E731] do not assign a lambda expression, use a def",
                      "cli_helper.py:196",
+                     "magic_parser.py:154: C0123: Using type() instead of isinstance()",
                      ])
 
 
@@ -80,7 +81,7 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'R1702', 'W0612', 'C0411', 'E1101', 'C0122',
                               'W0201', 'E0702', 'W1503', 'C0102', 'W0223',
                               'W0611', 'R1705', 'W0631', 'W0102', 'R0205',
-                              'W0107', 'C0415'),
+                              'W0107', 'C0415', 'W1202'),
                skip=["skip_' imported but unused",
                      "skip__' imported but unused",
                      "skip___' imported but unused",

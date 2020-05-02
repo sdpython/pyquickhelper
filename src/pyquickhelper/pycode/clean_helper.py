@@ -47,19 +47,17 @@ def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
     Backslashes are replaces by ``/``. The regular expressions
     applies on the relative path starting from *folder*.
 
-    @param      folder      folder to clean
-    @param      posreg      regular expression to select files to process
-    @param      negreg      regular expression to skip files to process
-    @param      op          kind of cleaning to do, see below for the available option
-    @param      fLOG        logging function
-    @return                 list of processed files
+    :param folder: folder to clean
+    :param posreg: regular expression to select files to process
+    :param negreg: regular expression to skip files to process
+    :param op: kind of cleaning to do, see below for the available option
+    :param fLOG: logging function
+    :return: list of processed files
 
     The following cleaning are available:
 
     * ``'CR'``: replaces ``'\\r\\n'`` by ``'\\n'``
     * ``'pep8'``: applies :epkg:`pep8` convention
-
-    .. versionadded:: 1.8
     """
     def clean_file_cr(name):
         with open(name, "rb") as f:

@@ -325,8 +325,8 @@ def configure_backend(app):
 
     logger = logging.getLogger("image")
     logger.info('Initiated images backend: ', nonl=True)
-    logger.info('`{}`'.format(
-        str(backend.__class__.__module__ + ':' + backend.__class__.__name__)))
+    logger.info('`{}:{}`'.format(
+        backend.__class__.__module__, backend.__class__.__name__))
 
     def backend_methods(node, output_type):
         "local function"

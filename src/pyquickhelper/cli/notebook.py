@@ -3,8 +3,6 @@
 @brief Command line about noteboooks.
 """
 import os
-from ..ipythonhelper import run_notebook as _run_notebook
-from ..helpgen.process_notebooks import process_notebooks
 
 
 def run_notebook(filename, profile_dir='', working_dir='',
@@ -41,6 +39,7 @@ def run_notebook(filename, profile_dir='', working_dir='',
         The command line runs a notebook and stores the modified
         notebook.
     """
+    from ..ipythonhelper import run_notebook as _run_notebook
     detailed_log = fLOG if verbose else None
     if profile_dir == '':
         profile_dir = None
@@ -89,6 +88,7 @@ def convert_notebook(filename, outfold=None, build=None,
         It calls :epkg:`nbconvert` but adds some preprocessing before calling
         it.
     """
+    from ..helpgen.process_notebooks import process_notebooks
     if not os.path.exists(filename):
         raise FileNotFoundError("Unable to find '{}'.".format(filename))
     if outfold in ('.', '', None):

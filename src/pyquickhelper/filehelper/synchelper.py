@@ -20,21 +20,21 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
     Returns the list of files included in a folder and its subfolders.
     Returned names can be modified if *sub_pattern* is specified.
 
-    @param          folder          (str) folder
-    @param          pattern         (str) if None, get all files, otherwise, it is a regular expression,
-                                    the filename must verify (with the folder if fullname is True)
-    @param          neg_pattern     (str) negative pattern
-    @param          fullname        (bool) if True, include the subfolder while checking the regex (pattern)
-    @param          return_only     (str) to return folders and files (*=None*),
-                                    only the files (*='f'*) or only the folders (*='d')
-    @param          recursive       (bool) look into subfolders
-    @param          sub_pattern     (str) replacements pattern, the output is
-                                    then modified accordingly to this
-                                    regular expression
-    @param          sub_replace     (str) if sub_pattern is specified, this second pattern
-                                    specifies how to replace
-    @param          fLOG            (fct) logging function
-    @return                         (list, list), a list of folders, a list of files (the folder is not included the path name)
+    :param folder: (str) folder
+    :param pattern: (str) if None, get all files, otherwise, it is a regular expression,
+        the filename must verify (with the folder if fullname is True)
+    :param neg_pattern: (str) negative pattern
+    :param fullname: (bool) if True, include the subfolder while checking the regex (pattern)
+    :param return_only: (str) to return folders and files (*=None*),
+        only the files (*='f'*) or only the folders (*='d')
+    :param recursive: (bool) look into subfolders
+    :param sub_pattern: (str) replacements pattern, the output is
+        then modified accordingly to this
+        regular expression
+    :param sub_replace: (str) if sub_pattern is specified, this second pattern
+        specifies how to replace
+    :param fLOG: (fct) logging function
+    :return: (list, list), a list of folders, a list of files (the folder is not included the path name)
 
     .. cmdref::
         :title: Explore the content of a directory
@@ -53,12 +53,6 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
         Or another to automatically create git commands to rename files::
 
             python -m pyquickhelper ls -f _mynotebooks -r f -p .*[.]ipynb -s "(.*)[.]ipynb" -su "git mv \\1.ipynb \\1~.ipynb"
-
-    .. versionchanged:: 1.7
-        Parameter *fLOG* was added.
-
-    .. versionchanged:: 1.8
-        Parameters *return_only*, *recursive* were added.
     """
     if pattern is not None:
         pattern = re.compile(pattern)
@@ -131,16 +125,13 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
     Same as @see fn explore_folder but iterates on files
     included in a folder and its subfolders.
 
-    @param          folder          folder
-    @param          pattern         if None, get all files, otherwise, it is a regular expression,
-                                    the filename must verify (with the folder is fullname is True)
-    @param          neg_pattern     negative pattern to exclude files
-    @param          fullname        if True, include the subfolder while checking the regex
-    @param          recursive       look into subfolders
-    @return                         iterator on files
-
-    .. versionchanged:: 1.7
-        Parameter *recursive* was added.
+    :param folder: folder
+    :param pattern: if None, get all files, otherwise, it is a regular expression,
+        the filename must verify (with the folder is fullname is True)
+    :param neg_pattern: negative pattern to exclude files
+    :param fullname: if True, include the subfolder while checking the regex
+    :param recursive: look into subfolders
+    :return: iterator on files
     """
     if pattern is not None:
         pattern = re.compile(pattern)
@@ -204,37 +195,37 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     It can walk through a :epkg:`git` repository or
     `SVN <https://subversion.apache.org/>`_.
 
-    @param      p1                  (str) first path
-    @param      p2                  (str) second path
-    @param      hash_size           (bool) to check whether or not two files are different
-    @param      repo1               (bool) assuming the first folder is under SVN or GIT,
-                                    it uses pysvn to get the list
-                                    of files (avoiding any extra files)
-    @param      repo2               (bool) assuming the second folder is under SVN or GIT,
-                                    it uses pysvn to get the list
-                                    of files (avoiding any extra files)
-    @param      size_different      (bool) if True, a file will be copied only if size are different,
-                                    otherwise, it will be copied if the first file is more recent
-    @param      no_deletion         (bool) if a file is found in the second folder and not in the first one,
-                                    if will be removed unless no_deletion is True
-    @param      filter              (str) None to accept every file, a string if it is a regular expression,
-                                    a function for something more complex:
-                                    function ``(fullname) --> True``
-                                    (every file is considered in lower case),
-                                    (use :epkg:`*py:re:search`)
-    @param      filter_copy         (str) None to accept every file, a string if it is a regular expression,
-                                    a function for something more complex: function (fullname) --> True
-    @param      avoid_copy          (bool) if True, just return the list of files
-                                    which should be copied but does not do the copy
-    @param      operations          if None, this function is called the following way ``operations(op, n1, n2)``
-                                    if should return True if the file was updated
-    @param      file_date           (str) filename which contains information about when the last sync was done
-    @param      log1                @see cl FileTreeNode
-    @param      copy_1to2           (bool) only copy files from *p1* to *p2*
-    @param      create_dest         (bool) create destination directory if not exist
-    @param      fLOG                logging function
-    @return                         list of operations done by the function,
-                                    list of 3-uple: action, source_file, dest_file
+    :param p1: (str) first path
+    :param p2: (str) second path
+    :param hash_size: (bool) to check whether or not two files are different
+    :param repo1: (bool) assuming the first folder is under SVN or GIT,
+        it uses pysvn to get the list
+        of files (avoiding any extra files)
+    :param repo2: (bool) assuming the second folder is under SVN or GIT,
+        it uses pysvn to get the list
+        of files (avoiding any extra files)
+    :param size_different: (bool) if True, a file will be copied only if size are different,
+        otherwise, it will be copied if the first file is more recent
+    :param no_deletion: (bool) if a file is found in the second folder and not in the first one,
+        if will be removed unless no_deletion is True
+    :param filter: (str) None to accept every file, a string if it is a regular expression,
+        a function for something more complex:
+        function ``(fullname) --> True``
+        (every file is considered in lower case),
+        (use :epkg:`*py:re:search`)
+    :param filter_copy: (str) None to accept every file, a string if it is a regular expression,
+        a function for something more complex: function (fullname) --> True
+    :param avoid_copy: (bool) if True, just return the list of files
+        which should be copied but does not do the copy
+    :param operations: if None, this function is called the following way ``operations(op, n1, n2)``
+        if should return True if the file was updated
+    :param file_date: (str) filename which contains information about when the last sync was done
+    :param log1: @see cl FileTreeNode
+    :param copy_1to2: (bool) only copy files from *p1* to *p2*
+    :param create_dest: (bool) create destination directory if not exist
+    :param fLOG: logging function
+    :return: list of operations done by the function,
+        list of 3-uple: action, source_file, dest_file
 
     if ``file_date`` is mentioned, the second folder is not explored. Only
     the modified files will be taken into account (except for the first sync).

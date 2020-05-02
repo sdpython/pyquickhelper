@@ -6,7 +6,7 @@ from __future__ import print_function
 import argparse
 import inspect
 import re
-from docutils import nodes
+from fire.docstrings import parse
 
 
 def clean_documentation_for_cli(doc, cleandoc):
@@ -81,45 +81,27 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
         Parameters *cls*, *positional* were added.
     """
     # delayed import to speed up import.
-    from ..helpgen import docstring2html
+    # from ..helpgen import docstring2html
+    if "@param" in f.__doc__:
+        raise RuntimeError(
+            "@param is not allowed in documentation for function '{}' in '{}'.".format(
+                f, f.__module__))
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
-    doctree = docstring2html(docf, writer="doctree",
-                             layout=layout, ret_doctree=True, **options)
-
-    # documentation
+    fulldocinfo = parse(docf)
     docparams = {}
-    for node_list in doctree.traverse(nodes.field_list):
-        for node in node_list.traverse(nodes.field):
-            text = list(filter(lambda c: c.astext().startswith(
-                "param "), node.traverse(nodes.Text)))
-            body = list(node.traverse(nodes.field_body))
-            if len(text) == 1 and len(body) == 1:
-                text = text[0]
-                body = body[0]
-                name = text.astext()
-                name = name[5:].strip()
-                doc = body.astext()
-                if name in docparams:
-                    raise ValueError(
-                        "Parameter '{0}' is documented twice.\n{1}".format(name, docf))
-                docparams[name] = doc
-
-    def clear_node_list(doctree):
-        "local function"
-        for node_list in doctree.traverse(nodes.field_list):
-            node_list.clear()
-
-    # create the parser
-    fulldoc = docstring2html(docf, writer="rst", layout='sphinx',
-                             filter_nodes=clear_node_list, **options)
-    fulldoc = fulldoc.replace("``", "`")
+    for arg in fulldocinfo.args:
+        if arg.name in docparams:
+            raise ValueError(
+                "Parameter '{0}' is documented twice.\n{1}".format(
+                    arg.name, docf))
+        docparams[arg.name] = arg.description
 
     # add arguments with the signature
     signature = inspect.signature(f)
     parameters = signature.parameters
     if cls is None:
         cls = argparse.ArgumentParser
-    parser = cls(prog=prog or f.__name__, description=fulldoc,
+    parser = cls(prog=prog or f.__name__, description=fulldocinfo.summary,
                  formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
     if skip_parameters is None:
@@ -193,7 +175,9 @@ def create_cli_argument(parser, param, doc, names, positional):
         default = None if p.default == inspect._empty else p.default
         if typ == bool:
             # see https://stackoverflow.com/questions/15008758/parsing-boolean-values-with-argparse
-            def typ(s): return s.lower() in {'true', 't', 'yes', '1'}
+            def typ_(s):
+                return s.lower() in {'true', 't', 'yes', '1'}
+            typ = typ_
         if default is not None:
             parser.add_argument(*pnames, type=typ, help=doc, default=default)
         else:
