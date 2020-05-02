@@ -17,7 +17,7 @@ class TestMagicCommands(ExtTestCase):
         mg.add_context({"MagicClassExample": MagicClassExample})
         cmd = "MagicClassExample -f text --no-print"
         res = mg.htmlhelp(cmd)
-        self.assertIn("@NB(example of a magic command)", res)
+        self.assertNotIn("@NB(example of a magic command)", res)
 
 
 if __name__ == "__main__":

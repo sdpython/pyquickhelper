@@ -5,18 +5,13 @@
 import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.ipythonhelper import AutoCompletion, AutoCompletionFile, MagicCommandParser, MagicClassWithHelpers, open_html_form
 
 
-class TestAutoCompletion (unittest.TestCase):
+class TestAutoCompletion(ExtTestCase):
 
     def test_completion(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         root = AutoCompletion()
         cl = root._add("name", "TestAutoCompletion")
         cl._add("method", "test_completion")
@@ -25,52 +20,31 @@ class TestAutoCompletion (unittest.TestCase):
         cl._add("method3", "test_completion")
         s = (str  # unicode#
              (root))
-        fLOG("\n" + s)
-        assert " |   |- method2" in s
+        self.assertIn(" |   |- method2", s)
         ls = len(root)
-        fLOG("l=", ls)
-        assert ls == 6
-        fLOG(root._)
+        self.assertEqual(ls, 6)
 
     def test_completion_file(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         fold = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.join(fold, "..", "..", "src")
         this = AutoCompletionFile(fold)
         ls = len(this)
-        assert ls > 30
+        self.assertGreater(ls, 30)
 
     def test_html_form(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         params = {"parA": "valueA", "parB": "valueB"}
         title = 'unit_test_title'
         key_save = 'jjj'
         raw = open_html_form(params, title, key_save, raw=True)
-        fLOG(raw)
-        assert len(raw) > 0
+        self.assertGreater(len(raw), 1)
 
     def test_eval(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         params = {"x": 3, "y": 4}
         cl = MagicCommandParser(prog="test_command")
-        res = cl.eval("x+y", params, fLOG=fLOG)
-        fLOG(res)
-        assert res == 7
+        res = cl.eval("x+y", params)
+        self.assertEqual(res, 7)
 
     def test_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         parser = MagicCommandParser(prog="test_command",
                                     description='display the first lines of a text file')
         typstr = str  # unicode#
@@ -85,21 +59,15 @@ class TestAutoCompletion (unittest.TestCase):
             default="utf8",
             help='file encoding')
         params = {"x": 3, "y": 4}
-        res = parser.parse_cmd('this.py -n x+y', context=params, fLOG=fLOG)
-        fLOG(res.__dict__)
+        res = parser.parse_cmd('this.py -n x+y', context=params)
+        self.assertNotEmpty(res)
         r = parser.format_help()
-        assert "usage: test_command [-h] [-n N] [-e ENCODING] f" in r
-        fLOG("###\n", r, "###\n")
-        fLOG(parser.usage)
+        self.assertIn("usage: test_command [-h] [-n N] [-e ENCODING] f", r)
         self.assertEqual(res.n, 7)
 
     def test_class_magic(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         cl = MagicClassWithHelpers()
-        assert cl.Context is None
+        self.assertEmpty(cl.Context)
 
         def call_MagicCommandParser():
             return MagicCommandParser(prog="parser_unittest")
@@ -110,11 +78,10 @@ class TestAutoCompletion (unittest.TestCase):
                         help='number of lines to display')
         pa.add_argument('-e', '--encoding', default="utf8",
                         help='file encoding')
-        assert pa is not None
+        self.assertNotEmpty(pa)
         cl.add_context({"x": 3, "y": 4})
-        assert cl.Context == {"x": 3, "y": 4}
-        res = cl.get_args('this.py -n x+y', pa, print_function=fLOG)
-        fLOG("**RES", res)
+        self.assertEqual(cl.Context, {"x": 3, "y": 4})
+        res = cl.get_args('this.py -n x+y', pa)
         if res.n != 7:
             raise Exception("res.n == {0}\nres={1}".format(res.n, res))
 

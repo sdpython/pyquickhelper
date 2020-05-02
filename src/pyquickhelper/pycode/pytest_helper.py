@@ -39,11 +39,11 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
     """
     Runs test functions from *module*.
 
-    @param      module      module (string or module)
-    @param      pattern     function pattern
-    @param      stop_first  stops at the first error or run all of them
-    @param      verbose     prints out the name of the functions
-    @param      fLOG        logging function
+    :param module: module (string or module)
+    :param pattern: function pattern
+    :param stop_first: stops at the first error or run all of them
+    :param verbose: prints out the name of the functions
+    :param fLOG: logging function
     """
     if isinstance(module, str):
         module_path = module

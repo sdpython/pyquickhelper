@@ -259,21 +259,22 @@ def create_visual_diff_through_html_files(file1, file2, encoding="utf8", page=No
     Calls function @see fn create_visual_diff_through_html
     with the content of two files.
 
-    @param      file1           first file (anything such as an url, a file, a string, a stream)
-    @param      file2           second file (anything such as an url, a file, a string, a stream)
-    @param      encoding        encoding
-    @param      page            if not None, saves the results in file
-    @param      browser         open browser ?
-    @param      notebook        if True, the function assumes the outcome
-                                will be displayed from a notebook and does
-                                things accordingly
-    @param      context_size    to display everything (None) or just the changes > 0
-    @param      inline_view     only for notebook, True: one column, False: two columns
-    @return                     html page or (`HTML <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?
-                                highlight=display#IPython.display.HTML>`_,
-                                `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?
-                                highlight=display#IPython.display.Javascript>`_)
-                                object if *notebook* is True
+    :param file1: first file (anything such as an url, a file, a string, a stream)
+    :param file2: second file (anything such as an url, a file, a string, a stream)
+    :param encoding: encoding
+    :param page: if not None, saves the results in file
+    :param browser: open browser ?
+    :param notebook: if True, the function assumes the outcome
+        will be displayed from a notebook and does
+        things accordingly
+    :param context_size: to display everything (None) or just the changes > 0
+    :param inline_view: only for notebook, True: one column, False: two columns
+    :return: html page or (`HTML
+        <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?
+        highlight=display#IPython.display.HTML>`_,
+        `Javascript <https://ipython.org/ipython-doc/stable/api/generated/IPython.display.html?
+        highlight=display#IPython.display.Javascript>`_)
+        object if *notebook* is True
 
     An example of the results is shown in blog post :ref:`b-diffview`.
     The function now uses @see fn read_content_ufs to retrieve the content.
