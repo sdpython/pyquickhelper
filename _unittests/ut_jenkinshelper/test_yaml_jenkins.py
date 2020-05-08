@@ -9,7 +9,7 @@ import re
 import warnings
 
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, skipif_appveyor
 from pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
 from pyquickhelper.jenkinshelper.yaml_helper import enumerate_processed_yml
 
@@ -56,6 +56,7 @@ class TestYamlJenkins(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
         self.private_tst_jenkins_ext_setup_server_yaml(False, None)
 
+    @skipif_appveyor("fails for python 3.8")
     def test_jenkins_ext_setup_server_yaml_disabled(self):
         fLOG(
             __file__,

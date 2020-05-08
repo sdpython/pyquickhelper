@@ -103,7 +103,7 @@ class TestModuleC(ExtTestCase):
         #endif
     """)
 
-    @unittest.skipIf(sys.version_info[:2] < (3, 7), "no test file to use")
+    @unittest.skipIf(sys.version_info[:2] != (3, 7), "no test file to use")
     @unittest.skipIf(sys.platform != "win32", "no test file to use")
     def test_module_c(self):
         fLOG(

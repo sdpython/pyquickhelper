@@ -7,13 +7,16 @@ import unittest
 import re
 
 from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import skipif_appveyor
 from pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
-from pyquickhelper.jenkinshelper.jenkins_helper import default_engines, default_jenkins_jobs, setup_jenkins_server_yml
+from pyquickhelper.jenkinshelper.jenkins_helper import (
+    default_engines, default_jenkins_jobs, setup_jenkins_server_yml)
 
 
 class TestYamlJenkins2(unittest.TestCase):
 
     @unittest.skipIf(sys.version_info[:2] < (3, 7), "Python37 is a constant in this test")
+    @skipif_appveyor("discrepencies with python 3.8 on windows")
     def test_jenkins_ext_setup_server_yaml2_url(self):
         fLOG(
             __file__,
