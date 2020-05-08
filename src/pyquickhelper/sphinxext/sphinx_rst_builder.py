@@ -46,7 +46,7 @@ from sphinx import addnodes
 from sphinx.locale import admonitionlabels, _
 try:
     from sphinx.domains.changeset import versionlabels
-except ImportError:
+except ImportError:  # pragma: no cover
     from sphinx.locale import versionlabels
 from sphinx.writers.text import TextTranslator, MAXWIDTH, STDINDENT
 from .sphinx_bigger_extension import visit_bigger_node_rst, depart_bigger_node_rst
@@ -287,7 +287,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_desc_annotation(self, node):
         content = node.astext()
-        if len(content) > MAXWIDTH:
+        if len(content) > MAXWIDTH:  # pragma: no cover
             h = int(MAXWIDTH / 3)
             content = content[:h] + " ... " + content[-h:]
             self.add_text(content)
@@ -1022,10 +1022,10 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         html = False
         latex = False
         if not(rst or html or latex or md):
-            raise ValueError("One of them should be True")
+            raise ValueError("One of them should be True")  # pragma: no cover
         try:
             ev = eval(expr)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise ValueError(
                 "Unable to interpret expression '{0}'".format(expr))
         return ev

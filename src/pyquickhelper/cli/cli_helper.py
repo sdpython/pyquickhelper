@@ -45,12 +45,12 @@ def clean_documentation_for_cli(doc, cleandoc):
                     doc = doc.replace(c[0], c[1].replace(':', '.'))
                 return doc
             else:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "cleandoc='{0}' is not implemented, only 'epkg'.".format(cleandoc))
         elif callable(cleandoc):
             return cleandoc(doc)
         else:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "cleandoc is not a string or a callable object but {0}".format(type(cleandoc)))
 
 
@@ -83,7 +83,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     # delayed import to speed up import.
     # from ..helpgen import docstring2html
     if "@param" in f.__doc__:
-        raise RuntimeError(
+        raise RuntimeError(  # pragma: no cover
             "@param is not allowed in documentation for function '{}' in '{}'.".format(
                 f, f.__module__))
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
@@ -91,7 +91,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     docparams = {}
     for arg in fulldocinfo.args:
         if arg.name in docparams:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Parameter '{0}' is documented twice.\n{1}".format(
                     arg.name, docf))
         docparams[arg.name] = arg.description
@@ -111,7 +111,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
         if k in skip_parameters:
             continue
         if k not in docparams:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Parameter '{0}' is not documented in\n{1}.".format(k, docf))
         create_cli_argument(parser, p, docparams[k], names, positional)
 
@@ -141,7 +141,7 @@ def create_cli_argument(parser, param, doc, names, positional):
     else:
         typ = type(p.default)
     if typ is None:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unable to infer type of '{0}' ({1})".format(p.name, p))
 
     if len(p.name) > 3:
@@ -156,7 +156,7 @@ def create_cli_argument(parser, param, doc, names, positional):
         shortname = None
 
     if p.name in names:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "You should change the name of parameter '{0}'".format(p.name))
 
     if positional is not None and p.name in positional:
@@ -188,7 +188,7 @@ def create_cli_argument(parser, param, doc, names, positional):
         # Positional argument
         parser.add_argument(*pnames, help=doc)
     else:
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "typ='{0}' not supported (parameter '{1}'). \n"
             "None should be replaced by an empty string \n"
             "as empty value are received that way.".format(typ, p))
@@ -244,7 +244,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
     else:
         try:
             args = parser.parse_args(args=args)
-        except SystemExit as e:
+        except SystemExit as e:  # pragma: no cover
             if fLOG:
                 fLOG("Unable to parse argument due to '{0}':".format(e))
                 fLOG("    ", " ".join(args))
@@ -365,13 +365,13 @@ def cli_main_helper(dfct, args, fLOG=print):
         python -u -m <module> --GUI
     """
     if fLOG is None:
-        raise ValueError("fLOG must be defined.")
+        raise ValueError("fLOG must be defined.")  # pragma: no cover
     first = None
     for _, v in dfct.items():
         first = v
         break
     if not first:
-        raise ValueError("dictionary must not be empty.")
+        raise ValueError("dictionary must not be empty.")  # pragma: no cover
 
     def print_available():
         maxlen = max(map(len, dfct)) + 3
@@ -440,7 +440,7 @@ def call_gui_function(dfct, fLOG=print, utest=False):
     """
     try:
         import tkinterquickhelper
-    except ImportError:
+    except ImportError:  # pragma: no cover
         print("Option --GUI requires module tkinterquickhelper to be installed.")
         tkinterquickhelper = None
     if tkinterquickhelper:

@@ -999,7 +999,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             with open(dest, "w", encoding="utf-8") as f:
                 f.write(style_figure_notebook[1])
 
-    if add_htmlhelp:
+    if add_htmlhelp:  # pragma: no cover
         # we call HtmlHelp
         fLOG("[generate_help_sphinx] run HTMLHELP")
         for cmd in cmds_post:
@@ -1131,7 +1131,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ######
     latex = os.path.join(build_path, "latex")
     html = os.path.join(build_path, "latex")
-    if os.path.exists(html) and os.path.exists(latex):
+    if os.path.exists(html) and os.path.exists(latex):  # pragma: no cover
         pdfs = os.listdir(latex)
         for pdf in pdfs:
             ext = os.path.splitext(pdf)[-1]
@@ -1212,7 +1212,7 @@ def _check_sphinx_configuration(conf, fLOG):
                 clean_folders.append(a)
     for cl in clean_folders:
         fLOG("[sphinx-gallery] clean '{0}'".format(cl))
-        for temp in os.listdir(cl):
+        for temp in os.listdir(cl):  # pragma: no cover
             if temp.startswith("temp_"):
                 aaa = os.path.join(cl, temp)
                 fLOG("[sphinx-gallery] remove '{0}'".format(cl))
@@ -1251,7 +1251,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
         try:
             module_conf = execute_script_get_local_variables(
                 "from conf import *", folder=folds)
-        except Exception as ee:
+        except Exception as ee:  # pragma: no cover
             raise HelpGenException(
                 "Unable to import a config file (root_source='{0}').".format(
                     folds), os.path.join(folds, "conf.py")) from ee

@@ -222,14 +222,14 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
                 raise HelpGenException(
                     "issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
             inside = True
-            if use_sys:
+            if use_sys:  # pragma: no cover
                 if not has_sys:
                     res.append("import sys")
                 res.append(
                     "if hasattr(sys, '{0}') and sys.{0}:".format(use_sys))
             res.append(line)
         elif line.startswith(marker_out):
-            if use_sys and flask_trick:
+            if use_sys and flask_trick:  # pragma: no cover
                 res.append("    pass")
             if not inside:
                 raise HelpGenException(
@@ -239,7 +239,7 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
             res.append(line)
         else:
             if inside:
-                if use_sys:
+                if use_sys:  # pragma: no cover
                     # specific trick for Flask
                     if line.startswith("@app."):
                         line = "# " + line
@@ -313,7 +313,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
                                      avoid_copy=True, fLOG=fLOG)
 
     if len(actions) == 0:
-        raise FileNotFoundError("empty folder: " + input)
+        raise FileNotFoundError("empty folder: " + input)  # pragma: no cover
 
     ractions = []
     for a, file, dest in actions:
@@ -415,7 +415,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     if not_expected not in ('jenkins', 'vsts', 'runner') and not_expected in fullnamenoext:
         mes = "The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'" + \
             "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
-        raise HelpGenException(mes.format(
+        raise HelpGenException(mes.format(  # pragma: no cover
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
     mo, prefix = import_module(
@@ -887,7 +887,7 @@ def filecontent_to_rst(filename, content):
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
     if not_expected != "jenkins" and not_expected in file:
-        raise HelpGenException(
+        raise HelpGenException(  # pragma: no cover
             "The title is probably wrong (1): '{0}' found in '{1}'".format(not_expected, file))
 
     rows = ["", ".. _f-%s:" % file, "", "", full, "",
@@ -1165,7 +1165,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
         # for pandas >= 0.17
         df = df.groupby(
             "extension/kind", as_index=False).sum().sort_values("extension/kind")
-    except AttributeError:
+    except AttributeError:  # pragma: no cover
         # for pandas < 0.17
         df = df.groupby(
             "extension/kind", as_index=False).sum().sort("extension/kind")
@@ -1493,7 +1493,7 @@ def private_migrating_doxygen_doc(rows, index_first_line, filename,
 
 def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                                    debug=False, silent=False):
-    if debug:
+    if debug:  # pragma: no cover
         fLOG("------------------ P0")
         fLOG("\n".join(rows))
         fLOG("------------------ P")
@@ -1562,7 +1562,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 beginends["example"] = beginends.get("example", 0) - 1
                 sp = " " * row.index("@endexample")
                 rows[i] = "\n" + sp + ".. endexample.\n"
-            if "@endNB" in strow:
+            if "@endNB" in strow:  # pragma: no cover
                 beginends["NB"] = beginends.get("NB", 0) - 1
                 sp = " " * row.index("@endNB")
                 rows[i] = "\n" + sp + ".. endNB.\n"
@@ -1716,7 +1716,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                     rows[i] = "\n" + rows[i]
                 beginends["FAQ"] = beginends.get("FAQ", 0) + 1
 
-            elif nbreg:
+            elif nbreg:  # pragma: no cover
                 sp = " " * row.index("@NB")
                 rep = nbreg.groups()[0]
                 exa = nbreg.groups()[2].replace("[|", "(").replace("|]", ")")
@@ -1798,7 +1798,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 raise SyntaxError(mes)
 
     for k, v in beginends.items():
-        if v != 0:
+        if v != 0:  # pragma: no cover
             mes = "  File \"%s\", line %d, in ???\n    unbalanced tag %s: %s \nwhole blocks:\n%s" % (
                 filename, index_first_line + i + 1, k, row, "\n".join(rows))
             fLOG("[sphinxerror]-E ", mes)

@@ -110,7 +110,7 @@ class NotebookRunner(object):
         if kernel:
             try:
                 from jupyter_client import KernelManager
-            except ImportError:
+            except ImportError:  # pragma: no cover
                 from ipykernel import KernelManager
 
             with warnings.catch_warnings():
@@ -142,7 +142,7 @@ class NotebookRunner(object):
                     raise SyntaxError(
                         "every option should start with '--': " + opt)
                 if "=" not in opt:
-                    raise SyntaxError(
+                    raise SyntaxError(  # pragma: no cover
                         "every option should be assigned a value: " + opt)
                 args.append(opt)
 
@@ -158,7 +158,7 @@ class NotebookRunner(object):
                         warnings.filterwarnings(
                             "ignore", category=ResourceWarning)
                         self.km.start_kernel(extra_arguments=args)
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise Exception(
                         "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
 
@@ -178,7 +178,7 @@ class NotebookRunner(object):
             self.kc.start_channels(stdin=False)
             try:
                 self.kc.wait_for_ready(timeout=startup_timeout)
-            except RuntimeError as e:
+            except RuntimeError as e:  # pragma: no cover
                 # We wait for one second.
                 sleep(startup_timeout)
                 self.kc.stop_channels()
@@ -256,7 +256,7 @@ class NotebookRunner(object):
         """
         self.fLOG('-- shutdown kernel')
         if self.kc is None:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "No kernel was started, specify kernel=True when initializing the instance.")
         self.kc.stop_channels()
         self.km.shutdown_kernel(now=True)
@@ -307,7 +307,7 @@ class NotebookRunner(object):
             iscell = True
             try:
                 return iscell, cell.source
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 return iscell, cell.input
 
     def run_cell(self, index_cell, cell, clean_function=None):
@@ -338,7 +338,7 @@ class NotebookRunner(object):
         if len(code) == 0:
             return ""
         if self.kc is None:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "No kernel was started, specify kernel=True when initializing the instance.")
         self.kc.execute(code)
 
@@ -346,7 +346,7 @@ class NotebookRunner(object):
         reason = None
         try:
             status = reply['content']['status']
-        except KeyError:
+        except KeyError:  # pragma: no cover
             status = 'error'
             reason = "no status key in reply['content']"
 
@@ -355,7 +355,7 @@ class NotebookRunner(object):
             try:
                 tr = [ansi_escape.sub('', _)
                       for _ in reply['content']['traceback']]
-            except KeyError:
+            except KeyError:  # pragma: no cover
                 tr = ["No traceback, available keys in reply['content']"] + \
                     list(reply['content'])
             traceback_text = '\n'.join(tr)
@@ -375,7 +375,7 @@ class NotebookRunner(object):
                 if msg['msg_type'] == 'status':
                     if msg['content']['execution_state'] == 'idle':
                         break
-            except Empty:
+            except Empty:  # pragma: no cover
                 # execution state should return to idle before the queue becomes empty,
                 # if it doesn't, something bad has happened
                 status = "error"
@@ -432,7 +432,7 @@ class NotebookRunner(object):
             else:
                 dcontent = "\n".join("{0}={1}".format(k, v)
                                      for k, v in sorted(content.items()))
-                raise NotImplementedError(
+                raise NotImplementedError(  # pragma: no cover
                     "Unhandled iopub message: '{0}'\n--CONTENT--\n{1}".format(msg_type, dcontent))
 
             outs.append(out)
@@ -556,7 +556,7 @@ class NotebookRunner(object):
             for ws in self.nb.worksheets:
                 last = ws
             if last is None:
-                raise NotebookError("no cell container")
+                raise NotebookError("no cell container")  # pragma: no cover
             return last.cells
         else:
             return self.nb.cells
@@ -598,9 +598,10 @@ class NotebookRunner(object):
         The function raises an exception if the type is incorrect.
         """
         if not isinstance(b, tuple):
-            raise TypeError("tuple expected, not {0}".format(type(b)))
+            raise TypeError(  # pragma: no cover
+                "tuple expected, not {0}".format(type(b)))
         if len(b) != 2:
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "tuple expected of lengh 2, not {0}".format(len(b)))
         if b[1] == "svg":
             if not isinstance(b[0], str):
@@ -678,13 +679,12 @@ class NotebookRunner(object):
             b = sio.getvalue(), "png"
             self._check_thumbnail_tuple(b)
             return b
-        else:
-            try:
-                from PIL import Image
-            except ImportError:
-                import Image
-            img = Image.open(sio)
-            return img
+        try:
+            from PIL import Image
+        except ImportError:  # pragma: no cover
+            import Image
+        img = Image.open(sio)
+        return img
 
     def cell_image(self, cell, image_from_text=False):
         """
@@ -742,7 +742,7 @@ class NotebookRunner(object):
                         if not isinstance(v, bytes):
                             v = base64.b64decode(v)
                         if not isinstance(v, bytes):
-                            raise TypeError(
+                            raise TypeError(  # pragma: no cover
                                 "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
                         results.append((v, k.split("/")[-1]))
                     elif k in ("text/vnd.plotly.v1+html", "application/vnd.plotly.v1+json",
@@ -750,7 +750,8 @@ class NotebookRunner(object):
                                "application/vnd.bokehjs_load.v0+json"):
                         results.append((v, k.split("/")[-1]))
                     else:
-                        raise NotImplementedError("cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
+                        raise NotImplementedError(  # pragma: no cover
+                            "cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
                                                                                                     k, v, cell))
             elif output["output_type"] == "error":
                 vl = output["traceback"]
@@ -841,8 +842,9 @@ class NotebookRunner(object):
                     v = output["traceback"]
                     nbl += len(v)
                 else:
-                    raise NotImplementedError("cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}"
-                                              .format(kind, output["output_type"], output, cell))
+                    raise NotImplementedError(  # pragma: no cover
+                        "cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}"
+                        .format(kind, output["output_type"], output, cell))
 
             return nbl
 
@@ -964,7 +966,7 @@ class NotebookRunner(object):
                 self.run_cell(i, cell, clean_function=clean_function)
                 nbnerr += 1
             except Empty as er:
-                raise Exception(
+                raise Exception(  # pragma: no cover
                     "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
             except NotebookError as e:
                 if not skip_exceptions:
@@ -1075,7 +1077,7 @@ class NotebookRunner(object):
         reg = re.compile(reg_link)
         new_desc = reg.sub("\\2", desc)
         if "http://" in new_desc or "https://" in new_desc:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Wrong regular expression in '{2}':\n{0}\nMODIFIED:\n{1}".format(desc, new_desc, self._filename))
         return header, new_desc.replace('"', "")
 
@@ -1131,17 +1133,16 @@ class NotebookRunner(object):
         # zoom
         if image[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json", "vnd.bokehjs_load.v0+json"):
             return None
-        elif image[1] == 'svg':
+        if image[1] == 'svg':
             try:
                 img = svg2img(image[0])
             except PYQImageException:
                 # Enable to convert SVG.
                 return None
             return self._scale_image(img, image[1], max_width=max_width, max_height=max_height)
-        else:
-            img = self._scale_image(
-                image[0], image[1], max_width=max_width, max_height=max_height)
-            return img
+        img = self._scale_image(
+            image[0], image[1], max_width=max_width, max_height=max_height)
+        return img
 
     def _scale_image(self, in_bytes, format=None, max_width=200, max_height=200):
         """
@@ -1203,8 +1204,9 @@ class NotebookRunner(object):
             results = results[0]
             self._check_thumbnail_tuple(results)
             return results
-        elif len(results) == 0:
+        if len(results) == 0:
             return None
+
         formats_counts = Counter(_[1] for _ in results)
         if len(formats_counts) == 1:
             format = results[0][1]
@@ -1218,33 +1220,32 @@ class NotebookRunner(object):
         results = [_ for _ in results if _[1] == format]
         if format == "svg":
             return ("\n".join(_[0] for _ in results), format)
-        else:
-            # local import to avoid testing dependency on PIL:
-            try:
-                from PIL import Image
-            except ImportError:
-                import Image
 
-            dx = 0.
-            dy = 0.
-            over = 0.7
-            imgs = []
-            for in_bytes, _ in results:
-                img = Image.open(BytesIO(in_bytes))
-                imgs.append(img)
-                dx = max(dx, img.size[0])
-                dy += img.size[1] * over
+        # local import to avoid testing dependency on PIL:
+        try:
+            from PIL import Image
+        except ImportError:  # pragma: no cover
+            import Image
 
-            new_im = Image.new('RGB', (int(dx), int(dy)), (220, 220, 220))
-            for img in imgs:
-                dy -= img.size[1] * over
-                new_im.paste(img, (0, max(int(dy), 0)))
+        dx = 0.
+        dy = 0.
+        over = 0.7
+        imgs = []
+        for in_bytes, _ in results:
+            img = Image.open(BytesIO(in_bytes))
+            imgs.append(img)
+            dx = max(dx, img.size[0])
+            dy += img.size[1] * over
 
-            if max(dx, dy) > 0:
-                image_buffer = BytesIO()
-                new_im.save(image_buffer, "PNG")
-                b = image_buffer.getvalue(), "png"
-                return b
-            else:
-                b = None, "png"
-                return b
+        new_im = Image.new('RGB', (int(dx), int(dy)), (220, 220, 220))
+        for img in imgs:
+            dy -= img.size[1] * over
+            new_im.paste(img, (0, max(int(dy), 0)))
+
+        if max(dx, dy) > 0:
+            image_buffer = BytesIO()
+            new_im.save(image_buffer, "PNG")
+            b = image_buffer.getvalue(), "png"
+            return b
+        b = None, "png"
+        return b

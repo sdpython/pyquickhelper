@@ -158,5 +158,5 @@ def dictionary_as_class(dico):
     return du
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
     freeze_support()

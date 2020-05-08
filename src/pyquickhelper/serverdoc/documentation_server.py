@@ -18,7 +18,7 @@ try:
 except ImportError:
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     path_ = os.path.normpath(os.path.abspath(
         os.path.join(os.path.split(__file__)[0], "..", "..", "..", "src")))
     if path_ not in sys.path:
@@ -485,7 +485,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                   path.geturl() + "\n" + str(params) + "\n")
         self.send_error(404)
 
-    def serve_main_page(self):
+    def serve_main_page(self):  # pragma: no cover
         """
         Displays all the mapping for the default path.
         """
@@ -584,7 +584,7 @@ def run_doc_server(server, mappings, thread=False, port=8079):
         return server
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # pragma: no cover
 
     run_server = True
     if run_server:

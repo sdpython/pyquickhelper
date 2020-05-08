@@ -196,7 +196,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 "store_in_file is only implemented if process is True.")
         try:
             obj = compile(script, "", "exec")
-        except Exception as ec:
+        except Exception as ec:  # pragma: no cover
             if comment is None:
                 comment = ""
             if not exception:
@@ -530,7 +530,7 @@ class RunPythonDirective(Directive):
             try:
                 script_disp = remove_extra_spaces_and_pep8(
                     script_disp, is_string=True)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 if '.' in docname:
                     comment = '  File "{0}", line {1}'.format(docname, lineno)
                 else:
@@ -641,7 +641,7 @@ class RunPythonDirective(Directive):
             #     settings_overrides["doctitle_xform"] = True
             try:
                 sett.warning_stream
-            except KeyError:
+            except KeyError:  # pragma: no cover
                 settings_overrides["warning_stream"] = StringIO()
             # 'initial_header_level': 2,
 
@@ -665,7 +665,7 @@ class RunPythonDirective(Directive):
                     dt = core.publish_doctree(
                         content, settings=sett,
                         settings_overrides=settings_overrides)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 tab = content
                 content = ["::"]
                 st = StringIO()

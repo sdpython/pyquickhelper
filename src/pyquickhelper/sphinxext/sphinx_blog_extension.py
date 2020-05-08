@@ -167,7 +167,7 @@ class BlogPostDirective(Directive):
         content = content + self.content
         try:
             nested_parse_with_titles(self.state, content, node)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
@@ -395,7 +395,7 @@ def purge_blogpost(app, env, docname):
                         if post['docname'] != docname]
 
 
-def process_blogpost_nodes(app, doctree, fromdocname):
+def process_blogpost_nodes(app, doctree, fromdocname):  # pragma: no cover
     """
     unused, kept as example
     """
