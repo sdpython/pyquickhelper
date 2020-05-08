@@ -126,7 +126,7 @@ def get_cmd_git():
 
     @return     string
     """
-    if sys.platform.startswith("win32"):
+    if sys.platform.startswith("win32"):  # pragma: no cover
         cmd = r'"C:\Program Files\Git\bin\git.exe"'
         if not os.path.exists(cmd):
             cmd = r'"C:\Program Files (x86)\Git\bin\git.exe"'
@@ -147,7 +147,7 @@ def repo_ls(full, commandline=True):
     @return                     output of client.ls
     """
 
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
@@ -163,7 +163,7 @@ def repo_ls(full, commandline=True):
                                full)[0] if os.path.isfile(full) else full,
                            shell=sys.platform.startswith("win32"))
         if len(err) > 0:
-            raise GitException(
+            raise GitException(  # pragma: no cover
                 "Issue with path '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(full, out, err))
 
         res = [RepoFile(name=os.path.join(full, _.strip().split("\t")[-1]))
@@ -219,7 +219,7 @@ def get_file_details(name, path=None, commandline=True):
     * inserted
     * bytes
     """
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
@@ -241,10 +241,12 @@ def get_file_details(name, path=None, commandline=True):
                            shell=sys.platform.startswith("win32"),
                            preprocess=False)
 
-        if len(err) > 0:
+        if len(err) > 0:  # pragma: no cover
             mes = "Problem with file '{0}'".format(os.path.join(path, name))
-            raise GitException(mes + "\n" +
-                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
+            raise GitException(
+                mes + "\n" +
+                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" +
+                err + "\nCMD:\n" + cmd)
 
         master = get_master_location(path, commandline)
         if master.endswith(".git"):
@@ -272,15 +274,18 @@ def get_file_details(name, path=None, commandline=True):
         for commit in commits:
             se = _reg_insertion.findall(commit)
             if len(se) > 1:
-                raise Exception("A commit is wrong \n{0}".format(commit))
+                raise Exception(  # pragma: no cover
+                    "A commit is wrong \n{0}".format(commit))
             inser = int(se[0]) if len(se) == 1 else 0
             de = _reg_deletion.findall(commit)
             if len(de) > 1:
-                raise Exception("A commit is wrong \n{0}".format(commit))
+                raise Exception(  # pragma: no cover
+                    "A commit is wrong \n{0}".format(commit))
             delet = int(de[0]) if len(de) == 1 else 0
             bi = _reg_bytes.findall(commit)
             if len(bi) > 1:
-                raise Exception("A commit is wrong \n{0}".format(commit))
+                raise Exception(  # pragma: no cover
+                    "A commit is wrong \n{0}".format(commit))
             bite = int(bi[0]) if len(bi) == 1 else 0
             com = commit.split("\n")[0].split()[1]
             rows.append((com, name.strip(), inser, delet, bite))
@@ -307,7 +312,7 @@ def get_file_details_all(path=None, commandline=True):
     * net
     * bytes
     """
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
@@ -329,10 +334,12 @@ def get_file_details_all(path=None, commandline=True):
                            shell=sys.platform.startswith("win32"),
                            preprocess=False)
 
-        if len(err) > 0:
+        if len(err) > 0:  # pragma: no cover
             mes = "Problem with '{0}'".format(path)
-            raise GitException(mes + "\n" +
-                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
+            raise GitException(
+                mes + "\n" +
+                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" +
+                err + "\nCMD:\n" + cmd)
 
         master = get_master_location(path, commandline)
         if master.endswith(".git"):
@@ -472,14 +479,14 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
         path = os.path.normpath(
             os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")))
 
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
             return get_repo_log(path, file_detail, True)
     else:
         cmd = get_cmd_git()
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             cmd += ' log --pretty=format:"<logentry revision=\\"%h\\">' + \
                    '<author>%an</author><date>%ci</date><hash>%H</hash><msg>%s</msg></logentry>" ' + \
                    path
@@ -494,10 +501,11 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
                                path)[0] if os.path.isfile(path) else path,
                            shell=sys.platform.startswith("win32"), preprocess=False)
 
-        if len(err) > 0:
+        if len(err) > 0:  # pragma: no cover
             mes = "Problem with file '{0}'".format(path)
             raise GitException(mes + "\n" +
-                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
+                               err + "\nCMD:\n" + cmd + "\nOUT:\n" + out +
+                               "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
 
         master = get_master_location(path, commandline)
         if master.endswith(".git"):
@@ -530,7 +538,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
             out = "\n".join(out)
             try:
                 root = ET.fromstring(out)
-            except ET.ParseError as eee:
+            except ET.ParseError as eee:  # pragma: no cover
                 raise GitException(
                     "Unable to parse:\n{0}".format(out)) from eee
 
@@ -567,7 +575,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
     if not usedate:
         last = get_nb_commits(path, commandline)
         return last
-    else:
+    else:  # pragma: no cover
         if path is None:
             path = os.path.normpath(
                 os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")))
@@ -632,7 +640,7 @@ def get_master_location(path=None, commandline=True):
         path = os.path.normpath(
             os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")))
 
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
@@ -647,19 +655,19 @@ def get_master_location(path=None, commandline=True):
                                change_path=os.path.split(
                                    path)[0] if os.path.isfile(path) else path,
                                log_error=False, shell=sys.platform.startswith("win32"))
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise GitException(
                 "Problem with subprocess. Path is '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err)) from e
 
         if len(err) > 0:
-            raise GitException(
+            raise GitException(  # pragma: no cover
                 "Problem with path '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err))
         lines = out.split("\n")
         lines = [_ for _ in lines if len(_) > 0]
         res = lines[0]
 
         if len(res) == 0:
-            raise GitException(
+            raise GitException(  # pragma: no cover
                 "The command 'git help' should return something.")
 
         return res
@@ -677,7 +685,7 @@ def get_nb_commits(path=None, commandline=True):
         path = os.path.normpath(
             os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")))
 
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
@@ -699,14 +707,14 @@ def get_nb_commits(path=None, commandline=True):
                            shell=sys.platform.startswith("win32"))
 
         if len(err) > 0:
-            raise GitException(
+            raise GitException(  # pragma: no cover
                 "Unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
 
         lines = out.strip()
         try:
             nb = int(lines)
         except ValueError as e:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "unable to parse: " + lines + "\nCMD:\n" + cmd) from e
         return nb
 
@@ -723,7 +731,7 @@ def get_file_last_modification(path, commandline=True):
         path = os.path.normpath(
             os.path.abspath(os.path.join(os.path.split(__file__)[0], "..", "..", "..")))
 
-    if not commandline:
+    if not commandline:  # pragma: no cover
         try:
             raise NotImplementedError()
         except Exception:
@@ -743,7 +751,7 @@ def get_file_last_modification(path, commandline=True):
                            shell=sys.platform.startswith("win32"))
 
         if len(err) > 0:
-            raise GitException(
+            raise GitException(  # pragma: no cover
                 "Unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
 
         lines = out.strip("\n\r ")
@@ -783,7 +791,7 @@ def clone(location, srv, group, project, username=None, password=None, fLOG=None
     cmd += " clone " + address + " " + location
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     if len(err) > 0 and "Cloning into" not in err and "Clonage dans" not in err:
-        raise GitException(
+        raise GitException(  # pragma: no cover
             "Unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err
 
@@ -814,6 +822,6 @@ def rebase(location, srv, group, project, username=None, password=None, fLOG=Non
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
-        raise GitException(
+        raise GitException(  # pragma: no cover
             "Unable to rebase {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
     return out, err

@@ -150,7 +150,8 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
         doc = re.sub(' +', ' ', doc)
 
         if raise_exception and len(doc) == 0:
-            raise ValueError("bad format for docstring: " + doc_)
+            raise ValueError(  # pragma: no cover
+                "bad format for docstring:\n{}".format(doc_))
 
         return doc
 
@@ -201,7 +202,7 @@ class ModuleMemberDoc:
             self.cl = self.obj.__class__
         if self.cl is None and self.type in [
                 "method", "staticmethod", "property"]:
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "N/a method must have a class (not None): %s" % typstr(self.obj))
 
     def add_prefix(self, prefix):
@@ -298,7 +299,8 @@ class ModuleMemberDoc:
             self.truncdoc = ""
 
         if self.name is None:
-            raise TypeError("S/name is None for object: %s" % typstr(self.obj))
+            raise TypeError(  # pragma: no cover
+                "S/name is None for object: %s" % typstr(self.obj))
 
     def __str__(self):
         """
@@ -466,7 +468,8 @@ class IndexInformation:
         @return             string
         """
         if existing is None:
-            raise ValueError("existing must not be None")
+            raise ValueError(  # pragma: no cover
+                "existing must not be None")
         suggestion = suggestion.replace("_", "").replace(".", "")
         while suggestion in existing:
             suggestion += "z"
@@ -624,7 +627,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     try:
         try:
             mo = importlib.import_module(fi, context)
-        except ImportError:
+        except ImportError:  # pragma: no cover
             log_function(
                 "[import_module] unable to import module '{0}' fullname '{1}'".format(fi, filename))
             mo_spec = importlib.util.find_spec(fi, context)
@@ -632,7 +635,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             mo = mo_spec.loader.load_module()
             log_function("[import_module] successful try", mo_spec)
 
-        if not mo.__file__.replace(
+        if not mo.__file__.replace(  # pragma: no cover
                 "\\", "/").endswith(filename.replace("\\", "/").strip("./")):
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
 
@@ -665,7 +668,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                 sys.modules[n] = m
         return mo, fmod
 
-    except ImportError as e:
+    except ImportError as e:  # pragma: no cover
         exp = re.compile("No module named '(.*)'")
         find = exp.search(str(e))
         if find:
@@ -714,7 +717,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
 
         return "Unable(1) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
-    except SystemError as e:
+    except SystemError as e:  # pragma: no cover
         log_function("[warning] -- unable to import module (2) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
@@ -728,7 +731,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                 sys.modules[n] = m
         return "unable(2) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
-    except KeyError as e:
+    except KeyError as e:  # pragma: no cover
         if first_try and "KeyError: 'pip._vendor.urllib3.contrib'" in str(e):
             # Issue with pip 9.0.2
             return import_module(rootm=rootm, filename=filename, log_function=log_function,
@@ -748,7 +751,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                     sys.modules[n] = m
             return "unable(4) to import %s\nError:\n%s" % (filename, str(e)), fmod
 
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         log_function("[warning] -- unable to import module (3) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
         import traceback
@@ -913,7 +916,7 @@ def make_label_index(title, comment):
             raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(
                 typstr(title), comment, typstr(type(title))))
         return r
-    except TypeError as e:
+    except TypeError as e:  # pragma: no cover
         typstr = str
         raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(
             typstr(title), comment, typstr(type(title)))) from e

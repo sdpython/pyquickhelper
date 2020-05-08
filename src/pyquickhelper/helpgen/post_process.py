@@ -129,7 +129,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
         # {\hyperref[\detokenize{c_classes/classes:chap-classe}]
         # {\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
     else:
-        raise NotImplementedError(
+        raise NotImplementedError(  # pragma: no cover
             "Unsupported format '{0}'\n{1}".format(format, text))
     return new_text
 
@@ -260,7 +260,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
     if fLOG:
         fLOG("[post_process_latex_output_any]   ** post_process_latex_output_any ", file)
     if not os.path.exists(file):
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "Unable to find '{}', other files in the same folder\n{}".format(
                 file, "\n".join(os.listdir(os.path.dirname(file)))))
     with open(file, "r", encoding="utf8") as f:
@@ -364,7 +364,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             # notebook itself
             img = imgreg.findall(lines[pos])
             if len(img) == 0:
-                raise HelpGenException(
+                raise HelpGenException(  # pragma: no cover
                     "Unable to extract image name in '{0}'".format(lines[pos]))
             nameimg = img[0]
             short = nameimg.replace("%5C", "/")
@@ -391,7 +391,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     if pos >= len(lines):
         mes = "Unable to find a title in notebook '{0}'".format(file)
         if exc:
-            raise HelpGenException(mes)
+            raise HelpGenException(mes)  # pragma: no cover
         warnings.warn(mes, UserWarning)
 
     # label
@@ -413,7 +413,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
 
     if github:
         if notebook is None:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Cannot add a link on github, notebook is None for file='{0}'".format(file))
         docname = notebook
         folder = docname
@@ -490,8 +490,9 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     content = "".join(lines)
     content = update_notebook_link(content, "rst", nblinks=nblinks, fLOG=fLOG)
     if "find://" in content:
-        raise Exception("find:// was found in '{0}'.\nYou should "
-                        "add or extend 'nblinks' in conf.py.".format(file))
+        raise Exception(  # pragma: no cover
+            "find:// was found in '{0}'.\nYou should "
+            "add or extend 'nblinks' in conf.py.".format(file))
 
     # notebooks replacements
     content = _notebook_replacements(content, notebook_replacements, fLOG)
@@ -520,7 +521,7 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
     @param      fLOG                    logging function
     """
     if not os.path.exists(file):
-        raise FileNotFoundError(file)
+        raise FileNotFoundError(file)  # pragma: no cover
     with open(file, "r", encoding="utf8") as f:
         text = f.read()
 
@@ -535,8 +536,9 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
 
     text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
-        raise Exception("find:// was found in '{0}'.\nYou should add "
-                        "or extend 'nblinks' in conf.py.".format(file))
+        raise Exception(  # pragma: no cover
+            "find:// was found in '{0}'.\nYou should add "
+            "or extend 'nblinks' in conf.py.".format(file))
 
     with open(file, "w", encoding="utf8") as f:
         f.write(text)
@@ -591,8 +593,9 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
     text = update_notebook_link(text, "slides", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
-        raise Exception("find:// was found in '{0}'.\nYou should add "
-                        "or extend 'nblinks' in conf.py.".format(file))
+        raise Exception(  # pragma: no cover
+            "find:// was found in '{0}'.\nYou should add "
+            "or extend 'nblinks' in conf.py.".format(file))
 
     # notebook replacements
     text = _notebook_replacements(text, notebook_replacements, fLOG)
@@ -782,8 +785,9 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     # fix references
     st = update_notebook_link(st, "latex", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
-        raise Exception("find:// was found in '{0}'\nYou should add or extend "
-                        "'nblinks' in conf.py.\n{1}".format(file, st))
+        raise Exception(  # pragma: no cover
+            "find:// was found in '{0}'\nYou should add or extend "
+            "'nblinks' in conf.py.\n{1}".format(file, st))
 
     # notebook replacements
     st = _notebook_replacements(st, notebook_replacements, fLOG)
@@ -821,8 +825,9 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
     st = update_notebook_link(st, "python", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
-        raise Exception("find:// was found in '{0}'.\nYou should add or extend "
-                        "'nblinks' in conf.py.".format(file))
+        raise Exception(  # pragma: no cover
+            "find:// was found in '{0}'.\nYou should add or extend "
+            "'nblinks' in conf.py.".format(file))
 
     # notebook replacements
     st = _notebook_replacements(st, notebook_replacements, fLOG)

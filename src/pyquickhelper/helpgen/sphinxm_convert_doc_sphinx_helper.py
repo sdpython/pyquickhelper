@@ -36,7 +36,7 @@ from ._single_file_html_builder import CustomSingleFileHTMLBuilder
 def _get_LaTeXTranslator():
     try:
         from sphinx.writers.latex import LaTeXTranslator
-    except ImportError:
+    except ImportError:  # pragma: no cover
         # Since sphinx 1.7.3 (circular reference).
         import sphinx.builders.latex.transforms
         from sphinx.writers.latex import LaTeXTranslator
@@ -46,7 +46,7 @@ def _get_LaTeXTranslator():
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
 else:
-    from sphinx.writers.html import HTMLTranslator
+    from sphinx.writers.html import HTMLTranslator  # pragma: no cover
 
 
 def update_docutils_languages(values=None):
@@ -134,11 +134,11 @@ class _AdditionalVisitDepart:
         md = self.output_format == 'md'
         doctree = self.output_format in ('doctree', 'doctree.txt')
         if not(rst or html or latex or md or doctree):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Unknown output format '{0}'.".format(self.output_format))
         try:
             ev = eval(expr)
-        except Exception:
+        except Exception:  # pragma: no cover
             raise ValueError(
                 "Unable to interpret expression '{0}'".format(expr))
         return ev
@@ -158,7 +158,7 @@ class _AdditionalVisitDepart:
             # The program should not necessarily be here.
             pass
 
-    def unknown_visit(self, node):
+    def unknown_visit(self, node):  # pragma: no cover
         raise NotImplementedError("[_AdditionalVisitDepart] Unknown node: '{0}' in '{1}'".format(
             node.__class__.__name__, self.__class__.__name__))
 
@@ -192,7 +192,7 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
         self.visit_Text(node)
         raise nodes.SkipNode
 
-    def unknown_visit(self, node):
+    def unknown_visit(self, node):  # pragma: no cover
         raise NotImplementedError("[HTMLTranslatorWithCustomDirectives] Unknown node: '{0}' in '{1}'".format(
             node.__class__.__name__, self.__class__.__name__))
 
@@ -256,7 +256,7 @@ class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXT
         if not hasattr(builder, "config"):
             builder, document = document, builder
         if not hasattr(builder, "config"):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "Builder has no config: {} - {}".format(type(builder), type(document)))
         EnhancedLaTeXTranslator.__init__(
             self, builder, document, *args, **kwds)
@@ -434,12 +434,12 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
         _WriterWithCustomDirectives._init(
             self, EnhancedLaTeXWriter, LatexTranslatorWithCustomDirectives, app)
         if not hasattr(self.builder, "config"):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "Builder has no config: {}".format(type(self.builder)))
 
     def translate(self):
         if not hasattr(self.builder, "config"):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "Builder has no config: {}".format(type(self.builder)))
         # The instruction
         # visitor = self.builder.create_translator(self.builder, self.document)
@@ -715,7 +715,8 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
         Override *handle_page* to write into stream instead of files.
         """
         if templatename is not None:
-            raise NotImplementedError("templatename must be None.")
+            raise NotImplementedError(
+                "templatename must be None.")  # pragma: no cover
         if not outfilename:
             outfilename = self.get_outfilename(pagename)
         if outfilename not in self.built_pages:
@@ -756,7 +757,8 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
         Override *handle_page* to write into stream instead of files.
         """
         if templatename is not None:
-            raise NotImplementedError("templatename must be None.")
+            raise NotImplementedError(
+                "templatename must be None.")  # pragma: no cover
         if not outfilename:
             outfilename = self.get_outfilename(pagename)
         if outfilename not in self.built_pages:
@@ -796,7 +798,8 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
         Override *handle_page* to write into stream instead of files.
         """
         if templatename is not None:
-            raise NotImplementedError("templatename must be None.")
+            raise NotImplementedError(
+                "templatename must be None.")  # pragma: no cover
         if not outfilename:
             outfilename = self.get_outfilename(pagename)
         if outfilename not in self.built_pages:
@@ -853,7 +856,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
 
     def _get_filename(self, targetname, encoding='utf-8', overwrite_if_changed=True):
         if not isinstance(targetname, str):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "targetname must be a string: {0}".format(targetname))
         destination = MemoryLatexBuilder.EnhancedStringIO()
         self.built_pages[targetname] = destination
@@ -1001,7 +1004,7 @@ class _CustomSphinx(Sphinx):
         self.parallel = parallel
 
         if self.srcdir == self.outdir:
-            raise ApplicationError('Source directory and destination '
+            raise ApplicationError('Source directory and destination '  # pragma: no cover
                                    'directory cannot be identical')
 
         if status is None:
@@ -1021,11 +1024,12 @@ class _CustomSphinx(Sphinx):
 
         # say hello to the world
         from sphinx import __display_version__
-        self.info('Running Sphinx v%s' % __display_version__)
+        self.info('Running Sphinx v%s' %
+                  __display_version__)  # pragma: no cover
 
         # notice for parallel build on macOS and py38+
         if sys.version_info > (3, 8) and platform.system() == 'Darwin' and parallel > 1:
-            self._logger.info(
+            self._logger.info(  # pragma: no cover
                 "For security reason, parallel mode is disabled on macOS and "
                 "python3.8 and above.  For more details, please read "
                 "https://github.com/sphinx-doc/sphinx/issues/6803")
@@ -1099,7 +1103,7 @@ class _CustomSphinx(Sphinx):
                         "ignore", category=DeprecationWarning)
                     self.setup_extension(extension)
             except Exception as e:
-                if 'sphinx.builders.applehelp' not in str(e):
+                if 'sphinx.builders.applehelp' not in str(e):  # pragma: no cover
                     mes = "Unable to run setup_extension '{0}'\nWHOLE LIST\n{1}".format(
                         extension, "\n".join(builtin_extensions))
                     raise ExtensionError(mes) from e
@@ -1207,7 +1211,7 @@ class _CustomSphinx(Sphinx):
         self._init_builder()
 
         if not isinstance(self.env, _CustomBuildEnvironment):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "self.env is not _CustomBuildEnvironment: '{0}' buildername='{1}'".format(type(self.env), buildername))
 
         # addition
@@ -1288,7 +1292,7 @@ class _CustomSphinx(Sphinx):
             img['save_uri'] = img['uri']
 
         if not isinstance(self.env, _CustomBuildEnvironment):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
         if not isinstance(self.builder.env, _CustomBuildEnvironment):
             raise TypeError("self.builder.env is not _CustomBuildEnvironment: '{0}'".format(
@@ -1337,7 +1341,7 @@ class _CustomSphinx(Sphinx):
             try:
                 # Sphinx >= 1.8
                 self.registry.add_builder(builder, override=override)
-            except TypeError:
+            except TypeError:  # pragma: no cover
                 # Sphinx < 1.8
                 self.registry.add_builder(builder)
         else:
@@ -1395,7 +1399,7 @@ class _CustomSphinx(Sphinx):
         except TypeError:
             # Sphinx >= 3.0.0
             Sphinx.add_directive(self, name, obj, override=override, **options)
-        except ExtensionError:
+        except ExtensionError:  # pragma: no cover
             # Sphinx < 1.8
             Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
                                  arguments=arguments, **options)
@@ -1405,7 +1409,7 @@ class _CustomSphinx(Sphinx):
         try:
             # Sphinx >= 1.8
             Sphinx.add_domain(self, domain, override=override)
-        except TypeError:
+        except TypeError:  # pragma: no cover
             # Sphinx < 1.8
             Sphinx.add_domain(self, domain)
         # For some reason, the directives are missing from the main catalog
@@ -1518,7 +1522,7 @@ class _CustomSphinx(Sphinx):
         try:
             # Sphinx >= 1.8
             Sphinx.add_js_file(self, filename, **kwargs)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             # Sphinx < 1.8
             Sphinx.add_javascript(self, filename, **kwargs)
 
@@ -1527,7 +1531,7 @@ class _CustomSphinx(Sphinx):
         try:
             # Sphinx >= 1.8
             Sphinx.add_css_file(self, filename, **kwargs)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             # Sphinx < 1.8
             Sphinx.add_stylesheet(self, filename, **kwargs)
 

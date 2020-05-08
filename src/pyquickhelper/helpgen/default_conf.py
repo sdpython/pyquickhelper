@@ -354,9 +354,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     try:
         import sphinx_gallery
         import sphinx_gallery.gen_rst
-    except ImportError:
+    except ImportError:  # pragma: no cover
         warnings.warn("ImportError: sphinx-gallery.", ImportWarning)
-    except ValueError:
+    except ValueError:  # pragma: no cover
         warnings.warn(
             "ImportError: sphinx-gallery.get_rst fails.", ImportWarning)
 
@@ -381,14 +381,14 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             import importlib
             try:
                 mod = importlib.import_module(module_name)
-            except (ImportError, ModuleNotFoundError):
+            except (ImportError, ModuleNotFoundError):  # pragma: no cover
                 mod = None
             if mod is None:
                 raise RuntimeError("Unknown module version. You should import '{0}' or specify 'doc_version'.".format(
                     module_name))
         try:
             version = mod.__version__
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             raise AttributeError("Unable to find attribute '__version__' in module '{}', "
                                  "__file__='{}'\n--PATH--\n{}".format(
                                      module_name, mod.__file__, "\n".join(sys.path)))
@@ -531,13 +531,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import sphinx_gallery
         extensions.append('sphinx_gallery.gen_gallery')
         has_sphinx_gallery = True
-    except ImportError:
+    except ImportError:  # pragma: no cover
         has_sphinx_gallery = False
 
     if has_sphinx_gallery:
         try:
             import sphinx_gallery.gen_rst
-        except ValueError as e:
+        except ValueError as e:  # pragma: no cover
             raise ValueError("Issue with sphinx-gallery.\n{0}".format(e))
 
     extensions.extend(['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
@@ -558,7 +558,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         extensions.append('matplotlib.sphinxext.plot_directive')
         plot_include_source = True
         plot_html_show_source_link = False
-    except ImportError:
+    except ImportError:  # pragma: no cover
         # matplotlib is not installed.
         pass
 
@@ -566,11 +566,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import sphinxcontrib.jsdemo
         assert sphinxcontrib.jsdemo is not None
         extensions.append('sphinxcontrib.jsdemo')
-    except ImportError:
+    except ImportError:  # pragma: no cover
         # No module sphinxcontrib.jsdemo.
         pass
 
-    if use_lunrsearch:
+    if use_lunrsearch:  # pragma: no cover
         extensions.append('sphinxcontrib.lunrsearch')
 
     if not use_mathjax:
@@ -675,7 +675,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                     user, project)
 
     # themes
-    if html_theme == "bootstrap":
+    if html_theme == "bootstrap":  # pragma: no cover
         if bootswatch_navbar_links is None:
             bootswatch_navbar_links = []
         html_logo = "project_ico_small.png"
@@ -695,7 +695,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'bootswatch_theme': bootswatch_theme,
             'bootstrap_version': "3",
         }
-    elif html_theme == "guzzle_sphinx_theme":
+    elif html_theme == "guzzle_sphinx_theme":  # pragma: no cover
         html_translator_class = 'guzzle_sphinx_theme.HTMLTranslator'
         if "guzzle_sphinx_theme" not in extensions:
             extensions.append('guzzle_sphinx_theme')
@@ -706,7 +706,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             # "homepage": "index",
             # "projectlink": "http://myproject.url",
         }
-    elif html_theme == "foundation_sphinx_theme":
+    elif html_theme == "foundation_sphinx_theme":  # pragma: no cover
         import foundation_sphinx_theme
         html_theme_path = foundation_sphinx_theme.HTML_THEME_PATH
         if "foundation_sphinx_theme" not in extensions:
@@ -729,13 +729,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         import numpy
         intersphinx_mapping['numpy'] = (
             'http://www.numpy.org/{0}'.format(numpy.__version__), None)
-    except ImportError:
+    except ImportError:  # pragma: no cover
         pass
     try:
         import pandas
         intersphinx_mapping['pandas'] = (
             'http://pandas.pydata.org/pandas-docs/version/{0}'.format(pandas.__version__), None)
-    except ImportError:
+    except ImportError:  # pragma: no cover
         pass
 
     # information about code
@@ -774,7 +774,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         gallery_dirs = []
         for res in readmes:
             if not has_sphinx_gallery:
-                raise ImportError(
+                raise ImportError(  # pragma: no cover
                     "sphinx_gallery is not present for gallery '{0}'".format(exa))
             last = res.parts[-2]
             if last.startswith("temp_"):
@@ -795,11 +795,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 last = "gy" + last
             dest = os.path.join(dirname, last)
             if dest in gallery_dirs:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Gallery '{0}' already exists (source='{1}', last={2}).".format(dest, nn, last))
             gallery_dirs.append(dest)
         if len(examples_dirs) == 0:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Unable to find any 'README.txt' in '{0}'.".format(exa))
         reference_url = {k: v[0] for k, v in intersphinx_mapping.items()}
         example_dir = os.path.join(dirname, "gallery")
@@ -852,7 +852,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             try:
                 # Sphinx >= 1.8
                 app.add_css_file(custom_style)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 # Sphinx < 1.8
                 app.add_stylesheet(custom_style)
         return custom_setup(app, author)
@@ -873,7 +873,7 @@ def get_first_line(filename):
     try:
         with open(filename, "r") as ff:
             first_line = ff.readlines()[0].strip(" \n\r")
-    except FileNotFoundError:
+    except FileNotFoundError:  # pragma: no cover
         first_line = "xxx"
     return first_line
 
@@ -938,7 +938,7 @@ def custom_setup(app, author):
 
     try:
         app.connect("autodoc-skip-member", _skip)
-    except ExtensionError as e:
+    except ExtensionError as e:  # pragma: no cover
         # No event autodoc-skip-member.
         warnings.warn("Sphinx extension error {0}".format(e), RuntimeError)
     if 'author' not in app.config.values:
@@ -970,7 +970,7 @@ def custom_setup(app, author):
         setup_bokeh(app)
         name = "pyquickhelper.sphinxext.bokeh.bokeh_plot"
         app.extensions[name] = Extension(name, setup_bokeh.__module__)
-    except ImportError:
+    except ImportError:  # pragma: no cover
         # bokeh is not installed.
         pass
 
@@ -979,7 +979,7 @@ def custom_setup(app, author):
     try:
         # Sphinx >= 1.8
         app.add_js_file("require.js")
-    except AttributeError:
+    except AttributeError:  # pragma: no cover
         # Sphinx < 1.8
         app.add_javascript("require.js")
 
@@ -987,7 +987,7 @@ def custom_setup(app, author):
     try:
         # Sphinx >= 1.8
         app.add_css_file(style_figure_notebook[0])
-    except AttributeError:
+    except AttributeError:  # pragma: no cover
         # Sphinx < 1.8
         app.add_stylesheet(style_figure_notebook[0])
     return app

@@ -214,7 +214,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             setup_params = {}
         out, err = call_setup_hook(
             folder, project_var_name, fLOG=fLOG, use_print=hook_print, **setup_params)
-        if len(err) > 0 and err != "no _setup_hook":
+        if len(err) > 0 and err != "no _setup_hook":  # pragma: no cover
             # fix introduced because pip 8.0 displays annoying warnings
             # RuntimeWarning: Config variable 'Py_DEBUG' is unset, Python ABI tag may be incorrect
             # RuntimeWarning: Config variable 'WITH_PYMALLOC' is unset, Python
@@ -240,7 +240,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         folder = os.path.normpath(
             os.path.join(os.path.dirname(logfile), ".."))
     if not os.path.exists(folder):
-        raise FileNotFoundError(folder)
+        raise FileNotFoundError(folder)  # pragma: no cover
 
     def selec_name(folder, name):
         if name.startswith('_') or name.startswith('.'):
@@ -259,7 +259,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
 
     content = [_ for _ in os.listdir(folder) if selec_name(folder, _)]
     if len(content) != 1:
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "Unable to guess the project name in '{0}', content=\n{1}\n---\n{2}\n---".format(
                 folder, "\n".join(content), "\n".join(os.listdir(folder))))
 
@@ -283,7 +283,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
 
     else:
         # coverage
-        if add_coverage:
+        if add_coverage:  # pragma: no cover
             stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
             if report_folder is None:
                 report_folder = os.path.join(
@@ -475,7 +475,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             stdout_this.write(
                 "[main_wrapper_tests] --- NO COVERAGE BEGIN ---\n")
             if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
-                raise CoverageException(
+                raise CoverageException(  # pragma: no cover
                     "covtoken is not null but add_coverage is not True, coverage cannot be published")
             tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
@@ -496,7 +496,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
             err = "\n".join(lines)
         if len(err) > 0:
-            raise TestWrappedException(err)
+            raise TestWrappedException(err)  # pragma: no cover
 
         datetime_end = datetime.now()
 

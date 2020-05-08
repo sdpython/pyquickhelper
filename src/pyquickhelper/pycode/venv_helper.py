@@ -30,7 +30,7 @@ class NotImplementedErrorFromVirtualEnvironment(NotImplementedError):
     pass
 
 
-def build_venv_cmd(params, posparams):
+def build_venv_cmd(params, posparams):  # pragma: no cover
     """
     Builds the command line for virtual env.
 
@@ -53,7 +53,8 @@ def build_venv_cmd(params, posparams):
     return " ".join(cmd)
 
 
-def create_virtual_env(where, symlinks=False, system_site_packages=False,
+def create_virtual_env(where, symlinks=False,  # pragma: no cover
+                       system_site_packages=False,
                        clear=True, packages=None, fLOG=None,
                        temp_folder=None, platform=None):
     """
@@ -147,7 +148,8 @@ def create_virtual_env(where, symlinks=False, system_site_packages=False,
     return out
 
 
-def venv_install(venv, packages, fLOG=None, temp_folder=None, platform=None):
+def venv_install(venv, packages, fLOG=None,  # pragma: no cover
+                 temp_folder=None, platform=None):
     """
     Installs a package or a list of packages in a virtual environment.
 
@@ -214,8 +216,10 @@ def venv_install(venv, packages, fLOG=None, temp_folder=None, platform=None):
         return run_venv_script(venv, "\n".join(script), fLOG=fLOG, platform=platform)
 
 
-def run_venv_script(venv, script, fLOG=None, file=False, is_cmd=False,
-                    skip_err_if=None, platform=None, **kwargs):
+def run_venv_script(venv, script, fLOG=None,  # pragma: no cover
+                    file=False, is_cmd=False,
+                    skip_err_if=None, platform=None,
+                    **kwargs):
     """
     Runs a script on a vritual environment (the script should be simple).
 
@@ -364,7 +368,8 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
         return out
 
 
-def check_readme_syntax(readme, folder, version="0.8", fLOG=None):
+def check_readme_syntax(readme, folder,  # pragma: no cover
+                        version="0.8", fLOG=None):
     """
     Checks the syntax of the file ``readme.rst``
     which describes a python project.

@@ -180,9 +180,9 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     try:
         from nbconvert.nbconvertapp import main as nbconvert_main
-        if nbconvert_main is None:
+        if nbconvert_main is None:  # pragma: no cover
             raise AttributeError("nbconvert_main is None")
-    except AttributeError as e:
+    except AttributeError as e:  # pragma: no cover
         raise ImportError(
             "Unable to import nbconvert, cannot generate the documentation") from e
 
@@ -240,7 +240,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
             if f is not None:
                 if d is not None:
-                    raise NotImplementedError(
+                    raise NotImplementedError(  # pragma: no cover
                         "Options -f and -d cannot be specified at the same time.")
 
                 def allow(name, code, duration):
@@ -432,7 +432,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             fLOG=fLOG)
         return True
 
-    elif "unittests_GUI" in argv:
+    elif "unittests_GUI" in argv:  # pragma: no cover
         def skip_skip(name, code, duration):
             return "test_GUI_" not in name
         run_unittests_for_setup(
@@ -604,7 +604,7 @@ def write_version_for_setup(file_or_folder, exc=False, module_name=None):
     ffolder = get_folder(file_or_folder)
     try:
         version = src.version(ffolder)
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         if exc:
             raise e
         return None
@@ -715,7 +715,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
         source = os.path.join(ffolder, "_doc", "sphinxdoc", "source")
 
         if not os.path.exists(source):
-            raise FileNotFoundError(
+            raise FileNotFoundError(  # pragma: no cover
                 "you must get the source from GitHub to build the documentation,\nfolder {0} "
                 "should exist\n(file_or_folder={1})\n(ffolder={2})\n(cwd={3})".format(source, file_or_folder, ffolder, os.getcwd()))
 
@@ -807,7 +807,7 @@ def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=Non
         add_coverage_folder=add_coverage_folder, coverage_root=coverage_root, fLOG=fLOG)
 
 
-def copy27_for_setup(file_or_folder):
+def copy27_for_setup(file_or_folder):  # pragma: no cover
     """
     Prepares a copy of the source for :epkg:`Python` 2.7,
     assuming the module follows the same design as *pyquickhelper*.
@@ -1024,13 +1024,13 @@ def _get_dump_default_path(location, module_name, argv):
     hash = hash_list(argv)
     setup = os.path.join(location, "setup.py")
     if not os.path.exists(setup):
-        raise FileNotFoundError(setup)
+        raise FileNotFoundError(setup)  # pragma: no cover
     fold = os.path.join(location, "..", "_coverage_dumps")
     if not os.path.exists(fold):
         os.mkdir(fold)
     dt = datetime.datetime.now().strftime("%Y%m%dT%H%M")
     if module_name is None:
-        raise ValueError("module_name cannot be None")
+        raise ValueError("module_name cannot be None")  # pragma: no cover
     dump = os.path.join(fold, module_name, hash, dt)
     if not os.path.exists(dump):
         os.makedirs(dump)

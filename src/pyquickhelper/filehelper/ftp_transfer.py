@@ -176,7 +176,7 @@ class TransferFTP:
             elif command != self._ftp.cwd:
                 pass
             return True
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             if self.is_sftp and 'No such file' in str(e):
                 raise FileNotFoundError(
                     "Unable to find {}.".format(args)) from e
@@ -229,15 +229,15 @@ class TransferFTP:
         self._check_can_logged()
         try:
             self.run_command(self._ftp.cwd, path)
-        except EOFError as e:
+        except EOFError as e:  # pragma: no cover
             raise EOFError("unable to go to: {0}".format(path)) from e
-        except FileNotFoundError as e:
+        except FileNotFoundError as e:  # pragma: no cover
             if create:
                 self.mkd(path)
                 self.cwd(path, create)
             else:
                 raise e
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             if create and TransferFTP.errorNoDirectory in str(e):
                 self.mkd(path)
                 self.cwd(path, create)
@@ -346,7 +346,7 @@ class TransferFTP:
             p_ = ('/' + '/'.join(path[:i + 1])) if self.is_sftp else p
             try:
                 self.cwd(p_, True)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 exc = e
                 break
             done.append(p)
@@ -403,7 +403,7 @@ class TransferFTP:
             try:
                 self.cwd("..")
                 done.pop()
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 time.sleep(0.5)
                 self.LOG(
                     "    issue with command .. len(done) == {0}".format(len(done)))
@@ -461,7 +461,7 @@ class TransferFTP:
                 try:
                     runc(name, callback, TransferFTP.blockSize, f)
                     r = True
-                except error_perm as e:
+                except error_perm as e:  # pragma: no cover
                     raise_exc = e
                     r = False
         elif isinstance(file, BytesIO):
@@ -489,7 +489,7 @@ class TransferFTP:
                 self.cwd("..")
 
         if raise_exc:
-            raise raise_exc
+            raise raise_exc  # pragma: no cover
 
         return r
 

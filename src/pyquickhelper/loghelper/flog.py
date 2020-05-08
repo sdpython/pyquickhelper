@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-
 @brief logging functionalities
-
 
 The function fLOG (or fLOG) is used to logged everything into a log file.
 
@@ -136,7 +134,7 @@ def GetLogFile(physical=False, filename=None):
                     flog_static.store_log_values["__log_file_name"] = os.path.join(
                         path, flog_static.store_log_values["__log_const"])
                 else:
-                    raise PQHException(
+                    raise PQHException(  # pragma: no cover
                         "unable to create a log file in folder " + path)
 
             if not isinstance(flog_static.store_log_values["__log_file_name"], str):
@@ -236,7 +234,7 @@ def fLOG(*l, **p):
     if flog_static.store_log_values["__log_display"]:
         try:
             myprint(message.strip("\r\n"))
-        except UnicodeEncodeError:
+        except UnicodeEncodeError:  # pragma: no cover
             mes = "\n".join(repr(message.strip("\r\n")).split("\\n"))
             try:
                 myprint(mes)
@@ -277,7 +275,7 @@ def fLOGFormat(sep, *l, **p):
                     else:
                         return typstr(s)
                 except Exception as e:
-                    raise Exception(
+                    raise Exception(  # pragma: no cover
                         "unable to convert s into string: type(s)=" + str(type(s))) from e
 
         message = str(dt).split(
@@ -391,7 +389,7 @@ def unzip(file, path_unzip=None, outfile=None, flatten=True, fLOG=noLOG):
         nb += 1
 
     if not os.path.exists(file):
-        raise FileNotFoundError(file)
+        raise FileNotFoundError(file)  # pragma: no cover
 
     return file
 
@@ -449,7 +447,7 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
     @return                     the unzipped file or filename if the format was not zip
     """
     if path_unzip is None:
-        raise ValueError("path_unzip cannot be None")
+        raise ValueError("path_unzip cannot be None")  # pragma: no cover
     file, ext = os.path.splitext(filename)
     ext = ext.lower()
     if ext == ".gz":
@@ -503,14 +501,15 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
 
         try:
             file = zipfile.ZipFile(filename, "r")
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             fLOG("[loghelper.flog] problem with ", filename)
             raise e
 
         if len(file.infolist()) != 1:
             if outfile is not None:
-                raise PQHException(
-                    "the archive contains %d files and not one as you expected by filling outfile" % len(file.infolist()))
+                raise PQHException(  # pragma: no cover
+                    "the archive contains %d files and not one as you expected "
+                    "by filling outfile" % len(file.infolist()))
             fLOG("[loghelper.flog] unzip file (multiple) ", filename)
             #message = "\n".join ([ fi.filename for fi in file.infolist() ] )
             #raise Exception.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
@@ -555,7 +554,7 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
                     else:
                         todo += 1
 
-            if todo > 0 and zip7:
+            if todo > 0 and zip7:  # pragma: no cover
                 dest = os.path.realpath(path_unzip)
                 cmd = '"' + _zip7_path + \
                     '\\7z.exe" x -y -r -o"%s" "%s"' % (dest,
@@ -766,7 +765,7 @@ def _check_source(fileurl, path_unzip, outfile, flatten=True, fLOG=noLOG):
             fileurl, path_download=path_unzip, outfile=None, fLOG=fLOG)
         txt = _check_zip_file(
             file, path_unzip=path_unzip, outfile=outfile, fLOG=fLOG, flatten=flatten)
-        if not os.path.exists(txt):
+        if not os.path.exists(txt):  # pragma: no cover
             message = "_check_source: unable to find file '" + \
                 txt + "' source '" + fileurl + "'"
             raise PQHException(message)
@@ -800,7 +799,7 @@ def removedirs(folder, silent=False, use_command_line=False):
     the command line
     """
     if use_command_line:
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             out, err = run_cmd("rmdir /s /q " + folder, wait=True)
         else:
             out, err = run_cmd("rm -Rf " + folder, wait=True)
@@ -821,7 +820,7 @@ def removedirs(folder, silent=False, use_command_line=False):
             try:
                 if os.path.exists(f):
                     os.remove(f)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 typstr = str
                 fLOG(
                     "Unable to remove file '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
@@ -833,7 +832,7 @@ def removedirs(folder, silent=False, use_command_line=False):
             try:
                 if os.path.exists(f):
                     os.removedirs(f)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 typstr = str
                 fLOG(
                     "Unable to remove folder '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
@@ -845,7 +844,7 @@ def removedirs(folder, silent=False, use_command_line=False):
         if os.path.exists(folder):
             try:
                 os.rmdir(folder)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 impos.append(folder)
         return impos
 
@@ -878,7 +877,7 @@ def guess_type_value(x, none=None):
                         return str
                     else:
                         return None
-                except Exception:
+                except Exception:  # pragma: no cover
                     return None
             else:
                 return str
@@ -911,8 +910,8 @@ def get_default_value_type(ty, none=True):
     elif ty == float:
         return 0.0
     else:
-        raise PQHException("type expected in " + str
-                           (guess_type_value_type()))
+        raise PQHException(  # pragma: no cover
+            "type expected in " + str(guess_type_value_type()))
 
 
 def guess_type_list(l, tolerance=0.01, none=True):
@@ -1010,10 +1009,10 @@ def IsEmptyString(s):
     """
     if s is None:
         return True
-    elif isinstance(s, str):
+    if isinstance(s, str):
         return len(s) == 0
-    else:
-        raise PQHException("the type is unexpected {0}".format(type(s)))
+    raise PQHException(  # pragma: no cover
+        "the type is unexpected {0}".format(type(s)))
 
 
 def load_content_file_with_encoding(filename):
@@ -1028,6 +1027,6 @@ def load_content_file_with_encoding(filename):
             with open(filename, "r", encoding=enc) as f:
                 content = f.read()
             return content, enc
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             error = e
     raise error

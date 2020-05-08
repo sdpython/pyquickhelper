@@ -15,7 +15,7 @@ from ..flog import fLOG, run_cmd
 from ..convert_helper import str2datetime
 
 
-def IsRepo(location, commandline=True):
+def IsRepo(location, commandline=True):  # pragma: no cover
     """
     says if it a repository SVN
 
@@ -33,7 +33,7 @@ def IsRepo(location, commandline=True):
         return False
 
 
-class RepoFile:
+class RepoFile:  # pragma: no cover
 
     """
     mimic a svn file
@@ -342,14 +342,14 @@ def get_repo_version(path=None, commandline=True, log=False):
         return int(res)
 
 
-def get_master_location(path=None, commandline=True):
+def get_master_location(path=None, commandline=True):  # pragma: no cover
     """
     raises an exception
     """
     raise NotImplementedError()
 
 
-def get_nb_commits(path=None, commandline=True):
+def get_nb_commits(path=None, commandline=True):  # pragma: no cover
     """
     returns the number of commit
 

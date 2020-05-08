@@ -120,7 +120,7 @@ class FSM(object):
                     self.current_state = to_state
                     self.current_input = input
                     self.current_transition = transition
-                    if options.debug:
+                    if options.debug:  # pragma: no cover
                         sys.stderr.write(
                             "# FSM: executing ({} -> {}) for line '{}'\n".format(from_state, to_state, input))
                     callback(match)
@@ -298,7 +298,7 @@ class Doxypy(object):
         Flushes the current outputbuffer to the outstream.
         """
         if self.output:
-            if options.debug:
+            if options.debug:  # pragma: no cover
                 sys.stderr.write("# OUTPUT: {0}\n".format(self.output))
             self.print_output("\n".join(self.output), file=self.outstream)
             self.outstream.flush()
@@ -316,7 +316,7 @@ class Doxypy(object):
 
         Closes the current commentblock and starts a new comment search.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             sys.stderr.write("# CALLBACK: resetCommentSearch")
         self.__closeComment()
         self.startCommentSearch(match)
@@ -328,7 +328,7 @@ class Doxypy(object):
         Saves the triggering line, resets the current comment and saves
         the current indentation.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             sys.stderr.write("# CALLBACK: startCommentSearch")
         self.defclass = [self.fsm.current_input]
         self.comment = []
@@ -341,7 +341,7 @@ class Doxypy(object):
         Closes the current commentblock, resets the triggering line and
         appends the current line to the output.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             sys.stderr.write("# CALLBACK: stopCommentSearch")
         self.__closeComment()
 
@@ -354,7 +354,7 @@ class Doxypy(object):
 
         Closes the open comment block, resets it and appends the current line.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             sys.stderr.write("# CALLBACK: appendFileheadLine")
         self.__closeComment()
         self.comment = []
@@ -367,7 +367,7 @@ class Doxypy(object):
         The comment delimiter is removed from multiline start and ends as
         well as singleline comments.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             sys.stderr.write("# CALLBACK: appendCommentLine")
         from_state, to_state, condition, callback = self.fsm.current_transition  # pylint: disable=W0612
 
@@ -408,7 +408,7 @@ class Doxypy(object):
         """
         Appends a line to the output.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             self.print_output("# CALLBACK: appendNormalLine", file=sys.stderr)
         self.output.append(self.fsm.current_input)
 
@@ -416,7 +416,7 @@ class Doxypy(object):
         """
         Appends a line to the triggering block.
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             self.print_output(
                 "# CALLBACK: appendDefclassLine", file=sys.stderr)
         self.defclass.append(self.fsm.current_input)
@@ -428,7 +428,7 @@ class Doxypy(object):
 
         @returns a list of indented comment lines
         """
-        if options.debug:
+        if options.debug:  # pragma: no cover
             self.print_output("# makeCommentBlock", file=sys.stderr)
         indent4 = "    " if len(self.defclass) > 0 else ""
         doxyStart = "%s\"\"\"" % indent4

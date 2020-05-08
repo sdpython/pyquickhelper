@@ -281,7 +281,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # sphinx configuration is a module and the function loads and unloads it
     list_modules_start = set(sys.modules.keys())
 
-    if add_htmlhelp:
+    if add_htmlhelp:  # pragma: no cover
         if not sys.platform.startswith("win"):
             raise ValueError("add_htmlhelp is True and the OS is not Windows")
         fLOG("[generate_help_sphinx] add add_htmlhelp")
@@ -332,8 +332,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     roles.register_canonical_role("downloadlink", process_downloadlink_role)
 
     if "conf" in sys.modules:
-        raise ImportError("module conf was imported, this function expects not to:\n{0}".format(
-            sys.modules["conf"].__file__))
+        raise ImportError(  # pragma: no cover
+            "module conf was imported, this function expects not to:\n{0}".format(
+                sys.modules["conf"].__file__))
 
     ############
     # root_source
@@ -346,7 +347,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if not os.path.exists(root_package):
         root_package = root
     if not os.path.exists(root_package):
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "Unable to find source root from '{}'.".format(root))
     fLOG("[generate_help_sphinx] root='{0}'".format(root))
     fLOG("[generate_help_sphinx] root_package='{0}'".format(root_package))
@@ -360,7 +361,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we import conf_base, specific to multi layers
     ########################################
     confb = os.path.join(root_source, "conf_base.py")
-    if os.path.exists(confb):
+    if os.path.exists(confb):  # pragma: no cover
         code = "from conf_base import *"
         with python_path_append(conf_paths):
             try:
@@ -416,11 +417,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         try:
             module_conf = execute_script_get_local_variables(
                 "from conf import *", folder=root_source, check=True)
-        except ImportError as e:
+        except ImportError as e:  # pragma: no cover
             raise ImportError("Unable to import 'conf.py' from '{0}', sys.path=\n{1}\nBEFORE:\n{2}".format(
                 root_source, "\n".join(sys.path), "\n".join(copypath))) from e
         if module_conf is None:
-            raise ImportError(
+            raise ImportError(  # pragma: no cover
                 "unable to import 'conf.py' which defines the help generation")
         if 'ERROR' in module_conf:
             msg = "\n".join(["paths:"] + conf_paths + [
@@ -430,7 +431,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 root_source])
             raise ImportError(msg)
         if len(module_conf) == 0:
-            raise ImportError("No extracted local variable.")
+            raise ImportError(
+                "No extracted local variable.")  # pragma: no cover
         theconf = dictionary_as_class(module_conf)
     fLOG("[generate_help_sphinx] conf.__file__='{0}'".format(
         os.path.abspath(theconf.__file__)))  # pylint: disable=E1101
@@ -452,13 +454,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         html_static_path = html_static_path[0]
     html_static_path = os.path.join(root_source, html_static_path)
     if not os.path.exists(html_static_path):
-        raise FileNotFoundError("no static path:" + html_static_path)
+        raise FileNotFoundError(  # pragma: no cover
+            "no static path:" + html_static_path)
     html_static_paths.append(html_static_path)
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", "build", "html")))
     custom_latex_processing = theconf.__dict__.get(
         "custom_latex_processing", None)
-    if custom_latex_processing is not None:
+    if custom_latex_processing is not None:  # pragma: no cover
         # The configuration file is pickled by sphinx
         # and parameter should not be functions.
         if isinstance(custom_latex_processing, str):
@@ -485,11 +488,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ####################################
     readme = os.path.join(root, "README.rst")
     if not os.path.exists(readme):
-        raise FileNotFoundError(readme)
+        raise FileNotFoundError(readme)  # pragma: no cover
     shutil.copy(readme, root_source)
     license = os.path.join(root, "LICENSE.txt")
     if not os.path.exists(license):
-        raise FileNotFoundError(license)
+        raise FileNotFoundError(license)  # pragma: no cover
     shutil.copy(license, root_source)
     history = os.path.join(root, "HISTORY.rst")
     if os.path.exists(history):
@@ -618,8 +621,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                                 copy_add_ext=copy_add_ext, use_sys=use_sys, fexclude=fexclude,
                                                 auto_rst_generation=auto_rst_generation, fLOG=fLOG)
 
-    except ImportErrorHelpGen as e:
-
+    except ImportErrorHelpGen as e:  # pragma: no cover
         fLOG(
             "[generate_help_sphinx] major failure, no solution found yet, please run again the script")
         fLOG("[generate_help_sphinx] list of added modules:")
@@ -695,7 +697,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                         notebook_replacements=notebook_replacements)
             nbs_all = set(_[0]
                           for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
-            if len(nbs_all) != len(indexlistnote):
+            if len(nbs_all) != len(indexlistnote):  # pragma: no cover
                 ext1 = "nbs_all:\n{0}".format("\n".join(nbs_all))
                 ext2 = "indexlistnote:\n{0}".format(
                     "\n".join(str(_) for _ in indexlistnote))
@@ -774,10 +776,10 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 try:
                     with open(thn, "r", encoding="utf8") as f:
                         f.read()
-                except UnicodeDecodeError as e:
+                except UnicodeDecodeError as e:  # pragma: no cover
                     raise HelpGenException(
                         "issue with encoding in a file", thn) from e
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise HelpGenException("issue with file ", thn) from e
 
     fLOG("[generate_help_sphinx] running sphinx... from", docpath)
@@ -823,7 +825,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         fLOG("[generate_help_sphinx] run:", cmd)
         lays.append(lay)
 
-        if add_htmlhelp and lay == "html":
+        if add_htmlhelp and lay == "html":  # pragma: no cover
             # we cannot execute htmlhelp in the same folder
             # as it changes the encoding
             cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", "{0}help".format(lay),
@@ -910,7 +912,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 sys.stderr = out
                 try:
                     build_main(cmd[1:])
-                except SystemExit as e:
+                except SystemExit as e:  # pragma: no cover
                     raise SystemExit("Unable to run Sphinx\n--CMD\n{0}\n--ERR--\n{1}\n--CWD--\n{2}\n--OUT--\n{3}\n--".format(
                         cmd, err.getvalue(), os.getcwd(), out.getvalue())) from e
                 sys.stdout = memo_out
@@ -941,7 +943,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if len(err) > 0 or len(out) > 0:
             if (len(err) > 0 and "Exception occurred:" in err) or \
                (len(out) > 0 and "Exception occurred:" in out):
-                def keep_line(_):
+                def keep_line(_):  # pragma: no cover
                     if "RemovedInSphinx" in _:
                         return False
                     if "while setting up extension" in _:
@@ -992,7 +994,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 build_path))
             continue
         dest = os.path.join(build_path, "_static", style_figure_notebook[0])
-        if not os.path.exists(dest):
+        if not os.path.exists(dest):  # pragma: no cover
             fLOG("[generate_help_sphinx]    CREATE-CSS2", dest)
             with open(dest, "w", encoding="utf-8") as f:
                 f.write(style_figure_notebook[1])
@@ -1036,7 +1038,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     fLOG("---- JENKINS BEGIN DOCUMENTATION COVERAGE ----")
     fLOG("[generate_help_sphinx] copy coverage")
     covfold = os.path.join(docpath, "source", "coverage")
-    if os.path.exists(covfold):
+    if os.path.exists(covfold):  # pragma: no cover
         fLOG("[generate_help_sphinx] coverage folder:", covfold)
         allfiles = os.listdir(covfold)
         allf = [_ for _ in allfiles if _.endswith(".rst")]
@@ -1259,7 +1261,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
             raise ImportError("Unable to extract local variable from conf.py.")
 
     if module_conf is None:
-        raise ImportError(
+        raise ImportError(  # pragma: no cover
             "Unable to import '{0}' which defines the help generation".format(newconf))
     thenewconf = dictionary_as_class(module_conf)
     if fLOG:
@@ -1277,7 +1279,8 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     html_static_path = os.path.normpath(
         os.path.join(root_source, html_static_path))
     if not os.path.exists(html_static_path):
-        raise FileNotFoundError("no static path:" + html_static_path)
+        raise FileNotFoundError(  # pragma: no cover
+            "no static path:" + html_static_path)
     html_static_paths.append(html_static_path)
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", build, "html")))

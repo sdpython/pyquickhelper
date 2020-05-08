@@ -53,7 +53,7 @@ def find_pdflatex(latex_path):
 
     .. versionadded:: 1.7
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         lat = os.path.join(latex_path, "xelatex.exe")
         if os.path.exists(lat):
             return lat
@@ -62,26 +62,24 @@ def find_pdflatex(latex_path):
             return lat
         raise FileNotFoundError(
             "Unable to find pdflatex or xelatex in '{0}'".format(latex_path))
-    if sys.platform.startswith("darwin"):
+    if sys.platform.startswith("darwin"):  # pragma: no cover
         try:
             err = run_cmd("/Library/TeX/texbin/xelatex --help", wait=True)[1]
             if len(err) == 0:
                 return "/Library/TeX/texbin/xelatex"
-            else:
-                raise FileNotFoundError(
-                    "Unable to run xelatex\n{0}".format(err))
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to run xelatex\n{0}".format(err))
         except Exception:
             return "/Library/TeX/texbin/pdflatex"
-    else:
-        try:
-            err = run_cmd("xelatex --help", wait=True)[1]
-            if len(err) == 0:
-                return "xelatex"
-            else:
-                raise FileNotFoundError(
-                    "Unable to run xelatex\n{0}".format(err))
-        except Exception:
-            return "pdflatex"
+    try:
+        err = run_cmd("xelatex --help", wait=True)[1]
+        if len(err) == 0:
+            return "xelatex"
+        else:
+            raise FileNotFoundError(
+                "Unable to run xelatex\n{0}".format(err))
+    except Exception:  # pragma: no cover
+        return "pdflatex"
 
 
 def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=None,
@@ -193,9 +191,9 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
         else:
             fnbcexe(**options_args)
         exc = None
-    except SystemExit as e:
+    except SystemExit as e:  # pragma: no cover
         exc = e
-    except IndentationError as e:
+    except IndentationError as e:  # pragma: no cover
         # This is change in IPython 6.0.0.
         # The conversion fails on IndentationError.
         # We switch to another one.
@@ -224,8 +222,9 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
     if exc:
         env = "\n".join("{0}={1}".format(k, v)
                         for k, v in sorted(os.environ.items()))
-        raise Exception("Notebook conversion failed.\nARGS:\n{0}\nOUT\n{1}\nERR\n{2}\nENVIRON\n{3}".format(
-            list_args, out, err, env)) from exc
+        raise Exception(  # pragma: no cover
+            "Notebook conversion failed.\nARGS:\n{0}\nOUT\n{1}\nERR\n{2}\nENVIRON\n{3}".format(
+                list_args, out, err, env)) from exc
     return out, err
 
 
@@ -301,7 +300,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
     if isinstance(notebooks, str):
         notebooks = [notebooks]
 
-    if "PANDOCPY" in os.environ and sys.platform.startswith("win"):
+    if "PANDOCPY" in os.environ and sys.platform.startswith("win"):  # pragma: no cover
         exe = os.environ["PANDOCPY"]
         exe = exe.rstrip("\\/")
         if exe.endswith("\\Scripts"):
@@ -310,7 +309,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             raise FileNotFoundError(exe)
         fLOG("[_process_notebooks_in] ** using PANDOCPY", exe)
     else:
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             from .utils_pywin32 import import_pywin32
             try:
                 import_pywin32()
@@ -379,7 +378,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 continue
 
             if format not in extensions:
-                raise NotebookConvertError(
+                raise NotebookConvertError(  # pragma: no cover
                     "Unable to find format: '{}' in {}".format(
                         format, ", ".join(extensions.keys())))
 
@@ -399,7 +398,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if os.path.exists(trueoutputfile):
                 dto = os.stat(trueoutputfile).st_mtime
                 dtnb = os.stat(notebook).st_mtime
-                if dtnb < dto:
+                if dtnb < dto:  # pragma: no cover
                     fLOG("[_process_notebooks_in] -- skipping notebook", format,
                          notebook, "(", trueoutputfile, ")")
                     if trueoutputfile not in thisfiles:
@@ -570,7 +569,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         raise HelpGenException(
                             "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}------".format(c, err, out))
                     f = os.path.join(build, nbout + ".pdf")
-                    if not os.path.exists(f):
+                    if not os.path.exists(f):  # pragma: no cover
                         # On Linux the parameter --output-directory is sometimes ignored.
                         # And it only works from the current directory.
                         # We check again.
@@ -591,7 +590,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 else:
                     fLOG("[_process_notebooks_in] unable to find latex in", latex_path)
 
-            elif pandoco is not None:
+            elif pandoco is not None:  # pragma: no cover
                 # compilation pandoc
                 fLOG("[_process_notebooks_in]   ** pandoc compilation (b)", pandoco)
                 inputfile = os.path.splitext(outputfile)[0] + ".html"
@@ -634,8 +633,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if format == "html":
                 # we add a link to the notebook
                 if not os.path.exists(outputfile):
-                    raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
+                    raise FileNotFoundError(  # pragma: no cover
+                        outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
+                            os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + c)
                 thisfiles += add_link_to_notebook(outputfile, notebook, "pdf" in formats, False,
                                                   "python" in formats, "slides" in formats,
                                                   exc=exc, nblinks=nblinks, fLOG=fLOG,
@@ -644,8 +644,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             elif format == "slides.html":
                 # we add a link to the notebook
                 if not os.path.exists(outputfile):
-                    raise FileNotFoundError(outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
-                        os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + str(list_args))
+                    raise FileNotFoundError(  # pragma: no cover
+                        outputfile + "\nCONTENT in " + os.path.dirname(outputfile) + ":\n" + "\n".join(
+                            os.listdir(os.path.dirname(outputfile))) + "\n[nberror]\n" + err + "\nOUT:\n" + out + "\nCMD:\n" + str(list_args))
                 thisfiles += add_link_to_notebook(outputfile, notebook,
                                                   "pdf" in formats, False, "python" in formats,
                                                   "slides" in formats, exc=exc,
@@ -695,7 +696,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 except shutil.SameFileError:
                     fLOG("[_process_notebooks_in] w,file ",
                          dest, "already exists")
-            else:
+            else:  # pragma: no cover
                 try:
                     shutil.copy(f, outfold)
                     fLOG("[_process_notebooks_in] copy ",
@@ -720,28 +721,16 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             image = os.path.join(build, image)
             dest = os.path.join(outfold, os.path.split(image)[-1])
 
-            if sys.version_info >= (3, 4):
-                try:
-                    shutil.copy(image, outfold)
-                    fLOG("[_process_notebooks_in] copy ",
-                         image, " to ", outfold, "[", dest, "]")
-                except shutil.SameFileError:
-                    fLOG("[_process_notebooks_in] w,file ",
-                         dest, "already exists")
-            else:
-                try:
-                    shutil.copy(image, outfold)
-                    fLOG("[_process_notebooks_in] copy ",
-                         image, " to ", outfold, "[", dest, "]")
-                except shutil.Error as e:
-                    if "are the same file" in str(e):
-                        fLOG("[_process_notebooks_in] w,file ",
-                             dest, "already exists")
-                    else:
-                        raise e
+            try:
+                shutil.copy(image, outfold)
+                fLOG("[_process_notebooks_in] copy ",
+                     image, " to ", outfold, "[", dest, "]")
+            except shutil.SameFileError:
+                fLOG("[_process_notebooks_in] w,file ",
+                     dest, "already exists")
 
             if not os.path.exists(dest):
-                raise FileNotFoundError(dest)
+                raise FileNotFoundError(dest)  # pragma: no cover
             copy.append((dest, True))
 
     return copy + [(_, False) for _ in skipped]
@@ -878,8 +867,9 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
 
     dirname = os.path.dirname(full)
     if not os.path.exists(dirname):
-        raise FileNotFoundError("Unable to find folder '{0}'\nfolder_snippet='{1}'\nrelative='{2}'\nnbfile='{3}'".format(
-            dirname, folder_snippet, relative, nbfile))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find folder '{0}'\nfolder_snippet='{1}'\nrelative='{2}'\nnbfile='{3}'".format(
+                dirname, folder_snippet, relative, nbfile))
 
     if isinstance(image, str):
         # SVG
@@ -902,7 +892,8 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         rst = THUMBNAIL_TEMPLATE_TABLE.format(
             snippet=desc, thumbnail=rel, ref_name=rst_link, nb_name=nb_name)
     else:
-        raise ValueError("layout must be 'classic' or 'table'")
+        raise ValueError(
+            "layout must be 'classic' or 'table'")  # pragma: no cover
     return rst
 
 
@@ -974,7 +965,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
         nbs = explore_folder(
             fold, ".*[.]ipynb", neg_pattern=neg_pattern, fullname=True)[1]
         if len(nbs) == 0:
-            raise FileNotFoundError(
+            raise FileNotFoundError(  # pragma: no cover
                 "Unable to find notebooks in folder '{0}'.".format(nbs))
         nbs = [(os.path.relpath(n, fold), n) for n in nbs]
 
@@ -996,7 +987,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
         name = rst[-1][1]
         ext = os.path.splitext(name)[-1]
         if ext != ".ipynb":
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "One file is not a notebook: {0}".format(rst[-1][1]))
         dirname, na = os.path.split(name)
         if dirname not in containers:
@@ -1041,7 +1032,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
         with open(exp, "r", encoding="utf-8") as f:
             try:
                 rows.extend(["", ".. _l-notebooks:", "", f.read(), ""])
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError as e:  # pragma: no cover
                 raise ValueError("Issue with file '{0}'".format(exp)) from e
     else:
         fLOG("[build_notebooks_gallery] not found", exp)
@@ -1074,8 +1065,9 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
             link = os.path.splitext(os.path.split(file)[-1])[0]
             link = link.replace("_", "") + "rst"
             if not os.path.exists(file):
-                raise FileNotFoundError("Unable to find: '{0}'\nRST=\n{1}".format(
-                    file, "\n".join(str(_) for _ in rst)))
+                raise FileNotFoundError(  # pragma: no cover
+                    "Unable to find: '{0}'\nRST=\n{1}".format(
+                        file, "\n".join(str(_) for _ in rst)))
             r = build_thumbail_in_gallery(
                 file, folder, folder_index, link, layout,
                 snippet_folder=snippet_folder, fLOG=fLOG)
@@ -1136,7 +1128,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
                         with open(readme, "r", encoding="utf-8") as f:
                             try:
                                 rows.extend(["", f.read(), ""])
-                            except UnicodeDecodeError as e:
+                            except UnicodeDecodeError as e:  # pragma: no cover
                                 raise ValueError(
                                     "Issue with file '{0}'".format(readme)) from e
                     else:

@@ -31,7 +31,7 @@ def validate_file_for_help(filename, fexclude=lambda f: False):
     if filename.endswith(".pyd") or filename.endswith(".so"):
         return True
 
-    if "rpy2" in filename:
+    if "rpy2" in filename:  # pragma: no cover
         with open(filename, "r") as ff:
             content = ff.read()
         if "from pandas.core." in content:
@@ -73,7 +73,7 @@ def replace_relative_import_fct(fullname, content=None):
             root = i + 1
             break
     if root is None:
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "Unable to package root for '{}'.".format(fullname))
 
     lines = content.split("\n")
@@ -104,9 +104,10 @@ def replace_relative_import_fct(fullname, content=None):
                     space=space, packname=packname, name0=name0, names=names, end=end)
                 lines[i] = line
             else:
-                raise ValueError("Unable to replace relative import in '{0}', "
-                                 "root='{1}'\n{2}|{3}|{4}|{5}| level={6}".format(
-                                     line, fullsplit[root], dot, rel, name0, names, level))
+                raise ValueError(  # pragma: no cover
+                    "Unable to replace relative import in '{0}', "
+                    "root='{1}'\n{2}|{3}|{4}|{5}| level={6}".format(
+                        line, fullsplit[root], dot, rel, name0, names, level))
 
     return "\n".join(lines)
 
@@ -144,7 +145,7 @@ def _private_process_one_file(
         try:
             with open(fullname, "r", encoding="utf8") as g:
                 content = g.read()
-        except UnicodeDecodeError:
+        except UnicodeDecodeError:  # pragma: no cover
             try:
                 with open(fullname, "r") as g:
                     content = g.read()
@@ -159,7 +160,7 @@ def _private_process_one_file(
         keepc = content
         try:
             counts, content = migrating_doxygen_doc(content, fullname, silent)
-        except SyntaxError as e:
+        except SyntaxError as e:  # pragma: no cover
             if not silent:
                 raise e
             content = keepc
@@ -323,7 +324,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         if file.name.endswith("setup.py"):
             continue
         if "setup.py" in file.name:
-            raise FileNotFoundError(
+            raise FileNotFoundError(  # pragma: no cover
                 "are you sure (setup.py)?, file: " + file.fullname)
 
         to = os.path.join(dest, file.name)
@@ -426,7 +427,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     tspecials = {}
 
     if mo is not None:
-        if isinstance(mo, str):
+        if isinstance(mo, str):  # pragma: no cover
             # it is an error
             spl = mo.split("\n")
             mo = "\n".join(["    " + _ for _ in spl])
@@ -524,7 +525,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
         try:
             with open(keepf, "r", encoding="latin-1") as ft:
                 content = ft.read()
-        except UnicodeDecodeError:
+        except UnicodeDecodeError:  # pragma: no cover
             with open(keepf, "r", encoding="utf8") as ft:
                 content = ft.read()
 
@@ -544,7 +545,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     if not_expected not in ('jenkins', 'vsts', 'runner') and not_expected in fullnamenoext:
         mes = "The title is probably wrong (3): {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}" + \
             "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'"
-        raise HelpGenException(mes.format(
+        raise HelpGenException(mes.format(  # pragma: no cover
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
     ttitle = "module ``{0}``".format(fullnamenoext)
@@ -861,7 +862,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
         not_expected = os.environ.get(
             "USERNAME", os.environ.get("USER", "````````````"))
         if not_expected != "jenkins" and not_expected in title:
-            raise HelpGenException(
+            raise HelpGenException(  # pragma: no cover
                 "The title is probably wrong (2), found '{0}' in '{1}'".format(not_expected, title))
 
         res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s\n\n%s" % (
@@ -1252,7 +1253,7 @@ def process_copy_images(folder_source, folder_images):
         try:
             with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             try:
                 with open(fn, "r") as f:
                     content = f.read()

@@ -44,7 +44,7 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
             st = os.stat(file)
             atime = datetime.datetime.fromtimestamp(st.st_atime)
             mtime = datetime.datetime.fromtimestamp(st.st_mtime)
-            if atime < a1980 or mtime < a1980:
+            if atime < a1980 or mtime < a1980:  # pragma: no cover
                 new_mtime = st.st_mtime + (4 * 3600)  # new modification time
                 while datetime.datetime.fromtimestamp(new_mtime) < a1980:
                     new_mtime += (4 * 3600)  # new modification time
@@ -81,7 +81,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
     try:
         with zipfile.ZipFile(zipf, "r"):
             pass
-    except zipfile.BadZipFile as e:
+    except zipfile.BadZipFile as e:  # pragma: no cover
         if isinstance(zipf, BytesIO):
             raise e
         raise IOError("Unable to read file '{0}'".format(zipf)) from e
@@ -94,7 +94,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
             if where_to is None:
                 try:
                     content = file.read(info.filename)
-                except zipfile.BadZipFile as e:
+                except zipfile.BadZipFile as e:  # pragma: no cover
                     if fail_if_error:
                         raise zipfile.BadZipFile(
                             "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
@@ -114,7 +114,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                         continue
                     try:
                         data = file.read(info.filename)
-                    except zipfile.BadZipFile as e:
+                    except zipfile.BadZipFile as e:  # pragma: no cover
                         if fail_if_error:
                             raise zipfile.BadZipFile(
                                 "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
@@ -139,7 +139,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                             try:
                                 with open(tos, "wb") as u:
                                     u.write(data)
-                            except FileNotFoundError as e:
+                            except FileNotFoundError as e:  # pragma: no cover
                                 # probably an issue in the path name
                                 # the next lines are just here to distinguish
                                 # between the two cases
@@ -186,14 +186,13 @@ def gzip_files(filename, file_set, encoding=None, fLOG=noLOG):
         f.write(content)
         f.close()
         return filename.getvalue() if isinstance(filename, BytesIO) else None
-    else:
-        f = gzip.open(filename, 'wt', encoding="utf-8")
-        for name in file_set:
-            with open(name, "r", encoding="utf-8") as ft:
-                content = ft.read()
-            f.write(content)
-        f.close()
-        return filename.getvalue() if isinstance(filename, BytesIO) else None
+    f = gzip.open(filename, 'wt', encoding="utf-8")
+    for name in file_set:
+        with open(name, "r", encoding="utf-8") as ft:
+            content = ft.read()
+        f.write(content)
+    f.close()
+    return filename.getvalue() if isinstance(filename, BytesIO) else None
 
 
 def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
@@ -224,7 +223,7 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
         if unzip:
             try:
                 return unzip_files(content, where_to=where_to, fLOG=fLOG)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 raise IOError(
                     "Unable to unzip file '{0}'".format(filename)) from e
         elif where_to is not None:
@@ -243,8 +242,7 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
             with open(filename, "wb") as f:
                 f.write(content)
             return filename
-        else:
-            return content
+        return content
 
 
 def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
@@ -273,7 +271,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         `sdpython.pylzma <https://github.com/sdpython/pylzma>`_
         and build it yourself with ``python setup.py bdist_wheel``.
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         exe = r"C:\Program Files\7-Zip\7z.exe"
         if not os.path.exists(exe):
             raise FileNotFoundError("unable to find: {0}".format(exe))
@@ -283,11 +281,12 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         exe = "7z"
 
     if os.path.exists(filename_7z):
-        raise FileException("'{0}' already exists".format(filename_7z))
+        raise FileException(  # pragma: no cover
+            "'{0}' already exists".format(filename_7z))
 
     notxist = [fn for fn in file_set if not os.path.exists(fn)]
     if len(notxist) > 0:
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "unable to compress unexisting files:\n{0}".format("\n".join(notxist)))
 
     flist = os.path.join(temp_folder, "listfiles7z.txt")
@@ -298,7 +297,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         exe, filename_7z, flist)
     out, err = run_cmd(cmd, wait=True)
     if "Error:" in out or not os.path.exists(filename_7z):
-        raise FileException(
+        raise FileException(  # pragma: no cover
             "An error occurred with cmd: '{0}'\nOUT:\n{1}\nERR\n{2}\n----".format(cmd, out, err))
     return len(file_set)
 
@@ -330,7 +329,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
         if fvalid:
             warnings.warn(
                 'fvalid and cmd_line are incompatible options.', UserWarning)
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             exe = r"C:\Program Files\7-Zip\7z.exe"
             if not os.path.exists(exe):
                 raise FileNotFoundError("unable to find: {0}".format(exe))
@@ -345,7 +344,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
         cmd = '"{0}" x "{1}" -o{2}'.format(exe, zipf, where_to)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         if len(err) > 0 or "Error:" in out:
-            raise FileException(
+            raise FileException(  # pragma: no cover
                 "Unable to un-7zip file '{0}'\n--CMD--\n{3}\n--OUT--\n{1}\n--ERR--\n{2}".format(zipf, out, err, cmd))
 
         return explore_folder(where_to)[1]
@@ -363,7 +362,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
         try:
             file = Archive7z(zipf)
         except FormatError as e:
-            raise FileException(
+            raise FileException(  # pragma: no cover
                 "You should use a modified version available at https://github.com/sdpython/pylzma") from e
         for info in file.files:
             if where_to is None:
@@ -381,7 +380,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                         continue
                     try:
                         data = info.read()
-                    except NotImplementedError as e:
+                    except NotImplementedError as e:  # pragma: no cover
                         # You should use command line.
                         if file_zipf is None:
                             raise TypeError(
@@ -390,7 +389,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                             "[un7zip_files] '{0}' --> Unavailable format. Use command line.".format(zipf), UserWarning)
                         return un7zip_files(file_zipf, where_to=where_to, fLOG=fLOG, fvalid=fvalid,
                                             remove_space=remove_space, cmd_line=True)
-                    except Exception as e:
+                    except Exception as e:  # pragma: no cover
                         raise FileException("Unable to unzip file '{0}' from '{1}'".format(
                             info.filename, zipf)) from e
                     # check encoding to avoid characters not allowed in paths
@@ -452,7 +451,7 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
     @param      remove_space    remove spaces in created local path (+ ``',()``)
     @return                     list of unzipped files
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         exe = r"C:\Program Files\7-Zip\7z.exe"
         if not os.path.exists(exe):
             raise FileNotFoundError("unable to find: {0}".format(exe))
