@@ -3,14 +3,12 @@
 @author     Xavier Dupre
 """
 
-import sys
 import os
 import unittest
 import warnings
 import datetime
 import ftplib
 import socket
-
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
 from pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
@@ -19,7 +17,6 @@ from pyquickhelper.loghelper.os_helper import get_machine, get_user
 
 class TestTransferFTPTrue(ExtTestCase):
 
-    @unittest.skipIf(sys.version_info[0] == 2, "issue with strings")
     def test_transfer_ftp_true(self):
         fLOG(
             __file__,
@@ -51,15 +48,18 @@ class TestTransferFTPTrue(ExtTestCase):
         except ftplib.error_temp as e:
             if "421 Home directory not available" in str(e):
                 return
+            raise e
         except socket.gaierror as ee:
             if "Name or service not known" in str(ee):
                 return
+            if "getaddrinfo failed" in str(ee):
+                return
+            raise ee
         r = web.ls(".")
         fLOG(r)
         self.assertTrue(isinstance(r, list))
         web.close()
 
-    @unittest.skipIf(sys.version_info[0] == 2, "issue with strings")
     def test_transfer_ftp_start_transfering(self):
         fLOG(
             __file__,
@@ -98,9 +98,13 @@ class TestTransferFTPTrue(ExtTestCase):
         except ftplib.error_temp as e:
             if "421 Home directory not available" in str(e):
                 return
+            raise e
         except socket.gaierror as ee:
             if "Name or service not known" in str(ee):
                 return
+            if "getaddrinfo failed" in str(ee):
+                return
+            raise ee
 
         web = FolderTransferFTP(ftn, ftp, sfile,
                                 root_web="/www/htdocs/apptest/",
