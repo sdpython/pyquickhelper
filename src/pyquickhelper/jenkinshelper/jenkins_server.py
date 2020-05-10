@@ -169,7 +169,7 @@ class JenkinsExt(jenkins.Jenkins):
         """
         return self.engines
 
-    def jenkins_open(self, req, add_crumb=True, resolve_auth=True):
+    def jenkins_open(self, req, add_crumb=True, resolve_auth=True):  # pragma: no cover
         '''
         Overloads the same method from module :epkg:`python-jenkins`
         to replace string by bytes.
@@ -189,7 +189,7 @@ class JenkinsExt(jenkins.Jenkins):
                 "empty response" % self.server)
         return response.content
 
-    def delete_job(self, name):
+    def delete_job(self, name):  # pragma: no cover
         '''
         Deletes :epkg:`Jenkins` job permanently.
 
@@ -223,7 +223,7 @@ class JenkinsExt(jenkins.Jenkins):
                                         folder_depth_per_request=folder_depth_per_request,
                                         view_name=view_name)
 
-    def delete_all_jobs(self):
+    def delete_all_jobs(self):  # pragma: no cover
         """
         Deletes all jobs permanently.
 
@@ -281,8 +281,9 @@ class JenkinsExt(jenkins.Jenkins):
             res = self.engines["default"]
             key = "default"
         if res is None:
-            raise JenkinsJobException("Unable to find engine in job '{}', available: {}".format(
-                job, ", ".join(self.engines.keys())))
+            raise JenkinsJobException(  # pragma: no cover
+                "Unable to find engine in job '{}', available: {}".format(
+                    job, ", ".join(self.engines.keys())))
         if "[27]" in job and "python34" in res.lower():
             mes = "\n".join("  {0}={1}".format(k, v)
                             for k, v in sorted(self.engines.items()))
@@ -299,7 +300,7 @@ class JenkinsExt(jenkins.Jenkins):
         """
         spl = job.split()
         if spl[0] != "standalone":
-            raise JenkinsExtException(
+            raise JenkinsExtException(  # pragma: no cover
                 "the job should start by standalone: " + job)
 
         if self.platform.startswith("win"):
@@ -321,12 +322,12 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd += "(temp_folder='build/update_modules', "
                 cmd += "verbose=True, source='2')\""
             else:
-                raise JenkinsExtException("cannot interpret job: " + job)
+                raise JenkinsExtException("cannot interpret job: " + job)  # pragma: no cover
 
             engine = self.get_engine_from_job(job)
             cmd = cmd.replace("__ENGINE__", engine)
             return cmd
-        else:
+        else:  # pragma: no cover
             if "[conda_update]" in spl:
                 cmd = "__ENGINE__/bin/conda update -y --all"
             elif "[local_pypi]" in spl:
@@ -438,7 +439,7 @@ class JenkinsExt(jenkins.Jenkins):
                 res = res.replace("__PYTHON27__", python)
                 if "__DEFAULTPYTHON__" in res:
                     if "default" not in self.engines:
-                        raise JenkinsExtException(
+                        raise JenkinsExtException(  # pragma: no cover
                             "a default engine (Python 3.4) must be defined for script using Python 27, job={}".format(job))
                 res = res.replace("__DEFAULTPYTHON__",
                                   os.path.join(self.engines["default"], "python"))
@@ -447,7 +448,7 @@ class JenkinsExt(jenkins.Jenkins):
             if "PACTHPQ" in res:
                 if hasattr(self, "PACTHPQ"):
                     if not hasattr(self, "pyquickhelper"):
-                        raise Exception(
+                        raise RuntimeError(  # pragma: no cover
                             "this should not happen:\n{0}\n---\n{1}".format(job_verbose, res))
                     if "pyquickhelper" in module_name:
                         repb = "@echo ~~SET set PYTHONPATH=src\nset PYTHONPATH=src"
@@ -462,7 +463,7 @@ class JenkinsExt(jenkins.Jenkins):
                     "__PACTHPQe__", repe)
 
             if "__" in res:
-                raise JenkinsJobException(
+                raise JenkinsJobException(  # pragma: no cover
                     "unable to interpret command line: {}\nCMD: {}\nRES:\n{}".format(job_verbose, cmd, res))
 
             # patch to avoid installing pyquickhelper when testing
@@ -497,24 +498,24 @@ class JenkinsExt(jenkins.Jenkins):
                     script = [script]
                 return [replacements(s, engine, python, namee + "_" + job_hash, module_name) for s in script]
 
-            elif len(spl) == 0:
-                raise ValueError("job is empty")
+            if len(spl) == 0:
+                raise ValueError("job is empty")  # pragma: no cover
 
-            elif spl[0] == "standalone":
+            if spl[0] == "standalone":
                 # conda update
                 return self.get_cmd_standalone(job)
 
-            elif spl[0] == "custom":
+            if spl[0] == "custom":
                 # custom script
                 return JenkinsExt.get_cmd_custom(job)
 
-            elif spl[0] == "empty":
-                return ""
+            if spl[0] == "empty":
+                return ""  # pragma: no cover
 
-            elif len(spl) in [2, 3, 4, 5]:
+            if len(spl) in [2, 3, 4, 5]:
                 # step 1: define the script
 
-                if "[test_local_pypi]" in spl:
+                if "[test_local_pypi]" in spl:  # pragma: no cover
                     cmd = """__PYTHON__ -u setup.py test_local_pypi"""
                     cmd = "auto_setup_test_local_pypi.bat __PYTHON__"
                 elif "[update_modules]" in spl:
@@ -583,9 +584,8 @@ class JenkinsExt(jenkins.Jenkins):
                     res.append(cmdn)
 
                 return res
-            else:
-                raise ValueError("unable to interpret: " + job)
-        else:
+            raise ValueError("unable to interpret: " + job)  # pragma: no cover
+        else:  # pragma: no cover
             # linux
             engine, namee = self.get_engine_from_job(job, True)
             python = "python%d.%d" % sys.version_info[:2]
@@ -660,7 +660,7 @@ class JenkinsExt(jenkins.Jenkins):
         if not adjust_scheduler:
             return scheduler
         if scheduler is None:
-            raise ValueError("scheduler is None")
+            raise ValueError("scheduler is None")  # pragma: no cover
         if not hasattr(self, "_scheduled_jobs"):
             self._scheduled_jobs = {}
         if scheduler not in self._scheduled_jobs:
@@ -671,7 +671,7 @@ class JenkinsExt(jenkins.Jenkins):
                 cp = re.compile("H[(]([0-9]+-[0-9]+)[)]")
                 f = cp.findall(scheduler)
                 if len(f) != 1:
-                    raise ValueError(
+                    raise ValueError(  # pragma: no cover
                         "Unable to find hours in the scheduler '{0}', expects 'H(a-b)'".format(scheduler))
                 a, b = f[0].split('-')
                 a0 = a
@@ -740,7 +740,7 @@ class JenkinsExt(jenkins.Jenkins):
         Parameter *update* updates a job instead of creating it.
         """
         if 'platform' in kwargs:
-            raise NameError(
+            raise NameError(  # pragma: no cover
                 "Parameter 'platform' should be set up in the constructor.")
         if script is None:
             if self.platform.startswith("win"):
@@ -758,7 +758,7 @@ class JenkinsExt(jenkins.Jenkins):
                 hash = JenkinsExt.hash_string(script)
                 script = script.replace("__SUFFIX__", hash)
             else:
-                raise JenkinsExtException("no default script for linux")
+                raise JenkinsExtException("no default script for linux")  # pragma: no cover
 
         if upstreams is not None and len(upstreams) > 0 and scheduler is not None:
             raise JenkinsExtException(
@@ -897,10 +897,9 @@ class JenkinsExt(jenkins.Jenkins):
 
         if self._mock or return_job:
             return conf
-        elif update:
-            return self.reconfig_job(name, conf)
-        else:
-            return self.create_job(name, conf)
+        if update:
+            return self.reconfig_job(name, conf)  # pragma: no cover
+        return self.create_job(name, conf)  # pragma: no cover
 
     def process_options(self, script, options):
         """
@@ -1131,9 +1130,9 @@ class JenkinsExt(jenkins.Jenkins):
         for jobs in modules:
             if isinstance(jobs, tuple):
                 if len(jobs) == 0:
-                    raise ValueError("Empty jobs in the list.")
+                    raise ValueError("Empty jobs in the list.")  # pragma: no cover
                 if jobs[0] == "yml" and len(jobs) != 3:
-                    raise ValueError(
+                    raise ValueError(  # pragma: no cover
                         "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\n" +
                         "Not: {0}".format(jobs))
 
@@ -1175,7 +1174,7 @@ class JenkinsExt(jenkins.Jenkins):
             new_dep.extend(dep)
             locations.extend(loc)
             if len(new_dep) > 20000:
-                raise JenkinsExtException(
+                raise JenkinsExtException(  # pragma: no cover
                     "unreasonable number of dependencies: {0}".format(len(new_dep)))
         return created, new_dep, locations
 
@@ -1204,7 +1203,7 @@ class JenkinsExt(jenkins.Jenkins):
             if len(job) == 3:
                 options = job[2]
                 if not isinstance(options, dict):
-                    raise JenkinsJobException(
+                    raise JenkinsJobException(  # pragma: no cover
                         "The last element of the tuple must be a dictionary:\nJOB:\n" + str(options))
             else:
                 options = {}
@@ -1286,7 +1285,7 @@ class JenkinsExt(jenkins.Jenkins):
             except jenkins.NotFoundException:
                 j = None
             except jenkins.JenkinsException as e:
-                raise JenkinsExtException(
+                raise JenkinsExtException(  # pragma: no cover
                     "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
 
             if overwrite or j is None:
@@ -1338,7 +1337,7 @@ class JenkinsExt(jenkins.Jenkins):
 
                     # check some inconsistencies
                     if "[27]" in job and "Anaconda3" in script:
-                        raise JenkinsExtException(
+                        raise JenkinsExtException(  # pragma: no cover
                             "incoherence for job {0}, script:\n{1}".format(job, script))
 
                     locations.append((job, loc))
@@ -1372,7 +1371,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                          job_options=scheduler_options):
                 if name in done:
                     s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
-                    raise ValueError(
+                    raise ValueError(  # pragma: no cover
                         s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
                 done[name] = (aj, name, var)
                 loc = None if location is None else os.path.join(

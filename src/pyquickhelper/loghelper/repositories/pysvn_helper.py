@@ -59,7 +59,7 @@ class RepoFile:  # pragma: no cover
         return self.name
 
 
-def repo_ls(full, commandline=True):
+def repo_ls(full, commandline=True):  # pragma: no cover
     """
     run ``ls`` on a path
     @param      full            full path
@@ -136,7 +136,7 @@ def repo_ls(full, commandline=True):
         return res
 
 
-def __get_version_from_version_txt(path):
+def __get_version_from_version_txt(path):  # pragma: no cover
     """
     private function, tries to find a file ``version.txt`` which should
     contains the version number (if svn is not present)
@@ -161,7 +161,7 @@ def __get_version_from_version_txt(path):
         "unable to find version.txt in\n" + "\n".join(paths))
 
 
-def get_repo_log(path=None, file_detail=False, commandline=True):
+def get_repo_log(path=None, file_detail=False, commandline=True):  # pragma: no cover
     """
     get the latest changes operated on a file in a folder or a subfolder
     @param      path            path to look

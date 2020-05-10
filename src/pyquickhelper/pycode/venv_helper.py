@@ -53,10 +53,10 @@ def build_venv_cmd(params, posparams):  # pragma: no cover
     return " ".join(cmd)
 
 
-def create_virtual_env(where, symlinks=False,  # pragma: no cover
+def create_virtual_env(where, symlinks=False,
                        system_site_packages=False,
                        clear=True, packages=None, fLOG=None,
-                       temp_folder=None, platform=None):
+                       temp_folder=None, platform=None):  # pragma: no cover
     """
     Creates a virtual environment.
 
@@ -148,8 +148,8 @@ def create_virtual_env(where, symlinks=False,  # pragma: no cover
     return out
 
 
-def venv_install(venv, packages, fLOG=None,  # pragma: no cover
-                 temp_folder=None, platform=None):
+def venv_install(venv, packages, fLOG=None,
+                 temp_folder=None, platform=None):  # pragma: no cover
     """
     Installs a package or a list of packages in a virtual environment.
 
@@ -216,10 +216,10 @@ def venv_install(venv, packages, fLOG=None,  # pragma: no cover
         return run_venv_script(venv, "\n".join(script), fLOG=fLOG, platform=platform)
 
 
-def run_venv_script(venv, script, fLOG=None,  # pragma: no cover
+def run_venv_script(venv, script, fLOG=None,
                     file=False, is_cmd=False,
                     skip_err_if=None, platform=None,
-                    **kwargs):
+                    **kwargs):  # pragma: no cover
     """
     Runs a script on a vritual environment (the script should be simple).
 
@@ -313,22 +313,21 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
         OK
     """
     from ..loghelper import run_cmd
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper import noLOG
         fLOG = noLOG
 
-    def true_err(err):
+    def true_err(err):  # pragma: no cover
         if "Ran 1 test" in err and "OK" in err:
             return False
-        else:
-            return True
+        return True
 
     if platform is None:
         platform = sys.platform
 
-    if hasattr(sys, 'real_prefix'):
+    if hasattr(sys, 'real_prefix'):  # pragma: no cover
         exe = sys.base_prefix
-    elif hasattr(sys, "base_exec_prefix"):
+    elif hasattr(sys, "base_exec_prefix"):  # pragma: no cover
         exe = sys.base_exec_prefix
     else:
         exe = sys.exec_prefix
@@ -340,7 +339,7 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
         if not os.path.exists(exe):
             exe = os.path.join(exe, "bin", "python")
 
-    if is_cmd:
+    if is_cmd:  # pragma: no cover
         cmd = " ".join([exe] + script)
         if argv is not None:
             cmd += " " + " ".join(argv)
@@ -354,7 +353,7 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
         script = ";".join(script.split("\n"))
         if file:
             if not os.path.exists(script):
-                raise FileNotFoundError(script)
+                raise FileNotFoundError(script)  # pragma: no cover
             cmd = " ".join([exe, "-u", '"{0}"'.format(script)])
         else:
             cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
@@ -363,13 +362,13 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0 and true_err(err):
             p = sys.base_prefix if hasattr(sys, "base_prefix") else sys.prefix
-            raise VirtualEnvError(
+            raise VirtualEnvError(  # pragma: no cover
                 "unable to run script with {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, p, cmd))
         return out
 
 
-def check_readme_syntax(readme, folder,  # pragma: no cover
-                        version="0.8", fLOG=None):
+def check_readme_syntax(readme, folder,
+                        version="0.8", fLOG=None):  # pragma: no cover
     """
     Checks the syntax of the file ``readme.rst``
     which describes a python project.

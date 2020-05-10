@@ -504,7 +504,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             folder, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
 
         # pyproj for PTVS
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             write_pyproj(folder)
 
         return True
@@ -536,7 +536,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         if len(argv) > pos + 3:
             location = argv[pos + 3]
         else:
-            if sys.platform.startswith("win"):
+            if sys.platform.startswith("win"):  # pragma: no cover
                 location = "\\Jenkins"
             else:
                 location = "/var/lib/jenkins/workspace"
@@ -564,10 +564,9 @@ def get_script_extension():
 
     @return     bat or sh
     """
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         return "bat"
-    else:
-        return "sh"
+    return "sh"
 
 
 def get_folder(file_or_folder):
