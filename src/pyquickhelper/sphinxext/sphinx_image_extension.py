@@ -186,7 +186,7 @@ def depart_simpleimage_node_html(self, node):
         alt = node["alt"]
         target = node["target"]
         found = node["abspath"] is not None or node["is_url"]
-        if not found:
+        if not found:  # pragma: no cover
             body = "<b>unable to find '{0}'</b>".format(filename)
             self.body.append(body)
         else:
@@ -225,7 +225,7 @@ def depart_simpleimage_node_text(self, node):
         alt = node["alt"]
         target = node["target"]
         found = node["abspath"] is not None or node["is_url"]
-        if not found:
+        if not found:  # pragma: no cover
             body = "unable to find '{0}'".format(filename)
             self.body.append(body)
         else:
@@ -254,7 +254,7 @@ def depart_simpleimage_node_latex(self, node):
         alt = node["alt"]
         full = os.path.join(node["relpath"], node['uri'])
         found = node['abspath'] is not None or node["is_url"]
-        if not found:
+        if not found:  # pragma: no cover
             body = "\\textbf{{unable to find '{0}'}}".format(full)
             self.body.append(body)
         else:
@@ -283,7 +283,7 @@ def depart_simpleimage_node_rst(self, node):
     if node.hasattr("uri"):
         filename = node["uri"]
         found = node["abspath"] is not None or node["is_url"]
-        if not found:
+        if not found:  # pragma: no cover
             body = ".. simpleimage:: {0} [not found]".format(filename)
             self.add_text(body + self.nl)
         else:
@@ -308,7 +308,7 @@ def depart_simpleimage_node_md(self, node):
     if node.hasattr("uri"):
         filename = node["uri"]
         found = node["abspath"] is not None or node["is_url"]
-        if not found:
+        if not found:  # pragma: no cover
             body = "[{0}](not found)".format(filename)
             self.add_text(body + self.nl)
         else:

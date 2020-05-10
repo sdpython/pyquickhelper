@@ -2,13 +2,11 @@
 @brief      test log(time=8s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
+import logging
 import pandas
 import numpy
-
 from pyquickhelper.loghelper import sys_path_append
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
@@ -82,23 +80,14 @@ class TestAutoSignature(ExtTestCase):
         self.assertTrue("autosignature" in _directives)
 
         html = htmls.split("BBBBBBBBBBBBBBBB")
-        if "onefunction" not in html[0]:
-            raise Exception(html[0])
-        if "onefunction" not in html[1]:
-            raise Exception(html[1])
-
-        if "<strong>a</strong>" not in html[1]:
-            raise Exception(html[1])
-        if "<strong>a</strong>" in html[0]:
-            raise Exception(html[0])
-        if ":param a:" in html[0]:
-            raise Exception(html[0])
-        if "`" in html[0]:
-            raise Exception(html[0])
-        if "if a and b have different types" in html[0]:
-            raise Exception(html[0])
-        if "Return the addition of" not in html[0]:
-            raise Exception(html[0])
+        self.assertIn("onefunction", html[0])
+        self.assertIn("onefunction", html[1])
+        self.assertIn("<strong>a</strong>", html[1])
+        self.assertNotIn("<strong>a</strong>", html[0])
+        self.assertNotIn(":param a:", html[0])
+        self.assertNotIn("`", html[0])
+        self.assertNotIn("if a and b have different types", html[0])
+        self.assertIn("Return the addition of", html[0])
 
     def test_autosignature_class(self):
         this = os.path.abspath(os.path.dirname(__file__))
@@ -311,6 +300,33 @@ class TestAutoSignature(ExtTestCase):
 
         self.assertIn('[debug]', htmls)
         self.assertIn('[import_any_object]', htmls)
+
+    def test_autosignature_issue(self):
+        newstring = ["AAAAAAAAAAAAAAAA",
+                     ".. autosignature:: exdocassert2222",
+                     "CCCCCCCCCCCCCCCC"]
+        newstring = "\n\n".join(newstring)
+        res, logs = self.assertLogging(
+            lambda: rst2html(newstring, writer='rst', layout="sphinx"),
+            'autosignature', log_sphinx=True)
+        self.assertIn("CCCCCCCCCCCCCCCC", res)
+        self.assertIn(
+            "[autosignature] object 'exdocassert2222' cannot be imported.", logs)
+
+    def test_autosignature_empty_variable(self):
+        newstring = ["AAAAAAAAAAAAAAAA",
+                     ".. autosignature:: variable.empty_variable",
+                     "CCCCCCCCCCCCCCCC"]
+        newstring = "\n\n".join(newstring)
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        with sys_path_append(data):
+            res, logs = self.assertLogging(
+                lambda: rst2html(newstring, writer='rst', layout="sphinx"),
+                'autosignature', log_sphinx=True)
+            self.assertIn("CCCCCCCCCCCCCCCC", res)
+            self.assertIn("unable to import 'variable.empty_variable'", logs)
+            self.assertIn("TypeError", logs)
 
 
 if __name__ == "__main__":

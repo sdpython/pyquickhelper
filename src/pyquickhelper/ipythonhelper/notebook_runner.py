@@ -752,7 +752,7 @@ class NotebookRunner(object):
                     else:
                         raise NotImplementedError(  # pragma: no cover
                             "cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
-                                                                                                    k, v, cell))
+                                                                              k, v, cell))
             elif output["output_type"] == "error":
                 vl = output["traceback"]
                 if image_from_text:

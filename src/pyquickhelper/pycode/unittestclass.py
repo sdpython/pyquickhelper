@@ -9,6 +9,7 @@ import unittest
 import warnings
 import decimal
 import pprint
+from logging import getLogger, INFO, StreamHandler
 from contextlib import redirect_stdout, redirect_stderr
 from .ci_helper import is_travis_or_appveyor
 from .profiling import profile
@@ -441,6 +442,66 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(
                 msg or "Unable to find '{}' in\n{}".format(
                     sub, pprint.pformat(ensemble)))
+
+    def assertWarning(self, fct):
+        """
+        Returns the list of warnings raised while
+        executing function *fct*.
+
+        @param      fct     function to run
+        @return             result, list of warnings
+        """
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            r = fct()
+            return r, list(w)
+
+    def assertLogging(self, fct, logger_name, level=INFO, log_sphinx=False):
+        """
+        Returns the logged information in a logger defined
+        by its name.
+
+        @param      fct             function to run
+        @param      logger_name     logger name
+        @param      level           level to intercept
+        @param      log_sphinx      logging from :epkg:`sphinx`
+        @return                     result, logged information
+        """
+        from sphinx.util import logging as logging_sphinx
+
+        class MyStream:
+            def __init__(self):
+                self.rows = []
+
+            def write(self, text):
+                self.rows.append(text)
+
+            def getvalue(self):
+                return "\n".join(self.rows)
+
+            def __len__(self):
+                return len(self.rows)
+
+        logger = (logging_sphinx.getLogger(logger_name).logger
+                  if log_sphinx else getLogger(logger_name))
+
+        hs = list(logger.handlers)
+        for h in logger.handlers:
+            logger.removeHandler(h)
+
+        log_capture_string = MyStream()
+        ch = StreamHandler(log_capture_string)
+        ch.setLevel(level)
+        logger.addHandler(ch)
+
+        res = fct()
+
+        logs = log_capture_string.getvalue()
+        logger.removeHandler(ch)
+
+        for h in hs:
+            logger.addHandler(h)
+        return res, logs
 
 
 def skipif_appveyor(msg):

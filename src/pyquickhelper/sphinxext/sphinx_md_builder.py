@@ -1022,7 +1022,7 @@ class MdBuilder(Builder):
             self.link_transform = link_transform
         self.md_image_dest = self.config.md_image_dest
 
-    def get_outdated_docs(self):
+    def get_outdated_docs(self):  # pragma: no cover
         """
         Return an iterable of input files that are outdated.
         This method is taken from ``TextBuilder.get_outdated_docs()``
@@ -1054,7 +1054,7 @@ class MdBuilder(Builder):
     def prepare_writing(self, docnames):
         self.writer = MdWriter(self)
 
-    def get_outfilename(self, pagename):
+    def get_outfilename(self, pagename):  # pragma: no cover
         """
         Overwrite *get_target_uri* to control file names.
         """
@@ -1068,7 +1068,7 @@ class MdBuilder(Builder):
         self.handle_page(docname, ctx, event_arg=doctree)
 
     def handle_page(self, pagename, addctx, templatename=None,
-                    outfilename=None, event_arg=None):
+                    outfilename=None, event_arg=None):  # pragma: no cover
         if templatename is not None:
             raise NotImplementedError("templatename must be None.")
         outfilename = self.get_outfilename(pagename)

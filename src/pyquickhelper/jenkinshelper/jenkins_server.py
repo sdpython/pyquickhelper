@@ -322,7 +322,8 @@ class JenkinsExt(jenkins.Jenkins):
                 cmd += "(temp_folder='build/update_modules', "
                 cmd += "verbose=True, source='2')\""
             else:
-                raise JenkinsExtException("cannot interpret job: " + job)  # pragma: no cover
+                raise JenkinsExtException(
+                    "cannot interpret job: " + job)  # pragma: no cover
 
             engine = self.get_engine_from_job(job)
             cmd = cmd.replace("__ENGINE__", engine)
@@ -584,7 +585,9 @@ class JenkinsExt(jenkins.Jenkins):
                     res.append(cmdn)
 
                 return res
-            raise ValueError("unable to interpret: " + job)  # pragma: no cover
+            else:
+                raise ValueError("unable to interpret: " +
+                                 job)  # pragma: no cover
         else:  # pragma: no cover
             # linux
             engine, namee = self.get_engine_from_job(job, True)
@@ -758,7 +761,8 @@ class JenkinsExt(jenkins.Jenkins):
                 hash = JenkinsExt.hash_string(script)
                 script = script.replace("__SUFFIX__", hash)
             else:
-                raise JenkinsExtException("no default script for linux")  # pragma: no cover
+                raise JenkinsExtException(
+                    "no default script for linux")  # pragma: no cover
 
         if upstreams is not None and len(upstreams) > 0 and scheduler is not None:
             raise JenkinsExtException(
@@ -1130,7 +1134,8 @@ class JenkinsExt(jenkins.Jenkins):
         for jobs in modules:
             if isinstance(jobs, tuple):
                 if len(jobs) == 0:
-                    raise ValueError("Empty jobs in the list.")  # pragma: no cover
+                    raise ValueError(
+                        "Empty jobs in the list.")  # pragma: no cover
                 if jobs[0] == "yml" and len(jobs) != 3:
                     raise ValueError(  # pragma: no cover
                         "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\n" +

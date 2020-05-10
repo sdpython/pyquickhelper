@@ -160,9 +160,9 @@ class AutoSignatureDirective(Directive):
             obj, _, kind = import_any_object(
                 object_name, use_init=False, fLOG=logging_function)
         except ImportError as e:
-            mes = "[AutoSignature] unable to import '{0}' due to '{1}'".format(
+            mes = "[autosignature] unable to import '{0}' due to '{1}'".format(
                 object_name, e)
-            logger = logging.getLogger("AutoSignature")
+            logger = logging.getLogger("autosignature")
             logger.warning(mes)
             if logging_function:
                 logging_function(mes)
