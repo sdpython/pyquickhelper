@@ -7,7 +7,7 @@ import os
 import unittest
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.filehelper import un7zip_files
-from pyquickhelper.pycode import skipif_azure_linux, skipif_appveyor
+from pyquickhelper.pycode import skipif_azure_linux, skipif_appveyor, skipif_travis
 
 
 class TestCompressHelperBug(ExtTestCase):
@@ -29,6 +29,7 @@ class TestCompressHelperBug(ExtTestCase):
         self.assertTrue(files[0].endswith('donnees.txt'))
 
     @skipif_appveyor('pylzma not available, must be installed from github')
+    @skipif_travis('command line not available')
     def test_uncompress_7zip_lzma2_cmd(self):
         import pylzma
         # use github version, not pypi version (2016-11-11)

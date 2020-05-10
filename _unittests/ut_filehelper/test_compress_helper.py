@@ -18,7 +18,6 @@ from pyquickhelper.filehelper import (
     ungzip_files, un7zip_files, unrar_files, untar_files
 )
 from pyquickhelper.pycode import skipif_travis, skipif_circleci, skipif_appveyor, skipif_linux, skipif_vless, skipif_azure
-from pyquickhelper.pycode import is_travis_or_appveyor
 
 
 class TestCompressHelper(unittest.TestCase):
@@ -90,6 +89,7 @@ class TestCompressHelper(unittest.TestCase):
         self.assertEqual(len(files), 1)
 
     @skipif_linux('py7zlib not available')
+    @skipif_appveyor('py7zlib not available')
     def test_compress_7zip(self):
         fLOG(
             __file__,
@@ -105,9 +105,6 @@ class TestCompressHelper(unittest.TestCase):
             raise FileNotFoundError(out7)
 
         typbytes = bytes
-
-        if is_travis_or_appveyor() == "appveyor":
-            return
 
         from py7zlib import COMPRESSION_METHOD_COPY
         fLOG("***", COMPRESSION_METHOD_COPY)
