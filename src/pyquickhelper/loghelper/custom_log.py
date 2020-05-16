@@ -78,45 +78,44 @@ class CustomLog:
         if self._close:
             self._handle.close()
 
-    def __call__(self, *l, **p):
+    def __call__(self, *args, **kwargs):
         """
         Log anything.
         """
-        self.fLOG(*l, **p)
+        self.fLOG(*args, **kwargs)
         if self._parent is not None:
-            self._parent(*l, **p)
+            self._parent(*args, **kwargs)
 
-    def fLOG(self, *l, **p):
+    def fLOG(self, *args, **kwargs):
         """
         Builds a message on a single line with the date, it deals with encoding issues.
 
-        @param      l       list of fields
-        @param      p       dictionary of fields
+        @param      args    list of fields
+        @param      kwargs  dictionary of fields
         """
         dt = datetime.datetime(2009, 1, 1).now()
         typstr = str
-        if len(l) > 0:
+        if len(args) > 0:
             def _str_process(s):
                 if isinstance(s, str):
                     return s
-                elif isinstance(s, bytes):
+                if isinstance(s, bytes):
                     return s.decode("utf8")
-                else:
-                    try:
-                        return str(s)
-                    except Exception as e:
-                        raise Exception(
-                            "unable to convert s into string: type(s)=" + str(type(s))) from e
+                try:
+                    return str(s)
+                except Exception as e:
+                    raise Exception(
+                        "unable to convert s into string: type(s)=" + str(type(s))) from e
 
             message = str(dt).split(
-                ".")[0] + " " + " ".join([_str_process(s) for s in l]) + "\n"
+                ".")[0] + " " + " ".join([_str_process(s) for s in args]) + "\n"
 
             self._handle.write(message)
             st = "                    "
         else:
             st = typstr(dt).split(".")[0] + " "
 
-        for k, v in p.items():
+        for k, v in kwargs.items():
             message = st + \
                 "%s = %s%s" % (
                     typstr(k), typstr(v), "\n")

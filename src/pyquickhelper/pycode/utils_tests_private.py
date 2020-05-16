@@ -209,29 +209,29 @@ def clean(folder=None, fLOG=noLOG):
     for log_file in ["temp_hal_log.txt", "temp_hal_log2.txt",
                      "temp_hal_log_.txt", "temp_log.txt", "temp_log2.txt", ]:
         li = get_test_file(log_file, folder=folder)
-        for l in li:
+        for el in li:
             try:
-                if os.path.isfile(l):
-                    os.remove(l)
+                if os.path.isfile(el):
+                    os.remove(el)
             except Exception as e:
-                fLOG(
-                    "[clean] unable to remove file", l, " --- ", str(e).replace("\n", " "))
+                fLOG("[clean] unable to remove file '{}' due to {}".format(
+                    el, str(e).replace("\n", " ")))
 
     li = get_test_file("temp_*")
-    for l in li:
+    for el in li:
         try:
-            if os.path.isfile(l):
-                os.remove(l)
+            if os.path.isfile(el):
+                os.remove(el)
         except Exception as e:
-            fLOG("[clean] unable to remove file. ", l,
-                 " --- ", str(e).replace("\n", " "))
-    for l in li:
+            fLOG("[clean] unable to remove file '{}' due to {}".format(
+                el, str(e).replace("\n", " ")))
+    for el in li:
         try:
-            if os.path.isdir(l):
-                remove_folder(l)
+            if os.path.isdir(el):
+                remove_folder(el)
         except Exception as e:
-            fLOG("[clean] unable to remove dir. ", l,
-                 " --- ", str(e).replace("\n", " "))
+            fLOG("[clean] unable to remove dir '{}' due to {}".format(
+                el, str(e).replace("\n", " ")))
 
 
 def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, skip_list=None,
@@ -283,8 +283,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 raise FileExistsError(
                     "This path should not exist '{}'.".format(path))
 
-    def short_name(l):
-        cut = os.path.split(l)
+    def short_name(el):
+        cut = os.path.split(el)
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         return cut
 
@@ -293,17 +293,16 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     li = get_test_file("test*", folder=path_test, fLOG=fLOG, root=path_test)
     if len(li) == 0:
         raise FileNotFoundError("no test files in " + path_test)
-    est = [get_estimation_time(l) for l in li]
-    co = [(e, short_name(l), l)
-          for e, l in zip(est, li)]  # pylint: disable=R1721
+    est = [get_estimation_time(el) for el in li]
+    co = [(e, short_name(el), el) for e, el in zip(est, li)]
     co.sort()
 
     # we check we do not run twice the same file
     done = {}
     duplicate = []
-    for _, cut, l in co:
+    for _, cut, lc in co:
         if cut in done:
-            duplicate.append((cut, l))
+            duplicate.append((cut, lc))
         done[cut] = True
 
     if len(duplicate) > 0:

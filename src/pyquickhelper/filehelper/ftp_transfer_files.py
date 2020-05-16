@@ -339,9 +339,9 @@ class FolderTransferFTP:
                 blocksize = 2**20
                 transfered = 0
 
-                def callback_function_(*l, **p):
+                def callback_function_(*args, **kwargs):
                     "local function"
-                    private_p = p.get('private_p', None)
+                    private_p = kwargs.get('private_p', None)
                     if private_p is None:
                         raise ValueError("private_p cannot be None")
                     private_p[1] += private_p[0]
@@ -350,8 +350,8 @@ class FolderTransferFTP:
                               (1.0 * private_p[1] / private_p[2], private_p[1], private_p[2]))
 
                 tp_ = [blocksize, transfered, size]
-                cb = lambda *ll, **p: callback_function_(
-                    *ll, private_p=tp_, **p)
+                cb = lambda *args2, **kwargs2: callback_function_(
+                    *args2, private_p=tp_, **kwargs2)
             else:
                 blocksize = None
                 cb = None

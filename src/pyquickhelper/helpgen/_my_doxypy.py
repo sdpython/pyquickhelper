@@ -590,7 +590,7 @@ if __name__ == "__main__":
         local_content = f.read()
     # main(__file__, print_output = print)
 
-    def pprint(*l, **kw):
-        print(*l, **kw)
+    def pprint(*la, **kw):
+        print(*la, **kw)
 
     process_string(local_content, pprint, lambda a, b, c: a, "", 0)

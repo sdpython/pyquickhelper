@@ -149,19 +149,19 @@ def GetLogFile(physical=False, filename=None):
     return flog_static.store_log_values["__log_file"]
 
 
-def noLOG(*l, **p):
+def noLOG(*args, **kwargs):
     """
     does nothing
     """
     pass
 
 
-def fLOG(*l, **p):
+def fLOG(*args, **kwargs):
     """
     Builds a message on a single line with the date, it deals with encoding issues.
 
-    @param      l       list of fields
-    @param      p       dictionary of fields (see below)
+    @param      args        list of fields
+    @param      kwargs      dictionary of fields (see below)
     @exception  OSError     When the log file cannot be created.
 
     About parameter *p*:
@@ -200,21 +200,21 @@ def fLOG(*l, **p):
         Parameter *OutputStream* allows to print
         the message on a different stream.
     """
-    path_add = p.get("LogPathAdd", [])
-    outstream = p.get('OutputStream', None)
+    path_add = kwargs.get("LogPathAdd", [])
+    outstream = kwargs.get('OutputStream', None)
     if outstream is not None:
-        del p['OutputStream']
+        del kwargs['OutputStream']
 
-    lock = p.get("Lock", None)
+    lock = kwargs.get("Lock", None)
     if lock is not None:
         flog_static.store_log_values["Lock"] = lock
 
-    if "LogFile" in p and "LogPath" in p:
-        init(p["LogPath"], p["LogFile"])
-    elif "LogFile" in p:
-        init(filename=p["LogFile"], path_add=path_add)
-    elif "LogPath" in p:
-        init(path=p["LogPath"], path_add=path_add)
+    if "LogFile" in kwargs and "LogPath" in kwargs:
+        init(kwargs["LogPath"], kwargs["LogFile"])
+    elif "LogFile" in kwargs:
+        init(filename=kwargs["LogFile"], path_add=path_add)
+    elif "LogPath" in kwargs:
+        init(path=kwargs["LogPath"], path_add=path_add)
 
     def myprint(s):
         if outstream is not None:
@@ -222,14 +222,14 @@ def fLOG(*l, **p):
         else:
             print(s)
 
-    if "OutputPrint" in p:
-        Print(p["OutputPrint"])
+    if "OutputPrint" in kwargs:
+        Print(kwargs["OutputPrint"])
 
-    if "LogFile" in p:
-        GetLogFile(True, filename=p["LogFile"])
+    if "LogFile" in kwargs:
+        GetLogFile(True, filename=kwargs["LogFile"])
 
     message = fLOGFormat(flog_static.store_log_values["__log_file_sep"],
-                         *l, **p)
+                         *args, **kwargs)
     GetLogFile().write(message)
     if flog_static.store_log_values["__log_display"]:
         try:
@@ -245,41 +245,38 @@ def fLOG(*l, **p):
     GetLogFile().flush()
 
 
-def fLOGFormat(sep, *l, **p):
+def fLOGFormat(sep, *args, **kwargs):
     """
     Formats a message.
 
     @param      sep     line separator
-    @param      l       list of anything
-    @param      p       dictioanry of anything
+    @param      args    list of anything
+    @param      kwargs  dictioanry of anything
     @return             string
 
     if *_pp* is True, the function uses :epkg:`*py:pprint`.
     """
-    upp = p.get('_pp', False)
+    upp = kwargs.get('_pp', False)
     dt = datetime.datetime(2009, 1, 1).now()
     typstr = str
-    if len(l) > 0:
+    if len(args) > 0:
         def _str_process(s):
             if isinstance(s, str):
                 if upp:
                     return pprint.pformat(s)
-                else:
-                    return s
-            elif isinstance(s, bytes):
+                return s
+            if isinstance(s, bytes):
                 return s.decode("utf8")
-            else:
-                try:
-                    if upp:
-                        return pprint.pformat(s)
-                    else:
-                        return typstr(s)
-                except Exception as e:
-                    raise Exception(  # pragma: no cover
-                        "unable to convert s into string: type(s)=" + str(type(s))) from e
+            try:
+                if upp:
+                    return pprint.pformat(s)
+                return typstr(s)
+            except Exception as e:
+                raise Exception(  # pragma: no cover
+                    "unable to convert s into string: type(s)=" + str(type(s))) from e
 
         message = str(dt).split(
-            ".")[0] + " " + " ".join([_str_process(s) for s in l]) + sep
+            ".")[0] + " " + " ".join([_str_process(s) for s in args]) + sep
         st = "                    "
     else:
         message = typstr(dt).split(".")[0] + " "
@@ -287,7 +284,7 @@ def fLOGFormat(sep, *l, **p):
 
     messages = [message]
 
-    for k, v in p.items():
+    for k, v in kwargs.items():
         if k in ("OutputPrint", '_pp') and v:
             continue
         message = st + "%s = %s%s" % (typstr(k), typstr(v), sep)
@@ -295,11 +292,11 @@ def fLOGFormat(sep, *l, **p):
     return sep.join(messages)
 
 
-def _this_fLOG(*l, **p):
+def _this_fLOG(*args, **kwargs):
     """
-    other name private to this module
+    Other name private to this module.
     """
-    fLOG(*l, **p)
+    fLOG(*args, **kwargs)
 
 
 def get_relative_path(folder, file, exists=True, absolute=True):
@@ -914,10 +911,10 @@ def get_default_value_type(ty, none=True):
             "type expected in " + str(guess_type_value_type()))
 
 
-def guess_type_list(l, tolerance=0.01, none=True):
+def guess_type_list(args, tolerance=0.01, none=True):
     """
     guess the type of a list
-    @param      l           list
+    @param      args        list
     @param      tolerance   let's denote m as the frequency of the most representative type,
                             and m2 the second one, if m2 > m * tolerance --> str
     @param      none        if True and all values are empty, return None
@@ -927,19 +924,19 @@ def guess_type_list(l, tolerance=0.01, none=True):
     defa = None if none else str
     length = 0
     typstr = str
-    if l in [typstr, float, int, None, decimal.Decimal]:
-        raise PQHException("this case is unexpected %s" % typstr(l))
+    if args in [typstr, float, int, None, decimal.Decimal]:
+        raise PQHException("this case is unexpected %s" % typstr(args))
 
-    if len(l) == 0:
+    if len(args) == 0:
         res = defa
 
-    elif len(l) == 1:
-        res = guess_type_value(l[0], none)
+    elif len(args) == 1:
+        res = guess_type_value(args[0], none)
         if res == typstr:
-            length = len(l[0])
+            length = len(args[0])
     else:
         count = {}
-        for x in l:
+        for x in args:
             t = guess_type_value(x, none)
             length = max(length, len(x))
             if t in count:

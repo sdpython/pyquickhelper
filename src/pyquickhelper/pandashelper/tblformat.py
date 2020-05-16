@@ -331,8 +331,8 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
 
         ic = 2
         length = [_ + ic for _ in length]
-        line = ["-" * l for l in length]
-        lineb = ["=" * l for l in length]
+        line = ["-" * lc for lc in length]
+        lineb = ["=" * lc for lc in length]
         sline = "+%s+" % ("+".join(line))
         slineb = "+%s+" % ("+".join(lineb))
         res = [sline]

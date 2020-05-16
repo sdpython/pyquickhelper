@@ -13,18 +13,18 @@ from .jenkins_helper import get_platform
 _jenkins_split = "JENKINS_SPLIT"
 
 
-def pickname(*l):
+def pickname(*args):
     """
     Picks the first string non null in the list.
 
     @param      l   list of string
     @return         string
     """
-    for s in l:
+    for s in args:
         s = s.strip()
         if s:
             return s
-    raise ValueError("Unable to find a non empty string in {0}".format(l))
+    raise ValueError("Unable to find a non empty string in {0}".format(args))
 
 
 def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):

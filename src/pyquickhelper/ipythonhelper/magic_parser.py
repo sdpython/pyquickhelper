@@ -15,15 +15,15 @@ class MagicCommandParser(argparse.ArgumentParser):
     Adds method ``parse_cmd`` to :epkg:`*py:argparse:ArgumentParser`.
     """
 
-    def __init__(self, prog, *l, **p):
+    def __init__(self, prog, *args, **kwargs):
         """
         custom constructor, see :epkg:`*py:argparse:ArgumentParser`.
 
         @param  prog        command name
-        @param  l           positional arguments
-        @param  p           named arguments
+        @param  args        positional arguments
+        @param  kwargs      named arguments
         """
-        argparse.ArgumentParser.__init__(self, prog=prog, *l, **p)
+        argparse.ArgumentParser.__init__(self, prog=prog, *args, **kwargs)
         self._keep_args = {}
 
     @staticmethod

@@ -70,8 +70,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
     if nblinks is None:
         nblinks = {}
     if format == "rst":
-        def reprst(l):
-            anc, url = l.groups()
+        def reprst(le):
+            anc, url = le.groups()
             url = get_url_from_nblinks(nblinks, url, format)
             if "://" in url:
                 new_url = "`{0} <{1}>`_".format(anc, url)
@@ -84,8 +84,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
         reg = re.compile("`([^`]+?) <find://([^`<>]+?)>`_")
         new_text = reg.sub(reprst, text)
     elif format in ("html", "slides", "slides2"):
-        def rephtml(l):
-            anc, url = l.groups()
+        def rephtml(le):
+            anc, url = le.groups()
             url = get_url_from_nblinks(nblinks, url, format)
             new_url = "<a href=\"{0}.html\">{1}</a>".format(anc, url)
             if fLOG:
@@ -95,8 +95,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
         reg = re.compile("<a href=\\\"find://([^\\\"]+?)\\\">([^`<>]+?)</a>")
         new_text = reg.sub(rephtml, text)
     elif format in ("ipynb", "python"):
-        def repipy(l):
-            anc, url = l.groups()
+        def repipy(le):
+            anc, url = le.groups()
             url = get_url_from_nblinks(nblinks, "find://" + url, format)
             if not url.startswith("http"):
                 mes = "\n".join("{0}: '{1}'".format(k, v)
@@ -114,8 +114,8 @@ def update_notebook_link(text, format, nblinks, fLOG):
         reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
         new_text = reg.sub(repipy, text)
     elif format in ("latex", "elatex"):
-        def replat(l):
-            url, anc = l.groups()
+        def replat(le):
+            url, anc = le.groups()
             url = get_url_from_nblinks(nblinks, url, format)
             if not url.endswith(".html") and not url.endswith(".js") and not url.endswith(".css"):
                 url += ".html"

@@ -14,16 +14,14 @@ class PQPipError (Exception):
     any exception raised by one of the following function
     """
 
-    def __init__(self, *l):
+    def __init__(self, *args):
         """
-        constructor
-
-        @param      l   either a string 3 strings (cmd, out, err)
+        @param      args    either a string 3 strings (cmd, out, err)
         """
-        if len(l) == 1:
-            Exception.__init__(self, l[0])
+        if len(args) == 1:
+            Exception.__init__(self, args[0])
         else:
-            cmd, out, err = l
+            cmd, out, err = args
             mes = "CMD:\n{0}\nOUT:\n{1}\n[piperror]\n{2}".format(cmd, out, err)
             Exception.__init__(self, mes)
 

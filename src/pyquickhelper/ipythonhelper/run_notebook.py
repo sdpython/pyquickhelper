@@ -145,13 +145,13 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 
     out = StringIO()
 
-    def flogging(*l, **p):
-        if len(l) > 0:
-            out.write(" ".join(l))
-        if len(p) > 0:
-            out.write(str(p))
+    def flogging(*args, **kwargs):
+        if len(args) > 0:
+            out.write(" ".join(args))
+        if len(kwargs) > 0:
+            out.write(str(kwargs))
         out.write("\n")
-        fLOG(*l, **p)
+        fLOG(*args, **kwargs)
 
     try:
         nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,

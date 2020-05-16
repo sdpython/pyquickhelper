@@ -1082,10 +1082,10 @@ def remove_some_indent(s, backslash=False):
     """
     rows = s.split("\n")
     mi = len(s)
-    for l in rows:
-        ll = l.lstrip()
+    for lr in rows:
+        ll = lr.lstrip()
         if len(ll) > 0:
-            d = len(l) - len(ll)
+            d = len(lr) - len(ll)
             mi = min(d, mi)
 
     if mi > 0:

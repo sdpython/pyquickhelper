@@ -559,14 +559,14 @@ class BlogPostList:
         return res
 
     @staticmethod
-    def produce_aggregated_post_page(name, l, this, prev, next, main_page="Blog",
+    def produce_aggregated_post_page(name, lp, this, prev, next, main_page="Blog",
                                      rst_links_up=None, rst_links_down=None,
                                      index_terms=None, bold_title=None, language="en"):
         """
         Writes the content of an aggregate page of blog posts.
 
         @param      name            filename to write
-        @param      l               list of posts
+        @param      lp              list of posts
         @param      this            reference to this page
         @param      prev            reference to the previous page
         @param      next            reference to the next page
@@ -626,7 +626,7 @@ class BlogPostList:
             rows.append("+" * len(bold_title))
             rows.append("")
 
-        for post in l:
+        for post in lp:
             text = post.post_as_rst(language=language, cut=True)
             rows.append(text)
             rows.append("")

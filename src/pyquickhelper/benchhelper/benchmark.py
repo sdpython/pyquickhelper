@@ -217,19 +217,19 @@ class BenchMark:
         """
         return self._name
 
-    def fLOG(self, *l, **p):
+    def fLOG(self, *args, **kwargs):
         """
         Logs something.
         """
-        self._tracelogs.append(fLOGFormat("\n", *l, **p).strip("\n"))
+        self._tracelogs.append(fLOGFormat("\n", *args, **kwargs).strip("\n"))
         if self._clog:
-            self._clog(*l, **p)
+            self._clog(*args, **kwargs)
         if self._fLOG:
-            self._fLOG(*l, **p)
+            self._fLOG(*args, **kwargs)
         if hasattr(self, "_progressbars") and self._progressbars and len(self._progressbars) > 0:
             br = self._progressbars[-1]
             br.set_description(fLOGFormat(
-                "\n", *l, **p).strip("\n").split("\n")[0])
+                "\n", *args, **kwargs).strip("\n").split("\n")[0])
             br.refresh()
 
     def run(self, params_list):

@@ -63,11 +63,11 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     cache_attributes = {}
     cache_refresh = datetime.timedelta(1)
 
-    def LOG(self, *l, **p):
+    def LOG(self, *args, **kwargs):
         """
         logging function
         """
-        fLOG(*l, **p)
+        fLOG(*args, **kwargs)
 
     @staticmethod
     def add_mapping(key, value):
