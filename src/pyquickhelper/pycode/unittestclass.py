@@ -233,7 +233,10 @@ class ExtTestCase(unittest.TestCase):
 
     def capture(self, fct):
         """
-        Runs a function and capture standard otuput and error.
+        Runs a function and capture standard output and error.
+
+        @param      fct     function to run
+        @return             result of *fct*, output, error
         """
         sout = StringIO()
         serr = StringIO()
