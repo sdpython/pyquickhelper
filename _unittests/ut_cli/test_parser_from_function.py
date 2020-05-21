@@ -60,8 +60,8 @@ class TestParserFromFunction(unittest.TestCase):
 
         rows = []
 
-        def flog(*l):
-            rows.append(l)
+        def flog(*args):
+            rows.append(args)
 
         call_cli_function(
             fpars, args=["-a", "3", "-b", "ttt", "-c", "5.5"], fLOG=flog)

@@ -73,8 +73,8 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
                 os.environ["PYTHONPATH"] = new_val.strip(sep)
                 log_lines = []
 
-                def logging_custom(*l, **p):
-                    log_lines.append(l)
+                def logging_custom(*args, **kwargs):
+                    log_lines.append(args)
                 lcmd = command.split() if ' ' in command else [command]
                 stdout2 = StringIO()
                 stderr2 = StringIO()

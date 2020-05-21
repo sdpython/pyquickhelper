@@ -22,8 +22,8 @@ class TestPyqSyncCli(unittest.TestCase):
 
         rows = []
 
-        def flog(*l):
-            rows.append(l)
+        def flog(*args):
+            rows.append(args)
 
         pyq_sync(args=['-h'], fLOG=flog)
 
