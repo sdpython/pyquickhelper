@@ -137,11 +137,11 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
     @return                             list of tests [ ( testsuite, file) ]
     """
     allsuite = []
-    for l in li:
+    for le in li:
 
         copypath = list(sys.path)
 
-        sdir = os.path.split(l)[0]
+        sdir = os.path.split(le)[0]
         if sdir not in sys.path:
             sys.path.append(sdir)
         if additional_ut_path:
@@ -153,7 +153,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                         sys.path.append(p[0])
                 else:
                     sys.path.append(p)
-        tl = os.path.split(l)[1]
+        tl = os.path.split(le)[1]
         fi = tl.replace(".py", "")
 
         try:
@@ -193,7 +193,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                 t = loc["t"]
                 testsuite.addTest(t)
 
-            allsuite.append((testsuite, l))
+            allsuite.append((testsuite, le))
 
     return allsuite
 
