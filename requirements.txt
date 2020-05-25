@@ -9,6 +9,7 @@ cryptography
 docformatter
 fire
 git-pandas
+gitdb
 img2pdf
 ipython>=5.0.0
 js2py
