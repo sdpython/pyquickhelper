@@ -8,7 +8,7 @@ from io import StringIO
 class BufferedPrint:
     """
     Buffered display. Relies on :epkg:`*py:io:StringIO`.
-    Use it as follows::
+    Use it as follows:
 
     .. runpython::
         :showcode:
