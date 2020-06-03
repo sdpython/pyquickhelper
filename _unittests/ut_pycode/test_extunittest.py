@@ -82,6 +82,20 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertEqualArray(None, df),
                          AssertionError)
 
+    def test_arr_squeeze(self):
+        from numpy import array
+        df = array([[0, 1], [1, 2]])
+        df1 = array([[0, 1], [1, 2]]).reshape((2, 2, 1))
+        df2 = array([[0, 1], [3, 2]]).reshape((2, 2, 1))
+        self.assertEqualArray(df, df1, squeeze=True)
+        self.assertEqualArray(None, None)
+        self.assertRaise(lambda: self.assertEqualArray(df, df2, squeeze=True),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualArray(df, None, squeeze=True),
+                         AssertionError)
+        self.assertRaise(lambda: self.assertEqualArray(None, df, squeeze=True),
+                         AssertionError)
+
     def test_arr_not_equal_noe(self):
         from numpy import array
         df = array([[0, 1], [1, 2]])
@@ -93,6 +107,18 @@ class TestExtTestCase(ExtTestCase):
             None, None), AssertionError)
         self.assertNotEqualArray(df, None)
         self.assertNotEqualArray(None, df)
+
+    def test_arr_not_equal_noe_squeeze(self):
+        from numpy import array
+        df = array([[0, 1], [1, 2]])
+        df1 = array([[0, 1], [1, 2]]).reshape((2, 2, 1))
+        df2 = array([[0, 1], [3, 2]]).reshape((2, 2, 1))
+        self.assertRaise(lambda: self.assertNotEqualArray(
+            df, df1, squeeze=True), AssertionError)
+        self.assertRaise(lambda: self.assertNotEqualArray(
+            None, None, squeeze=True), AssertionError)
+        self.assertNotEqualArray(df, None, squeeze=True)
+        self.assertNotEqualArray(None, df, squeeze=True)
 
     def test_arr_equal(self):
         from numpy import array

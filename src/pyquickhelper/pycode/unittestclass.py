@@ -124,7 +124,7 @@ class ExtTestCase(unittest.TestCase):
             return
         raise AssertionError("Two dataframes are identical.")
 
-    def assertEqualArray(self, d1, d2, **kwargs):
+    def assertEqualArray(self, d1, d2, squeeze=False, **kwargs):
         """
         Checks that two arrays are equal.
         Relies on :epkg:`numpy:testing:assert_almost_equal.html`.
@@ -136,6 +136,10 @@ class ExtTestCase(unittest.TestCase):
         if d2 is None:
             raise AssertionError("d1 is not None, d2 is")
         from numpy.testing import assert_almost_equal
+        import numpy
+        if squeeze:
+            d1 = numpy.squeeze(d1)
+            d2 = numpy.squeeze(d2)
         assert_almost_equal(d1, d2, **kwargs)
 
     def assertEqualSparseArray(self, d1, d2, **kwargs):
@@ -163,7 +167,7 @@ class ExtTestCase(unittest.TestCase):
         raise NotImplementedError("Comparison not implemented for types {} and {}.".format(
             type(d1), type(d2)))
 
-    def assertNotEqualArray(self, d1, d2, **kwargs):
+    def assertNotEqualArray(self, d1, d2, squeeze=False, **kwargs):
         """
         Checks that two arrays are equal.
         Relies on :epkg:`numpy:testing:assert_almost_equal.html`.
@@ -173,6 +177,10 @@ class ExtTestCase(unittest.TestCase):
         if d1 is None or d2 is None:
             return
         from numpy.testing import assert_almost_equal
+        import numpy
+        if squeeze:
+            d1 = numpy.squeeze(d1)
+            d2 = numpy.squeeze(d2)
         try:
             assert_almost_equal(d1, d2, **kwargs)
         except AssertionError:
