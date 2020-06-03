@@ -159,62 +159,56 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
                     content = f.read()
                     check_size(content)
                     return (content, "rb") if add_source else content
-            else:
-                with open(file_url_stream, "r", encoding=encoding) as f:
-                    content = f.read()
-                    check_size(content)
-                    return (content, "r") if add_source else content
-        elif len(file_url_stream) < 5000 and file_url_stream.startswith("http"):
+            with open(file_url_stream, "r", encoding=encoding) as f:
+                content = f.read()
+                check_size(content)
+                return (content, "r") if add_source else content
+        if len(file_url_stream) < 5000 and file_url_stream.startswith("http"):
             content = read_url(file_url_stream, encoding=encoding)
             check_size(content)
             return (content, "u") if add_source else content
-        elif is_url_string(file_url_stream):
+        if is_url_string(file_url_stream):
             if asbytes:
                 content = read_url(file_url_stream)
                 check_size(content)
                 return (content, "ub") if add_source else content
-            else:
-                if encoding is None:
-                    raise ValueError(
-                        "cannot return bytes if encoding is None for url: " + file_url_stream)
-                content = read_url(file_url_stream, encoding=encoding)
-                check_size(content)
-                return (content, "u") if add_source else content
-        else:
-            # the string should the content itself
-            if isinstance(file_url_stream, str):
-                if asbytes:
-                    raise TypeError(
-                        "file_url_stream is str when expected bytes")
-                return (file_url_stream, "s") if add_source else file_url_stream
-            else:
-                if asbytes:
-                    return (file_url_stream, "b") if add_source else file_url_stream
+            if encoding is None:
+                raise ValueError(
+                    "cannot return bytes if encoding is None for url: " + file_url_stream)
+            content = read_url(file_url_stream, encoding=encoding)
+            check_size(content)
+            return (content, "u") if add_source else content
+        # the string should the content itself
+        if isinstance(file_url_stream, str):
+            if asbytes:
                 raise TypeError(
-                    "file_url_stream is bytes when expected str")
-    elif isinstance(file_url_stream, bytes):
+                    "file_url_stream is str when expected bytes")
+            return (file_url_stream, "s") if add_source else file_url_stream
         if asbytes:
             return (file_url_stream, "b") if add_source else file_url_stream
-        else:
-            content = file_url_stream.encode(encoding=encoding)
-            check_size(content)
-            return (content, "b") if add_source else content
-    elif isinstance(file_url_stream, StringIO):
+        raise TypeError(
+            "file_url_stream is bytes when expected str")
+
+    if isinstance(file_url_stream, bytes):
+        if asbytes:
+            return (file_url_stream, "b") if add_source else file_url_stream
+        content = file_url_stream.encode(encoding=encoding)
+        check_size(content)
+        return (content, "b") if add_source else content
+    if isinstance(file_url_stream, StringIO):
         v = file_url_stream.getvalue()
         if asbytes and v:
             content = v.encode(encoding=encoding)
             check_size(content)
             return (content, "Sb") if add_source else content
-        else:
-            return (v, "S") if add_source else v
-    elif isinstance(file_url_stream, BytesIO):
+        return (v, "S") if add_source else v
+    if isinstance(file_url_stream, BytesIO):
         v = file_url_stream.getvalue()
         if asbytes or not v:
             return (v, "SBb") if add_source else v
-        else:
-            content = v.decode(encoding=encoding)
-            check_size(content)
-            return (content, "SB") if add_source else content
-    else:
-        raise TypeError(
-            "unexpected type for file_url_stream: {0}".format(type(file_url_stream)))
+        content = v.decode(encoding=encoding)
+        check_size(content)
+        return (content, "SB") if add_source else content
+    raise TypeError(
+        "unexpected type for file_url_stream: {0}\n{1}".format(
+            type(file_url_stream), file_url_stream))

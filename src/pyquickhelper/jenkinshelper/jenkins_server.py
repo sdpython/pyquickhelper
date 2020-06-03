@@ -579,7 +579,8 @@ class JenkinsExt(jenkins.Jenkins):
                     cmdn = replacements(cmd, engine, python,
                                         namee + "_" + job_hash, module_name)
                     if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or
-                                            "Python36" in cmdn or "Python37" in cmdn):
+                                            "Python36" in cmdn or "Python37" in cmdn or
+                                            "Python38" in cmdn or "Python39" in cmdn):
                         raise ValueError(
                             "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
                     res.append(cmdn)
@@ -591,7 +592,13 @@ class JenkinsExt(jenkins.Jenkins):
         else:  # pragma: no cover
             # linux
             engine, namee = self.get_engine_from_job(job, True)
-            python = "python%d.%d" % sys.version_info[:2]
+            if engine is None:
+                python = "python%d.%d" % sys.version_info[:2]
+            elif namee.startswith('py'):
+                vers = (int(namee[2:3]), int(namee[3:]))
+                python = "python%d.%d" % vers
+            else:
+                raise ValueError("Unable to handle engine ='{}', namee='{}'.".format(engine, namee))
 
             if len(spl) == 1:
                 script = _modified_linux_jenkins(
@@ -638,7 +645,8 @@ class JenkinsExt(jenkins.Jenkins):
                     cmdn = replacements(cmd, engine, python,
                                         namee + "_" + job_hash, module_name)
                     if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or
-                                            "Python36" in cmdn or "Python37" in cmdn):
+                                            "Python36" in cmdn or "Python37" in cmdn or
+                                            "Python38" in cmdn or "Python39" in cmdn):
                         raise ValueError(
                             "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
                     res.append(cmdn)
@@ -1269,7 +1277,10 @@ class JenkinsExt(jenkins.Jenkins):
         description = ["%s%02d%02d" % (dozen, order, unit)]
         if scheduler is not None:
             description.append(scheduler)
-        description = " - ".join(description)
+        try:
+            description = " - ".join(description)
+        except TypeError as e:
+            raise TypeError("Issue with {}.".format(description)) from e
 
         # credentials
         if isinstance(credentials, dict):

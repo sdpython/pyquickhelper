@@ -37,6 +37,9 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     @param      platform            to join path differently based on the OS
     @return                         see `PyYAML <http://pyyaml.org/wiki/PyYAMLDocumentation>`_
     """
+    if not isinstance(context, dict):
+        raise TypeError(  # pragma: no cover
+            "context must be a dictionary not {}.".format(type(context)))
     def replace(val, rep, into):
         if val is None:
             return val
@@ -67,11 +70,12 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
                     context[k] = f
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
-
-    if not context["root_path"].endswith(project_name):
+    
+    if ("root_path" not in context or
+            not context["root_path"].endswith(project_name)):
         context = context.copy()
         context["root_path"] = ospathjoin(
-            context["root_path"], project_name, platform=platform)
+            context.get("root_path", ""), project_name, platform=platform)
 
     if "root_path" in context:
         if platform is None:

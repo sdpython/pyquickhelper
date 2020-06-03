@@ -346,10 +346,16 @@ class ExtTestCase(unittest.TestCase):
         mi = min(abs(a), abs(b))
         if mi == 0:
             d = abs(a - b)
-            self.assertLesser(d, precision)
+            try:
+                self.assertLesser(d, precision)
+            except AssertionError:
+                raise AssertionError("{} != {} (p={})".format(a, b, precision))
         else:
             r = float(abs(a - b)) / mi
-            self.assertLesser(r, precision)
+            try:
+                self.assertLesser(r, precision)
+            except AssertionError:
+                raise AssertionError("{} != {} (p={})".format(a, b, precision))
 
     def assertCallable(self, fct):
         """
