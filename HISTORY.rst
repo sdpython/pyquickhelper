@@ -5,8 +5,17 @@
 History
 =======
 
-current - 2020-04-06 - 0.00Mb
+current - 2020-06-03 - 0.00Mb
 =============================
+
+* `303`: Add parameter squeeze to assertEqualArray (2020-06-03)
+* `301`: Implements method assertWarning in ExtTestCase (2020-05-10)
+* `302`: Implements method assertLogging in ExtTestCase (2020-05-10)
+* `300`: Use fire instead of docutils to parse function documentation in cli (2020-05-02)
+* `298`: SingleFileHTMLBuilder is deprecated in Sphinx (2020-04-07)
+
+1.9.3359 - 2020-04-06 - 2.06Mb
+==============================
 
 * `297`: Fix import issue with sphinx==3.0.0 (2020-04-05)
 
@@ -234,10 +243,6 @@ current - 2020-04-06 - 0.00Mb
 * `143`: add setup option to run pylint (2018-05-11)
 * `142`: look for the files which makes pylint crash on Windows (2018-05-11)
 * `141`: check_pep8 does not detect line too long and unused variables (use of pylint) (2018-05-11)
-
-1.7.2581 - 2018-05-07 - 2.00Mb
-==============================
-
 * `140`: modify assertEqualArray to allow small different (assert_almost_equal) (2018-05-07)
 * `138`: retrieve past issues in history.rst (2018-05-06)
 * `139`: update to python-jenkins 1.0.0 (2018-05-05)

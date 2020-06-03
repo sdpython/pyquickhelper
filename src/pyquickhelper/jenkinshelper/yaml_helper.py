@@ -70,7 +70,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
             "project_name is wrong, it cannot end by '__': '{0}'".format(project_name))
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
-    
+
     if ("root_path" not in context or
             not context["root_path"].endswith(project_name)):
         context = context.copy()

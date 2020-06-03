@@ -598,7 +598,8 @@ class JenkinsExt(jenkins.Jenkins):
                 vers = (int(namee[2:3]), int(namee[3:]))
                 python = "python%d.%d" % vers
             else:
-                raise ValueError("Unable to handle engine ='{}', namee='{}'.".format(engine, namee))
+                raise ValueError(
+                    "Unable to handle engine ='{}', namee='{}'.".format(engine, namee))
 
             if len(spl) == 1:
                 script = _modified_linux_jenkins(
