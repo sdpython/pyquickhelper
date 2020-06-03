@@ -2,6 +2,7 @@
 @file
 @brief Templating functions
 """
+from pprint import pformat
 
 
 class CustomTemplateException(Exception):
@@ -57,7 +58,8 @@ def apply_template(text, context, engine="mako"):
             res = template.render(**context)
         except UndefinedError as ee:
             raise CustomTemplateException(
-                "Some parameters are missing or mispelled.") from ee
+                "Some parameters are missing or mispelled\n{}"
+                "".format(pformat(context))) from ee
         return res
     else:
         raise ValueError(

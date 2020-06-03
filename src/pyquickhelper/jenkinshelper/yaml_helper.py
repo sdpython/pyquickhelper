@@ -37,21 +37,11 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     @param      platform            to join path differently based on the OS
     @return                         see `PyYAML <http://pyyaml.org/wiki/PyYAMLDocumentation>`_
     """
-    if not isinstance(context, dict):
-        raise TypeError(  # pragma: no cover
-            "context must be a dictionary not {}.".format(type(context)))
     def replace(val, rep, into):
         if val is None:
             return val
         return val.replace(rep, into)
     content, source = read_content_ufs(file_or_buffer, add_source=True)
-    if "project_name" not in context:
-        project_name = infer_project_name(file_or_buffer, source)
-    else:
-        project_name = context["project_name"]
-    if project_name.endswith("__"):
-        raise ValueError(
-            "project_name is wrong, it cannot end by '__': '{0}'".format(project_name))
 
     def ospathjoinp(*args, **kwargs):
         p = kwargs.get('platform', platform)
@@ -68,6 +58,16 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
             for k, f in fs:
                 if k not in context:
                     context[k] = f
+    if not isinstance(context, dict):
+        raise TypeError(  # pragma: no cover
+            "context must be a dictionary not {}.".format(type(context)))
+    if "project_name" not in context:
+        project_name = infer_project_name(file_or_buffer, source)
+    else:
+        project_name = context["project_name"]
+    if project_name.endswith("__"):
+        raise ValueError(
+            "project_name is wrong, it cannot end by '__': '{0}'".format(project_name))
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
     
