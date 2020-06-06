@@ -31,6 +31,8 @@ def default_filter_warning(w):  # pragma: no cover
         if "_bootstrap.py" in w.filename:
             if "numpy.dtype size changed" in str(w.message):
                 return False
+            if "More than 20 figures have been opened." in str(w.message):
+                return False
     elif isinstance(w.message, UserWarning):
         if "matplotlib" in w.filename:
             if "findfont: Font family" in str(w.message):
