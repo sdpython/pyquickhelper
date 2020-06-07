@@ -15,7 +15,8 @@ from .trace_execution import get_call_stack
 from .unittestclass import (
     ExtTestCase, skipif_appveyor, skipif_travis, skipif_circleci,
     skipif_linux, skipif_vless, skipif_azure_macosx,
-    skipif_azure, skipif_azure_linux, unittest_require_at_least
+    skipif_azure, skipif_azure_linux, unittest_require_at_least,
+    ignore_warnings
 )
 from .pytest_helper import run_test_function, TestExecutionError
 from .utils_tests import main_wrapper_tests

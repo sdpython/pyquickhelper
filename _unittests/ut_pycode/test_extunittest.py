@@ -7,7 +7,8 @@ import unittest
 import warnings
 import pandas
 
-from pyquickhelper.pycode import ExtTestCase, unittest_require_at_least
+from pyquickhelper.pycode import (
+    ExtTestCase, unittest_require_at_least, ignore_warnings)
 from pyquickhelper.pandashelper import df2rst
 from pyquickhelper import __file__ as rootfile
 
@@ -249,6 +250,7 @@ class TestExtTestCase(ExtTestCase):
         except Exception as e:
             self.assertIn('older than', str(e))
 
+    @ignore_warnings(RuntimeWarning)
     def test_sparse_arr(self):
         from numpy import array
         from scipy.sparse import coo_matrix, csc_matrix, csr_matrix

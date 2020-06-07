@@ -8,6 +8,7 @@ import sys
 import unittest
 import warnings
 import decimal
+from functools import wraps
 import pprint
 from logging import getLogger, INFO, StreamHandler
 from contextlib import redirect_stdout, redirect_stderr
@@ -50,8 +51,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if hasattr(s, "replace"):
             return "'{0}'".format(s)
-        else:
-            return s
+        return s
 
     def assertNotEmpty(self, x):
         """
@@ -624,3 +624,21 @@ def unittest_require_at_least(mod, version, msg=""):
     msg = "Module '{}'  is older than '{}' (= '{}'). {}".format(
         mod, version, v, msg)
     return unittest.skip(msg)
+
+
+def ignore_warnings(warns):
+    """
+    Catches warnings.
+
+    @param      warns   warnings to ignore
+    """
+    def wrapper(fct):
+        if warns is None:
+            raise AssertionError(  # pragma: no cover
+                "warns cannot be None for '{}'.".format(fct))
+        def call_f(self):
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", warns)
+                return fct(self)
+        return call_f
+    return wrapper
