@@ -5,12 +5,17 @@
 History
 =======
 
-current - 2020-06-03 - 0.00Mb
+current - 2020-06-08 - 0.00Mb
 =============================
 
+* `304`: Implements a simpler version of ignore_warnings (2020-06-07)
+
+1.9.3393 - 2020-06-03 - 2.06Mb
+==============================
+
 * `303`: Add parameter squeeze to assertEqualArray (2020-06-03)
-* `301`: Implements method assertWarning in ExtTestCase (2020-05-10)
 * `302`: Implements method assertLogging in ExtTestCase (2020-05-10)
+* `301`: Implements method assertWarning in ExtTestCase (2020-05-10)
 * `300`: Use fire instead of docutils to parse function documentation in cli (2020-05-02)
 * `298`: SingleFileHTMLBuilder is deprecated in Sphinx (2020-04-07)
 

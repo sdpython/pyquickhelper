@@ -8,7 +8,6 @@ import sys
 import unittest
 import warnings
 import decimal
-from functools import wraps
 import pprint
 from logging import getLogger, INFO, StreamHandler
 from contextlib import redirect_stdout, redirect_stderr
@@ -636,6 +635,7 @@ def ignore_warnings(warns):
         if warns is None:
             raise AssertionError(  # pragma: no cover
                 "warns cannot be None for '{}'.".format(fct))
+
         def call_f(self):
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", warns)
