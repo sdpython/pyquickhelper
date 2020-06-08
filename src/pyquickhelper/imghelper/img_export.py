@@ -31,7 +31,7 @@ def images2pdf(images, output, fLOG=None):
         else:
             images = [images]
     elif not isinstance(images, list):
-        raise TypeError("Images must be a list.")
+        raise TypeError("Images must be a list.")  # pragma: no cover
 
     all_images = []
     for img in images:
@@ -41,7 +41,7 @@ def images2pdf(images, output, fLOG=None):
         else:
             all_images.append(img)
 
-    if fLOG is not None:
+    if fLOG is not None:  # pragma: no cover
         for i, img in enumerate(all_images):
             fLOG("[images2pdf] {}/{} '{}'".format(i + 1, len(all_images), img))
 

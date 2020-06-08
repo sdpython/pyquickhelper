@@ -84,8 +84,9 @@ def install_node_js_modules(dest, module_list=None, fLOG=noLOG):
             err = run_cmd(cmd, wait=True, change_path=dir_name, fLOG=fLOG)[1]
             errs.append(err)
     if not os.path.exists(node_modules):
-        raise Exception("Unable to run from '{0}' commands line:\n{1}\n--due to--\n{2}".format(
-                        dir_name, "\n".join(cmds), "\n".join(errs)))
+        raise RuntimeError(  # pragma: no cover
+            "Unable to run from '{0}' commands line:\n{1}\n--due to--\n{2}".format(
+                dir_name, "\n".join(cmds), "\n".join(errs)))
 
 
 def nodejs_version():
@@ -94,7 +95,8 @@ def nodejs_version():
     """
     out, err = run_cmd('node -v', wait=True)
     if len(err) > 0:
-        raise NodeJsException("Unable to find node\n{0}".format(err))
+        raise NodeJsException(  # pragma: no cover
+            "Unable to find node\n{0}".format(err))
     return out
 
 
@@ -112,13 +114,14 @@ def run_js_with_nodejs(script, path_dependencies=None, fLOG=noLOG):
     out, err = run_cmd(cmd, change_path=path_dependencies,
                        fLOG=fLOG, wait=True)
     if len(err) > 0:
-        filtered = "\n".join(_ for _ in err.split(
-            '\n') if not _.startswith("[BABEL] Note:"))
+        filtered = "\n".join(_ for _ in err.split('\n')
+                             if not _.startswith("[BABEL] Note:"))
     else:
         filtered = err
     if len(filtered) > 0:
-        raise NodeJsException(
-            "Execution of node.js failed.\n--CMD--\n{0}\n--ERR--\n{1}\n--OUT--\n{2}\n--SCRIPT--\n{3}".format(cmd, err, out, script))
+        raise NodeJsException(  # pragma: no cover
+            "Execution of node.js failed.\n--CMD--\n{0}\n--ERR--\n{1}\n--OUT--\n{2}\n"
+            "--SCRIPT--\n{3}".format(cmd, err, out, script))
     return out
 
 
@@ -140,7 +143,8 @@ def require(module_name, cache_folder='.', suffix='_pyq', update=False, fLOG=noL
     The function is not fully tested.
     """
     if module_name.endswith('.js'):
-        raise ValueError("module_name must the name without extension .js")
+        raise ValueError(  # pragma: no cover
+            "module_name must the name without extension .js")
     global _require_cache
     if module_name in _require_cache and not update:
         py_code = _require_cache[module_name]

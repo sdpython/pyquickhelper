@@ -90,17 +90,20 @@ def convert_notebook(filename, outfold=None, build=None,
     """
     from ..helpgen.process_notebooks import process_notebooks
     if not os.path.exists(filename):
-        raise FileNotFoundError("Unable to find '{}'.".format(filename))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find '{}'.".format(filename))
     if outfold in ('.', '', None):
         outfold = os.path.abspath(os.path.dirname(filename))
     if not os.path.exists(outfold):
-        raise FileNotFoundError("Unable to find '{}'.".format(outfold))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find '{}'.".format(outfold))
     if build in ('.', '', None):
         build = os.path.join(outfold, "_convertnb")
         if not os.path.exists(build):
             os.mkdir(build)
     if not os.path.exists(build):
-        raise FileNotFoundError("Unable to find '{}'.".format(build))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find '{}'.".format(build))
     return process_notebooks(
         notebooks=filename, outfold=outfold, build=build,
         latex_path=latex_path, pandoc_path=pandoc_path,

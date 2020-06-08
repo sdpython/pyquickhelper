@@ -295,8 +295,7 @@ def guess_module_name(fct):
     name = spl[0]
     if name == 'src':
         return spl[1]
-    else:
-        return spl[0]
+    return spl[0]
 
 
 def cli_main_helper(dfct, args, fLOG=print):

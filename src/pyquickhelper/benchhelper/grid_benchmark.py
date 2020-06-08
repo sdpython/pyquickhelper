@@ -46,22 +46,22 @@ class GridBenchMark(BenchMark):
                            **params)
 
         if not isinstance(datasets, list):
-            raise TypeError("datasets must be a list")
+            raise TypeError("datasets must be a list")  # pragma: no cover
         for i, df in enumerate(datasets):
             if not isinstance(df, dict):
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "Every dataset must be a dictionary, {0}th is not.".format(i))
             if "X" not in df:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Dictionary {0} should contain key 'X'.".format(i))
             if "di" in df:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Dictionary {0} should not contain key 'di'.".format(i))
             if "name" not in df:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Dictionary {0} should not contain key 'name'.".format(i))
             if "shortname" not in df:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Dictionary {0} should not contain key 'shortname'.".format(i))
         self._datasets = datasets
         self._repetition = repetition
@@ -108,16 +108,17 @@ class GridBenchMark(BenchMark):
         unique = set()
         for i, pars in enumerate(params_list):
             if "name" not in pars:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Dictionary {0} must contain key 'name'.".format(i))
             if "shortname" not in pars:
-                raise KeyError(
+                raise KeyError(  # pragma: no cover
                     "Dictionary {0} must contain key 'shortname'.".format(i))
             if pars["name"] in unique:
-                raise ValueError("'{0}' is duplicated.".format(pars["name"]))
+                raise ValueError(  # pragma: no cover
+                    "'{0}' is duplicated.".format(pars["name"]))
             unique.add(pars["name"])
             if pars["shortname"] in unique:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "'{0}' is duplicated.".format(pars["shortname"]))
             unique.add(pars["shortname"])
 
@@ -141,7 +142,8 @@ class GridBenchMark(BenchMark):
         parameter *di* is the dataset to use
         """
         if "di" not in params:
-            raise KeyError("key 'di' is missing from params")
+            raise KeyError(
+                "key 'di' is missing from params")  # pragma: no cover
         results = []
 
         for iexp in range(self._repetition):
@@ -205,7 +207,7 @@ class GridBenchMark(BenchMark):
         @param      params      additional parameters
         @return                 output of the experiment
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def predict_score_experiment(self, info, output, **params):
         """
@@ -216,4 +218,4 @@ class GridBenchMark(BenchMark):
         @param      params      additional parameters
         @return                 output of the experiment, tuple of dictionaries
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover

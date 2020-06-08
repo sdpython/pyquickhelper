@@ -107,7 +107,8 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
     else:
         content = input
     if directives:
-        raise NotImplementedError("Cannot specify directives yet.")
+        raise NotImplementedError(
+            "Cannot specify directives yet.")  # pragma: no cover
 
     preamble = _preamble + _custom_preamble
     epkg_dictionary = get_epkg_dictionary()

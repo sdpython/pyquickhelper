@@ -62,5 +62,5 @@ def apply_template(text, context, engine="mako"):
                 "".format(pformat(context))) from ee
         return res
     else:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "engine should be 'mako' or 'jinja2', not '{0}'".format(engine))

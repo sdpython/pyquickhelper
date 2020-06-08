@@ -5,12 +5,7 @@
 .. versionadded:: 1.7
 """
 import xml.etree.ElementTree as ET
-try:
-    from io import BytesIO
-except ImportError:
-    # Python 2.7
-    from StringIO import StringIO as BytesIO
-
+from io import BytesIO
 from .excs import PYQImageException
 
 
@@ -67,7 +62,7 @@ def svg2img(svg, dpi=None, scale=1., **kwargs):
             svg = head + svg[5:]
             return svg2img(svg, dpi=dpi, scale=scale, **kwargs)
         else:
-            raise PYQImageException(
+            raise PYQImageException(  # pragma: no cover
                 "width and height must be specified. This might be the error.") from e
     png = img.getvalue()
     st = BytesIO(png)

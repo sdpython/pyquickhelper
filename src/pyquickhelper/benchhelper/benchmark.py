@@ -60,7 +60,8 @@ class BenchMark:
         """
         Initialisation. Overwrite this method.
         """
-        raise NotImplementedError("It should be overwritten.")
+        raise NotImplementedError(
+            "It should be overwritten.")  # pragma: no cover
 
     def bench(self, **params):
         """
@@ -71,13 +72,15 @@ class BenchMark:
 
         The results of this method will be cached if a *cache_file* was specified in the constructor.
         """
-        raise NotImplementedError("It should be overwritten.")
+        raise NotImplementedError(
+            "It should be overwritten.")  # pragma: no cover
 
     def end(self):
         """
         Cleans. Overwrites this method.
         """
-        raise NotImplementedError("It should be overwritten.")
+        raise NotImplementedError(
+            "It should be overwritten.")  # pragma: no cover
 
     def graphs(self, path_to_images):
         """
@@ -143,7 +146,7 @@ class BenchMark:
             @param      root            path should be relative to this one
             """
             if func_gen is None:
-                raise ValueError("func_gen cannot be None")
+                raise ValueError("func_gen cannot be None")  # pragma: no cover
             if filename is not None:
                 self.filename = filename
             if title is not None:
@@ -191,7 +194,8 @@ class BenchMark:
                 filename = filename.replace("\\", "/")
                 return '<img src="{0}" {1}/>'.format(filename, merge)
             else:
-                raise NotImplementedError("only files are allowed")
+                raise NotImplementedError(
+                    "only files are allowed")  # pragma: no cover
 
         def to_rst(self):
             """
@@ -208,7 +212,8 @@ class BenchMark:
                 filename = filename.replace("\\", "/")
                 return '.. image:: {0}'.format(filename)
             else:
-                raise NotImplementedError("only files are allowed")
+                raise NotImplementedError(
+                    "only files are allowed")  # pragma: no cover
 
     @property
     def Name(self):
@@ -239,10 +244,11 @@ class BenchMark:
         @param      params_list     list of dictionaries
         """
         if not isinstance(params_list, list):
-            raise TypeError("params_list must be a list")
+            raise TypeError("params_list must be a list")  # pragma: no cover
         for di in params_list:
             if not isinstance(di, dict):
-                raise TypeError("params_list must be a list of dictionaries")
+                raise TypeError(  # pragma: no cover
+                    "params_list must be a list of dictionaries")
 
         # shared variables
         cached = {}
@@ -326,36 +332,39 @@ class BenchMark:
                 elif isinstance(tu, list):
                     tus = tu
                 else:
-                    raise TypeError(
+                    raise TypeError(  # pragma: no cover
                         "return of method bench must be a tuple of a list")
 
                 # checkings
                 for tu in tus:
                     met, app = tu
                     if len(tu) != 2:
-                        raise TypeError(
+                        raise TypeError(  # pragma: no cover
                             "Method run should return a tuple with 2 elements.")
                     if "_btry" not in met:
-                        raise KeyError("Metrics should contain key '_btry'.")
+                        raise KeyError(  # pragma: no cover
+                            "Metrics should contain key '_btry'.")
                     if "_btry" not in app:
-                        raise KeyError("Appendix should contain key '_btry'.")
+                        raise KeyError(  # pragma: no cover
+                            "Appendix should contain key '_btry'.")
 
                 for met, app in tus:
                     met["_date"] = dt
                     dt = datetime.now() - dt
                     if not isinstance(met, dict):
-                        raise TypeError("metrics should be a dictionary")
+                        raise TypeError(  # pragma: no cover
+                            "metrics should be a dictionary")
                     if "_time" in met:
-                        raise KeyError(
+                        raise KeyError(  # pragma: no cover
                             "key _time should not be the returned metrics")
                     if "_span" in met:
-                        raise KeyError(
+                        raise KeyError(  # pragma: no cover
                             "key _span should not be the returned metrics")
                     if "_i" in met:
-                        raise KeyError(
+                        raise KeyError(  # pragma: no cover
                             "key _i should not be in the returned metrics")
                     if "_name" in met:
-                        raise KeyError(
+                        raise KeyError(  # pragma: no cover
                             "key _name should not be the returned metrics")
                     met["_time"] = cl
                     met["_span"] = dt
@@ -372,10 +381,11 @@ class BenchMark:
             self.fLOG("[BenchMark.run] graph {0} do".format(self.Name))
             self._graphs = self.graphs(self._path_to_images)
             if self._graphs is None or not isinstance(self._graphs, list):
-                raise TypeError("Method graphs does not return anything.")
+                raise TypeError(  # pragma: no cover
+                    "Method graphs does not return anything.")
             for tu in self._graphs:
                 if not isinstance(tu, self.LocalGraph):
-                    raise TypeError(
+                    raise TypeError(  # pragma: no cover
                         "Method graphs should return a list of LocalGraph.")
             self.fLOG("[BenchMark.run] graph {0} done".format(self.Name))
             self.fLOG("[BenchMark.run] Received {0} graphs.".format(
@@ -431,7 +441,8 @@ class BenchMark:
         Returns the metrics.
         """
         if not hasattr(self, "_metrics"):
-            raise KeyError("Method run was not run, no metrics was found.")
+            raise KeyError(  # pragma: no cover
+                "Method run was not run, no metrics was found.")
         return self._metrics
 
     @property
@@ -440,7 +451,8 @@ class BenchMark:
         Returns the metrics.
         """
         if not hasattr(self, "_metadata"):
-            raise KeyError("Method run was not run, no metadata was found.")
+            raise KeyError(  # pragma: no cover
+                "Method run was not run, no metadata was found.")
         return self._metadata
 
     @property
@@ -449,7 +461,8 @@ class BenchMark:
         Returns the metrics.
         """
         if not hasattr(self, "_appendix"):
-            raise KeyError("Method run was not run, no metadata was found.")
+            raise KeyError(  # pragma: no cover
+                "Method run was not run, no metadata was found.")
         return self._appendix
 
     def to_df(self, convert=False, add_link=False, format="html"):
@@ -626,7 +639,7 @@ class BenchMark:
         Returns images of graphs.
         """
         if not hasattr(self, "_graphs"):
-            raise KeyError("unable to find _graphs")
+            raise KeyError("unable to find _graphs")  # pragma: no cover
         return self._graphs
 
     default_css = """

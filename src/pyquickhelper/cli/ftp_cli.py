@@ -4,7 +4,6 @@
 """
 import os
 import glob
-from ..filehelper import TransferFTP
 
 
 def ftp_upload(files, dest, host, user, pwd, ftps=False, fLOG=print):
@@ -34,6 +33,8 @@ def ftp_upload(files, dest, host, user, pwd, ftps=False, fLOG=print):
     to retrieve the values. Example:
     ``--user=keyring,user,site``.
     """
+    from ..filehelper import TransferFTP
+
     if isinstance(files, str):
         files = [files]
     new_files = []

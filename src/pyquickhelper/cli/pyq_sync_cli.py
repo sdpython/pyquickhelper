@@ -26,7 +26,7 @@ def pyq_sync(fLOG=print, args=None):
         try:
             from pyquickhelper.filehelper.synchelper import synchronize_folder
             from pyquickhelper.cli.cli_helper import call_cli_function
-        except ImportError:
+        except ImportError:  # pragma: no cover
             folder = os.path.normpath(os.path.join(
                 os.path.abspath(os.path.dirname(__file__)), "..", ".."))
             sys.path.append(folder)
@@ -38,4 +38,4 @@ def pyq_sync(fLOG=print, args=None):
 
 
 if __name__ == "__main__":
-    pyq_sync()
+    pyq_sync()  # pragma: no cover

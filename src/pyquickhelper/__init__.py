@@ -6,7 +6,7 @@ Helpers to produce documentation, test notebooks, walk through files,
 sphinx extension, jenkins helpers...
 """
 
-__version__ = "1.9.3396"
+__version__ = "1.9.3397"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"
@@ -53,7 +53,7 @@ def _setup_hook(add_print=False, unit_test=False):
     # it can check many things, needed module
     # any others things before unit tests are started
     if add_print:
-        print("Success: _setup_hook")
+        print("Success: _setup_hook")  # pragma: no cover
 
 
 def load_ipython_extension(ip):  # pragma: no cover

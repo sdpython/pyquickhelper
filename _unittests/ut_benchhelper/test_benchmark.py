@@ -54,6 +54,8 @@ class TestBenchMark(unittest.TestCase):
         local_graph.add("alt", "h")
         link = local_graph.to_html()
         self.assertEqual(link, '<img src="zzz/g.png" alt="agraph"/>')
+        rst = local_graph.to_rst()
+        self.assertEqual(rst, '.. image:: zzz/g.png')
 
         params = [dict(value=random.randint(10, 20)) for i in range(0, 20)]
 

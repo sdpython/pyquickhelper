@@ -38,6 +38,5 @@ def isnan(s):
     if isinstance(s, float):
         import numpy
         return numpy.isnan(s)
-    else:
-        raise TypeError(
-            "wrong type before calling numpy.isnan: {0}".format(type(s)))
+    raise TypeError(  # pragma: no cover
+        "wrong type before calling numpy.isnan: {0}".format(type(s)))

@@ -43,10 +43,10 @@ def do_main(source, dest, password, encrypt, fLOG=None):
     @param      fLOG        logging function
     """
     if not os.path.exists(source):
-        raise FileNotFoundError(source)
+        raise FileNotFoundError(source)  # pragma: no cover
     try:
         from pyquickhelper.filehelper import encrypt_stream, decrypt_stream
-    except ImportError:
+    except ImportError:  # pragma: no cover
         folder = os.path.normpath(os.path.join(
             os.path.abspath(os.path.dirname(__file__)), "..", ".."))
         sys.path.append(folder)
@@ -86,7 +86,7 @@ def encrypt_file(fLOG=print, args=None):
     else:
         try:
             args = parser.parse_args()
-        except SystemExit:
+        except SystemExit:  # pragma: no cover
             if fLOG:
                 fLOG(parser.format_usage())
             args = None
@@ -116,7 +116,7 @@ def decrypt_file(fLOG=print, args=None):
     else:
         try:
             args = parser.parse_args()
-        except SystemExit:
+        except SystemExit:  # pragma: no cover
             if fLOG:
                 fLOG(parser.format_usage())
             args = None
@@ -128,4 +128,4 @@ def decrypt_file(fLOG=print, args=None):
 
 
 if __name__ == "__main__":
-    decrypt_file()
+    decrypt_file()  # pragma: no cover

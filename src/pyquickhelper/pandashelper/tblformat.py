@@ -136,7 +136,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             if ':ref:' in key:
                 try:
                     key = key.split("`")[1].split("<")[0].strip()
-                except IndexError:
+                except IndexError:  # pragma: no cover
                     pass
             if label_pattern is not None:
                 lab = label_pattern.format(section=key.replace(".", "D"))
@@ -225,34 +225,32 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         def boldify(x):
             try:
                 return "**{0}**".format(x)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 raise Exception(
                     "Unable to boldify type {0}".format(type(x))) from e
 
         try:
             values = df[ind].apply(boldify)
-        except Exception:
+        except Exception:  # pragma: no cover
             warnings.warn("Unable to boldify the index (1).", SyntaxWarning)
 
         try:
             df[ind] = values
-        except Exception:
+        except Exception:  # pragma: no cover
             warnings.warn("Unable to boldify the index (2).", SyntaxWarning)
 
     def align_string(s, align, length):
         if len(s) < length:
             if align == "l":
                 return s + " " * (length - len(s))
-            elif align == "r":
+            if align == "r":
                 return " " * (length - len(s)) + s
-            elif align == "c":
+            if align == "c":
                 m = (length - len(s)) // 2
                 return " " * m + s + " " * (length - m - len(s))
-            else:
-                raise ValueError(
-                    "align should be 'l', 'r', 'c' not '{0}'".format(align))
-        else:
-            return s
+            raise ValueError(  # pragma: no cover
+                "align should be 'l', 'r', 'c' not '{0}'".format(align))
+        return s
 
     def complete(cool):
         if list_table:
@@ -311,11 +309,12 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         if column_size is not None:
             if isinstance(column_size, list):
                 if len(length) != len(column_size):
-                    raise ValueError("length and column_size should have the same size {0} != {1}".format(
-                        len(length), len(column_size)))
+                    raise ValueError(  # pragma: no cover
+                        "length and column_size should have the same size {0} != {1}".format(
+                            len(length), len(column_size)))
                 for i in range(len(length)):
                     if not isinstance(column_size[i], int):
-                        raise TypeError(
+                        raise TypeError(  # pragma: no cover
                             "column_size[{0}] is not an integer".format(i))
                     length[i] *= column_size[i]
             elif isinstance(column_size, dict):
@@ -325,7 +324,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                     elif i in column_size:
                         length[i] = column_size[i]
             else:
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "column_size must be a list or a dictionary not {}".format(
                         type(column_size)))
 
@@ -377,9 +376,8 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
 
     def conv(s):
         if s is None:
-            return ""
-        else:
-            return typstr(s)
+            return ""  # pragma: no cover
+        return typstr(s)
 
     for row in self.values:
         s = septd.join(conv(_) for _ in row)
