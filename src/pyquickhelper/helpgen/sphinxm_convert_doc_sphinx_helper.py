@@ -884,17 +884,22 @@ class _CustomBuildEnvironment(BuildEnvironment):
             doctree.reporter = Reporter(self.doc2path(
                 docname), 2, 5, stream=WarningStream())
             return doctree
-        else:
-            if hasattr(self, "self.doctree_"):
-                available = list(sorted(self.doctree_))
-                if len(available) > 10:
-                    available = available[10:]
-            else:
-                available = []
 
-            raise KeyError("Unable to find doctree for '{0}'\nFirst documents:\n{1}.".format(
-                docname, "\n".join(available)))
-            # return BuildEnvironment.get_doctree(self, docname)
+        if hasattr(self, "doctree_"):
+            available = list(sorted(self.doctree_))
+            if len(available) > 10:
+                available = available[10:]
+            raise KeyError(
+                "Unable to find entry '{}' (has doctree: {})\nFirst documents:\n{}"
+                "".format(
+                    docname, hasattr(self, "doctree_"),
+                    "\n".join(available)))
+
+        raise KeyError(
+            "Doctree empty or not found for '{}' (has doctree: {})"
+            "".format(
+                docname, hasattr(self, "doctree_")))
+        # return BuildEnvironment.get_doctree(self, docname)
 
     def apply_post_transforms(self, doctree, docname):
         """Apply all post-transforms."""

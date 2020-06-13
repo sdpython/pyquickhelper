@@ -8,8 +8,7 @@ import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
+from sphinx.errors import ExtensionError
 from pyquickhelper.pycode import get_temp_folder
 from pyquickhelper.helpgen import rst2html, rst2rst_folder
 from pyquickhelper.sphinxext import TocDelayDirective
@@ -18,19 +17,9 @@ from pyquickhelper.sphinxext import TocDelayDirective
 class TestTocDelayExtension(unittest.TestCase):
 
     def test_post_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("tocdelay", TocDelayDirective)
 
     def test_regex(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         s = "2016-06-11 - Make a reference to a blog post <2016/2016-06-11_blogpost_with_label>"
         reg = TocDelayDirective.regex_title
         gr = reg.search(s)
@@ -40,11 +29,6 @@ class TestTocDelayExtension(unittest.TestCase):
                           "2016/2016-06-11_blogpost_with_label"))
 
     def test_tocdelay1(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         content = """
                     .. tocdelay::
 
@@ -52,18 +36,12 @@ class TestTocDelayExtension(unittest.TestCase):
                     """.replace("                    ", "")
 
         try:
-            rst2html(content,  # fLOG=fLOG,
-                               layout="sphinx",
-                               writer="rst", keep_warnings=True)
+            rst2html(content, layout="sphinx",
+                     writer="rst", keep_warnings=True)
         except ValueError as e:
             self.assertIn("No found document", str(e))
 
     def test_tocdelay2(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(path, "data", "blog")
         content = """
@@ -74,19 +52,13 @@ class TestTocDelayExtension(unittest.TestCase):
                     """.replace("                    ", "").format(path)
 
         try:
-            rst2html(content,  # fLOG=fLOG,
-                     layout="sphinx",
+            rst2html(content, layout="sphinx",
                      writer="rst", keep_warnings=True)
-        except KeyError as e:
+        except (KeyError, ExtensionError) as e:
             self.assertIn(
-                "Unable to find doctree for '/2015/2015-04-05_first_bl", str(e))
+                "event 'doctree-resolved' threw an exception", str(e))
 
     def test_tocdelay3(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_tocdelay3")
         path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(path, "data", "blog")
@@ -99,9 +71,9 @@ class TestTocDelayExtension(unittest.TestCase):
 
         try:
             rst2rst_folder(content, temp)
-        except KeyError as e:
+        except (KeyError, ExtensionError) as e:            
             self.assertIn(
-                "Unable to find doctree for '/2015/2015-04-05_first_bl", str(e))
+                "event 'doctree-resolved' threw an exception", str(e))
 
 
 if __name__ == "__main__":
