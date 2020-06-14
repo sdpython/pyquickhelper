@@ -1540,9 +1540,11 @@ class _CustomSphinx(Sphinx):
             # Sphinx < 1.8
             Sphinx.add_stylesheet(self, filename, **kwargs)
 
-    def add_latex_package(self, packagename, options=None):
+    def add_latex_package(self, packagename, options=None, after_hyperref=False):
         self._added_objects.append(('latex', packagename))
-        Sphinx.add_latex_package(self, packagename)
+        Sphinx.add_latex_package(
+            self, packagename=packagename, options=options,
+            after_hyperref=after_hyperref)
 
     def add_object_type(self, directivename, rolename, indextemplate='',
                         parse_node=None, ref_nodeclass=None, objname='',
