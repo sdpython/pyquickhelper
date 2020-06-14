@@ -71,7 +71,7 @@ class TestTocDelayExtension(unittest.TestCase):
 
         try:
             rst2rst_folder(content, temp)
-        except (KeyError, ExtensionError) as e:            
+        except (KeyError, ExtensionError) as e:
             self.assertIn(
                 "event 'doctree-resolved' threw an exception", str(e))
 
