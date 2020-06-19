@@ -59,6 +59,10 @@ pyquickhelper: automation of many things
     :target: https://github.com/sdpython/pyquickhelper/
     :alt: Stars
 
+.. image:: https://img.shields.io/github/repo-size/sdpython/pyquickhelper
+    :target: https://github.com/sdpython/pyquickhelper/
+    :alt: size
+
 `pyquickhelper <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_
 is used to automate the release of the documentation such as automating *Jenkins*,
 converting notebooks into many formats, extending *Sphinx* with custom

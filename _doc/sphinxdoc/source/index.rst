@@ -54,6 +54,10 @@ pyquickhelper: various automations in python
     :target: https://github.com/sdpython/pyquickhelper/
     :alt: Stars
 
+.. image:: https://img.shields.io/github/repo-size/sdpython/pyquickhelper
+    :target: https://github.com/sdpython/pyquickhelper/
+    :alt: size
+
 **Links:** `pypi <https://pypi.python.org/pypi/pyquickhelper/>`_,
 `github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_,
