@@ -30,8 +30,7 @@ def get_available_build_commands():
     """
     Returns commands which build the package.
     """
-    return {"bdist_msi", "sdist",
-            "bdist_wheel", "publish", "publish_doc", "register",
+    return {"sdist", "bdist_wheel", "publish", "publish_doc", "register",
             "upload_docs", "bdist_wininst", "build_ext"}
 
 
@@ -164,10 +163,10 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     .. versionchanged:: 1.8
         Parameters *coverage_root*, *direct_call* were added.
     """
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
-    if skip_function is None:
+    if skip_function is None:  # pragma: no cover
         from .utils_tests_private import default_skip_function
         skip_function = default_skip_function
     if pattern_copy is None:
@@ -213,7 +212,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         if "-e" in argv:
             le = argv.index("-e")
             if le >= len(argv) - 1:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Option -e should be follow by a regular expression.")
             e = re.compile(argv[le + 1])
         else:
@@ -222,7 +221,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         if "-g" in argv:
             lg = argv.index("-g")
             if lg >= len(argv) - 1:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Option -g should be follow by a regular expression.")
             g = re.compile(argv[lg + 1])
         else:
@@ -264,7 +263,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
     if unittest_modules is None:
         unittest_modules_py3to2 = None
         unittest_modules_script = None
-    else:
+    else:  # pragma: no cover
         unittest_modules_py3to2 = []
         unittest_modules_script = []
         for mod in unittest_modules:
@@ -289,7 +288,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
 
     # starts interpreting the commands
 
-    if "clean_space" in argv:
+    if "clean_space" in argv:  # pragma: no cover
         rem = clean_space_for_setup(
             file_or_folder, file_filter=file_filter_pep8)
         print("[clean_space] number of impacted files (pep8 + rst):", len(rem))
@@ -319,7 +318,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                              pylint_ignore=ignores)
         return True
 
-    elif 'history' in argv:
+    elif 'history' in argv:  # pragma: no cover
         dest = ' '.join(argv).split('history')[-1].strip()
         if not dest:
             dest = os.path.join(folder, 'HISTORY.rst')
@@ -356,7 +355,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                                    fLOG=fLOG,
                                    **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
-            raise Exception(
+            raise Exception(  # pragma: no cover
                 "unable to run _setup_hook\nOUT:\n{0}\n[setuperror]\n{1}".format(out, err))
 
         if func_sphinx_begin is not None:
@@ -519,7 +518,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
             root, dest, unittest_modules=unittest_modules_py3to2, pattern_copy=pattern_copy)
         return True
 
-    elif "test_local_pypi" in argv:
+    elif "test_local_pypi" in argv:  # pragma: no cover
         # delayed import
         from ..filehelper import get_url_content_timeout
         url = "http://localhost:{0}/".format(port)
@@ -529,7 +528,7 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
         print(content)
         return True
 
-    elif 'local_jenkins' in argv:
+    elif 'local_jenkins' in argv:  # pragma: no cover
         pos = argv.index("local_jenkins")
         user = argv[pos + 1]
         password = argv[pos + 2]
@@ -608,7 +607,8 @@ def write_version_for_setup(file_or_folder, exc=False, module_name=None):
             raise e
         return None
     if version in ["0", 0, None]:
-        raise Exception("issue with version {0}".format(version))
+        raise Exception(  # pragma: no cover
+            "issue with version {0}".format(version))
 
     # write version number
     if version is not None:
@@ -696,10 +696,10 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
     A page will be added for each extra file extension mentioned in *extra_ext* if
     some of these were found.
     """
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
-    if "--help" in argv:
+    if "--help" in argv:  # pragma: no cover
         from ..helpgen.help_usage import get_help_usage
         print(get_help_usage())
     else:
@@ -776,13 +776,14 @@ def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=Non
     ffolder = get_folder(file_or_folder)
     funit = os.path.join(ffolder, "_unittests")
     if not os.path.exists(funit):
-        raise FileNotFoundError(
-            "You must get the whole source to run the unittests,\nfolder {0} should exist".format(funit))
+        raise FileNotFoundError(  # pragma: no cover
+            "You must get the whole source to run the unittests,"
+            "\nfolder {0} should exist".format(funit))
 
-    if skip_function is None:
+    if skip_function is None:  # pragma: no cover
         from .utils_tests_private import default_skip_function
         skip_function = default_skip_function
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
 
@@ -846,10 +847,10 @@ def write_pyproj(file_or_folder, location=None):
         if "temp_" in name:
             return False
         if "temp2_" in name:
-            return False
+            return False  # pragma: no cover
         for a in avoid:
             if name.startswith(a + "\\"):
-                return False
+                return False  # pragma: no cover
             if name.startswith(a + "/"):
                 return False
         return True
@@ -858,7 +859,7 @@ def write_pyproj(file_or_folder, location=None):
     root = os.path.normpath(root)
     name = os.path.split(root)[-1]
     if location is None:
-        dest = os.path.join(root, "ptvs_project.pyproj")
+        dest = os.path.join(root, "ptvs_project.pyproj")  # pragma: no cover
     else:
         dest = os.path.join(location, "ptvs_project.pyproj")
     all_files = [os.path.relpath(_, root)
@@ -1019,7 +1020,7 @@ def _get_dump_default_path(location, module_name, argv):
     """
     from . import is_travis_or_appveyor
     if is_travis_or_appveyor():
-        return None
+        return None  # pragma: no cover
     hash = hash_list(argv)
     setup = os.path.join(location, "setup.py")
     if not os.path.exists(setup):
@@ -1050,8 +1051,7 @@ def hash_list(argv, size=8):
     res = hash.hexdigest()
     if len(res) > 8:
         return res[:8]
-    else:
-        return res
+    return res  # pragma: no cover
 
 
 def build_history_from_setup(dest, owner, module, existing_history=None,
@@ -1072,7 +1072,7 @@ def build_history_from_setup(dest, owner, module, existing_history=None,
     from ..loghelper.history_helper import build_history, compile_history
     if owner is None:
         raise ValueError("owner must be specified")
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
     repo = module
@@ -1100,7 +1100,7 @@ def run_pylint_for_setup(folder, pattern=".*[.]py$", neg_pattern=None,
     """
     # delayed import
     from .utils_tests_helper import check_pep8
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
     check_pep8(folder, pattern=pattern, neg_pattern=neg_pattern,
@@ -1123,7 +1123,7 @@ def modifies_init_file(folder, version, module_name=None):
             vs = list(vs)
             vs[-1] = nv
             return '.'.join(vs)
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unable to process '{}' with new version '{}'.".format(v, nv))
 
     filename = None
@@ -1133,7 +1133,7 @@ def modifies_init_file(folder, version, module_name=None):
             if module_name is None:
                 setu = os.path.join(folder, 'setup.py')
                 if not os.path.exists(setu):
-                    raise FileNotFoundError(
+                    raise FileNotFoundError(  # pragma: no cover
                         "Unable to find 'setup.py' in '{}' and module_name is "
                         "None.".format(folder))
                 reg = re.compile(
@@ -1142,7 +1142,7 @@ def modifies_init_file(folder, version, module_name=None):
                     cst = f.read()
                 find = reg.findall(cst)
                 if len(find) == 0:
-                    raise FileNotFoundError(
+                    raise FileNotFoundError(  # pragma: no cover
                         "Unable to find 'project_var_name' in 'setup.py' in '{}' "
                         "and module_name is None.".format(folder))
                 module_name = find[0][1]
@@ -1153,10 +1153,10 @@ def modifies_init_file(folder, version, module_name=None):
             elif module_name is not None:
                 filename = os.path.join(folder, module_name, '__init__.py')
             else:
-                raise FileNotFoundError(
+                raise FileNotFoundError(  # pragma: no cover
                     "Unable to find '__init__.py' in '{}' (module_name is None).".format(folder))
         if not os.path.exists(filename):
-            raise FileNotFoundError(
+            raise FileNotFoundError(  # pragma: no cover
                 "Unable to find '__init__.py' in '{}' (got '{}').".format(folder, filename))
         with open(filename, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -1173,7 +1173,7 @@ def modifies_init_file(folder, version, module_name=None):
         if line.startswith("__version__"):
             find = reg.findall(line)
             if len(find) != 1:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Unable to find __version__ in '{}'".format(line))
             v = find[0][1]
             nv = _update_version(v, str(version))
@@ -1183,7 +1183,7 @@ def modifies_init_file(folder, version, module_name=None):
         else:
             modif.append(line)
     if len(rep) == 0:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unable to find '__version__' in \n{}".format(content))
 
     content = '\n'.join(modif)

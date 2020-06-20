@@ -88,7 +88,7 @@ def init(path=None, filename=None, create=True, path_add=None):
             os.makedirs(flog_static.store_log_values["__log_path"])
     else:
         if not os.path.exists(flog_static.store_log_values["__log_path"]):
-            raise PQHException(
+            raise PQHException(  # pragma: no cover
                 "unable to find path " + flog_static.store_log_values["__log_path"])
 
 
@@ -271,7 +271,7 @@ def fLOGFormat(sep, *args, **kwargs):
                 if upp:
                     return pprint.pformat(s)
                 return typstr(s)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 raise Exception(  # pragma: no cover
                     "unable to convert s into string: type(s)=" + str(type(s))) from e
 
@@ -296,7 +296,7 @@ def _this_fLOG(*args, **kwargs):
     """
     Other name private to this module.
     """
-    fLOG(*args, **kwargs)
+    fLOG(*args, **kwargs)  # pragma: no cover
 
 
 def get_relative_path(folder, file, exists=True, absolute=True):
@@ -313,9 +313,9 @@ def get_relative_path(folder, file, exists=True, absolute=True):
     """
     if exists:
         if not os.path.exists(folder):
-            raise PQHException(folder + " does not exist.")
+            raise PQHException(folder + " does not exist.")  # pragma: no cover
         if not os.path.exists(file):
-            raise PQHException(file + " does not exist.")
+            raise PQHException(file + " does not exist.")  # pragma: no cover
     sd = os.path.normpath(folder).replace("\\", "/").split("/")
     sf = os.path.normpath(file).replace("\\", "/").split("/")
     i = 0
@@ -678,7 +678,7 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
                 down = _first_more_recent(f1, dest)
                 newdate = down
                 f1.close()
-            except IOError:
+            except IOError:  # pragma: no cover
                 fLOG(
                     "unable to connect Internet, working offline for url", url)
                 down = False
@@ -800,7 +800,7 @@ def removedirs(folder, silent=False, use_command_line=False):
             out, err = run_cmd("rmdir /s /q " + folder, wait=True)
         else:
             out, err = run_cmd("rm -Rf " + folder, wait=True)
-        if len(err) > 0:
+        if len(err) > 0:  # pragma: no cover
             raise Exception("Unable to remove '{0}'\n{1}".format(folder, err))
         return out
     else:
@@ -925,7 +925,7 @@ def guess_type_list(args, tolerance=0.01, none=True):
     length = 0
     typstr = str
     if args in [typstr, float, int, None, decimal.Decimal]:
-        raise PQHException("this case is unexpected %s" % typstr(args))
+        raise PQHException("this case is unexpected %s" % typstr(args))  # pragma: no cover
 
     if len(args) == 0:
         res = defa
@@ -969,10 +969,10 @@ def guess_type_list(args, tolerance=0.01, none=True):
 
 def guess_machine_parameter():
     """
-    determine many parameters on this machine
-        - machine name
-        - user name
-        - domain...
+    Determines many parameters on this machine:
+    - machine name
+    - user name
+    - domain...
     @return         dictionary { name : value }
     """
     val = ["COMPUTERNAME", "NUMBER_OF_PROCESSORS", "OS",
@@ -997,7 +997,7 @@ def guess_machine_parameter():
 
 def IsEmptyString(s):
     """
-    empty string or not?
+    Empty string or not?
 
     :param s: any string (str, None)
     :return: is it empty or not?
@@ -1014,7 +1014,7 @@ def IsEmptyString(s):
 
 def load_content_file_with_encoding(filename):
     """
-    try different encoding to load a file, tries utf8, latin1 and None
+    Tries different encoding to load a file, tries utf8, latin1 and None.
     @param      filename    filename
     @return                 couple  (content, encoding)
     """
@@ -1026,4 +1026,4 @@ def load_content_file_with_encoding(filename):
             return content, enc
         except Exception as e:  # pragma: no cover
             error = e
-    raise error
+    raise error  # pragma: no cover

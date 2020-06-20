@@ -6,15 +6,16 @@ import os
 import unittest
 import time
 
-
 if "temp_" in os.path.abspath(__file__):
     raise ImportError(
         "This file should not be imported in that location: {0}".format(
             os.path.abspath(__file__)))
 
-from pyquickhelper.loghelper.flog import fLOG, load_content_file_with_encoding, get_prefix
 from pyquickhelper.loghelper.run_cmd import run_cmd, run_script
-from pyquickhelper.loghelper.flog import removedirs, unzip, guess_type_list, GetLogFile, get_relative_path
+from pyquickhelper.loghelper.flog import (
+    fLOG, load_content_file_with_encoding, get_prefix,
+    removedirs, unzip, guess_type_list, GetLogFile, get_relative_path,
+    guess_machine_parameter)
 from pyquickhelper.pycode import ExtTestCase
 
 
@@ -266,6 +267,10 @@ class TestLog(ExtTestCase):
         fLOG(LogAddPath="temp")
         fLOG(LogPath="###")
         fLOG(LogPath=None, LogAddPath=None)
+
+    def test_guess_machine_parameter(self):
+        res = guess_machine_parameter()
+        self.assertIsInstance(res, dict)
 
 
 if __name__ == "__main__":

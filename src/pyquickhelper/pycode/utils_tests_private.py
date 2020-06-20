@@ -37,7 +37,7 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
             dirs = [os.path.join(path, "..", "..", d) for d in expected]
         elif isinstance(folder, str):
             if not os.path.exists(folder):
-                raise FileNotFoundError(folder)
+                raise FileNotFoundError(folder)  # pragma: no cover
             last = os.path.split(folder)[-1]
             if last in expected:
                 dirs = [folder]
@@ -65,8 +65,7 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
                 def remove_root(p):
                     if p.startswith(root):
                         return p[len(root):]
-                    else:
-                        return p
+                    return p
                 couples = [(remove_root(il), il) for il in content]
             else:
                 couples = [(il, il) for il in content]
@@ -110,21 +109,21 @@ def get_estimation_time(file):
         f = open(file, "r", errors="ignore")
         li = f.readlines()
         f.close()
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         warnings.warn("Issue with '{0}'\n{1}\n{2}".format(
             file, type(e), e), UserWarning)
         return 10
     try:
         s = ''.join(li)
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         warnings.warn(
-            "Probably an enconding issue for file '{0}'\n{1}\n{2}".format(file, type(e), e), UserWarning)
+            "Probably an enconding issue for file '{0}'\n{1}\n{2}".format(
+                file, type(e), e), UserWarning)
         return 10
     c = re.compile("[(]time=([0-9]+)s[)]").search(s)
     if c is None:
         return 0
-    else:
-        return int(c.groups()[0])
+    return int(c.groups()[0])
 
 
 def import_files(li, additional_ut_path=None, fLOG=noLOG):
@@ -158,7 +157,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
 
         try:
             mo = __import__(fi)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise ImportError("Unable to import '{}' due to {}.\nsys.path=\n{}".format(
                 fi, e, "\n".join(sys.path)))
 
@@ -177,7 +176,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
             di = loc["di"]
             for d in di:
                 if len(d) >= 6 and d[:5] == "_test":
-                    raise RuntimeError(
+                    raise RuntimeError(  # pragma: no cover
                         "a function _test is still deactivated %s in %s" % (d, c))
                 if len(d) < 5 or d[:4] != "test":
                     continue
@@ -188,7 +187,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                 try:
                     exec(cp, globals(), loc)
                 except Exception as e:
-                    raise Exception(
+                    raise Exception(  # pragma: no cover
                         "Unable to execute code '{0}'".format(code)) from e
                 t = loc["t"]
                 testsuite.addTest(t)
@@ -213,7 +212,7 @@ def clean(folder=None, fLOG=noLOG):
             try:
                 if os.path.isfile(el):
                     os.remove(el)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 fLOG("[clean] unable to remove file '{}' due to {}".format(
                     el, str(e).replace("\n", " ")))
 
@@ -222,14 +221,14 @@ def clean(folder=None, fLOG=noLOG):
         try:
             if os.path.isfile(el):
                 os.remove(el)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             fLOG("[clean] unable to remove file '{}' due to {}".format(
                 el, str(e).replace("\n", " ")))
     for el in li:
         try:
             if os.path.isdir(el):
                 remove_folder(el)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             fLOG("[clean] unable to remove dir '{}' due to {}".format(
                 el, str(e).replace("\n", " ")))
 
@@ -280,7 +279,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         paths = [os.path.join(path_module, "src"), ]
         for path in paths:
             if os.path.exists(path):
-                raise FileExistsError(
+                raise FileExistsError(  # pragma: no cover
                     "This path should not exist '{}'.".format(path))
 
     def short_name(el):
@@ -305,7 +304,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             duplicate.append((cut, lc))
         done[cut] = True
 
-    if len(duplicate) > 0:
+    if len(duplicate) > 0:  # pragma: no cover
         s = list(set(duplicate))
         s.sort()
         mes = "\n".join(str(_) for _ in s)
@@ -313,7 +312,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # check existing
     if len(co) == 0:
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "unable to find any test files in {0}".format(path_test))
 
     if skip != -1:
@@ -327,7 +326,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     index = 0
     for e, cut, l in co:
         if e > limit_max:
-            continue
+            continue  # pragma: no cover
         cco.append((e, l))
         cut = os.path.split(l)
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
@@ -361,9 +360,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     # display all tests
     for i, s in enumerate(suite):
         if skip >= 0 and i < skip:
-            continue
+            continue  # pragma: no cover
         if i + 1 in skip_list:
-            continue
+            continue  # pragma: no cover
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip_function is not None:
@@ -390,9 +389,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     for i, s in enumerate(suite):
         last_s = s
         if skip >= 0 and i < skip:
-            continue
+            continue  # pragma: no cover
         if i + 1 in skip_list:
-            continue
+            continue  # pragma: no cover
         cut = os.path.split(s[1])
         cut = os.path.split(cut[0])[-1] + "/" + cut[-1]
         if skip_function is not None:
@@ -559,12 +558,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 wdone[sw] = w
                 try:
                     sw = "  w{0}: {1}\n".format(i, w)
-                except UnicodeEncodeError:
+                except UnicodeEncodeError:  # pragma: no cover
                     sw = "  w{0}: Unable to convert a warnings of type {1} into a string (1)".format(
                         i, type(w))
                 try:
                     memout.write(sw)
-                except UnicodeEncodeError:
+                except UnicodeEncodeError:  # pragma: no cover
                     sw = "  w{0}: Unable to convert a warnings of type {1} into a string (2)".format(
                         i, type(w))
                     memout.write(sw)

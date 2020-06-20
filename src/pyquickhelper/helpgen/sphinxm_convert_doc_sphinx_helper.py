@@ -634,7 +634,7 @@ class _MemoryBuilder:
 
         try:
             output = self.templates.render(templatename, ctx)
-        except UnicodeError:
+        except UnicodeError:  # pragma: no cover
             logger = getLogger("MockSphinxApp")
             logger.warning("[_CustomSphinx] A unicode error occurred when rendering the page %s. "
                            "Please make sure all config values that contain "
@@ -895,7 +895,7 @@ class _CustomBuildEnvironment(BuildEnvironment):
                     docname, hasattr(self, "doctree_"),
                     "\n".join(available)))
 
-        raise KeyError(
+        raise KeyError(  # pragma: no cover
             "Doctree empty or not found for '{}' (has doctree: {})"
             "".format(
                 docname, hasattr(self, "doctree_")))
@@ -1046,7 +1046,7 @@ class _CustomSphinx(Sphinx):
         from sphinx.application import builtin_extensions
         try:
             from sphinx.application import CONFIG_FILENAME, Config, Tags
-            sphinx_version = 2
+            sphinx_version = 2  # pragma: no cover
         except ImportError:
             # Sphinx 3.0.0
             from sphinx.config import CONFIG_FILENAME, Config, Tags
@@ -1059,7 +1059,7 @@ class _CustomSphinx(Sphinx):
                 "ignore", (DeprecationWarning, PendingDeprecationWarning))
             if self.confdir is None:
                 self.config = Config({}, confoverrides or {})
-            else:
+            else:  # pragma: no cover
                 try:
                     self.config = Config.read(
                         self.confdir, confoverrides or {}, self.tags)
@@ -1077,7 +1077,7 @@ class _CustomSphinx(Sphinx):
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
-        if sphinx_version == 2:
+        if sphinx_version == 2:  # pragma: no cover
             with warnings.catch_warnings():
                 warnings.simplefilter(
                     "ignore", (DeprecationWarning, PendingDeprecationWarning, ImportWarning))
@@ -1088,7 +1088,8 @@ class _CustomSphinx(Sphinx):
         self._init_i18n()
 
         # check the Sphinx version if requested
-        if self.config.needs_sphinx and self.config.needs_sphinx > __display_version__:
+        if (self.config.needs_sphinx and self.config.needs_sphinx >
+                __display_version__):  # pragma: no cover
             from sphinx.locale import _
             from sphinx.application import VersionRequirementError
             raise VersionRequirementError(
@@ -1107,7 +1108,7 @@ class _CustomSphinx(Sphinx):
                     warnings.filterwarnings(
                         "ignore", category=DeprecationWarning)
                     self.setup_extension(extension)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 if 'sphinx.builders.applehelp' not in str(e):  # pragma: no cover
                     mes = "Unable to run setup_extension '{0}'\nWHOLE LIST\n{1}".format(
                         extension, "\n".join(builtin_extensions))
@@ -1156,7 +1157,7 @@ class _CustomSphinx(Sphinx):
                 with prefixed_warnings(prefix):
                     if callable(self.config.setup):
                         self.config.setup(self)
-                    else:
+                    else:  # pragma: no cover
                         from sphinx.locale import _
                         from sphinx.application import ConfigError
                         raise ConfigError(
@@ -1228,7 +1229,7 @@ class _CustomSphinx(Sphinx):
             self.env.setup(self)
             if self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND":
                 self.env.find_files(self.config, self.builder)
-        elif "IMPOSSIBLE:TOFIND" not in self.doctreedir:
+        elif "IMPOSSIBLE:TOFIND" not in self.doctreedir:  # pragma: no cover
             from sphinx.application import ENV_PICKLE_FILENAME
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
             try:
@@ -1245,14 +1246,16 @@ class _CustomSphinx(Sphinx):
             if hasattr(self.env, 'setup'):
                 self.env.setup(self)
         if not hasattr(self.env, 'project') or self.env.project is None:
-            raise AttributeError("self.env.project is not initialized.")
+            raise AttributeError(  # pragma: no cover
+                "self.env.project is not initialized.")
 
     def create_builder(self, name):
         """
         Creates a builder, raises an exception if name is None.
         """
         if name is None:
-            raise ValueError("Builder name cannot be None")
+            raise ValueError(  # pragma: no cover
+                "Builder name cannot be None")
 
         return self.registry.create_builder(self, name)
 
@@ -1282,7 +1285,7 @@ class _CustomSphinx(Sphinx):
                 node['ids'][0]
             except IndexError:
                 node['ids'] = ['missing%d' % i]
-            except TypeError:
+            except TypeError:  # pragma: no cover
                 pass
 
     def finalize(self, doctree, external_docnames=None):
@@ -1300,8 +1303,9 @@ class _CustomSphinx(Sphinx):
             raise TypeError(  # pragma: no cover
                 "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
         if not isinstance(self.builder.env, _CustomBuildEnvironment):
-            raise TypeError("self.builder.env is not _CustomBuildEnvironment: '{0}'".format(
-                type(self.builder.env)))
+            raise TypeError(  # pragma: no cover
+                "self.builder.env is not _CustomBuildEnvironment: '{0}'".format(
+                    type(self.builder.env)))
         self.doctree_ = doctree
         self.builder.doctree_ = doctree
         self.env.doctree_[self.config.master_doc] = doctree
@@ -1388,7 +1392,7 @@ class _CustomSphinx(Sphinx):
                     logger.info(
                         '[MockSphinxApp] PlotDirective ok')
                     return res
-                except OSError as e:
+                except OSError as e:  # pragma: no cover
                     logger = getLogger("MockSphinxApp")
                     logger.info(
                         '[MockSphinxApp] PlotDirective failed: {}'.format(e))
@@ -1458,7 +1462,7 @@ class _CustomSphinx(Sphinx):
         for key, val in kwds.items():
             try:
                 visit, depart = val
-            except ValueError:
+            except ValueError:  # pragma: no cover
                 raise ExtensionError(("Value for key '%r' must be a "
                                       "(visit, depart) function tuple") % key)
             translator = self.registry.translators.get(key)
@@ -1505,7 +1509,7 @@ class _CustomSphinx(Sphinx):
             Sphinx.add_directive_to_domain(self, domain, name, obj,  # pylint: disable=E1123
                                            has_content=has_content, argument_spec=argument_spec,
                                            override=override, **option_spec)
-        except TypeError:
+        except TypeError:  # pragma: no cover
             # Sphinx==3.0.0
             Sphinx.add_directive_to_domain(self, domain, name, obj,
                                            override=override, **option_spec)
@@ -1585,8 +1589,10 @@ class _CustomSphinx(Sphinx):
         if found is not None and not exc:
             return None
         if found is None:
-            raise ValueError("Unable to find a collector '{0}' in \n{1}".format(
-                clname, "\n".join(map(lambda x: x.__class__.__name__, self._added_collectors))))
+            raise ValueError(  # pragma: no cover
+                "Unable to find a collector '{0}' in \n{1}".format(
+                    clname, "\n".join(map(lambda x: x.__class__.__name__,
+                    self._added_collectors))))
         for v in found.listener_ids.values():
             self.disconnect(v)
         del self._added_collectors[foundi]
