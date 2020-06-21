@@ -1591,8 +1591,9 @@ class _CustomSphinx(Sphinx):
         if found is None:
             raise ValueError(  # pragma: no cover
                 "Unable to find a collector '{0}' in \n{1}".format(
-                    clname, "\n".join(map(lambda x: x.__class__.__name__,
-                    self._added_collectors))))
+                    clname, "\n".join(
+                        map(lambda x: x.__class__.__name__,
+                            self._added_collectors))))
         for v in found.listener_ids.values():
             self.disconnect(v)
         del self._added_collectors[foundi]
