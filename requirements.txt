@@ -46,6 +46,7 @@ Sphinx>=2.1
 sphinx-gallery
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
+sphinx_rtd_theme
 tqdm
 unify
 virtualenv
