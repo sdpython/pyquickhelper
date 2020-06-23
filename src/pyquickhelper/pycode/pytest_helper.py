@@ -44,6 +44,22 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
     :param stop_first: stops at the first error or run all of them
     :param verbose: prints out the name of the functions
     :param fLOG: logging function
+
+    The following piece of code could also be used to
+    run all tests not using any parameter.
+
+    ::
+
+        fcts = [v for k, v in locals().items() if k.startswith('test_')]
+        for fct in fcts:
+            print("run", fct.__name__)
+            try:
+                fct()
+            except Exception as e:
+                if 'missing' in str(e):
+                    print(e)
+                    continue
+                raise e
     """
     if isinstance(module, str):
         module_path = module
