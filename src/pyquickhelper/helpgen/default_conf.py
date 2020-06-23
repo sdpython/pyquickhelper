@@ -534,6 +534,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     except ImportError:  # pragma: no cover
         has_sphinx_gallery = False
 
+    # numpydoc
+    try:
+        import numpydoc
+        extensions.append('numpydoc')
+    except ImportError:
+        pass
+
     if has_sphinx_gallery:
         try:
             import sphinx_gallery.gen_rst

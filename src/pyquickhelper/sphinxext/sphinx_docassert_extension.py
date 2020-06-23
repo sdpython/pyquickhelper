@@ -124,12 +124,25 @@ class OverrideDocFieldTransformer:
             except ValueError:
                 # maybe an argument-less field type?
                 fieldtype, fieldarg = fieldname.astext(), ''
-            if fieldtype != "param":
+            if fieldtype == "Parameters":
+                # numpydoc style
+                keyfieldtype = 'parameter'
+            elif fieldtype == "param":
+                keyfieldtype = 'param'
+            else:
                 continue
-            typedesc, is_typefield = typemap.get(fieldtype, (None, None))
+            typedesc, is_typefield = typemap.get(keyfieldtype, (None, None))
 
             # sort out unknown fields
-            if typedesc is None or typedesc.has_arg != bool(fieldarg):
+            extracted = []
+            if keyfieldtype == 'parameter':
+                # numpydoc
+
+                for child in fieldbody.children:
+                    if isinstance(child, nodes.definition_list):
+                        for child2 in child.children:
+                            extracted.append(child2)
+            elif typedesc is None or typedesc.has_arg != bool(fieldarg):
                 # either the field name is unknown, or the argument doesn't
                 # match the spec; capitalize field name and be done with it
                 new_fieldname = fieldtype[0:1].upper() + fieldtype[1:]
@@ -142,7 +155,9 @@ class OverrideDocFieldTransformer:
             typename = typedesc.name
 
             # collect the content, trying not to keep unnecessary paragraphs
-            if _is_single_paragraph(fieldbody):
+            if extracted:
+                content = extracted
+            elif _is_single_paragraph(fieldbody):
                 content = fieldbody.children[0].children
             else:
                 content = fieldbody.children
@@ -213,7 +228,14 @@ class OverrideDocFieldTransformer:
 
             # grouped entries need to be collected in one entry, while others
             # get one entry per field
-            if typedesc.is_grouped:
+            if extracted:
+                # numpydoc
+                group_entries = []
+                for ext in extracted:
+                    name = ext.astext().split('\n')[0].split()[0]
+                    group_entries.append((name, ext))
+                entries.append([typedesc, group_entries])
+            elif typedesc.is_grouped:
                 if typename in groupindices:
                     group = entries[groupindices[typename]]
                 else:
@@ -238,7 +260,6 @@ class OverrideDocFieldTransformer:
 
         for entry in entries:
             if isinstance(entry, nodes.field):
-                # raise NotImplementedError()
                 logger = logging.getLogger("docassert")
                 logger.warning(
                     "[docassert] unable to check [nodes.field] {0}".format(entry))

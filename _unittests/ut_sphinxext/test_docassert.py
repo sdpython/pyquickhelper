@@ -281,6 +281,58 @@ class TestDocAssert(unittest.TestCase):
         if nb == 0:
             raise Exception("not the right warning")
 
+    def test_docassert_html_style(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        class MyStream:
+            def __init__(self):
+                self.rows = []
+
+            def write(self, text):
+                fLOG(
+                    "[warning-i3] {0} - '{1}'".format(len(self), text.strip("\n\r ")))
+                self.rows.append(text)
+
+            def getvalue(self):
+                return "\n".join(self.rows)
+
+            def __len__(self):
+                return len(self.rows)
+
+        logger1 = getLogger("MockSphinxApp")
+        logger2 = getLogger("docassert")
+        log_capture_string = MyStream()  # StringIO()
+        ch = logging.StreamHandler(log_capture_string)
+        ch.setLevel(logging.DEBUG)
+        logger1.logger.addHandler(ch)
+        logger2.logger.addHandler(ch)
+        logger2.warning("try")
+
+        this = os.path.abspath(os.path.dirname(__file__))
+        data = os.path.join(this, "datadoc")
+        with sys_path_append(data):
+            obj, name = import_object("clsslk.Estimator3", "class")
+            newstring = ".. autoclass:: clsslk.Estimator3"
+            html = rst2html(newstring, autoclass_content='both',
+                            new_extensions=['numpydoc'])
+            self.assertTrue(html is not None)
+        fLOG(len(log_capture_string))
+
+        lines = log_capture_string.getvalue().split("\n")
+        if len(lines) == 0:
+            raise Exception("no warning")
+        nb = 0
+        for line in lines:
+            if "'Estimator3' has no parameter 'fit_intercep'" in line:
+                nb += 1
+            if "'Estimator3' has undocumented parameters 'fit" in line:
+                nb += 1
+        if nb == 0:
+            raise Exception("not the right warning")
+
 
 if __name__ == "__main__":
     unittest.main()
