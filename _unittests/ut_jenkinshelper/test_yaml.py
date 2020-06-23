@@ -346,11 +346,11 @@ class TestYaml(unittest.TestCase):
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
             $PYINT -m pip install --upgrade pip
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -m pip install --no-cache-dir --upgrade --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
+            $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -m pip install --no-cache-dir --upgrade --no-deps --index http://localhost:8067/simple/ pyrsslocal --extra-index-url=https://pypi.python.org/simple/
+            $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyrsslocal --extra-index-url=https://pypi.python.org/simple/
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -m pip install --no-cache-dir --upgrade --no-deps --index http://localhost:8067/simple/ pyensae --extra-index-url=https://pypi.python.org/simple/
+            $PYINT -m pip install --upgrade --no-cache-dir --no-deps --index http://localhost:8067/simple/ pyensae --extra-index-url=https://pypi.python.org/simple/
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT -m pip install -r requirements.txt
             if [ $? -ne 0 ]; then exit $?; fi

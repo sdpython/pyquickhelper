@@ -275,5 +275,5 @@ def setup_docassert(app):
 
 
 def setup(app):
-    "see @see fn setup_docassert"
+    "setup for docassert"
     return setup_docassert(app)
