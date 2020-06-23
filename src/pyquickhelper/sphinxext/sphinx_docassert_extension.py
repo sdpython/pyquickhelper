@@ -11,16 +11,8 @@ from sphinx.util.docfields import DocFieldTransformer, _is_single_paragraph
 from .import_object_helper import import_any_object
 
 
-def check_typed_make_field(self,
-                           types,
-                           domain,
-                           items,
-                           env=None,
-                           parameters=None,
-                           function_name=None,
-                           docname=None,
-                           kind=None
-                           ):
+def check_typed_make_field(self, types, domain, items, env=None, parameters=None,
+                           function_name=None, docname=None, kind=None):
     """
     Overwrites function
     `make_field <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docfields.py#L197>`_.
@@ -105,14 +97,18 @@ class OverrideDocFieldTransformer:
     def override_transform(self, other_self, node):
         """
         Transform a single field list *node*.
-        Overwrite function `transform <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docfields.py#L271>`_.
-        It only adds extra verification and returns results from the replaced function.
+        Overwrite function `transform
+        <https://github.com/sphinx-doc/sphinx/blob/
+        master/sphinx/util/docfields.py#L271>`_.
+        It only adds extra verification and returns results from
+        the replaced function.
 
         @param      other_self      the builder
         @param      node            node the replaced function changes or replace
 
-        The function parses the original function and checks that the list of arguments declared
-        by the function is the same the list of documented arguments.
+        The function parses the original function and checks that the list
+        of arguments declared by the function is the same the list of
+        documented arguments.
         """
         typemap = other_self.typemap
         entries = []
@@ -245,7 +241,7 @@ class OverrideDocFieldTransformer:
                 # raise NotImplementedError()
                 logger = logging.getLogger("docassert")
                 logger.warning(
-                    "[docassert] unable to checl [nodes.field] {0}".format(entry))
+                    "[docassert] unable to check [nodes.field] {0}".format(entry))
             else:
                 fieldtype, content = entry
                 fieldtypes = types.get(fieldtype.name, {})

@@ -925,7 +925,8 @@ def guess_type_list(args, tolerance=0.01, none=True):
     length = 0
     typstr = str
     if args in [typstr, float, int, None, decimal.Decimal]:
-        raise PQHException("this case is unexpected %s" % typstr(args))  # pragma: no cover
+        raise PQHException("this case is unexpected %s" %
+                           typstr(args))  # pragma: no cover
 
     if len(args) == 0:
         res = defa
