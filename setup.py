@@ -286,6 +286,7 @@ if not r:
                 "nbconvert>=5.6.1",
                 "notebook>=4.2.0",
                 "numpy>=1.16.0",
+                "numpydoc",
                 "pandas>=1.0.0",
                 'psutil',
                 "pylint",
