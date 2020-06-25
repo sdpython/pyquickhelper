@@ -10,12 +10,12 @@ import copy
 import datetime
 try:
     from urllib.parse import urlparse, parse_qs
-except ImportError:
+except ImportError:  # pragma: no cover
     from urlparse import urlparse, parse_qs
 from threading import Thread
 try:
     from http.server import BaseHTTPRequestHandler, HTTPServer
-except ImportError:
+except ImportError:  # pragma: no cover
     from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 
 if __name__ == "__main__":  # pragma: no cover
@@ -72,19 +72,19 @@ class DocumentationHandler(BaseHTTPRequestHandler):
     @staticmethod
     def add_mapping(key, value):
         """
-        adds a mapping associated to a local path to watch
+        Adds a mapping associated to a local path to watch.
 
         @param      key         key in ``http://locahost:8008/key/``
         @param      value       local path
 
-        Python documentation says list are protected against multithreading (concurrent accesses).
-
+        Python documentation says list are protected against
+        multithreading (concurrent accesses).
         If you run the server multiple times, the mappings stays because it
         is a static variable.
         """
         value = os.path.normpath(value)
         if not os.path.exists(value):
-            raise FileNotFoundError(value)
+            raise FileNotFoundError(value)  # pragma: no cover
         DocumentationHandler.mappings[key] = value
 
     @staticmethod
@@ -328,7 +328,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         else:
             if script_python:
                 #any = self.process_scripts(any, params)
-                raise NotImplementedError("unable to execute a python script")
+                raise NotImplementedError(  # pragma: no cover
+                    "unable to execute a python script")
             text = anys.encode("utf-8")
             self.wfile.write(text)
 
@@ -336,7 +337,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         Shuts down the service.
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def serve_content(self, cpath, method="GET"):
         """
@@ -573,13 +574,14 @@ def run_doc_server(server, mappings, thread=False, port=8079):
     elif isinstance(server, str):
         server = HTTPServer((server, port), DocumentationHandler)
     elif not isinstance(server, HTTPServer):
-        raise TypeError("unexpected type for server: " + str(type(server)))
+        raise TypeError(  # pragma: no cover
+            "unexpected type for server: " + str(type(server)))
 
     if thread:
         th = DocumentationThreadServer(server)
         th.start()
         return th
-    else:
+    else:  # pragma: no cover
         server.serve_forever()
         return server
 
