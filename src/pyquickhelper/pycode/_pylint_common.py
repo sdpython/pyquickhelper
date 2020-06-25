@@ -66,6 +66,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                      "[E731] do not assign a lambda expression, use a def",
                      "cli_helper.py:196",
                      "magic_parser.py:154: C0123: Using type() instead of isinstance()",
+                     "sphinxm_convert_doc_sphinx_helper.py:1595: [E128]",
                      ])
 
 
