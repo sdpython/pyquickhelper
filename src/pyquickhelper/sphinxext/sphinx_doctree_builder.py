@@ -24,7 +24,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
 
     def __init__(self, builder, document):
         if not hasattr(builder, 'config'):
-            raise TypeError(
+            raise TypeError(  # pragma: no cover
                 "Unexpected type for builder {0}".format(type(builder)))
         nodes.NodeVisitor.__init__(self, document)
         self.builder = builder

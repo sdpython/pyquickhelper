@@ -158,7 +158,7 @@ class BlocRef(BaseAdmonition):
         # mid
         breftag = self.options.get('tag', '').strip()
         if len(breftag) == 0:
-            raise ValueError("tag is empty")
+            raise ValueError("tag is empty")  # pragma: no cover
         if env is not None:
             mid = int(env.new_serialno('index%s-%s' %
                                        (name_desc, breftag))) + 1
@@ -168,7 +168,7 @@ class BlocRef(BaseAdmonition):
         # title
         titleo = self.options.get('title', "").strip()
         if len(titleo) == 0:
-            raise ValueError("title is empty")
+            raise ValueError("title is empty")  # pragma: no cover
         title = self._update_title(titleo, breftag, mid)
 
         # main node
@@ -201,7 +201,7 @@ class BlocRef(BaseAdmonition):
             set_source_info(self, targetnode)
             try:
                 self.state.add_target(targetid, '', targetnode, lineno)
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 mes = "Issue in \n  File '{0}', line {1}\ntitle={2}\ntag={3}\ntargetid={4}"
                 raise Exception(mes.format(docname, lineno,
                                            title, breftag, targetid)) from e
@@ -224,8 +224,7 @@ class BlocRef(BaseAdmonition):
         res = [a for a in [indexnode, targetnode, blocref] if a is not None]
         if add_container:
             return res, ret_container
-        else:
-            return res
+        return res
 
 
 def process_blocrefs(app, doctree):
@@ -253,8 +252,8 @@ def process_blocrefs_generic(app, doctree, bloc_name, class_node):
         try:
             targetnode = node.parent[node.parent.index(node) - 1]
             if not isinstance(targetnode, nodes.target):
-                raise IndexError
-        except IndexError:
+                raise IndexError  # pragma: no cover
+        except IndexError:  # pragma: no cover
             targetnode = None
         newnode = node.deepcopy()
         breftag = newnode['breftag']
@@ -452,13 +451,13 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 newnode['refuri'] = app.builder.get_relative_uri(
                     fromdocname, blocref_info['docname'])
                 if blocref_info['target'] is None:
-                    raise NoUri
+                    raise NoUri  # pragma: no cover
                 try:
                     newnode['refuri'] += '#' + blocref_info['target']['refid']
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise KeyError("refid in not present in '{0}'".format(
                         blocref_info['target'])) from e
-            except NoUri:
+            except NoUri:  # pragma: no cover
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass
 
@@ -483,7 +482,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                     newnode['refuri'] = app.builder.get_relative_uri(
                         fromdocname, brefdocname)
                     newnode['refuri'] += '#' + idss[0]
-                except NoUri:
+                except NoUri:  # pragma: no cover
                     # ignore if no URI can be determined, e.g. for LaTeX output
                     pass
                 p += newnode

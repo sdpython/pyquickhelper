@@ -58,7 +58,8 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def __init__(self, builder, document):
         if not hasattr(builder, "config"):
-            raise TypeError("Builder has no config: {}".format(type(builder)))
+            raise TypeError(  # pragma: no cover
+                "Builder has no config: {}".format(type(builder)))
         TextTranslator.__init__(self, document, builder)
 
         newlines = builder.config.text_newlines
@@ -438,8 +439,8 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_entry(self, node):
         if hasattr(node, 'morerows') or hasattr(node, 'morecols'):
-            raise NotImplementedError('Column or row spanning cells are '
-                                      'not implemented.')
+            raise NotImplementedError(  # pragma: no cover
+                'Column or row spanning cells are not implemented.')
         self.new_state(0)
 
     def depart_entry(self, node):
@@ -922,10 +923,10 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         html = False
         latex = False
         if not(rst or html or latex or md):
-            raise ValueError("One of them should be True")
+            raise ValueError("One of them should be True")  # pragma: no cover
         try:
             ev = eval(expr)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise ValueError(
                 "Unable to interpret expression '{0}'".format(expr))
         return ev

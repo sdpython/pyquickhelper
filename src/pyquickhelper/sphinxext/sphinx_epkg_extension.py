@@ -99,16 +99,18 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     config = app.config
     try:
         epkg_dictionary = config.epkg_dictionary
-    except AttributeError as e:
+    except AttributeError as e:  # pragma: no cover
         ma = "\n".join(sorted(str(_) for _ in app.config))
         raise AttributeError(
-            "unable to find 'epkg_dictionary' in configuration. Available:\n{0}".format(ma)) from e
+            "unable to find 'epkg_dictionary' in configuration. Available:\n{0}"
+            "".format(ma)) from e
 
     # Supported module?
     modname = spl[0]
     if modname not in epkg_dictionary:
-        msg = inliner.reporter.error("Unable to find module '{0}' in epkg_dictionary, existing={1}".format(
-                                     modname, ", ".join(sorted(epkg_dictionary.keys())), line=lineno))
+        msg = inliner.reporter.error(
+            "Unable to find module '{0}' in epkg_dictionary, existing={1}".format(
+                modname, ", ".join(sorted(epkg_dictionary.keys())), line=lineno))
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
 
@@ -144,7 +146,8 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
         if found is None:
             msg = inliner.reporter.error(
-                "Unable to find a tuple with '{0}' parameters in epkg_dictionary['{1}']".format(expected, modname))
+                "Unable to find a tuple with '{0}' parameters in epkg_dictionary['{1}']"
+                "".format(expected, modname))
             prb = inliner.problematic(rawtext, rawtext, msg)
             return [prb], [msg]
 
@@ -154,9 +157,10 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             except TypeError:
                 try:
                     anchor, url = found()(text)
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise ValueError(
-                        "epkg accepts function or classes with __call__ overloaded. Found '{0}'".format(found)) from e
+                        "epkg accepts function or classes with __call__ overloaded. "
+                        "Found '{0}'".format(found)) from e
         else:
             url = found.format(*tuple(spl[1:]))
             if spl[0].startswith("*"):

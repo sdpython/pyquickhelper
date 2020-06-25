@@ -85,7 +85,7 @@ class CmdRef(BlocRef):
             self.reporter = self.state.document.reporter
             try:
                 source, lineno = self.reporter.get_source_and_line(self.lineno)
-            except AttributeError:
+            except AttributeError:  # pragma: no cover
                 source = lineno = None
 
             # object name
@@ -152,7 +152,7 @@ class CmdRef(BlocRef):
                 fullname = "{0}.{1}".format(fullname, name_fct)
                 try:
                     obj, name = import_object(fullname, kind="function")
-                except ImportError:
+                except ImportError:  # pragma: no cover
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
                         "[CmdRef] unable to import '{0}'".format(fullname))

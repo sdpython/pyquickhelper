@@ -84,8 +84,9 @@ class CommonSphinxWriterHelpers:
                         current = os.path.dirname(os.path.join(
                             srcdir, builder.current_docname))
                     if current is None or not os.path.exists(current):
-                        raise FileNotFoundError(
-                            "Unable to find document '{0}' current_docname='{1}'".format(current, builder.current_docname))
+                        raise FileNotFoundError(  # pragma: no cover
+                            "Unable to find document '{0}' current_docname='{1}'"
+                            "".format(current, builder.current_docname))
                     dest = os.path.dirname(os.path.join(
                         outdir, builder.current_docname))
                     fold = outdir
@@ -131,10 +132,11 @@ class CommonSphinxWriterHelpers:
                                 get_url_content_timeout(
                                     atts['src'], output=dest, encoding=None, timeout=20)
                                 full = atts['src']
-                            except InternetException as e:
+                            except InternetException as e:  # pragma: no cover
                                 logger = logging.getLogger("image")
                                 logger.warning(
-                                    "[image] unable to get content for url '{0}' due to '{1}'".format(atts['src'], e))
+                                    "[image] unable to get content for url '{0}' due to '{1}'"
+                                    "".format(atts['src'], e))
                                 this = os.path.abspath(
                                     os.path.dirname(__file__))
                                 full = os.path.join(
@@ -153,7 +155,7 @@ class CommonSphinxWriterHelpers:
                         try:
                             shutil.copy(full, dest)
                         except FileNotFoundError as e:
-                            raise FileNotFoundError(
+                            raise FileNotFoundError(  # pragma: no cover
                                 "Unable to copy from '{0}' to '{1}'.".format(full, dest)) from e
                         full = dest
                 else:
@@ -167,8 +169,9 @@ class CommonSphinxWriterHelpers:
             atts['full'] = full
             atts['dest'] = dest
         else:
-            raise ValueError("No image was found in node (class='{1}')\n{0}".format(
-                node, self.__class__.__name__))
+            raise ValueError(  # pragma: no cover
+                "No image was found in node (class='{1}')\n{0}".format(
+                    node, self.__class__.__name__))
 
         # image size
         if 'width' in node:
@@ -184,7 +187,7 @@ class CommonSphinxWriterHelpers:
                 try:
                     img = PIL.Image.open(
                         imagepath.encode(sys.getfilesystemencoding()))
-                except (IOError, UnicodeEncodeError):
+                except (IOError, UnicodeEncodeError):  # pragma: no cover
                     pass  # TODO: warn?
                 else:
                     self.settings.record_dependencies.add(  # pylint: disable=E1101

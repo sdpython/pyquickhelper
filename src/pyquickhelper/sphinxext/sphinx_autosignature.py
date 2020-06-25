@@ -148,7 +148,7 @@ class AutoSignatureDirective(Directive):
 
         try:
             source, lineno = self.reporter.get_source_and_line(self.lineno)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             source = lineno = None
 
         # object name
@@ -165,7 +165,7 @@ class AutoSignatureDirective(Directive):
             logger = logging.getLogger("autosignature")
             logger.warning(mes)
             if logging_function:
-                logging_function(mes)
+                logging_function(mes)  # pragma: no cover
             if lineno is not None:
                 logger.warning(
                     '   File "{0}", line {1}'.format(source, lineno))
@@ -174,10 +174,11 @@ class AutoSignatureDirective(Directive):
         if opt_syspath:
             del sys.path[syslength:]
 
-        if opt_members is not None and kind != "class":
+        if opt_members is not None and kind != "class":  # pragma: no cover
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] option members is specified but '{0}' is not a class (kind='{1}').".format(object_name, kind))
+                "[autosignature] option members is specified but '{0}' "
+                "is not a class (kind='{1}').".format(object_name, kind))
             obj = None
 
         # build node
@@ -203,10 +204,11 @@ class AutoSignatureDirective(Directive):
             anchor = object_name
         elif opt_path == 'name':
             anchor = object_name.split(".")[-1]
-        else:
+        else:  # pragma: no cover
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] options path is '{0}', it should be in (import, name, full) for object '{1}'.".format(opt_path, object_name))
+                "[autosignature] options path is '{0}', it should be in "
+                "(import, name, full) for object '{1}'.".format(opt_path, object_name))
             anchor = object_name
 
         if obj is None:
@@ -219,7 +221,7 @@ class AutoSignatureDirective(Directive):
             try:
                 signature = inspect.signature(obj_sig)
                 parameters = signature.parameters
-            except TypeError as e:
+            except TypeError as e:  # pragma: no cover
                 mes = "[autosignature](1) unable to get signature of '{0}' - {1}.".format(
                     object_name, str(e).replace("\n", "\\n"))
                 logger = logging.getLogger("autosignature")
@@ -228,7 +230,7 @@ class AutoSignatureDirective(Directive):
                     logging_function(mes)
                 signature = None
                 parameters = None
-            except ValueError as e:
+            except ValueError as e:  # pragma: no cover
                 # Backup plan, no __text_signature__, this happen
                 # when a function was created with pybind11.
                 doc = obj_sig.__doc__
@@ -284,7 +286,7 @@ class AutoSignatureDirective(Directive):
         if obj is not None and opt_summary:
             # Documentation.
             doc = obj.__doc__  # if kind != "class" else obj.__class__.__doc__
-            if doc is None:
+            if doc is None:  # pragma: no cover
                 mes = "[autosignature] docstring empty for '{0}'.".format(
                     object_name)
                 logger = logging.getLogger("autosignature")
@@ -293,7 +295,8 @@ class AutoSignatureDirective(Directive):
                     logging_function(mes)
             else:
                 if "type(object_or_name, bases, dict)" in doc:
-                    raise Exception("issue with {0}\n{1}".format(obj, doc))
+                    raise TypeError(  # pragma: no cover
+                        "issue with {0}\n{1}".format(obj, doc))
                 docstring = self.build_summary(doc)
                 text += docstring + "\n\n"
 
@@ -332,12 +335,13 @@ class AutoSignatureDirective(Directive):
                 continue
             try:
                 signature = inspect.signature(value)
-            except TypeError as e:
+            except TypeError as e:  # pragma: no cover
                 logger = logging.getLogger("autosignature")
                 logger.warning(
-                    "[autosignature](2) unable to get signature of '{0}.{1} - {2}'.".format(object_name, name, str(e).replace("\n", "\\n")))
+                    "[autosignature](2) unable to get signature of "
+                    "'{0}.{1} - {2}'.".format(object_name, name, str(e).replace("\n", "\\n")))
                 signature = None
-            except ValueError:
+            except ValueError:  # pragma: no cover
                 signature = None
 
             if signature is not None:
@@ -354,7 +358,7 @@ class AutoSignatureDirective(Directive):
 
             if value is not None and summary:
                 doc = value.__doc__
-                if doc is None:
+                if doc is None:  # pragma: no cover
                     logger = logging.getLogger("autosignature")
                     logger.warning(
                         "[autosignature] docstring empty for '{0}.{1}'.".format(object_name, name))
