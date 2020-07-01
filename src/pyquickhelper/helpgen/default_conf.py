@@ -722,21 +722,15 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     # mapping
 
-    intersphinx_mapping = {'python': (
-        'https://docs.python.org/{0}.{1}'.format(*(sys.version_info[:2])), None)}
-    intersphinx_mapping['matplotlib'] = ('http://matplotlib.org/', None)
-    try:
-        import numpy
-        intersphinx_mapping['numpy'] = (
-            'http://www.numpy.org/{0}'.format(numpy.__version__), None)
-    except ImportError:  # pragma: no cover
-        pass
-    try:
-        import pandas
-        intersphinx_mapping['pandas'] = (
-            'http://pandas.pydata.org/pandas-docs/version/{0}'.format(pandas.__version__), None)
-    except ImportError:  # pragma: no cover
-        pass
+    intersphinx_mapping = {
+        'python': ('https://docs.python.org/{.major}'.format(
+            sys.version_info), None),
+        'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+        'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
+        'matplotlib': ('https://matplotlib.org/', None),
+        'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
+        'joblib': ('https://joblib.readthedocs.io/en/latest/', None),
+    }
 
     # information about code
     def linkcode_resolve_function(domain, info):
