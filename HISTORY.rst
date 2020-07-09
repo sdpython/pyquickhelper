@@ -5,8 +5,15 @@
 History
 =======
 
-current - 2020-06-08 - 0.00Mb
+current - 2020-07-09 - 0.00Mb
 =============================
+
+* `307`: Add a function to plot a graph on a matplotlib (2020-07-07)
+* `306`: Remove numpydoc added by default, it fails with other extensions (2020-06-28)
+* `305`: docassert does not work on numpydoc (2020-06-23)
+
+1.9.3396 - 2020-06-08 - 2.06Mb
+==============================
 
 * `304`: Implements a simpler version of ignore_warnings (2020-06-07)
 
