@@ -71,7 +71,8 @@ def default_engines(platform=None):
                    Python37="/usr/local/python37",
                    Python36="/usr/local/python36")
     else:
-        raise ValueError("Unknown value for platform '{0}'.".format(platform))
+        raise ValueError(  # pragma: no cover
+            "Unknown value for platform '{0}'.".format(platform))
 
     return res
 

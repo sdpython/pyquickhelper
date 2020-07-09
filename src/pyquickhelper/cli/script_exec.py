@@ -2,7 +2,6 @@
 @file
 @brief Repeat execution.
 """
-from ..loghelper.time_helper import repeat_script_execution
 
 
 def repeat_script(script, every_second=20, stop_after_second=-1,
@@ -29,6 +28,8 @@ def repeat_script(script, every_second=20, stop_after_second=-1,
         The command line runs the execution a script
         on a regular basis.
     """
+    from ..loghelper.time_helper import repeat_script_execution
+
     every_second = int(every_second)
     stop_after_second = int(stop_after_second)
     if stop_after_second == -1:

@@ -157,9 +157,10 @@ class JenkinsExt(jenkins.Jenkins):
         self.engines = engines
         for k, v in self.engines.items():
             if v.endswith(".exe"):
-                raise FileNotFoundError("{}:{} is not a folder".format(k, v))
+                raise FileNotFoundError(  # pragma: no cover
+                    "{}:{} is not a folder".format(k, v))
             if " " in v:
-                raise JenkinsJobException(
+                raise JenkinsJobException(  # pragma: no cover
                     "No space allowed in engine path: " + v)
 
     @property
@@ -526,8 +527,9 @@ class JenkinsExt(jenkins.Jenkins):
                     parameters = [_ for _ in spl if _.startswith(
                         "{") and _.endswith("}")]
                     if len(parameters) != 1:
-                        raise ValueError(
-                            "unable to extract parameters for the unittests:\n{0}".format(" ".join(spl)))
+                        raise ValueError(  # pragma: no cover
+                            "Unable to extract parameters for the unittests:"
+                            "\n{0}".format(" ".join(spl)))
                     p = parameters[0].replace("_", " ").strip("{}")
                     cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "unittests " + p)
@@ -581,8 +583,9 @@ class JenkinsExt(jenkins.Jenkins):
                     if "run27" in cmdn and ("Python34" in cmdn or "Python35" in cmdn or
                                             "Python36" in cmdn or "Python37" in cmdn or
                                             "Python38" in cmdn or "Python39" in cmdn):
-                        raise ValueError(
-                            "Python version mismatch\nENGINE\n{2}\n----BEFORE\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
+                        raise ValueError(  # pragma: no cover
+                            "Python version mismatch\nENGINE\n{2}\n----BEFORE"
+                            "\n{0}\n-----\nAFTER\n-----\n{1}".format(cmd, cmdn, engine))
                     res.append(cmdn)
 
                 return res
@@ -823,9 +826,11 @@ class JenkinsExt(jenkins.Jenkins):
         for scr in script:
             search = underscore.search(scr)
             if search:
-                mes = "script still contains __\ndefault_engine_paths: {}\nfound: {}\nscr:\n{}\nSCRIPT:\n{}\n".format(
-                    default_engine_paths, search.groups()[0], scr, str(script))
-                raise ValueError(mes)
+                raise ValueError(  # pragma: no cover
+                    "script still contains __\ndefault_engine_paths: {}\n"
+                    "found: {}\nscr:\n{}\nSCRIPT:\n{}\n".format(
+                        default_engine_paths, search.groups()[0],
+                        scr, str(script)))
             script_mod.append(scr)
 
         # wrappers
@@ -841,7 +846,7 @@ class JenkinsExt(jenkins.Jenkins):
             git_repo_xml = ""
         else:
             if not isinstance(git_repo, str):
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "git_repo must be str not '{0}'".format(git_repo))
             git_repo_xml = JenkinsExt._git_repo \
                 .replace("__GITREPO__", git_repo) \
@@ -864,8 +869,9 @@ class JenkinsExt(jenkins.Jenkins):
             if len(job_options) > 0:
                 keys = ", ".join(
                     ["credentials", "git_repo", "scheduler", "scripts"])
-                raise ValueError(
-                    "Unable to process options\n{0}\nYou can specify the following options:\n{1}".format(job_options, keys))
+                raise ValueError(  # pragma: no cover
+                    "Unable to process options\n{0}\nYou can specify the "
+                    "following options:\n{1}".format(job_options, keys))
 
         # scripts
         # tasks is XML, we need to encode s into XML format
@@ -878,7 +884,8 @@ class JenkinsExt(jenkins.Jenkins):
 
         # location
         if location is not None and "<--" in location:
-            raise Exception("this should not happen")
+            raise Exception(  # pragma: no cover
+                "this should not happen")
         location = "" if location is None else "<customWorkspace>%s</customWorkspace>" % location
 
         # emailing
@@ -936,7 +943,7 @@ class JenkinsExt(jenkins.Jenkins):
             elif k == "script":
                 script = [_.replace("__SCRIPTOPTIONS__", v) for _ in script]
             else:
-                raise JenkinsJobException(
+                raise JenkinsJobException(  # pragma: no cover
                     "unable to interpret options: " + str(options))
         return script
 
@@ -1204,8 +1211,9 @@ class JenkinsExt(jenkins.Jenkins):
 
         if isinstance(job, tuple):
             if len(job) < 2:
-                raise JenkinsJobException(
-                    "the tuple must contain at least two elements:\nJOB:\n" + str(job))
+                raise JenkinsJobException(  # pragma: no cover
+                    "the tuple must contain at least two elements:\nJOB:"
+                    "\n" + str(job))
 
             if job[0] == "yml":
                 is_yml = True
@@ -1280,7 +1288,7 @@ class JenkinsExt(jenkins.Jenkins):
             description.append(scheduler)
         try:
             description = " - ".join(description)
-        except TypeError as e:
+        except TypeError as e:  # pragma: no cover
             raise TypeError("Issue with {}.".format(description)) from e
 
         # credentials
@@ -1299,10 +1307,10 @@ class JenkinsExt(jenkins.Jenkins):
             try:
                 j = jenkins_server.get_job_config(
                     jname) if not jenkins_server._mock else None
-            except jenkins.NotFoundException:
+            except jenkins.NotFoundException:  # pragma: no cover
                 j = None
-            except jenkins.JenkinsException as e:
-                raise JenkinsExtException(  # pragma: no cover
+            except jenkins.JenkinsException as e:  # pragma: no cover
+                raise JenkinsExtException(
                     "unable to retrieve job config for job={0}, name={1}".format(job, jname)) from e
 
             if overwrite or j is None:
@@ -1338,8 +1346,9 @@ class JenkinsExt(jenkins.Jenkins):
                     if mod in ("standalone", "custom"):
                         gpar = None
                     elif gitrepo is None:
-                        raise JenkinsJobException(
-                            "gitrepo cannot must not be None if standalone or custom is not defined,\njob=" + str(job))
+                        raise JenkinsJobException(  # pragma: no cover
+                            "gitrepo cannot must not be None if standalone or "
+                            "custom is not defined,\njob=" + str(job))
                     elif gitrepo.endswith(".git"):
                         gpar = gitrepo
                     else:
@@ -1387,7 +1396,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                          build_location=location, mails=self.mails,
                                                          job_options=scheduler_options):
                 if name in done:
-                    s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"
+                    s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"  # pragma: no cover
                     raise ValueError(  # pragma: no cover
                         s.format(name, jobdef, "\n".join(sorted(set(done.keys())))))
                 done[name] = (aj, name, var)

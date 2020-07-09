@@ -24,7 +24,8 @@ def pickname(*args):
         s = s.strip()
         if s:
             return s
-    raise ValueError("Unable to find a non empty string in {0}".format(args))
+    raise ValueError(  # pragma: no cover
+        "Unable to find a non empty string in {0}".format(args))
 
 
 def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
@@ -66,8 +67,9 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     else:
         project_name = context["project_name"]
     if project_name.endswith("__"):
-        raise ValueError(
-            "project_name is wrong, it cannot end by '__': '{0}'".format(project_name))
+        raise ValueError(  # pragma: no cover
+            "project_name is wrong, it cannot end by '__': '{0}'"
+            "".format(project_name))
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
 
@@ -91,7 +93,7 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
     content = apply_template(content, context, engine)
     try:
         return yaml_load(content), project_name
-    except Exception as e:
+    except Exception as e:  # pragma: no cover
         raise SyntaxError(
             "Unable to parse content\n{0}".format(content)) from e
 
@@ -159,40 +161,40 @@ def interpret_instruction(inst, variables=None):
         if any(res):
             return [_ for _ in res if _ is not None]
         return None
-    elif isinstance(inst, tuple):
+    if isinstance(inst, tuple):
         if len(inst) != 2 or inst[1] is None:
-            raise ValueError("Unable to interpret '{}'.".format(inst))
+            raise ValueError(  # pragma: no cover
+                "Unable to interpret '{}'.".format(inst))
         return (inst[0], interpret_instruction(inst[1], variables))
-    elif isinstance(inst, dict):
+    if isinstance(inst, dict):
         return inst
-    elif isinstance(inst, (int, float)):
+    if isinstance(inst, (int, float)):
         return inst
-    else:
-        inst = inst.replace("\n", " ")
-        exp = re.compile("^ *if +(.*) +then +(.*)( +else +(.*))? +fi *$")
-        find = exp.search(inst)
-        if find:
-            gr = find.groups()
-            try:
-                e = evaluate_condition(gr[0], variables)
-            except SyntaxError:
-                # We assume the condition is a linux condition.
-                return inst
-            g = gr[1] if e else gr[3]
-            return None if g is None else interpret_instruction(g, variables)
-        elif inst.startswith('--'):
-            # one format like --CMD=...; --NAME==...;
-            exp = re.compile("--([a-zA-Z]+?)=(.+?);;")
-            find = exp.findall(inst)
-            if find:
-                inst = {k.strip(): v.strip() for k, v in find}
-                inst = {k: (None if not v or len(v) == 0 else v)
-                        for k, v in inst.items()}
-                return inst
-            else:
-                return inst
-        else:
+
+    inst = inst.replace("\n", " ")
+    exp = re.compile("^ *if +(.*) +then +(.*)( +else +(.*))? +fi *$")
+    find = exp.search(inst)
+    if find:
+        gr = find.groups()
+        try:
+            e = evaluate_condition(gr[0], variables)
+        except SyntaxError:
+            # We assume the condition is a linux condition.
             return inst
+        g = gr[1] if e else gr[3]
+        return None if g is None else interpret_instruction(g, variables)
+
+    if inst.startswith('--'):
+        # one format like --CMD=...; --NAME==...;
+        exp = re.compile("--([a-zA-Z]+?)=(.+?);;")
+        find = exp.findall(inst)
+        if find:
+            inst = {k.strip(): v.strip() for k, v in find}
+            inst = {k: (None if not v or len(v) == 0 else v)
+                    for k, v in inst.items()}
+            return inst
+        return inst
+    return inst
 
 
 def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=True):
@@ -227,7 +229,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
     else:
         def_variables = variables.copy()
     if 'Python37' in def_variables and 'Python38' not in def_variables:
-        raise RuntimeError(
+        raise RuntimeError(  # pragma: no cover
             "Key 'Python38' is missing in {}.".format(def_variables))
     if add_environ:
         for k, v in os.environ.items():
@@ -242,8 +244,9 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
         value = obj.get(key, None)
         if key == "language":
             if value != "python":
-                raise NotImplementedError("language must be python")
-            continue
+                raise NotImplementedError(  # pragma: no cover
+                    "language must be python")
+            continue  # pragma: no cover
         if value is not None:
             if key in {'python', 'script'} and not isinstance(value, list):
                 value = [value]
@@ -268,8 +271,9 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                 value = value[i_python]
                 if isinstance(value, dict):
                     if 'PATH' not in value:
-                        raise KeyError(
-                            "The dictionary should include key 'path': {0}".format(value))
+                        raise KeyError(  # pragma: no cover
+                            "The dictionary should include key 'path': {0}"
+                            "".format(value))
                     for k, v in sorted(value.items()):
                         if k != 'PATH':
                             variables[k] = v
@@ -319,7 +323,8 @@ def ospathjoin(*args, **kwargs):
 
     value = build_value(*args, **kwargs)
     if value == "/$PYINT":
-        raise RuntimeError("Impossible values {} - {}.".format(args, kwargs))
+        raise RuntimeError(  # pragma: no cover
+            "Impossible values {} - {}.".format(args, kwargs))
     return value
 
 
@@ -375,8 +380,9 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
     def add_path_win(rows, interpreter, platform, root_project):
         path_inter = ospathdirname(interpreter, platform)
         if len(path_inter) == 0:
-            raise ValueError(
-                "Unable to guess interpreter path from '{0}', platform={1}".format(interpreter, platform))
+            raise ValueError(  # pragma: no cover
+                "Unable to guess interpreter path from '{0}', platform={1}"
+                "".format(interpreter, platform))
         if iswin:
             rows.append("set PATH={0};%PATH%".format(path_inter))
         else:
@@ -424,8 +430,9 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
         elif key == "virtualenv":
             if isinstance(value, list):
                 if len(value) != 1:
-                    raise ValueError(
-                        "Expecting one value for the path of the virtual environment:\n{0}".format(value))
+                    raise ValueError(  # pragma: no cover
+                        "Expecting one value for the path of the virtual environment"
+                        ":\n{0}".format(value))
                 value = value[0]
             p = value["path"] if isinstance(value, dict) else value
             rows.append("")
@@ -465,8 +472,9 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             if value is not None:
                 if isinstance(value, dict):
                     if "CMD" not in value and "CMDPY" not in value:
-                        raise KeyError(
-                            "A script defined by a dictionary must contain key '{0}' or '{1}' in \n{2}".format("CMD", 'CMDPY', value))
+                        raise KeyError(  # pragma: no cover
+                            "A script defined by a dictionary must contain key "
+                            "'{0}' or '{1}' in \n{2}".format("CMD", 'CMDPY', value))
                     if "NAME" in value:
                         if iswin:
                             rows.append("set JOB_NAME=%s" % value["NAME"])
@@ -482,8 +490,9 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 elif isinstance(value, typstr):
                     pass
                 else:
-                    raise TypeError(
-                        "value must of type list, dict, not '{0}'\n{1}".format(type(value), value))
+                    raise TypeError(  # pragma: no cover
+                        "value must of type list, dict, not '{0}'\n{1}"
+                        "".format(type(value), value))
 
                 rows.append("")
                 rows.append(echo + " " + key.upper())
@@ -499,7 +508,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                                 nbrem = v.split("-")[-1]
                                 try:
                                     nbrem = int(nbrem)
-                                except ValueError as e:
+                                except ValueError as e:  # pragma: no cover
                                     raise ValueError(
                                         "Unable to interpret '{0}'".format(v))
                             else:
@@ -525,19 +534,22 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             else:
                 rowsset.append("export {0}={1}".format(value[0], vs))
         else:
-            raise ValueError("unexpected key '{0}'".format(key))
+            raise ValueError(  # pragma: no cover
+                "unexpected key '{0}'".format(key))
 
     splits = [rowsset + _ for _ in splits]
     allres = []
     for rows in splits:
         try:
             res = "\n".join(rows)
-        except TypeError as e:
+        except TypeError as e:  # pragma: no cover
             raise TypeError("Unexpected type\n{0}".format(
                 "\n".join([str((type(_), _)) for _ in rows]))) from e
         if _jenkins_split in res:
-            raise ValueError(
-                "Constant '{0}' is present in the generated script. It can only be added to the install section.".format(_jenkins_split))
+            raise ValueError(  # pragma: no cover
+                "Constant '{0}' is present in the generated script. "
+                "It can only be added to the install section."
+                "".format(_jenkins_split))
         allres.append(res)
     return allres if len(allres) > 1 else allres[0]
 
@@ -569,14 +581,16 @@ def infer_project_name(file_or_buffer, source):
             else:
                 break
         if name is None:
-            raise ValueError(
-                "Unable to infer project name for '{0}'".format(file_or_buffer))
+            raise ValueError(  # pragma: no cover
+                "Unable to infer project name for '{0}'".format(
+                    file_or_buffer))
         return name
     elif source == "s":
         return "unknown_string"
     else:
-        raise ValueError("Unexpected value for add_source: '{0}' for '{1}'".format(
-            source, file_or_buffer))
+        raise ValueError(  # pragma: no cover
+            "Unexpected value for add_source: '{0}' for '{1}'".format(
+                source, file_or_buffer))
     return last
 
 
@@ -636,9 +650,9 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             import jenkins
             try:
                 j = server.get_job_config(name) if not server._mock else None
-            except jenkins.NotFoundException:
+            except jenkins.NotFoundException:  # pragma: no cover
                 j = None
-            except jenkins.JenkinsException as e:
+            except jenkins.JenkinsException as e:  # pragma: no cover
                 from .jenkins_exceptions import JenkinsExtException
                 raise JenkinsExtException(
                     "Unable to retrieve job config for name='{0}'.".format(name)) from e
@@ -648,7 +662,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                 if kwargs.get('update', True):
                     update_job = True
                 else:
-                    if fLOG is not None:
+                    if fLOG is not None:  # pragma: no cover
                         fLOG("[jenkins] delete job", name)
                     server.delete_job(name)
 
@@ -676,10 +690,10 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                     elif "STARTUP" in scheduler:
                         adjuster_scheduler = False
                     elif 'fixed' in scheduler.lower():
-                        raise ValueError(
+                        raise ValueError(  # pragma: no cover
                             "Scheduler should contain 'FIXED' in upper case.")
                     elif 'startup' in scheduler.lower():
-                        raise ValueError(
+                        raise ValueError(  # pragma: no cover
                             "Scheduler should contain 'STARTUP' in upper case.")
                     else:
                         adjuster_scheduler = True

@@ -5,7 +5,7 @@
 import yaml
 try:
     from yaml import FullLoader as Loader
-except ImportError:
+except ImportError:  # pragma: no cover
     Loader = None
 
 

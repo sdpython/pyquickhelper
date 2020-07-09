@@ -98,7 +98,7 @@ def do_main(source, dest, password, encrypt,  # pylint: disable=W0621
         issue = enc.start_transfering()[1]
 
         for file, exc in issue:
-            if fLOG:
+            if fLOG:  # pragma: no cover
                 fLOG("{0} -- {1}".format(file, exc))
     else:
         enc = EncryptedBackup(key=password, file_tree_node=None,

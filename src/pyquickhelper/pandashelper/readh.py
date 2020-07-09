@@ -32,7 +32,7 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
         with zipfile.ZipFile(BytesIO(content)) as myzip:
             infos = myzip.infolist()
             if not infos:
-                raise FileNotFoundError(
+                raise FileNotFoundError(  # pragma: no cover
                     "unable to find a file in " + filepath_or_buffer)
             res = {}
             for info in infos:
@@ -43,18 +43,19 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
                     res[name] = text
                 else:
                     if text is None:
-                        raise FileNotFoundError(
-                            "empty file {0} in {1}".format(name, filepath_or_buffer))
+                        raise FileNotFoundError(  # pragma: no cover
+                            "Empty file '{0}' in '{1}'".format(
+                                name, filepath_or_buffer))
                     text = text.decode(
                         encoding=params.get('encoding', 'ascii'))
                     st = StringIO(text)
                     try:
                         df = pandas.read_csv(
                             st, compression=compression, **params)
-                    except pandas.errors.ParserError as e:
+                    except pandas.errors.ParserError as e:  # pragma: no cover
                         lines = text.split("\n")
                         end = min(len(lines), 5)
-                        mes = "Parsing errors in {0}, first lines:\n{1}".format(
+                        mes = "Parsing errors in '{0}', first lines:\n{1}".format(
                             name, "\n".join(lines[:end]))
                         raise Exception(mes) from e
                     res[name] = df

@@ -82,7 +82,7 @@ def encrypt_file(fLOG=print, args=None):
     """
     parser = get_parser(True)
     if args is not None and args == ['--help']:
-        fLOG(parser.format_help())
+        fLOG(parser.format_help())  # pragma: no cover
     else:
         try:
             args = parser.parse_args()
@@ -112,7 +112,7 @@ def decrypt_file(fLOG=print, args=None):
     """
     parser = get_parser(False)
     if args is not None and args == ['--help']:
-        fLOG(parser.format_help())
+        fLOG(parser.format_help())  # pragma: no cover
     else:
         try:
             args = parser.parse_args()

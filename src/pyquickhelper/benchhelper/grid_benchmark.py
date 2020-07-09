@@ -17,8 +17,6 @@ class GridBenchMark(BenchMark):
     def __init__(self, name, datasets, clog=None, fLOG=noLOG, path_to_images=".",
                  cache_file=None, repetition=1, progressbar=None, **params):
         """
-        initialisation
-
         @param      name            name of the test
         @param      datasets        list of dictionary of dataframes
         @param      clog            see @see cl CustomLog or string
@@ -92,7 +90,7 @@ class GridBenchMark(BenchMark):
         """
         Skips it.
         """
-        pass
+        pass  # pragma: no cover
 
     def run(self, params_list):
         """

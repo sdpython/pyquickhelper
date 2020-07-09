@@ -323,7 +323,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         """
         if isinstance(anys, bytes):
             if script_python:
-                raise SystemError("** w,unable to execute script from bytes")
+                raise SystemError(  # pragma: no cover
+                    "** w,unable to execute script from bytes")
             self.wfile.write(anys)
         else:
             if script_python:
@@ -383,7 +384,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 url = cpath.path.replace("/%s/" % project, "")
                 try:
                     content = get_url_content(url)
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     content = "<html><body>ERROR (2): %s</body></html>" % e
                 self.feed(content, False, params={})
 
