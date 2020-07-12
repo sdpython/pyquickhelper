@@ -33,12 +33,12 @@ class BlogPostList:
         """
         self._blogposts = []
         sub = os.listdir(folder)
-        for s in sub:
+        for s in sorted(sub):
             full = os.path.join(folder, s)
             if os.path.isdir(full):
                 fLOG("[BlogPostList]    reading folder", full)
                 posts = os.listdir(full)
-                for post in posts:
+                for post in sorted(posts):
                     if os.path.splitext(post)[-1] in [".rst"]:
                         fpost = os.path.join(full, post)
                         fLOG("    reading post", fpost)
