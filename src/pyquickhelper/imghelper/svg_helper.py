@@ -60,7 +60,7 @@ def svg2img(svg, dpi=None, scale=1., **kwargs):
             size = guess_svg_size(svg)
             head = '<svg width="{}" height="{}">'.format(*size)
             svg = head + svg[5:]
-            return svg2img(svg, dpi=dpi, scale=scale, **kwargs)
+            return svg2img(svg, **kwargs)
         else:
             raise PYQImageException(  # pragma: no cover
                 "width and height must be specified. This might be the error.") from e

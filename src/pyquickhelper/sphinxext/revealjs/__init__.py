@@ -20,9 +20,9 @@ template_path = path.join(package_dir, 'templates')
 
 def get_path():
     """entry-point for sphinx  theme."""
-    return template_path
+    return template_path  # pragma: no cover
 
 
 def setup(app):
     """entry-point for sphinx  directive."""
-    directives.setup(app)
+    directives.setup(app)  # pragma: no cover

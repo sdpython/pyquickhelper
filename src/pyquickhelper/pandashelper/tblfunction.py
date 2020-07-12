@@ -21,7 +21,7 @@ def isempty(s):
     import numpy
     if numpy.isnan(s):
         return True
-    return False
+    return False  # pragma: no cover
 
 
 def isnan(s):

@@ -64,13 +64,11 @@ def compare_module_version(num, vers):
                 b = str(b)
                 if a < b:
                     return -1
-                elif a > b:
-                    return 1
+                if a > b:
+                    return 1  # pragma: no cover
         return 0
-    else:
-        if len(num) < len(vers):
-            num = num + (0,) * (len(vers) - len(num))
-            return compare_module_version(num, vers)
-        else:
-            vers = vers + (0,) * (len(num) - len(vers))
-            return compare_module_version(num, vers)
+    if len(num) < len(vers):
+        num = num + (0,) * (len(vers) - len(num))
+        return compare_module_version(num, vers)
+    vers = vers + (0,) * (len(num) - len(vers))
+    return compare_module_version(num, vers)

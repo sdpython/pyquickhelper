@@ -77,7 +77,7 @@ class PostContentsDirective(Directive):
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
         else:
-            docname = ''
+            docname = ''  # pragma: no cover
 
         node = postcontents_node()
         node['pclineno'] = lineno
@@ -134,7 +134,8 @@ def _modify_postcontents(node, event):
                 subnode["ids"].append("postid-{}".format(id(subnode)))
             nid = subnode["ids"][0]
             if nid in memo:
-                raise KeyError("node was already added '{0}'".format(nid))
+                raise KeyError(  # pragma: no cover
+                    "node was already added '{0}'".format(nid))
             logger.info("[{}]  {}section id '{}'".format(
                 event, "  " * level, nid))
             level += 1

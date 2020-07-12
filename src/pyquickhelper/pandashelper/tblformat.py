@@ -125,8 +125,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         *split_col_common*, *filter_rows* were added.
     """
     if isinstance(df, str):
-        import pandas
-        df = pandas.read_csv(df, encoding="utf-8", sep=sep)
+        import pandas  # pragma: no cover
+        df = pandas.read_csv(  # pragma: no cover
+            df, encoding="utf-8", sep=sep)
 
     if split_row is not None:
         gdf = df.groupby(split_row)
@@ -256,7 +257,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         if list_table:
             i, s = cool
             if s is None:
-                s = ""
+                s = ""  # pragma: no cover
             if isinstance(s, float) and numpy.isnan(s):
                 s = ""
             else:
@@ -268,9 +269,9 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         else:
             i, s = cool
             if s is None:
-                s = " " * 4
+                s = " " * 4  # pragma: no cover
             if isinstance(s, float) and numpy.isnan(s):
-                s = ""
+                s = ""  # pragma: no cover
             else:
                 s = typstr(s).replace("\n", " ")
             i -= 2

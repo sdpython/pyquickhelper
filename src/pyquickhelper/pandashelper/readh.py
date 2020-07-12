@@ -61,4 +61,5 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
                     res[name] = df
             return res if len(res) > 1 else list(res.values())[0]
     else:
-        return pandas.read_csv(filepath_or_buffer, compression=compression, **params)
+        return pandas.read_csv(  # pragma: no cover
+            filepath_or_buffer, compression=compression, **params)

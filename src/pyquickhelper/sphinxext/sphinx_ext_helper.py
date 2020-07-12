@@ -60,12 +60,12 @@ def sphinx_lang(env, default_value='en'):
     if hasattr(env, "settings"):
         settings = env.settings
         if hasattr(settings, "language_code"):
-            lang = env.settings.language_code
+            lang = env.settings.language_code  # pragma: no cover
         else:
             lang = "en"
     else:
-        settings = None
-        lang = "en"
+        settings = None  # pragma: no cover
+        lang = "en"  # pragma: no cover
     return lang
 
 

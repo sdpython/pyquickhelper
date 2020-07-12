@@ -54,7 +54,7 @@ def gitlog_role(role, rawtext, text, lineno, inliner, options=None, content=None
         value = get_file_last_modification(source)
         node['text'] = value
     else:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "Unable to interpret this instuction '{}'.".format(text))
     return [node], []
 

@@ -51,6 +51,16 @@ class TestSvg2Image(ExtTestCase):
         img.save(name)
         self.assertExists(name)
 
+        img = svg2img(svg, dpi=200)
+        name = os.path.join(temp, "image3.png")
+        img.save(name)
+        self.assertExists(name)
+
+        img = svg2img(svg, scale=2.)
+        name = os.path.join(temp, "image4.png")
+        img.save(name)
+        self.assertExists(name)
+
 
 if __name__ == "__main__":
     unittest.main()

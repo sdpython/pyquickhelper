@@ -123,7 +123,7 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
             try:
                 i = int(v)
                 size = i
-            except ValueError:
+            except ValueError:  # pragma: no cover
                 msg = inliner.reporter.error(
                     "unable to interpret {0} from {1}".format(v, rawtext), line=lineno)
                 prb = inliner.problematic(rawtext, rawtext, msg)

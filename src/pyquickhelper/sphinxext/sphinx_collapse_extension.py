@@ -95,14 +95,14 @@ def visit_collapse_node(self, node):
     """
     visit collapse_node
     """
-    pass
+    pass  # pragma: no cover
 
 
 def depart_collapse_node(self, node):
     """
     depart collapse_node
     """
-    pass
+    pass  # pragma: no cover
 
 
 def visit_collapse_node_rst(self, node):

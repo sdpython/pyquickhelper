@@ -499,7 +499,8 @@ class BenchMark:
                 df["_i"] = df["_i"].apply(
                     lambda s: ':ref:`{0} <l-{1}-{0}>`'.format(s, self.Name))
             else:
-                raise ValueError("Format should be rst or html.")
+                raise ValueError(  # pragma: no cover
+                    "Format should be rst or html.")
         return df
 
     def meta_to_df(self, convert=False, add_link=False, format="html"):
@@ -535,7 +536,8 @@ class BenchMark:
                 df["_i"] = df["_i"].apply(
                     lambda s: ':ref:`{0} <l-{1}-{0}>'.format(s, self.Name))
             else:
-                raise ValueError("Format should be rst or html.")
+                raise ValueError(  # pragma: no cover
+                    "Format should be rst or html.")
         return df[col1 + col2]
 
     def report(self, css=None, template_html=None, template_rst=None, engine="mako", filecsv=None,
@@ -568,7 +570,7 @@ class BenchMark:
         if params_html is None:
             params_html = dict()
         if title is None:
-            title = self.Name
+            title = self.Name  # pragma: no cover
         if "escape" not in params_html:
             params_html["escape"] = False
 
@@ -580,7 +582,7 @@ class BenchMark:
         import pandas
 
         if description is None:
-            description = ""
+            description = ""  # pragma: no cover
 
         contents = {'df': self.to_df()}
 
