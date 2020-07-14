@@ -20,7 +20,7 @@ from .notebook_helper import writes
 try:
     from nbformat.reader import reads
     from nbformat.reader import NotJSONError
-except ImportError:
+except ImportError:  # pragma: no cover
     from IPython.nbformat.reader import reads
     from IPython.nbformat.reader import NotJSONError
 
@@ -40,7 +40,8 @@ def _cache_url_to_file(cache_urls, folder, fLOG=noLOG):
     if cache_urls is None:
         return None
     if folder is None:
-        raise FileNotFoundError("folder cannot be None")
+        raise FileNotFoundError(  # pragma: no cover
+            "folder cannot be None")
     res = {}
     for url in cache_urls:
         local_file = "__cached__" + url.split("/")[-1]
@@ -134,12 +135,12 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     with open(filename, "r", encoding=encoding) as payload:
         try:
             nbc = payload.read()
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError as e:  # pragma: no cover
             raise NotebookException(
                 "(2) Unable to read file '{0}' encoding='{1}'.".format(filename, encoding)) from e
     try:
         nb = reads(nbc)
-    except NotJSONError as e:
+    except NotJSONError as e:  # pragma: no cover
         raise NotebookException(
             "(1) Unable to read file '{0}' encoding='{1}'.".format(filename, encoding)) from e
 
@@ -160,7 +161,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                                    extended_args=extended_args, kernel_name=kernel_name,
                                    replacements=cached_rep, kernel=True, detailed_log=detailed_log,
                                    startup_timeout=startup_timeout)
-    except NotebookKernelError:
+    except NotebookKernelError:  # pragma: no cover
         # It fails. We try again once.
         nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
                                    theNotebook=os.path.abspath(filename),
@@ -177,7 +178,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
             with open(outfilename, 'w', encoding=encoding) as f:
                 try:
                     s = writes(nb_runner.nb)
-                except NotebookException as e:
+                except NotebookException as e:  # pragma: no cover
                     raise NotebookException(
                         "issue with notebook: '{}'".format(filename)) from e
                 if isinstance(s, bytes):
@@ -265,7 +266,7 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
                                      cache_urls=cache_urls, replacements=replacements,
                                      detailed_log=detailed_log, startup_timeout=startup_timeout)
             if not os.path.exists(outfile):
-                raise FileNotFoundError(outfile)
+                raise FileNotFoundError(outfile)  # pragma: no cover
             etime = time.perf_counter() - cl
             results[note] = dict(success=True, output=out, name=note, etime=etime,
                                  date=datetime.now())
@@ -328,7 +329,7 @@ def _existing_dump(dump):
     def read_file(dump):
         try:
             df = pandas.read_csv(dump, sep="\t", encoding="utf-8")
-        except ParserError:
+        except ParserError:  # pragma: no cover
             df = pandas.read_csv(
                 dump, sep="\t", encoding="utf-8", error_bad_lines=False, warn_bad_lines=True)
         return df
@@ -338,16 +339,16 @@ def _existing_dump(dump):
         # file at the same time.
         try:
             df = read_file(dump)
-        except PermissionError:
+        except PermissionError:  # pragma: no cover
             # We try again once.
             time.sleep(10)
             try:
                 df = read_file(dump)
             except Exception as e:
-                raise Exception(
+                raise RuntimeError(
                     "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
-        except Exception as e:
-            raise Exception(
+        except Exception as e:  # pragma: no cover
+            raise RuntimeError(
                 "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
     else:
         df = None
@@ -376,7 +377,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
         print(_get_dump_default_path(pyquickhelper))
     """
     if len(res) == 0:
-        raise Exception("No notebook was run.")
+        raise RuntimeError("No notebook was run.")  # pragma: no cover
 
     def fail_note(v):
         return "error" in v
@@ -420,7 +421,7 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
             # locket (https://github.com/mwilliamson/locket.py) was not tried.
             try:
                 df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
-            except PermissionError:
+            except PermissionError:  # pragma: no cover
                 time.sleep(7)
                 df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
 
@@ -450,12 +451,14 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
         fold = os.path.dirname(module_or_path.__file__)
         _doc = os.path.join(fold, "..", "..", "_doc")
         if not os.path.exists(_doc):
-            raise FileNotFoundError(
-                "Unable to find path '{0}' for module '{1}'".format(_doc, module_or_path))
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to find path '{0}' for module '{1}'".format(
+                    _doc, module_or_path))
         nbpath = os.path.join(_doc, "notebooks")
         if not os.path.exists(nbpath):
-            raise FileNotFoundError(
-                "Unable to find path '{0}' for module '{1}'".format(nbpath, module_or_path))
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to find path '{0}' for module '{1}'".format(
+                    nbpath, module_or_path))
         nbs = explore_folder(nbpath, ".*[.]ipynb$")[1]
     else:
         nbpath = module_or_path
@@ -474,7 +477,7 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     # file at the same time.
     try:
         dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
-    except PermissionError:
+    except PermissionError:  # pragma: no cover
         # We try again once.
         time.sleep(10)
         dfall = pandas.read_csv(dump, sep="\t", encoding="utf-8")
@@ -509,8 +512,9 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
     for c in ["key", "last_name"]:
         names = [_ for _ in merged[c] if isinstance(_, str)]
         if len(names) > len(set(names)):
-            raise ValueError("Unexpected duplicated names in column '{1}'\n{0}".format(
-                "\n".join(sorted(names)), c))
+            raise ValueError(  # pragma: no cover
+                "Unexpected duplicated names in column '{1}'\n{0}".format(
+                    "\n".join(sorted(names)), c))
 
     return merged
 
@@ -557,12 +561,12 @@ def badge_notebook_coverage(df, image_name):
     try:
         cov = int(cov)
         cov = min(cov, 100)
-    except ValueError:
+    except ValueError:  # pragma: no cover
         cov = "?"
     try:
         val = int(val)
         val = min(val, 100)
-    except ValueError:
+    except ValueError:  # pragma: no cover
         val = "?"
     if cov != val:
         im.text((3, 4), "NB:{0}%-{1}%          ".format(cov, val),
@@ -602,5 +606,6 @@ def retrieve_notebooks_in_folder(folder, posreg=".*[.]ipynb$", negreg=None):
             if neg is None or not neg.search(name):
                 res.append(os.path.join(folder, name))
     if len(res) == 0:
-        raise FileNotFoundError("No notebook found in '{0}'.".format(folder))
+        raise FileNotFoundError(  # pragma: no cover
+            "No notebook found in '{0}'.".format(folder))
     return res

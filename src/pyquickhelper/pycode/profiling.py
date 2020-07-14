@@ -91,7 +91,7 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
         res = s.getvalue()
         try:
             pack = site.getsitepackages()
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             import numpy
             pack = os.path.normpath(os.path.abspath(
                 os.path.join(os.path.dirname(numpy.__file__), "..")))
@@ -120,9 +120,8 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
             def better_name(row):
                 if len(row['fct']) > 15:
                     return "{}-{}".format(row['file'].split(':')[-1], row['fct'])
-                else:
-                    name = row['file'].replace("\\", "/")
-                    return "{}-{}".format(name.split('/')[-1], row['fct'])
+                name = row['file'].replace("\\", "/")
+                return "{}-{}".format(name.split('/')[-1], row['fct'])
 
             rows = _process_pstats(ps, clean_text)
             import pandas
@@ -137,11 +136,12 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
             res = clean_text(res)
             return ps, res
     elif as_df:
-        raise ValueError("as_df is not a compatible option with pyinst_format")
+        raise ValueError(  # pragma: no cover
+            "as_df is not a compatible option with pyinst_format")
     else:
         try:
             from pyinstrument import Profiler
-        except ImportError as e:
+        except ImportError as e:  # pragma: no cover
             raise ImportError("pyinstrument is not installed.") from e
 
         profiler = Profiler(**kwargs)

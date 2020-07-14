@@ -66,9 +66,11 @@ class StringIOAndFile(StringIO):
         @param      name        name
         """
         if self.to is not None:
-            raise Exception("A test has not finished: '{0}'".format(self.to))
+            raise Exception(  # pragma: no cover
+                "A test has not finished: '{0}'".format(self.to))
         if name is None:
-            raise ValueError("name is None")
+            raise ValueError(  # pragma: no cover
+                "name is None")
         self.to = name
         self.redirect[name] = StringIO()
 
@@ -79,8 +81,9 @@ class StringIOAndFile(StringIO):
         @param      name        name
         """
         if name != self.to:
-            raise ValueError(
-                "Inconsistency in test name '{0}' != '{1}'".format(name, self.to))
+            raise ValueError(  # pragma: no cover
+                "Inconsistency in test name '{0}' != '{1}'".format(
+                    name, self.to))
         self.to = None
 
     def getvalue(self):
@@ -89,5 +92,4 @@ class StringIOAndFile(StringIO):
         """
         if self.to is not None:
             return self.redirect[self.to].getvalue()
-        else:
-            return StringIO.getvalue(self)
+        return StringIO.getvalue(self)

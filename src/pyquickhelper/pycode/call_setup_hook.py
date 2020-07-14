@@ -15,7 +15,8 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
                         additional_paths=None, interpreter_path=None,
                         check=True, **args):
     """
-    Prepares the command line to call function @see fn _setup_hook for a specific module.
+    Prepares the command line to call function
+    @see fn _setup_hook for a specific module.
 
     @param      folder              folder which contains the setup
     @param      module_name         module name
@@ -38,7 +39,8 @@ def call_setup_hook_cmd(folder, module_name, function_name="_setup_hook",
     if check and not os.path.exists(src):
         src = os.path.abspath(folder)
     if check and not os.path.exists(src):
-        raise FileNotFoundError("Unable to find folder '{}'.".format(folder))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find folder '{}'.".format(folder))
     if additional_paths is None:
         additional_paths = [src, this]
     else:
@@ -115,7 +117,7 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
             if not os.path.exists(src):
                 src = os.path.abspath(folder)
             if not os.path.exists(src):
-                raise FileNotFoundError(
+                raise FileNotFoundError(  # pragma: no cover
                     "Unable to find folder '{}'.".format(folder))
             init = os.path.join(src, module_name, "__init__.py")
             with open_script(init, "r") as f:
@@ -136,21 +138,20 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                 print("[pyqerror]\n", err)
 
     def error():
-        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]\n{2}\nexit={4}".format(code.replace(";", "\n"),
-                                                                                           out, err, cmd, exit)
+        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]\n{2}\nexit={4}".format(
+            code.replace(";", "\n"), out, err, cmd, exit)
         return mes
 
     if not must_be and (
         "ImportError: cannot import name '{0}'".format(function_name) in err or
-        "ImportError: cannot import name {0}".format(function_name) in err
-    ):
+            "ImportError: cannot import name {0}".format(function_name) in err):
         # no _setup_hook
         return out, "no {0}".format(function_name)
     if "Error while finding spec " in err:
-        raise Exception(error())
+        raise Exception(error())  # pragma: no cover
     if "ImportError: No module named" in err:
-        raise Exception(error())
+        raise Exception(error())  # pragma: no cover
     if exit != 0:
-        raise Exception(error())
+        raise Exception(error())  # pragma: no cover
     out = "CMD: {0}\n---\n{1}".format(cmd, out)
     return out, err

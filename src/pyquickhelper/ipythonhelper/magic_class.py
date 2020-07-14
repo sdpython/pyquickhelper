@@ -66,8 +66,7 @@ class MagicClassWithHelpers(Magics):
         if res is None:
             MagicClassWithHelpers._parser_store[name] = parser_class()
             return MagicClassWithHelpers._parser_store[name]
-        else:
-            return res
+        return res
 
     def get_args(self, line, parser, print_function=print):
         """
@@ -94,7 +93,7 @@ class MagicClassWithHelpers(Magics):
         """
         try:
             args = parser.parse_cmd(line, context=self.Context)
-        except SystemExit:
+        except SystemExit:  # pragma: no cover
             print_function(parser.format_usage())
             args = None
 

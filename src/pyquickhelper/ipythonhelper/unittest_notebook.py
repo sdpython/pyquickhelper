@@ -66,12 +66,13 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
     doc = os.path.normpath(os.path.join(
         temp, "..", "..", "..", "_doc", "notebooks", folder))
     if not os.path.exists(doc):
-        raise FileNotFoundError(doc)
+        raise FileNotFoundError(doc)  # pragma: no cover
     keepnote = [os.path.join(doc, _) for _ in os.listdir(
         doc) if name in _ and ".ipynb" in _ and ".ipynb_checkpoints" not in _]
     if len(keepnote) == 0:
-        raise AssertionError("No found notebook in '{0}'\n{1}".format(
-            doc, "\n".join(os.listdir(doc))))
+        raise AssertionError(  # pragma: no cover
+            "No found notebook in '{0}'\n{1}".format(
+                doc, "\n".join(os.listdir(doc))))
 
     if copy_files is not None:
         for name_ in copy_files:
@@ -91,7 +92,7 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
         else:
             thismodule = sys.modules[this_module_name]
         base = [jyquickhelper, thismodule]
-    else:
+    else:  # pragma: no cover
         pyquickhelper = sys.modules['pyquickhelper']
         jyquickhelper = sys.modules['jyquickhelper']
         if "src." + this_module_name in sys.modules:

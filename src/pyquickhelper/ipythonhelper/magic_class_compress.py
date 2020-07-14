@@ -65,19 +65,19 @@ class MagicCompress(MagicClassWithHelpers):
 
             if format == "zip":
                 return zip_files(dest, files)
-            elif format == "gzip":
+            if format == "gzip":
                 return gzip_files(dest, files)
-            elif format == "7z":
+            if format == "7z":
                 return zip7_files(dest, files)
-            else:
-                raise ValueError(
-                    "unexpected format: {0} from file {1}".format(format, dest))
+            raise ValueError(
+                "Unexpected format: '{0}' from file '{1}'?".format(
+                    format, dest))
         return None
 
 
-def register_file_magics(ip=None):
+def register_file_magics(ip=None):  # pragma: no cover
     """
-    register magics function, can be called from a notebook
+    Registers magics function, can be called from a notebook.
 
     @param      ip      from ``get_ipython()``
     """

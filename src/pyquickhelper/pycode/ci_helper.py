@@ -6,7 +6,7 @@
 
 def is_travis_or_appveyor(env=None):
     """
-    Tells if is a travis environment or appveyor.
+    Tells if is a *travis* environment or *appveyor*.
 
     @param      env         checks that a environment variable is set up.
     @return                 ``'travis'``, ``'appveyor'``, ``'circleci'``
@@ -20,15 +20,15 @@ def is_travis_or_appveyor(env=None):
     """
     import sys
     if "travis" in sys.executable:
-        return "travis"
+        return "travis"  # pragma: no cover
     import os
     if os.environ.get("USERNAME", os.environ.get("USER", None)) == "appveyor" or \
        os.environ.get("APPVEYOR", "").lower() in ("true", "1"):
-        return "appveyor"
+        return "appveyor"  # pragma: no cover
     if os.environ.get('CIRCLECI', "undefined") != "undefined":
-        return "circleci"
+        return "circleci"  # pragma: no cover
     if os.environ.get('AZURE_HTTP_USER_AGENT', 'undefined') != 'undefined':
-        return "azurepipe"
+        return "azurepipe"  # pragma: no cover
     if env is not None:
         for k in env:
             if k in os.environ and os.environ[k]:

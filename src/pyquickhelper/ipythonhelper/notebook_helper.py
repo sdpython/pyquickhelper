@@ -22,9 +22,9 @@ with warnings.catch_warnings():
     try:
         from ipykernel.kernelspec import install as install_k
         raisewarn = False
-    except ImportError:
+    except ImportError:  # pragma: no cover
         raisewarn = True
-if raisewarn:
+if raisewarn:  # pragma: no cover
     warnings.warn("ipykernel is not installed. pyquickhelper cannot execute a notebook.",
                   category=ImportWarning)
 
@@ -53,7 +53,7 @@ def writes(nb, **kwargs):
     """
     try:
         return versions[nb.nbformat].writes_json(nb, **kwargs)
-    except AttributeError as e:
+    except AttributeError as e:  # pragma: no cover
         raise NotebookException(
             "probably wrong error: {0}".format(nb.nbformat)) from e
 
@@ -71,7 +71,7 @@ def upgrade_notebook(filename, encoding="utf-8"):
 
     try:
         nb = reads(content)
-    except NotJSONError as e:
+    except NotJSONError as e:  # pragma: no cover
         if len(content) > 10:
             lc = list(content[:10])
         else:
@@ -84,7 +84,7 @@ def upgrade_notebook(filename, encoding="utf-8"):
 
     try:
         upgrade(nb, from_version=nb.nbformat)
-    except ValueError as e:
+    except ValueError as e:  # pragma: no cover
         raise ValueError("Unable to convert '{0}'.".format(filename)) from e
 
     s = writes(nb)
@@ -93,10 +93,9 @@ def upgrade_notebook(filename, encoding="utf-8"):
 
     if s == content:
         return False
-    else:
-        with open(filename, "w", encoding=encoding) as f:
-            f.write(s)
-        return True
+    with open(filename, "w", encoding=encoding) as f:
+        f.write(s)
+    return True
 
 
 def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
@@ -115,7 +114,8 @@ def read_nb(filename, profile_dir=None, encoding="utf8", working_dir=None,
     @param      fLOG            logging function
     @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
     @param      kernel_name     kernel name, it can be None
-    @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+    @param      extended_args   others arguments to pass to the command line
+                                (`--KernelManager.autorestar=True` for example),
                                 see :ref:`l-ipython_notebook_args` for a full list
     @param      kernel          *kernel* is True by default, the notebook can be run, if False,
                                 the notebook can be read but not run
@@ -181,7 +181,7 @@ def read_nb_json(js, profile_dir=None, encoding="utf8",
 
 def find_notebook_kernel(kernel_spec_manager=None):
     """
-    return a dict mapping kernel names to resource directories
+    Returns a dict mapping kernel names to resource directories.
 
     @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/
                                         latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
@@ -201,7 +201,8 @@ def find_notebook_kernel(kernel_spec_manager=None):
 
 def get_notebook_kernel(kernel_name, kernel_spec_manager=None):
     """
-    Returns a `KernelSpec <https://ipython.org/ipython-doc/dev/api/generated/IPython.kernel.kernelspec.html>`_.
+    Returns a `KernelSpec <https://ipython.org/ipython-doc/dev/api/
+    generated/IPython.kernel.kernelspec.html>`_.
 
     @param      kernel_spec_manager     see `KernelSpecManager <http://jupyter-client.readthedocs.org/en/
                                         latest/api/kernelspec.html#jupyter_client.kernelspec.KernelSpecManager>`_
@@ -222,8 +223,9 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
                                user=False, prefix=None, nbextensions_dir=None,
                                destination=None):
     """
-    Install notebook extensions,
-    see `install_nbextension <https://ipython.org/ipython-doc/dev/api/generated/IPython.html.nbextensions.html
+    Installs notebook extensions,
+    see `install_nbextension <https://ipython.org/ipython-doc/
+    dev/api/generated/IPython.html.nbextensions.html
     #IPython.html.nbextensions.install_nbextension>`_
     for documentation.
 
@@ -299,22 +301,17 @@ def get_jupyter_extension_dir(user=False, prefix=None,
 def get_installed_notebook_extension(user=False, prefix=None,
                                      nbextensions_dir=None):
     """
-    Parameters
-    ----------
+    Retuns installed extensions.
 
-    user : bool [default: False]
+    :param user: bool [default: False]
         Whether to check the user's .ipython/nbextensions directory.
         Otherwise check a system-wide install (e.g. /usr/local/share/jupyter/nbextensions).
-    prefix : str [optional]
+    :param prefix: str [optional]
         Specify install prefix, if it should differ from default (e.g. /usr/local).
         Will check prefix/share/jupyter/nbextensions
-    nbextensions_dir : str [optional]
+    :param nbextensions_dir: str [optional]
         Specify absolute path of nbextensions directory explicitly.
-
-    Return
-    ------
-
-    list: list of installed notebook extension (by the user)
+    :return: list: list of installed notebook extension (by the user)
 
     You can install extensions with function @see fn install_notebook_extension.
     """
@@ -336,7 +333,7 @@ def get_installed_notebook_extension(user=False, prefix=None,
 
 def install_jupyter_kernel(exe=sys.executable, kernel_spec_manager=None, user=False, kernel_name=None, prefix=None):
     """
-    Install a kernel based on executable (this python by default)
+    Installs a kernel based on executable (this python by default).
 
     @param  exe                 Python executable
                                 current one by default
@@ -439,8 +436,9 @@ def remove_kernel(kernel_name, kernel_spec_manager=None):
             raise FileNotFoundError("unable to remove folder " + fold)
         remove_folder(fold)
     else:
-        raise NotebookException("unable to find kernel {0} in {1}".format(
-            kernel_name, ", ".join(kernels.keys())))
+        raise NotebookException(  # pragma: no cover
+            "Unable to find kernel '{0}' in {1}".format(
+                kernel_name, ", ".join(kernels.keys())))
 
 
 def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, rule=int):
@@ -480,7 +478,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
                     cellno += 1
                     adict[key] = cellno
                 else:
-                    raise ValueError(
+                    raise ValueError(  # pragma: no cover
                         "Rule '{0}' does not apply on {1}={2}".format(rule, key, adict[key]))
             elif key == "outputs":
                 if isinstance(adict[key], dict):
@@ -510,7 +508,5 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
             with open(outfile, "w", encoding=encoding) as f:
                 f.write(res)
             return content
-        else:
-            return None
-    else:
-        return res
+        return None
+    return res

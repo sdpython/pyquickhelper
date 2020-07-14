@@ -33,8 +33,9 @@ def clean_readme(content):
                 if less is None:
                     less = len(line) - len(sline)
                     if less == indent:
-                        raise ValueError(
-                            "Wrong format at line {0}\n{1}".format(i, content))
+                        raise ValueError(  # pragma: no cover
+                            "Wrong format at line {0}\n{1}".format(
+                                i, content))
                 new_line = line[less - indent:]
                 rows.append(new_line)
             else:

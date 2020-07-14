@@ -32,7 +32,8 @@ class TestExecutionError(RuntimeError):
                 name, module.__name__, exc, format_exc())
             RuntimeError.__init__(self, msg)
         else:
-            raise RuntimeError("Unknown test error.")
+            raise RuntimeError(  # pragma: no cover
+                "Unknown test error.")
 
 
 def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=False, fLOG=print):
@@ -69,12 +70,14 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
             spec = importlib.util.spec_from_file_location(
                 module_name, module_path)
             if spec is None:
-                raise ImportError("Cannot import module '{}' from '{}'.".format(
-                    module_name, module_path))
+                raise ImportError(  # pragma: no cover
+                    "Cannot import module '{}' from '{}'.".format(
+                        module_name, module_path))
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
     if module is None:
-        raise ValueError("module must be specified.")
+        raise ValueError(  # pragma: no cover
+            "module must be specified.")
 
     reg = re.compile(pattern)
     fcts = []
@@ -105,8 +108,9 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
                 excs.append(exc)
         dt = time.perf_counter() - t0
         if verbose:
-            fLOG("[run_test_function] {}/{}: {} '{}' in {:0.000}s".format(
-                i + 1, len(fcts), 'OK' if exc is None else '--', name, dt))
+            fLOG(  # pragma: no cover
+                "[run_test_function] {}/{}: {} '{}' in {:0.000}s".format(
+                    i + 1, len(fcts), 'OK' if exc is None else '--', name, dt))
         tested.append(name)
         i += 1
 

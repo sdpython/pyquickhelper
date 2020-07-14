@@ -41,7 +41,8 @@ class MagicCommandParser(argparse.ArgumentParser):
                     return a
                 elif a.startswith("--"):
                     return a[2:].replace("-", "_")
-        raise KeyError("unable to find parameter name in: " + typstr(args))
+        raise KeyError(  # pragma: no cover
+            "Unable to find parameter name in: " + typstr(args))
 
     def add_argument(self, *args, **kwargs):
         """
@@ -72,8 +73,8 @@ class MagicCommandParser(argparse.ArgumentParser):
             if args != ('-h', '--help'):
                 pass
             elif kwargs.get("action", "") != "help":
-                raise ValueError(
-                    "unable to add parameter -h, --help, already taken for help")
+                raise ValueError(  # pragma: no cover
+                    "Unable to add parameter -h, --help, already taken for help.")
 
     def has_choices(self, name):
         """
@@ -83,8 +84,9 @@ class MagicCommandParser(argparse.ArgumentParser):
         @return                 boolean
         """
         if name not in self._keep_args:
-            raise KeyError("unable to find parameter name: {0} in {1}".format(
-                name, list(self._keep_args.keys())))
+            raise KeyError(
+                "Unable to find parameter name: {0} in {1}".format(
+                    name, list(self._keep_args.keys())))
         return "choices" in self._keep_args[name][1]
 
     def has_eval(self, name):
@@ -96,8 +98,9 @@ class MagicCommandParser(argparse.ArgumentParser):
         @return                 boolean
         """
         if name not in self._keep_args:
-            raise KeyError("unable to find parameter name: {0} in {1}".format(
-                name, list(self._keep_args.keys())))
+            raise KeyError(
+                "Unable to find parameter name: {0} in {1}".format(
+                    name, list(self._keep_args.keys())))
         return "no_eval" not in self._keep_args[name][1]
 
     def expected_type(self, name):
@@ -109,8 +112,7 @@ class MagicCommandParser(argparse.ArgumentParser):
         """
         if name in self._keep_args:
             return self._keep_args[name][1].get("type", None)
-        else:
-            return None
+        return None
 
     def expected_eval_type(self, name):
         """
@@ -122,13 +124,13 @@ class MagicCommandParser(argparse.ArgumentParser):
         """
         if name in self._keep_args:
             return self._keep_args[name][1].get("eval_type", None)
-        else:
-            return None
+        return None
 
     def parse_cmd(self, line, context=None, fLOG=noLOG):
         """
-        split line using `shlex <https://docs.python.org/3/library/shlex.html>`_
-        and call `parse_args <https://docs.python.org/3/library/argparse.html#argparse.ArgumentParser.parse_args>`_
+        Splits line using `shlex <https://docs.python.org/3/library/shlex.html>`_
+        and call `parse_args <https://docs.python.org/3/library/
+        argparse.html#argparse.ArgumentParser.parse_args>`_
 
         @param      line        string
         @param      context     if not None, tries to evaluate expression the command may contain
@@ -150,8 +152,8 @@ class MagicCommandParser(argparse.ArgumentParser):
                 else:
                     ev = self.eval(v, context=context, fLOG=fLOG)
                     v_exp = self.expected_eval_type(k)
-                    if ev is not None and (v_exp is None or v_exp == type(ev)) and \
-                            (type(v) != type(ev) or v != ev):  # pylint: disable=C0123
+                    if (ev is not None and (v_exp is None or v_exp == type(ev)) and  # pylint: disable=C0123
+                            (type(v) != type(ev) or v != ev)):  # pylint: disable=C0123
                         up[k] = ev
                     elif v_exp is not None and type(v) != v_exp:  # pylint: disable=C0123
                         up[k] = v_exp(v)
@@ -194,9 +196,8 @@ class MagicCommandParser(argparse.ArgumentParser):
             try:
                 res = eval(value, {}, context)
                 return res
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 fLOG(
-                    "unable to interpret: " + typstr(value), " exception ", typstr(e))
+                    "Unable to interpret {} due to {}.".format(typstr(value), e))
                 return value
-        else:
-            return value
+        return value

@@ -33,7 +33,7 @@ def open_html_form(params, title='', key_save="",
     .. exref::
         :title: Open a add a form in a notebook to ask parameters to a user
 
-        @image images/form.png
+        .. image:: images/form.png
 
         Cell 1::
 
@@ -67,8 +67,9 @@ def open_html_form(params, title='', key_save="",
     global _reg_var
     for k in params:
         if not _reg_var.match(k):
-            raise KeyError(
-                "keys in params must look like a variable, it is not the case for: " + k)
+            raise KeyError(  # pragma: no cover
+                "keys in params must look like a variable, it is not the case for "
+                "'{}'.".format(k))
 
     row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
@@ -110,6 +111,5 @@ def open_html_form(params, title='', key_save="",
 
     if raw:
         return text
-    else:
-        from IPython.display import HTML
-        return HTML(text)
+    from IPython.display import HTML  # pragma: no cover
+    return HTML(text)  # pragma: no cover

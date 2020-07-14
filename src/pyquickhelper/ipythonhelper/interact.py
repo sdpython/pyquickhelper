@@ -49,7 +49,7 @@ def _get_html(obj):
     else:
         png_rep = None
 
-    if png_rep is not None:
+    if png_rep is not None:  # pragma: no cover
         # do not move this import to the root or
         # you will be exposed to the issue mentioned by
         # function fix_tkinter_issues_virtualenv

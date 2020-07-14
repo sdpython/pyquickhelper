@@ -87,12 +87,11 @@ class MagicClassExample(MagicClassWithHelpers):
             nop = args.no_print
             if nop or format == "html":
                 return docstring2html(obj, format=format)
-            else:
-                print(docstring2html(obj, format=format))
+            print(docstring2html(obj, format=format))
         return None
 
 
-def register_file_magics(ip=None):
+def register_file_magics(ip=None):  # pragma: no cover
     """
     Registers magics functions, can be called from a notebook.
 

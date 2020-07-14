@@ -68,19 +68,22 @@ def get_package_info(name=None, start=0, end=-1):
             end = len(packs)
         subp = packs[start:end]
         if len(subp) == 0:
-            raise PQPipError(
-                "no package, start={0}, end={1}, len(subp)={2}, len(packs)={3}".format(start, end, len(subp), len(packs)))
+            raise PQPipError(  # pragma: no cover
+                "No package, start={0}, end={1}, len(subp)={2}, len(packs)={3}".format(
+                    start, end, len(subp), len(packs)))
         for cp in subp:
             pack = cp.project_name
             info = get_package_info(pack)
             res.append(info)
         if len(res) == 0 and len(subp) > 0:
-            raise PQPipError(
-                "empty list, unexpected, start={0}, end={1}, len(subp)={3}".format(start, end, len(subp)))
+            raise PQPipError(  # pragma: no cover
+                "Empty list, unexpected, start={0}, end={1}, len(subp)={3}".format(
+                    start, end, len(subp)))
         return res
-    else:
-        res = list(search_packages_info([name]))
-        if len(res) != 1:
-            raise PQPipError(
-                "unexpected number of results {0} for {1}".format(len(res), name))
-        return res[0]
+
+    res = list(search_packages_info([name]))
+    if len(res) != 1:
+        raise PQPipError(  # pragma: no cover
+            "Unexpected number of results {0} for {1}".format(
+                len(res), name))
+    return res[0]

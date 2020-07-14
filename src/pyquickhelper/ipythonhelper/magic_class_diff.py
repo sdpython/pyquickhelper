@@ -86,15 +86,15 @@ class MagicDiff(MagicClassWithHelpers):
     @line_magic
     def difftext(self, line):
         """
-        defines ``%difftext`` which calls @see me textdiff
+        Defines ``%difftext`` which calls @see me textdiff.
         but should be easier to remember
         """
         return self.textdiff(line)
 
 
-def register_file_magics(ip=None):
+def register_file_magics(ip=None):  # pragma: no cover
     """
-    register magics function, can be called from a notebook
+    Register magics function, can be called from a notebook.
 
     @param      ip      from ``get_ipython()``
     """

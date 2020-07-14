@@ -49,12 +49,13 @@ def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
 
     You can also read blog post :ref:`b-migration-py2py3`.
 
-    The variable *unittest_modules* indicates the list of modules which are not installed
-    in :epkg:`Python` distribution but still used and placed in the same folder
-    as the same which has to converted.
+    The variable *unittest_modules* indicates the list of
+    modules which are not installed in :epkg:`Python` distribution
+    but still used and placed in the same folder as the same which
+    has to converted.
 
-    *unittest_modules* can be either a list or a tuple ``(module, alias)``. Then the alias
-    appears instead of the module name.
+    *unittest_modules* can be either a list or a tuple ``(module, alias)``.
+    Then the alias appears instead of the module name.
 
     The function does not convert the exception
     `FileNotFoundError <https://docs.python.org/3/library/exceptions.html>`_
@@ -62,9 +63,10 @@ def py3to2_convert_tree(folder, dest, encoding="utf8", pattern=".*[.]py$",
     if this exception is raised.
 
     The following page
-    `Cheat Sheet: Writing Python 2-3 compatible code <http://python-future.org/compatible_idioms.html>`_
-    gives the difference between the two versions of Python and how to write
-    compatible code.
+    `Cheat Sheet: Writing Python 2-3 compatible code
+    <http://python-future.org/compatible_idioms.html>`_
+    gives the difference between the two versions of Python
+    and how to write compatible code.
     """
     exclude = ("temp_", "dist", "_doc", "build", "extensions",
                "nbextensions", "dist_module27", "_virtualenv", "_venv")
@@ -142,7 +144,7 @@ def py3to2_convert(script, unittest_modules):
         try:
             with open(script, "r", encoding="utf8") as f:
                 content = f.read()
-        except (UnicodeEncodeError, UnicodeDecodeError):
+        except (UnicodeEncodeError, UnicodeDecodeError):  # pragma: no cover
             with open(script, "r") as f:
                 content = f.read()
 
@@ -159,7 +161,7 @@ def py3to2_convert(script, unittest_modules):
     else:
         try:
             content = py3to2_future(content)
-        except Convert3to2Exception as e:
+        except Convert3to2Exception as e:  # pragma: no cover
             raise Convert3to2Exception(
                 'unable to convert a file due to unicode issue.\n  File "{0}", line 1'.format(script)) from e
 
@@ -194,17 +196,19 @@ def py3to2_future(content):
     """
     find = "from __future__ import unicode_literals"
     if find in content and '"{0}"'.format(find) not in content:
-        # the second condition avoid to raise this exception when parsing this file
+        # the second condition avoid to raise this
+        # exception when parsing this file
         # this case should only happen for this file
-        raise Convert3to2Exception("unable to convert a file")
+        raise Convert3to2Exception(  # pragma: no cover
+            "unable to convert a file")
 
     lines = content.split("\n")
     position = 0
     incomment = None
-    while position < len(lines) and not lines[position].startswith("import ") \
-            and not lines[position].startswith("from ") \
-            and not lines[position].startswith("def ") \
-            and not lines[position].startswith("class "):
+    while (position < len(lines) and not lines[position].startswith("import ") and
+            not lines[position].startswith("from ") and
+            not lines[position].startswith("def ") and
+            not lines[position].startswith("class ")):
         if incomment is None:
             if lines[position].startswith("'''"):
                 incomment = "'''"

@@ -29,8 +29,8 @@ class NotebookError(Exception):
 class NotebookKernelError(Exception):
     """
     Raised when
-    `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
-    fails.
+    `wait_for_ready <https://github.com/jupyter/jupyter_client/blob/master/
+    jupyter_client/blocking/client.py#L84>`_ fails.
     """
     pass
 
@@ -91,7 +91,8 @@ class NotebookRunner(object):
         @param      fLOG            logging function
         @param      log_level       Choices: (0, 10, 20, 30=default, 40, 50, 'DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL')
         @param      kernel_name     kernel name, it can be None
-        @param      extended_args   others arguments to pass to the command line ('--KernelManager.autorestar=True' for example),
+        @param      extended_args   others arguments to pass to the command line
+                                    (`--KernelManager.autorestar=True` for example),
                                     see :ref:`l-ipython_notebook_args` for a full list
         @param      kernel          *kernel* is True by default, the notebook can be run, if False,
                                     the notebook can be read but not run
@@ -102,7 +103,8 @@ class NotebookRunner(object):
                                     with the same signature as ``print`` or None
         @param      startup_timeout wait for this long for the kernel to be ready,
                                     see `wait_for_ready
-                                    <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
+                                    <https://github.com/jupyter/jupyter_client/blob/master/
+                                    jupyter_client/blocking/client.py#L84>`_
 
         .. versionchanged:: 1.8
             Parameter *startup_timeout* was added.
@@ -216,13 +218,14 @@ class NotebookRunner(object):
             with open(filename, "w", encoding=encoding) as payload:
                 self.to_json(payload)
                 return None
-        elif filename is None:
+
+        if filename is None:
             st = StringIO()
             st.write(writes(self.nb))
             return st.getvalue()
-        else:
-            filename.write(writes(self.nb))
-            return None
+
+        filename.write(writes(self.nb))
+        return None
 
     def copy(self):
         """
@@ -272,25 +275,25 @@ class NotebookRunner(object):
         has_bokeh = "bokeh." in code or "from bokeh" in code or "import bokeh" in code
         if code is None:
             return code
-        else:
-            lines = [_.strip("\n\r").rstrip(" \t") for _ in code.split("\n")]
-            res = []
-            show_is_last = False
-            for line in lines:
-                if line.replace(" ", "") == "show()":
-                    line = line.replace("show", "#show")
-                    show_is_last = True
-                elif has_bokeh and line.replace(" ", "") == "output_notebook()":
-                    line = line.replace("output_notebook", "#output_notebook")
-                else:
-                    show_is_last = False
-                if self.replacements is not None:
-                    for k, v in self.replacements.items():
-                        line = line.replace(k, v)
-                res.append(line)
-                if show_is_last:
-                    res.append('"nothing to show"')
-            return "\n".join(res)
+
+        lines = [_.strip("\n\r").rstrip(" \t") for _ in code.split("\n")]
+        res = []
+        show_is_last = False
+        for line in lines:
+            if line.replace(" ", "") == "show()":
+                line = line.replace("show", "#show")
+                show_is_last = True
+            elif has_bokeh and line.replace(" ", "") == "output_notebook()":
+                line = line.replace("output_notebook", "#output_notebook")
+            else:
+                show_is_last = False
+            if self.replacements is not None:
+                for k, v in self.replacements.items():
+                    line = line.replace(k, v)
+            res.append(line)
+            if show_is_last:
+                res.append('"nothing to show"')
+        return "\n".join(res)
 
     @staticmethod
     def get_cell_code(cell):
@@ -303,16 +306,16 @@ class NotebookRunner(object):
         if isinstance(cell, str):
             iscell = False
             return iscell, cell
-        else:
-            iscell = True
-            try:
-                return iscell, cell.source
-            except AttributeError:  # pragma: no cover
-                return iscell, cell.input
+
+        iscell = True
+        try:
+            return iscell, cell.source
+        except AttributeError:  # pragma: no cover
+            return iscell, cell.input
 
     def run_cell(self, index_cell, cell, clean_function=None):
         '''
-        Runs a notebook cell and update the output of that cell in-place.
+        Runs a notebook cell and update the output of that cell inplace.
 
         @param      index_cell          index of the cell
         @param      cell                cell to execute
@@ -326,15 +329,17 @@ class NotebookRunner(object):
 
         self.fLOG('-- running cell:\n%s\n' % codei)
         if self.detailed_log:
-            self.detailed_log('[run_cell] code=\n                        {0}'.format(
-                              "\n                        ".join(codei.split("\n"))))
+            self.detailed_log(
+                '[run_cell] code=\n                        {0}'.format(
+                    "\n                        ".join(codei.split("\n"))))
 
         code = self.clean_code(codei)
         if clean_function is not None:
             code = clean_function(code)
         if self.detailed_log:
-            self.detailed_log('    cleaned code=\n                        {0}'.format(
-                              "\n                        ".join(code.split("\n"))))
+            self.detailed_log(
+                '    cleaned code=\n                        {0}'.format(
+                    "\n                        ".join(code.split("\n"))))
         if len(code) == 0:
             return ""
         if self.kc is None:
@@ -558,8 +563,7 @@ class NotebookRunner(object):
             if last is None:
                 raise NotebookError("no cell container")  # pragma: no cover
             return last.cells
-        else:
-            return self.nb.cells
+        return self.nb.cells
 
     def __len__(self):
         """
@@ -730,10 +734,9 @@ class NotebookRunner(object):
                             b = self.create_picture_from(v, "latex")
                             results.append(b)
                     elif k == "application/vnd.jupyter.widget-view+json":
-                        # see
-                        # http://ipywidgets.readthedocs.io/en/latest/embedding.html
+                        # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
                         if "model_id" not in v:
-                            raise KeyError(
+                            raise KeyError(  # pragma: no cover
                                 "model_id is missing from {0}".format(v))
                         model_id = v["model_id"]
                         self.fLOG(
@@ -751,8 +754,8 @@ class NotebookRunner(object):
                         results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError(  # pragma: no cover
-                            "cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(kind,
-                                                                              k, v, cell))
+                            "cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(
+                                kind, k, v, cell))
             elif output["output_type"] == "error":
                 vl = output["traceback"]
                 if image_from_text:
@@ -766,16 +769,16 @@ class NotebookRunner(object):
                     b = self.create_picture_from(v, "text")
                     results.append(b)
             else:
-                raise NotImplementedError("cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}"
-                                          .format(kind, output["output_type"], output, cell))
+                raise NotImplementedError(  # pragma: no cover
+                    "cell type: {0}\noutput type: {1}\nOUT:\n{2}\nCELL:\n{3}"
+                    "".format(kind, output["output_type"], output, cell))
         if len(results) > 0:
             res = self._merge_images(results)
             if res[0] is None:
                 return None
             self._check_thumbnail_tuple(res)
             return res
-        else:
-            return None
+        return None
 
     def cell_height(self, cell):
         """
@@ -790,12 +793,12 @@ class NotebookRunner(object):
             lines = content.split("\n")
             nbs = sum(1 + len(line) // 80 for line in lines)
             return nbs
-        elif kind == "raw":
+        if kind == "raw":
             content = cell.source
             lines = content.split("\n")
             nbs = sum(1 + len(line) // 80 for line in lines)
             return nbs
-        elif kind == "code":
+        if kind == "code":
             content = cell.source
             lines = content.split("\n")
             nbl = len(lines)
@@ -848,9 +851,8 @@ class NotebookRunner(object):
 
             return nbl
 
-        else:
-            raise NotImplementedError(
-                "cell type: {0}\nCELL:\n{1}".format(kind, cell))
+        raise NotImplementedError(  # pragma: no cover
+            "cell type: {0}\nCELL:\n{1}".format(kind, cell))
 
     def add_tag_slide(self, max_nb_cell=4, max_nb_line=25):
         """
@@ -930,8 +932,8 @@ class NotebookRunner(object):
         # additional path
         if additional_path is not None:
             if not isinstance(additional_path, list):
-                raise TypeError(
-                    "additional_path should be a list not: " + str(additional_path))
+                raise TypeError(  # pragma: no cover
+                    "Additional_path should be a list not: " + str(additional_path))
             code = ["import sys"]
             for p in additional_path:
                 code.append("sys.path.append(r'{0}')".format(p))
@@ -966,13 +968,13 @@ class NotebookRunner(object):
                 self.run_cell(i, cell, clean_function=clean_function)
                 nbnerr += 1
             except Empty as er:
-                raise Exception(  # pragma: no cover
+                raise RuntimeError(  # pragma: no cover
                     "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
             except NotebookError as e:
                 if not skip_exceptions:
                     raise
-                raise Exception(
-                    "issue when executing:\n{0}".format(codei)) from e
+                raise RuntimeError(  # pragma: no cover
+                    "Issue when executing:\n{0}".format(codei)) from e
             if progress_callback:
                 progress_callback(i)
         etime = time.perf_counter() - cl
@@ -1046,26 +1048,27 @@ class NotebookRunner(object):
                 rest = '\n'.join(parts).lstrip().split('\n\n')
                 desc = rest[0].replace('\n', ' ')
                 return header, desc
+
+            if get_header:
+                if parts[0].startswith(('=', '-')):
+                    parts = parts[1:]
+                header = parts.pop(0)
+                if parts and parts[0].startswith(('=', '-')):
+                    parts.pop(0)
+                if not parts:
+                    return header, ''
             else:
-                if get_header:
-                    if parts[0].startswith(('=', '-')):
-                        parts = parts[1:]
-                    header = parts.pop(0)
-                    if parts and parts[0].startswith(('=', '-')):
-                        parts.pop(0)
-                    if not parts:
-                        return header, ''
-                else:
-                    header = ''
-                rest = '\n'.join(parts).lstrip().split('\n\n')
-                desc = rest[0].replace('\n', ' ')
-                return header, desc
+                header = ''
+            rest = '\n'.join(parts).lstrip().split('\n\n')
+            desc = rest[0].replace('\n', ' ')
+            return header, desc
 
         first_cell = self.first_cell()
 
         if not first_cell['cell_type'] == 'markdown':
-            raise ValueError("The first cell is not in markdown but '{0}' filename='{1}'.".format(
-                first_cell['cell_type'], self._filename))
+            raise ValueError(  # pragma: no cover
+                "The first cell is not in markdown but '{0}' filename='{1}'.".format(
+                    first_cell['cell_type'], self._filename))
 
         header, desc = split_header(first_cell['source'])
         if not desc and len(self.nb['cells']) > 1:
@@ -1078,7 +1081,8 @@ class NotebookRunner(object):
         new_desc = reg.sub("\\2", desc)
         if "http://" in new_desc or "https://" in new_desc:
             raise ValueError(  # pragma: no cover
-                "Wrong regular expression in '{2}':\n{0}\nMODIFIED:\n{1}".format(desc, new_desc, self._filename))
+                "Wrong regular expression in '{2}':\n{0}\nMODIFIED:\n{1}".format(
+                    desc, new_desc, self._filename))
         return header, new_desc.replace('"', "")
 
     def get_thumbnail(self, max_width=200, max_height=200, use_default=False):
@@ -1122,7 +1126,8 @@ class NotebookRunner(object):
 
         # select the image
         if len(images) == 0:
-            raise ValueError("There should be at least one image.")
+            raise ValueError(  # pragma: no cover
+                "There should be at least one image.")
         if len(images) == 1:
             image = images[0]
         else:
@@ -1136,7 +1141,7 @@ class NotebookRunner(object):
         if image[1] == 'svg':
             try:
                 img = svg2img(image[0])
-            except PYQImageException:
+            except PYQImageException:  # pragma: no cover
                 # Enable to convert SVG.
                 return None
             return self._scale_image(img, image[1], max_width=max_width, max_height=max_height)
@@ -1158,7 +1163,7 @@ class NotebookRunner(object):
         # local import to avoid testing dependency on PIL:
         try:
             from PIL import Image
-        except ImportError:
+        except ImportError:  # pragma: no cover
             import Image
 
         if isinstance(in_bytes, tuple):
@@ -1168,8 +1173,9 @@ class NotebookRunner(object):
         elif isinstance(in_bytes, Image.Image):
             img = in_bytes
         else:
-            raise TypeError(
-                "bytes expected, not {0} - format={1}".format(type(in_bytes), format))
+            raise TypeError(  # pragma: no cover
+                "bytes expected, not {0} - format={1}".format(
+                    type(in_bytes), format))
         width_in, height_in = img.size
         scale_w = max_width / float(width_in)
         scale_h = max_height / float(height_in)

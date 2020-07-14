@@ -34,5 +34,5 @@ def open_script(filename, mode="r"):
     if mode == "r":
         encoding = detect_encoding(filename)
         return open(filename, mode, encoding=encoding)
-    else:
-        raise ValueError("this function only works for mode='r'")
+    raise ValueError(  # pragma: no cover
+        "this function only works for mode='r'")

@@ -333,11 +333,11 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
         exe = sys.exec_prefix
 
     if platform.startswith("win"):
-        exe = os.path.join(exe, "python")
+        exe = os.path.join(exe, "python")  # pragma: no cover
     else:
         exe = os.path.join(exe, "bin", "python%d.%d" % sys.version_info[:2])
         if not os.path.exists(exe):
-            exe = os.path.join(exe, "bin", "python")
+            exe = os.path.join(exe, "bin", "python")  # pragma: no cover
 
     if is_cmd:  # pragma: no cover
         cmd = " ".join([exe] + script)

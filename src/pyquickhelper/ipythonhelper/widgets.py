@@ -69,7 +69,8 @@ class StaticWidget(object):
 
     def html(self):
         "abstract method"
-        raise NotImplementedError("This should overriden.")
+        raise NotImplementedError(  # pragma: no cover
+            "This should overriden.")
 
     def copy(self):
         """
@@ -111,8 +112,6 @@ class RangeWidget(StaticWidget):
                  default=None, width=350, divclass=None,
                  show_range=False):
         """
-        constructor
-
         @param      min         min value
         @param      max         max value
         @param      step        step
@@ -201,7 +200,8 @@ class DropDownWidget(StaticWidget):
         elif default in values:
             self.default = default
         else:
-            raise ValueError("if specified, default must be in values")
+            raise ValueError(  # pragma: no cover
+                "if specified, default must be in values")
 
     def _single_option(self, label, value):
         """
@@ -248,8 +248,6 @@ class RadioWidget(StaticWidget):
                  labels=None, default=None, divclass=None,
                  delimiter="      "):
         """
-        constructor
-
         @param      values      values for the list
         @param      name        name of the object
         @param      labels      ?
@@ -272,8 +270,9 @@ class RadioWidget(StaticWidget):
         elif default in values:
             self.default = default
         else:
-            raise ValueError(
-                "if specified, default must be in values: default={0}, values={1}".format(default, values))
+            raise ValueError(  # pragma: no cover
+                "if specified, default must be in values: default={0}, values={1}".format(
+                    default, values))
 
     def _single_radio(self, value):
         """

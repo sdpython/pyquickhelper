@@ -40,17 +40,18 @@ class AutoCompletion:
         @return               (AutoCompletion)
         """
         if member in self.__dict__:
-            raise NameError(
-                "unable to add member {0} because it already exists".format(member))
+            raise NameError(  # pragma: no cover
+                "Unable to add member {0} because it already exists".format(
+                    member))
         if member.startswith("_"):
-            raise NameError("a member cannot start by _: {0}".format(member))
+            raise NameError(  # pragma: no cover
+                "A member cannot start by _: {0}".format(member))
         if isinstance(value, AutoCompletion):
             self.__dict__[member] = value
             return value
-        else:
-            value = AutoCompletion(value)
-            self.__dict__[member] = value
-            return value
+        value = AutoCompletion(value)
+        self.__dict__[member] = value
+        return value
 
     @property
     def _members(self):
@@ -113,13 +114,14 @@ class AutoCompletionFile(AutoCompletion):
         @param  value       directory
         """
         if not os.path.exists(value):
-            raise FileNotFoundError("{0} does not exists".format(value))
+            raise FileNotFoundError(  # pragma: no cover
+                "{0} does not exists".format(value))
         AutoCompletion.__init__(self, os.path.normpath(os.path.abspath(value)))
         self._populate()
 
     def _filter(self, s):
         """
-        remove unexpected characters for a file name
+        Removes unexpected characters for a file name.
 
         @param      s       filename
         @return             cleaned filename
