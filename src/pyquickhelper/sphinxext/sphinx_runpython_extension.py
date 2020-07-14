@@ -46,7 +46,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     @param  script              python script
     @param  params              params to add before the execution
     @param  comment             message to add in a exception when the script fails
-    @param  setsysvar           if not None, add a member to module *sys*, set up this variable to True,
+    @param  setsysvar           if not None, add a member to module *sys*,
+                                set up this variable to True,
                                 if is remove after the execution
     @param  process             run the script in a separate process
     @param  exception           expects an exception to be raised,
@@ -73,8 +74,8 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
         import math
         def coordonnees_polaires(x,y):
-            rho     = math.sqrt(x*x+y*y)
-            theta   = math.atan2 (y,x)
+            rho = math.sqrt(x*x+y*y)
+            theta = math.atan2 (y,x)
             return rho, theta
         coordonnees_polaires(1, 1)
 
@@ -85,21 +86,14 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         def fake_function():
             import math
             def coordonnees_polaires(x,y):
-                rho     = math.sqrt(x*x+y*y)
-                theta   = math.atan2 (y,x)
+                rho = math.sqrt(x*x+y*y)
+                theta = math.atan2 (y,x)
                 return rho, theta
             coordonnees_polaires(1, 1)
         fake_function()
 
     Section :ref:`l-image-rst-runpython` explains
     how to display an image with this directive.
-
-    .. versionchanged:: 1.7
-        Parameter *warningout* was added.
-
-    .. versionchanged:: 1.8
-        Parameter *chdir*, *context* were added,
-        returns the context too.
 
     .. versionchanged:: 1.9
         Parameter *store_in_file* was added.
@@ -129,7 +123,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 "context cannot be used if the script runs in a separate process.")
 
         cmd = sys.executable
-        header = ["import sys"]
+        header = ["# coding: utf-8", "import sys"]
         if setsysvar:
             header.append("sys.{0} = True".format(setsysvar))
         add = 0
@@ -145,9 +139,10 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                         path.replace("\\", "\\\\")))
                     add += 1
         if add == 0:
-            # It did not find any path linked to the copy of the current module
-            # in the documentation
-            # it assumes the first path of sys.path is part of the unit test
+            # It did not find any path linked to the copy of
+            # the current module in the documentation
+            # it assumes the first path of `sys.path` is part
+            # of the unit test.
             path = sys.path[0]
             path = os.path.join(path, "..", "..", "src")
             if os.path.exists(path):
