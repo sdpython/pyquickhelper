@@ -716,6 +716,10 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def visit_literal_block(self, node):
         if 'language' in node.attributes:
             self.add_text(".. code-block:: {0}".format(node["language"]))
+            if 'linenos' in node.attributes:
+                self.new_state(4)
+                self.add_text(":linenos:")
+                self.end_state(wrap=False)
         else:
             self.add_text("::")
         self.new_state(self.indent)

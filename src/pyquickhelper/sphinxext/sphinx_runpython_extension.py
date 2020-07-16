@@ -266,7 +266,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 class runpython_node(nodes.Structural, nodes.Element):
 
     """
-    defines *runpython* node
+    Defines *runpython* node.
     """
     pass
 
@@ -308,6 +308,7 @@ class RunPythonDirective(Directive):
     * ``:exception:`` the code throws an exception but it is expected. The error is displayed.
     * ``:indent:<int>`` to indent the output
     * ``:language:``: changes ``::`` into ``.. code-block:: language``
+    * ``:linenos:`` to show line numbers
     * ``:nopep8:`` if present, leaves the code as it is and does not apply pep8 by default,
       see @see fn remove_extra_spaces_and_pep8.
     * ``:numpy_precision: <precision>``, run ``numpy.set_printoptions(precision=...)``,
@@ -408,6 +409,7 @@ class RunPythonDirective(Directive):
         'restore': directives.unchanged,
         'numpy_precision': directives.unchanged,
         'store_in_file': directives.unchanged,
+        'linenos': directives.unchanged,
     }
     has_content = True
     runpython_class = runpython_node
@@ -444,6 +446,7 @@ class RunPythonDirective(Directive):
         bool_set_ = (True, 1, "True", "1", "true", '')
         p = {
             'showcode': 'showcode' in self.options,
+            'linenos': 'linenos' in self.options,
             'showout': 'showout' in self.options,
             'rst': 'rst' in self.options,
             'sin': self.options.get('sin', TITLES[language_code]["In"]),
@@ -611,11 +614,15 @@ class RunPythonDirective(Directive):
             else:
                 secin = node
             pin = nodes.paragraph(text=p["sin"])
+            if p['language'] in (None, ''):
+                p['language'] = 'python'
             if p['language']:
                 pcode = nodes.literal_block(
-                    script_disp, script_disp, language=p['language'])
+                    script_disp, script_disp, language=p['language'],
+                    linenos=p['linenos'])
             else:
-                pcode = nodes.literal_block(script_disp, script_disp)
+                pcode = nodes.literal_block(
+                    script_disp, script_disp, linenos=p['linenos'])
             secin += pin
             secin += pcode
 

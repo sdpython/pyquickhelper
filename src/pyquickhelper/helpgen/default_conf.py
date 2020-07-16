@@ -542,7 +542,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     extensions.extend(['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
                        'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
-                       'sphinx.ext.inheritance_diagram',
+                       'sphinx.ext.inheritance_diagram', 'sphinx.ext.intersphinx',
                        'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
                        'sphinx.ext.napoleon', 'sphinx.ext.todo', 'sphinx.ext.viewcode',
                        'sphinxcontrib.imagesvg',
@@ -723,13 +723,21 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # mapping
 
     intersphinx_mapping = {
+        'joblib': ('https://joblib.readthedocs.io/en/latest/', None),
+        'matplotlib': ('https://matplotlib.org/', None),
+        'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+        'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
+        'pyquickhelper': (
+            'http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/', None),
         'python': ('https://docs.python.org/{.major}'.format(
             sys.version_info), None),
-        'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+        'scikit-learn': (
+            'https://scikit-learn.org/stable/',
+            None),
         'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-        'matplotlib': ('https://matplotlib.org/', None),
-        'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
-        'joblib': ('https://joblib.readthedocs.io/en/latest/', None),
+        'sklearn': (
+            'https://scikit-learn.org/stable/',
+            None),
     }
 
     # information about code
@@ -801,7 +809,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             os.makedirs(example_dir)
         sphinx_gallery_conf = {
             'doc_module': (module_name),
-            'reference_url': {},
             'examples_dirs': examples_dirs,
             'gallery_dirs': gallery_dirs,
             'backreferences_dir': example_dir,
@@ -809,6 +816,17 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'capture_repr': ('_repr_html_', '__repr__'),
             'ignore_repr_types': r'matplotlib.text|matplotlib.axes',
         }
+
+        if github_repo is not None and github_user is not None:
+            sphinx_gallery_conf['binder'] = {
+                'org': github_user,
+                'repo': github_repo,
+                'binderhub_url': 'https://mybinder.org',
+                'branch': 'master',
+                'dependencies': os.path.abspath(
+                    os.path.join(os.path.dirname(version_file), 'requirements.txt')),
+                'use_jupyter_lab': True,
+            }
 
         sphinx_gallery_conf['show_memory'] = False
     else:

@@ -125,6 +125,45 @@ class TestRunPythonExtension(unittest.TestCase):
         if "[1.12 1.99]" not in html:
             raise Exception(html)
 
+    def test_runpython_numpy_linenos(self):
+        """
+        this test also test the extension runpython
+        """
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        from docutils import nodes
+
+        if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
+            raise Exception("this case shoud not be")
+
+        content = """
+                    test a directive
+                    ================
+
+                    .. runpythonthis::
+                        :setsysvar:
+                        :rst:
+                        :showcode:
+                        :numpy_precision: 2
+                        :linenos:
+
+                        import numpy
+                        print(numpy.array([1.123456789, 1.987654321]))
+                    """.replace("                    ", "")
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="rst", keep_warnings=True)
+        if "[1.12 1.99]" not in html:
+            raise Exception(html)
+        self.assertIn(':linenos:', html)
+
+        html = rst2html(content,  # fLOG=fLOG,
+                        writer="html", keep_warnings=True)
+        self.assertIn('class="linenos">', html)
+
     def test_runpython_catch_warning(self):
         """
         this test also test the extension runpython
