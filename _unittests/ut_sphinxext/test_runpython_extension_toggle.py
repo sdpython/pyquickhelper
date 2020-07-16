@@ -96,7 +96,8 @@ class TestRunPythonExtensionToggle(unittest.TestCase):
                         directives=tives)
 
         t1 = "<<<::"
-        if t1 not in html:
+        t2 = "<<<.. code-block:: python"
+        if t1 not in html and t2 not in html:
             raise Exception(html)
         t1 = ".. collapse::"
         if t1 not in html:
