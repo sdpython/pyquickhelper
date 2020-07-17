@@ -198,6 +198,7 @@ def get_epkg_dictionary():
         'sphinx': 'http://www.sphinx-doc.org/en/stable/',
         'Sphinx': 'http://www.sphinx-doc.org/en/stable/',
         'sphinx.ext.autodoc': 'http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc',
+        'sphinx.ext.intersphinx': 'https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html',
         'sphinx-gallery': 'https://sphinx-gallery.readthedocs.io/en/latest/',
         'Sphinx application': 'http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html',
         'svg': 'https://fr.wikipedia.org/wiki/Scalable_Vector_Graphics',
