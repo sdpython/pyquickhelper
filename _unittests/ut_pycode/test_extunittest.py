@@ -83,6 +83,14 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertEqualArray(None, df),
                          AssertionError)
 
+    def test_nan(self):
+        from numpy import array, nan
+        df = array([[nan, 1], [1, 2]])
+        df1 = array([[0, 1], [1, 2]])
+        self.assertHasNoNan(df1)
+        self.assertRaise(lambda: self.assertHasNoNan(None), AssertionError)
+        self.assertRaise(lambda: self.assertHasNoNan(df), AssertionError)
+
     def test_arr_squeeze(self):
         from numpy import array
         df = array([[0, 1], [1, 2]])

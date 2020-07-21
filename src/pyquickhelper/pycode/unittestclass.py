@@ -141,6 +141,16 @@ class ExtTestCase(unittest.TestCase):
             d2 = numpy.squeeze(d2)
         assert_almost_equal(d1, d2, **kwargs)
 
+    def assertHasNoNan(self, a):  # pylint: disable=W0221
+        """
+        Checks that there is no NaN in ``a``.
+        """
+        if a is None:
+            raise AssertionError("a is None")
+        import numpy
+        if any(map(numpy.isnan, a.ravel())):
+            raise AssertionError("a has nan:\n{}".format(a))
+
     def assertEqualSparseArray(self, d1, d2, **kwargs):
         if type(d1) != type(d2):  # pylint: disable=C0123
             raise AssertionError("d1 and d2 have difference types {} != {}.".format(
