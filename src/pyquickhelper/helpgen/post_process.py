@@ -375,7 +375,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     for pos, line in enumerate(lines):
         line = line.strip("\n\r")
         if len(line) > 0 and line == "=" * len(line):
-            lines[pos] = lines[pos].replace("=", "*")
+            # lines[pos] = lines[pos].replace("=", "*")
             pos2 = pos - 1
             li = len(lines[pos])
             while len(lines[pos2]) != li:
