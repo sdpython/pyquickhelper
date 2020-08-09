@@ -36,10 +36,10 @@ jobs:
           command: |
                     sudo apt-get install -y p7zip-full
           
-      - run:
-          name: Install InkScape
-          command: |
-                    sudo apt-get install -y inkscape
+#      - run:
+#          name: Install InkScape
+#          command: |
+#                    sudo apt-get install -y inkscape
           
       - run:
           name: Install graphviz
