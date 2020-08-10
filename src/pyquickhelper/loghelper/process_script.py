@@ -122,8 +122,8 @@ def execute_script_get_local_variables(script, folder=None,
         with Pool(1, None, None, None) as p:
             res = p.map(execute_script, [content])
         if len(res) != 1:
-            raise RuntimeError("Something went wrong with content\n{}".format(
-                content))
+            raise RuntimeError(
+                "Something went wrong with content\n{}".format(content))
         return res[0]
     return execute_script(content, folder, filename, check=check)
 

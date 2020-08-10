@@ -5,14 +5,16 @@ import sys
 import unittest
 import textwrap
 
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder, skipif_appveyor
-from pyquickhelper.loghelper.process_script import execute_script, execute_script_get_local_variables
-from pyquickhelper.loghelper.process_script import dictionary_as_class
+from pyquickhelper.pycode import (
+    ExtTestCase, get_temp_folder, skipif_appveyor, skipif_azure_macosx)
+from pyquickhelper.loghelper.process_script import (
+    execute_script, execute_script_get_local_variables, dictionary_as_class)
 
 
 class TestRunScript(ExtTestCase):
 
     @skipif_appveyor("job stuck")
+    @skipif_azure_macosx('issue with popen')
     def test_run_script(self):
         code = textwrap.dedent("""
             import os
@@ -23,6 +25,7 @@ class TestRunScript(ExtTestCase):
         self.assertIn('res', exe)
 
     @skipif_appveyor("job stuck")
+    @skipif_azure_macosx('issue with popen')
     def test_run_script_error(self):
         code = textwrap.dedent("""
             import os
@@ -33,6 +36,7 @@ class TestRunScript(ExtTestCase):
         self.assertIn('ERROR', exe)
 
     @skipif_appveyor("job stuck")
+    @skipif_azure_macosx('issue with popen')
     def test_run_script_error2(self):
         code = textwrap.dedent("""
             import os
@@ -43,6 +47,7 @@ class TestRunScript(ExtTestCase):
         self.assertIn('ERROR', exe)
 
     @skipif_appveyor("job stuck")
+    @skipif_azure_macosx('issue with popen')
     def test_run_script_process(self):
         code = textwrap.dedent("""
             import os
@@ -53,6 +58,7 @@ class TestRunScript(ExtTestCase):
         self.assertIn('res', exe)
 
     @skipif_appveyor("job stuck")
+    @skipif_azure_macosx('issue with popen')
     def test_run_script_process_check(self):
         code = textwrap.dedent("""
             import os
@@ -80,6 +86,7 @@ class TestRunScript(ExtTestCase):
         self.assertEqual(st, "{'r': 4}")
 
     @skipif_appveyor("job stuck")
+    @skipif_azure_macosx('issue with popen')
     def test_run_script_popen(self):
         temp = get_temp_folder(__file__, "temp_run_script_popen")
         code = textwrap.dedent("""

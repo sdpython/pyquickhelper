@@ -171,7 +171,10 @@ class TestModuleC(ExtTestCase):
         if sys.platform == "win32":
             name = "stdchelper_demo.cp%d%d-win_amd64.pyd" % sys.version_info[:2]
         elif sys.platform == "darwin":
-            name = "stdchelper_demo.cpython-%d%dm-darwin.so" % sys.version_info[:2]
+            if sys.version_info[:2] <= (3, 7):
+                name = "stdchelper_demo.cpython-%d%dm-darwin.so" % sys.version_info[:2]
+            else:
+                name = "stdchelper_demo.cpython-%d%d-darwin.so" % sys.version_info[:2]
         else:
             if sys.version_info[:2] <= (3, 7):
                 name = "stdchelper_demo.cpython-%d%dm-x86_64-linux-gnu.so" % sys.version_info[:2]
