@@ -5,7 +5,7 @@ jobs:
   strategy:
     matrix:
       Python37:
-        python.version: '3.7'
+        python.version: '3.8'
     maxParallel: 3
 
   steps:
@@ -54,7 +54,7 @@ jobs:
   strategy:
     matrix:
       Python37:
-        python.version: "3.7"
+        python.version: "3.8"
 
   steps:
   - task: UsePythonVersion@0
@@ -86,6 +86,10 @@ jobs:
     displayName: Take ownership of conda installation
   - bash: conda update conda --yes --quiet
     displayName: Update conda.
+  - script: brew cask install mactex
+    displayName: 'Install latex'
+  - script: python -m pip install --upgrade pip setuptools wheel
+    displayName: 'Install tools'
   - bash: conda info -a
   - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
     displayName: Create Anaconda environment.
