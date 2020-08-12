@@ -274,8 +274,8 @@ def copy_js_files(app):
                                            "unable to use local viz.js.".format(e))
                             
                         if not os.path.exists(dest):
-                            raise FileNotFoundError(
-                                "Unable to find the copied file '{}'.".format(dest))
+                            logger.warning("[gdot] unable to copy='{}', "
+                                           "unable to use local viz.js.".format(dest))
                     else:
                         logger.warning("[gdot] destination folder='{}' does not exists, "
                                        "unable to use local viz.js.".format(destf))
