@@ -265,9 +265,14 @@ def copy_js_files(app):
                     destf = os.path.join(os.path.abspath(srcdir), dest)
                     if os.path.exists(destf):
                         dest = os.path.join(destf, 'viz.js')
-                        shutil.copy(path, dest)
-                        logger.info(
-                            "[gdot] copy '{}' to '{}'.".format(path, dest))
+                        try:
+                            shutil.copy(path, dest)
+                            logger.info(
+                                "[gdot] copy '{}' to '{}'.".format(path, dest))
+                        except PermissionError as e:  # pragma: no cover
+                            logger.warning("[gdot] permission error: {}, "
+                                           "unable to use local viz.js.".format(e))
+                            
                         if not os.path.exists(dest):
                             raise FileNotFoundError(
                                 "Unable to find the copied file '{}'.".format(dest))
