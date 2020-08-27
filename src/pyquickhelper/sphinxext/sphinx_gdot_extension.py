@@ -272,7 +272,7 @@ def copy_js_files(app):
                         except PermissionError as e:  # pragma: no cover
                             logger.warning("[gdot] permission error: {}, "
                                            "unable to use local viz.js.".format(e))
-                            
+
                         if not os.path.exists(dest):
                             logger.warning("[gdot] unable to copy='{}', "
                                            "unable to use local viz.js.".format(dest))
