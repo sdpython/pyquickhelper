@@ -155,9 +155,8 @@ class TestTemplating(unittest.TestCase):
             assert False
         except CustomTemplateException as e:
             if "Some parameters are missing or mispelled" not in str(e):
-                raise Exception(str(e))
+                raise AssertionError(str(e)) from e
             return
-        assert False
         fLOG(res)
         self.assertEqual(res.replace(" ", "").replace("\n", ""),
                          exp.replace(" ", "").replace("\n", ""))
