@@ -48,22 +48,22 @@ def available_commands_list(argv):
     return False
 
 
-def process_standard_options_for_setup(argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
-                                       pattern_copy=None,
-                                       requirements=None, port=8067, blog_list=None, default_engine_paths=None,
-                                       extra_ext=None, add_htmlhelp=False, setup_params=None, coverage_options=None,
-                                       coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
-                                       additional_notebook_path=None, additional_local_path=None, copy_add_ext=None,
-                                       nbformats=(
-                                           "ipynb", "html", "python", "rst", "slides",
-                                           "pdf", "github"),
-                                       layout=None, direct_call=False,
-                                       additional_ut_path=None,
-                                       skip_function=None, covtoken=None, hook_print=True,
-                                       stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
-                                       file_filter_pep8=None, github_owner=None,
-                                       existing_history=None, coverage_root='src',
-                                       fexclude=None, skip_issues=None, fLOG=None):
+def process_standard_options_for_setup(
+        argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
+        pattern_copy=None,
+        requirements=None, port=8067, blog_list=None, default_engine_paths=None,
+        extra_ext=None, add_htmlhelp=False, setup_params=None, coverage_options=None,
+        coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
+        additional_notebook_path=None, additional_local_path=None, copy_add_ext=None,
+        nbformats=("ipynb", "html", "python", "rst", "slides",
+                   "pdf", "github"),
+        layout=None, direct_call=False,
+        additional_ut_path=None,
+        skip_function=None, covtoken=None, hook_print=True,
+        stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
+        file_filter_pep8=None, github_owner=None,
+        existing_history=None, coverage_root='src',
+        fexclude=None, skip_issues=None, fLOG=None):
     """
     Processes the standard options the module pyquickhelper is
     able to process assuming the module which calls this function
@@ -359,43 +359,63 @@ def process_standard_options_for_setup(argv, file_or_folder, project_var_name, m
                 "unable to run _setup_hook\nOUT:\n{0}\n[setuperror]\n{1}".format(out, err))
 
         if func_sphinx_begin is not None:
-            func_sphinx_begin(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
-                              module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
-                              requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
-                              extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
-                              coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin,
-                              func_sphinx_end=func_sphinx_end, additional_notebook_path=additional_notebook_path,
-                              nbformats=nbformats, layout=layout,
-                              skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
-        standard_help_for_setup(argv,
-                                file_or_folder, project_var_name, module_name=module_name, extra_ext=extra_ext,
-                                add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext, nbformats=nbformats, layout=layout,
-                                use_run_cmd=use_run_cmd, fLOG=fLOG, direct_call=direct_call,
-                                fexclude=fexclude)
+            func_sphinx_begin(
+                argv=argv, file_or_folder=file_or_folder,
+                project_var_name=project_var_name,
+                module_name=module_name, unittest_modules=unittest_modules,
+                pattern_copy=pattern_copy,
+                requirements=requirements, port=port, blog_list=blog_list,
+                default_engine_paths=default_engine_paths,
+                extra_ext=extra_ext, add_htmlhelp=add_htmlhelp,
+                setup_params=setup_params, coverage_options=coverage_options,
+                coverage_exclude_lines=coverage_exclude_lines,
+                func_sphinx_begin=func_sphinx_begin,
+                func_sphinx_end=func_sphinx_end,
+                additional_notebook_path=additional_notebook_path,
+                nbformats=nbformats, layout=layout,
+                skip_function=skip_function,
+                addition_ut_path=additional_ut_path, fLOG=fLOG)
+        standard_help_for_setup(
+            argv,
+            file_or_folder, project_var_name,
+            module_name=module_name, extra_ext=extra_ext,
+            add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext,
+            nbformats=nbformats, layout=layout,
+            use_run_cmd=use_run_cmd, fLOG=fLOG, direct_call=direct_call,
+            fexclude=fexclude)
 
         if func_sphinx_end is not None:
-            func_sphinx_end(argv=argv, file_or_folder=file_or_folder, project_var_name=project_var_name,
-                            module_name=module_name, unittest_modules=unittest_modules, pattern_copy=pattern_copy,
-                            requirements=requirements, port=port, blog_list=blog_list, default_engine_paths=default_engine_paths,
-                            extra_ext=extra_ext, add_htmlhelp=add_htmlhelp, setup_params=setup_params, coverage_options=coverage_options,
-                            coverage_exclude_lines=coverage_exclude_lines, func_sphinx_begin=func_sphinx_begin,
-                            func_sphinx_end=func_sphinx_end, additional_notebook_path=additional_notebook_path,
-                            nbformats=nbformats, layout=layout,
-                            skip_function=skip_function, addition_ut_path=additional_ut_path, fLOG=fLOG)
+            func_sphinx_end(
+                argv=argv, file_or_folder=file_or_folder,
+                project_var_name=project_var_name,
+                module_name=module_name, unittest_modules=unittest_modules,
+                pattern_copy=pattern_copy,
+                requirements=requirements, port=port, blog_list=blog_list,
+                default_engine_paths=default_engine_paths,
+                extra_ext=extra_ext, add_htmlhelp=add_htmlhelp,
+                setup_params=setup_params, coverage_options=coverage_options,
+                coverage_exclude_lines=coverage_exclude_lines,
+                func_sphinx_begin=func_sphinx_begin,
+                func_sphinx_end=func_sphinx_end,
+                additional_notebook_path=additional_notebook_path,
+                nbformats=nbformats, layout=layout,
+                skip_function=skip_function,
+                addition_ut_path=additional_ut_path, fLOG=fLOG)
 
         return True
 
     elif "unittests" in argv:
         skip_f = process_argv_for_unittest(argv)
-        run_unittests_for_setup(file_or_folder, setup_params=setup_params,
-                                coverage_options=coverage_options,
-                                coverage_exclude_lines=coverage_exclude_lines,
-                                additional_ut_path=additional_ut_path,
-                                skip_function=skip_f, covtoken=covtoken,
-                                hook_print=hook_print, stdout=stdout, stderr=stderr,
-                                filter_warning=filter_warning, dump_coverage=dump_coverage_fct(),
-                                add_coverage_folder=dump_coverage_fct(False),
-                                coverage_root=coverage_root, fLOG=fLOG)
+        run_unittests_for_setup(
+            file_or_folder, setup_params=setup_params,
+            coverage_options=coverage_options,
+            coverage_exclude_lines=coverage_exclude_lines,
+            additional_ut_path=additional_ut_path,
+            skip_function=skip_f, covtoken=covtoken,
+            hook_print=hook_print, stdout=stdout, stderr=stderr,
+            filter_warning=filter_warning, dump_coverage=dump_coverage_fct(),
+            add_coverage_folder=dump_coverage_fct(False),
+            coverage_root=coverage_root, fLOG=fLOG)
         return True
 
     elif "setup_hook" in argv:
