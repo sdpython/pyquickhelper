@@ -177,14 +177,6 @@ def process_standard_options_for_setup(
     if layout is None:
         layout = ["html", "pdf"]
 
-    try:
-        from nbconvert.nbconvertapp import main as nbconvert_main
-        if nbconvert_main is None:  # pragma: no cover
-            raise AttributeError("nbconvert_main is None")
-    except AttributeError as e:  # pragma: no cover
-        raise ImportError(
-            "Unable to import nbconvert, cannot generate the documentation") from e
-
     if "--help" in argv or "--help-commands" in argv:
         process_standard_options_for_setup_help(argv)
         return not len(get_available_build_commands() & set(argv))
@@ -348,6 +340,13 @@ def process_standard_options_for_setup(
     elif "build_sphinx" in argv:
         # delayed import
         from .call_setup_hook import call_setup_hook
+        try:
+            from nbconvert.nbconvertapp import main as nbconvert_main
+            if nbconvert_main is None:  # pragma: no cover
+                raise AttributeError("nbconvert_main is None")
+        except AttributeError as e:  # pragma: no cover
+            raise ImportError(
+                "Unable to import nbconvert, cannot generate the documentation") from e
         if setup_params is None:
             setup_params = {}
         out, err = call_setup_hook(folder,

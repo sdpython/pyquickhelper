@@ -1,0 +1,11 @@
+
+.. blogpost::
+    :title: Logging on linux
+    :keywords: linux, logging
+    :date: 2020-09-04
+    :categories: security
+
+    Something interesting to look at if you need to know what
+    is going on a linux machine:
+    `12 Critical Linux Log Files You Must be Monitoring
+    <https://www.eurovps.com/blog/important-linux-log-files-you-must-be-monitoring/>`_.
