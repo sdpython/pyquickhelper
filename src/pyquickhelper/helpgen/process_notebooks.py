@@ -452,8 +452,10 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 compilation = False
 
             # output
-            templ = {'html': 'full', 'latex': 'article',
-                     'elatex': 'article'}.get(format, format)
+            # set templates to None to avoid error
+            # No template sub-directory with name 'article' found in the following paths:
+            templ = {'html': None, 'latex': None,
+                     'elatex': None}.get(format, format)
             fLOG("[_process_notebooks_in] ### convert into '{}' (done: {}): '{}' -> '{}'".format(
                 format_, os.path.exists(outputfile), notebook, outputfile))
 
