@@ -1,6 +1,6 @@
 """
 @file
-@brief Calls :epkg:`nbconvert` in command line for latex and pdf
+@brief Calls :epkg:`nbconvert` in command line for latex and pdf.
 """
 import sys
 try:

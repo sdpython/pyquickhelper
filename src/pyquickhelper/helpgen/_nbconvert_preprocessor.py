@@ -19,7 +19,7 @@ class LatexRawOutputPreprocessor(Preprocessor):
 
     def preprocess_cell(self, cell, resources, cell_index):  # pylint: disable=W0221
         """
-        Apply a transformation on each cell. See base.py for details,
+        Applies a transformation on each cell. See base.py for details,
         add ``\\begin{verbatim}`` and ``\\end{verbatim}``.
         """
         if cell.cell_type == 'raw':

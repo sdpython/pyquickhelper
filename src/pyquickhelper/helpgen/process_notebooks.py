@@ -178,7 +178,11 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
 
 
 def _process_notebooks_in_private(fnbcexe, list_args, options_args):
-    from ..ipythonhelper import read_nb
+    """
+    This function fails in nbconvert 6.0 when the conversion
+    is called more than once. The conversion probably changes the
+    initial state.
+    """
     out = StringIO()
     err = StringIO()
     memo_out = sys.stdout
@@ -197,6 +201,7 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
         # This is change in IPython 6.0.0.
         # The conversion fails on IndentationError.
         # We switch to another one.
+        from ..ipythonhelper import read_nb
         i = list_args.index("--template")
         format = list_args[i + 1]
         if format == "python":
@@ -213,18 +218,23 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
         else:
             # We do nothing in this case.
             exc = e
-    except (AttributeError, FileNotFoundError) as e:
+    except (AttributeError, FileNotFoundError, ValueError) as e:
         exc = e
     sys.stdout = memo_out
     sys.stderr = memo_err
     out = out.getvalue()
     err = err.getvalue()
     if exc:
+        if "Unsupported mimetype 'text/html'" in str(exc):
+            from nbconvert.nbconvertapp import main
+            main(argv=list_args, **options_args)
+            return "", ""
         env = "\n".join("{0}={1}".format(k, v)
                         for k, v in sorted(os.environ.items()))
-        raise Exception(  # pragma: no cover
-            "Notebook conversion failed.\nARGS:\n{0}\nOUT\n{1}\nERR\n{2}\nENVIRON\n{3}".format(
-                list_args, out, err, env)) from exc
+        raise RuntimeError(  # pragma: no cover
+            "Notebook conversion failed.\nfnbcexe\n{}\noptions_args\n{}"
+            "\nARGS:\n{}\nOUT\n{}\nERR\n{}\nENVIRON\n{}".format(
+                fnbcexe, options_args, list_args, out, err, env)) from exc
     return out, err
 
 
@@ -470,7 +480,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     nb2rst(notebook, outputfile, post_process=False)
                     err = ""
                     c = ""
-                elif nbconvert_main != fnbcexe or format not in ("slides", "elatex", "latex", "pdf"):
+                elif nbconvert_main != fnbcexe or format not in (
+                        "slides", "elatex", "latex", "pdf", "html"):
                     if options_args:
                         fLOG("[_process_notebooks_in] NBp*:",
                              format, options_args)

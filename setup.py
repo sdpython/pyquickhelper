@@ -299,6 +299,7 @@ if not r:
                 "sphinx>=2.1",
                 "sphinx-gallery",
                 "sphinxcontrib-imagesvg",
+                "traitlets>=5.0",
             ],
         },
         entry_points={
