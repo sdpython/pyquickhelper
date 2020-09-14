@@ -21,7 +21,7 @@ keyring
 Mako
 matplotlib
 mistune
-nbconvert>=5.6.1
+nbconvert>=6.0.2
 nbformat
 notebook>=5.0.0
 numpy>=1.16
