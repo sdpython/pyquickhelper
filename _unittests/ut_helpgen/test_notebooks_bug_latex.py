@@ -23,8 +23,6 @@ class TestNoteBooksBugLatex(ExtTestCase):
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
         formats = ["ipynb", "html", "python", "rst", "pdf"]
-        if sys.platform.startswith("win"):
-            formats.append("docx")
 
         temp = os.path.join(path, "temp_nb_bug_latex")
         if not os.path.exists(temp):

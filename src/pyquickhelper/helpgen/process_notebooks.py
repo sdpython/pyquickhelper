@@ -430,9 +430,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     raise FileNotFoundError(custom_config)
                 title = os.path.splitext(
                     os.path.split(notebook)[-1])[0].replace("_", " ")
-                list_args.extend(['--config', '"%s"' % custom_config,
-                                  '--SphinxTransformer.author=""',
-                                  '--SphinxTransformer.overridetitle="{0}"'.format(title)])
+                list_args.extend(['--config', '"%s"' % custom_config])
                 format = "latex"
                 compilation = True
                 thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
@@ -510,6 +508,11 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         # There might be some errors because the latex script needs to be post-processed
                         # sometimes (wrong characters such as " or formulas not
                         # captured as formulas).
+                        if err and "usage: process_notebooks_cmd.py" in err:
+                            raise RuntimeError(
+                                "Unable to convert a notebook\n----\n{}----\n{}\n"
+                                "---ERR---\n{}\n---OUT---\n{}".format(
+                                    fnbcexe, list_args, err, out))
                         fLOG("[_process_notebooks_in] LATEX ERR\n" + err)
                         fLOG("[_process_notebooks_in] LATEX OUT\n" + out)
                     else:
@@ -684,6 +687,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 raise HelpGenException("unexpected format " + format)
 
             files.extend(thisfiles)
+            fLOG("[_process_notebooks_in] ### conversion into '{}' done into '{}'.".format(
+                format_, outputfile))
 
     copy = []
     for f in files:

@@ -23,11 +23,11 @@ matplotlib
 mistune
 nbconvert>=6.0.2
 nbformat
-notebook>=5.0.0
-numpy>=1.16
+notebook>=6.0.0
+numpy>=1.19
 numpydoc
 openpyxl
-pandas>=0.22.0
+pandas>=1.0
 pandocfilters
 pillow
 psutil
@@ -43,7 +43,7 @@ PyYAML
 scipy
 semantic_version
 setuptools
-Sphinx>=2.1
+Sphinx>=2.3
 sphinx-gallery
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
