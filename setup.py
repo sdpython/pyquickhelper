@@ -281,9 +281,7 @@ if not r:
                 "matplotlib",
                 "metakernel",
                 "multi_key_dict",
-                # see https://github.com/sdpython/pyquickhelper/issues/216
-                # "nbconvert @ git+https://github.com/sdpython/nbconvert.git@fixes",
-                "nbconvert>=5.6.1",
+                "nbconvert>=6.0.2",
                 "notebook>=4.2.0",
                 "numpy>=1.16.0",
                 "numpydoc",

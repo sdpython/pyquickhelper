@@ -4,10 +4,10 @@ channels:
   - conda-forge
 
 dependencies:
-  - python=3.7
+  - python=3.8
   - sphinx
   - ipywidgets>=7.0.0
   - IPython
-  - nbconvert>=5.6.1
+  - nbconvert>=6.0.2
   - nbformat
   - matplotlib
