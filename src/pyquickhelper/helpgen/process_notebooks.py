@@ -438,8 +438,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
             if format == "pdf":
                 if not os.path.exists(custom_config):
                     raise FileNotFoundError(custom_config)
-                title = os.path.splitext(
-                    os.path.split(notebook)[-1])[0].replace("_", " ")
+                # title = os.path.splitext(
+                #     os.path.split(notebook)[-1])[0].replace("_", " ")
                 list_args.extend(['--config', '"%s"' % custom_config])
                 format = "latex"
                 compilation = True
