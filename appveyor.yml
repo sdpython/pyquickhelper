@@ -33,14 +33,15 @@ install:
     - "%PYTHON%\\Scripts\\pip install pymyinstall"
     - "%PYTHON%\\Scripts\\pymy_install3 pylzma"
     - "%PYTHON%\\Scripts\\pip install cryptography pycryptodomex"
-    - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
-    - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
-    - "dir %PYTHON%\\Scripts"
-    - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
+    # - "%PYTHON%\\Scripts\\pip install backports.shutil-get-terminal-size"
+    # - "%PYTHON%\\Scripts\\pip install https://github.com/ipython-contrib/jupyter_contrib_nbextensions/tarball/master"
+    # - "dir %PYTHON%\\Scripts"
+    # - "%PYTHON%\\Scripts\\jupyter-nbextension enable --py --sys-prefix widgetsnbextension"
     - "%PYTHON%\\Scripts\\pymy_install3 --task=tool --source=zip graphviz"
-    - "%PYTHON%\\python -c \"from pymyinstall.fix import fix_win32ctypes_core_cffi__advapi32_py;fix_win32ctypes_core_cffi__advapi32_py(fLOG=print)\""
+    # - "%PYTHON%\\python -c \"from pymyinstall.fix import fix_win32ctypes_core_cffi__advapi32_py;fix_win32ctypes_core_cffi__advapi32_py(fLOG=print)\""
     - "%PYTHON%\\Scripts\\pip install tkinterquickhelper --no-deps"
     - set PYTHONPATH=src
+    - set MPLBACKEND=AGG
 
 build: off
 
