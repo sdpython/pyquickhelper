@@ -6,6 +6,7 @@
 import hashlib
 import os
 import re
+import glob
 import urllib.request
 import shutil
 import sys
@@ -105,6 +106,14 @@ class CommonSphinxWriterHelpers:
                 full = os.path.join(
                     srcdir, atts['src']) if srcdir else atts['src']
 
+                if '*' in full:
+                    files = glob.glob(full)
+                    if len(files) == 0:
+                        raise FileNotFoundError(  # pragma: no cover
+                            "Unable to find any file matching pattern "
+                            "'{}'.".format(full))
+                    full = files[0]
+
                 if not os.path.exists(full):
                     this = os.path.abspath(os.path.dirname(__file__))
                     repl = os.path.join(
@@ -114,7 +123,7 @@ class CommonSphinxWriterHelpers:
                         "[image] unable to find image '{0}', replaced by '{1}'".format(full, repl))
                     full = repl
 
-                ext = os.path.splitext(atts['src'])[-1]
+                ext = os.path.splitext(full)[-1]
                 name = self.hash_md5_readfile(full) + ext
                 remote = False
 
@@ -122,6 +131,11 @@ class CommonSphinxWriterHelpers:
                 os.makedirs(fold)
 
             dest = os.path.join(fold, name) if fold else None
+            if '*' in dest:
+                raise RuntimeError(  # pragma: no cover
+                    "Wrong destination '{} // {}' image_dest='{}' atts['src']='{}' "
+                    "srcdir='{}' full='{}'.".format(
+                        fold, name, image_dest, atts['src'], srcdir, full))
 
             if dest is not None:
                 if not os.path.exists(dest):
@@ -154,7 +168,7 @@ class CommonSphinxWriterHelpers:
                                 dest += '.png'
                         try:
                             shutil.copy(full, dest)
-                        except FileNotFoundError as e:
+                        except (FileNotFoundError, OSError) as e:
                             raise FileNotFoundError(  # pragma: no cover
                                 "Unable to copy from '{0}' to '{1}'.".format(full, dest)) from e
                         full = dest
