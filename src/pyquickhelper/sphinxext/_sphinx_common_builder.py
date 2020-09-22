@@ -131,7 +131,7 @@ class CommonSphinxWriterHelpers:
                 os.makedirs(fold)
 
             dest = os.path.join(fold, name) if fold else None
-            if '*' in dest:
+            if dest is not None and '*' in dest:
                 raise RuntimeError(  # pragma: no cover
                     "Wrong destination '{} // {}' image_dest='{}' atts['src']='{}' "
                     "srcdir='{}' full='{}'.".format(
