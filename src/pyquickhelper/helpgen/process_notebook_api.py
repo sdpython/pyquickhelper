@@ -4,6 +4,7 @@
 @brief Direct calls to IPython API without running a command line
 """
 import os
+from .utils_sphinx_doc_helpers import HelpGenException
 
 
 def get_exporter(format, add_writer=False):
@@ -181,7 +182,14 @@ def nb2rst(nb_file, outfile, exc=True, post_process=True):
     # post_processing
     if post_process:
         from .post_process import post_process_rst_output
-        post_process_rst_output(outfile, False, False,
-                                False, False, False, exc=exc)
+        try:
+            post_process_rst_output(outfile, False, False,
+                                    False, False, False, exc=exc)
+        except HelpGenException as e:
+            raise HelpGenException(  # pragma: no cover
+                "Unable to post process notebook '{}' with writer '{}' and "
+                "exporter '{}'".format(
+                    nb_file, type(writer), type(exporter))) from e
+
     res = [outfile]
     return res
