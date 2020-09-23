@@ -309,7 +309,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     with open(file + "~", "w", encoding="utf8") as f:
         f.write("".join(lines))
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-a] 'None' present in %r" % file)
 
     # Removes empty lines in inserted code, also adds line number.
@@ -360,7 +360,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
 
                 memopos = None
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-b] 'None' present in %r" % file)
 
     # code and images
@@ -402,7 +402,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             raise HelpGenException(mes)  # pragma: no cover
         warnings.warn(mes, UserWarning)
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-c] 'None' present in %r" % file)
 
     # label
@@ -411,7 +411,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     label = "\n.. _{0}:\n\n".format(labelname)
     lines.insert(0, label)
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-d] 'None' present in %r" % file)
 
     # links
@@ -442,7 +442,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
         lines[pos], ", ".join(links))
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-e] 'None' present in %r" % file)
 
     # we remove the
@@ -462,7 +462,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             merged = merged.replace(rep, "\n" * nbl)
         lines = [(_ + "\n") for _ in merged.split("\n")]
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-f] 'None' present in %r" % file)
 
     # bullets
@@ -483,7 +483,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             elif line.startswith("- "):
                 pass
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-g] 'None' present in %r" % file)
 
     # remove last ::
@@ -509,7 +509,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                 line = line.replace(memo, new_memo)
                 lines[i] = line
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-h] 'None' present in %r" % file)
 
     # checking for find://
@@ -520,13 +520,13 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             "find:// was found in '{0}'.\nYou should "
             "add or extend 'nblinks' in conf.py.".format(file))
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-i] 'None' present in %r" % file)
 
     # notebooks replacements
     content = _notebook_replacements(content, notebook_replacements, fLOG)
 
-    if any(line == 'None\n' for line in lines):
+    if fLOG and any(line == 'None\n' for line in lines):
         fLOG("[post_process_rst_output-j] 'None' present in %r" % file)
 
     # replaces the function
