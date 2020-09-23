@@ -108,6 +108,7 @@ def get_epkg_dictionary():
         'html': 'https://en.wikipedia.org/wiki/HTML',
         'HTML': 'https://en.wikipedia.org/wiki/HTML',
         'imgmath': 'http://www.sphinx-doc.org/en/master/usage/extensions/math.html#module-sphinx.ext.imgmath',
+        'img2pdf': 'https://gitlab.mister-muffin.de/josch/img2pdf',
         'Inkscape': 'https://inkscape.org/',
         'InkScape': 'https://inkscape.org/',
         'IPython': 'https://en.wikipedia.org/wiki/IPython',

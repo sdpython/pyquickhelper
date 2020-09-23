@@ -309,8 +309,10 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     with open(file + "~", "w", encoding="utf8") as f:
         f.write("".join(lines))
 
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-a] 'None' present in %r" % file)
+    if any(line == 'None\n' for line in lines):
+        raise HelpGenException(  # pragma: no cover
+            "One row unexpectedly contains only None in '{}'\n{}".format(
+                file, "".join(lines)))
 
     # Removes empty lines in inserted code, also adds line number.
     def startss(line):
@@ -360,9 +362,6 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
 
                 memopos = None
 
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-b] 'None' present in %r" % file)
-
     # code and images
     imgreg = re.compile("[.][.] image:: (.*)")
     for pos in range(0, len(lines)):
@@ -402,17 +401,11 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             raise HelpGenException(mes)  # pragma: no cover
         warnings.warn(mes, UserWarning)
 
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-c] 'None' present in %r" % file)
-
     # label
     labelname = name.replace(" ", "").replace("_", "").replace(
         ":", "").replace(".", "").replace(",", "")
     label = "\n.. _{0}:\n\n".format(labelname)
     lines.insert(0, label)
-
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-d] 'None' present in %r" % file)
 
     # links
     links = ['**Links:** :download:`notebook <{0}.ipynb>`'.format(noext)]
@@ -442,9 +435,6 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
         lines[pos], ", ".join(links))
 
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-e] 'None' present in %r" % file)
-
     # we remove the
     # <div
     # style="position:absolute;
@@ -461,9 +451,6 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             nbl = len(rep.split("\n"))
             merged = merged.replace(rep, "\n" * nbl)
         lines = [(_ + "\n") for _ in merged.split("\n")]
-
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-f] 'None' present in %r" % file)
 
     # bullets
     for pos, line in enumerate(lines):
@@ -482,9 +469,6 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                 lines[pos - 1] += "\n"
             elif line.startswith("- "):
                 pass
-
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-g] 'None' present in %r" % file)
 
     # remove last ::
     i = len(lines)
@@ -509,9 +493,6 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                 line = line.replace(memo, new_memo)
                 lines[i] = line
 
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-h] 'None' present in %r" % file)
-
     # checking for find://
     content = "".join(lines)
     content = update_notebook_link(content, "rst", nblinks=nblinks, fLOG=fLOG)
@@ -520,14 +501,8 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             "find:// was found in '{0}'.\nYou should "
             "add or extend 'nblinks' in conf.py.".format(file))
 
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-i] 'None' present in %r" % file)
-
     # notebooks replacements
     content = _notebook_replacements(content, notebook_replacements, fLOG)
-
-    if fLOG and any(line == 'None\n' for line in lines):
-        fLOG("[post_process_rst_output-j] 'None' present in %r" % file)
 
     # replaces the function
     content = content.replace("\\mathbb{1}", "\\mathbf{1\\!\\!1}")

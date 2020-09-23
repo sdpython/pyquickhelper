@@ -55,8 +55,7 @@ def get_exporter(format, add_writer=False):
     if add_writer:
         from nbconvert.writers import FilesWriter
         return exp, FilesWriter
-    else:
-        return exp
+    return exp
 
 
 def nb2slides(nb_file, outfile, add_tag=True):
