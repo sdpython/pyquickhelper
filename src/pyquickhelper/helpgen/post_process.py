@@ -62,7 +62,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
                 extension = "You shoud add links into variable 'nblinks' " \
                             "into documentation configuration file."
                 extension += "\nnblinks={0}".format(nblinks)
-                raise Exception(
+                raise HelpGenException(
                     "Unable to find a replacement for '{0}' format='{1}' in \n{2}\n{3}".format(
                         url, format, snb, extension))
         return url
@@ -103,9 +103,10 @@ def update_notebook_link(text, format, nblinks, fLOG):
                                 for k, v in sorted(nblinks.items()))
                 extension = "You should add this link into the documentation " \
                             "configuration file in variable 'nblinks'."
-                raise Exception("A reference was not found: '{0}' - '{1}' "
-                                "format={2}, nblinks=\n{3}\n{4}".format(
-                                    anc, url, format, mes, extension))
+                raise HelpGenException(
+                    "A reference was not found: '{0}' - '{1}' "
+                    "format={2}, nblinks=\n{3}\n{4}".format(
+                        anc, url, format, mes, extension))
             new_url = "[{0}]({1})".format(anc, url)
             if fLOG:
                 fLOG("      [update_notebook_link]3 add in ",
@@ -312,7 +313,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     if any(line == 'None\n' for line in lines):
         raise HelpGenException(  # pragma: no cover
             "One row unexpectedly contains only None in '{}'\n{}".format(
-                file, "".join(lines)))
+                file, "".join(lines[:20])))
 
     # Removes empty lines in inserted code, also adds line number.
     def startss(line):
@@ -497,7 +498,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     content = "".join(lines)
     content = update_notebook_link(content, "rst", nblinks=nblinks, fLOG=fLOG)
     if "find://" in content:
-        raise Exception(  # pragma: no cover
+        raise HelpGenException(  # pragma: no cover
             "find:// was found in '{0}'.\nYou should "
             "add or extend 'nblinks' in conf.py.".format(file))
 
@@ -543,7 +544,7 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
 
     text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
-        raise Exception(  # pragma: no cover
+        raise HelpGenException(  # pragma: no cover
             "find:// was found in '{0}'.\nYou should add "
             "or extend 'nblinks' in conf.py.".format(file))
 
@@ -600,7 +601,7 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
                         "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
     text = update_notebook_link(text, "slides", nblinks=nblinks, fLOG=fLOG)
     if "find://" in text:
-        raise Exception(  # pragma: no cover
+        raise HelpGenException(  # pragma: no cover
             "find:// was found in '{0}'.\nYou should add "
             "or extend 'nblinks' in conf.py.".format(file))
 
@@ -792,7 +793,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
     # fix references
     st = update_notebook_link(st, "latex", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
-        raise Exception(  # pragma: no cover
+        raise HelpGenException(  # pragma: no cover
             "find:// was found in '{0}'\nYou should add or extend "
             "'nblinks' in conf.py.\n{1}".format(file, st))
 
@@ -832,7 +833,7 @@ def post_process_python(st, doall, info=None, nblinks=None, file=None, fLOG=None
     st = st.replace("# coding: utf-8", "# -*- coding: utf-8 -*-")
     st = update_notebook_link(st, "python", nblinks=nblinks, fLOG=fLOG)
     if "find://" in st:
-        raise Exception(  # pragma: no cover
+        raise HelpGenException(  # pragma: no cover
             "find:// was found in '{0}'.\nYou should add or extend "
             "'nblinks' in conf.py.".format(file))
 
