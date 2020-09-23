@@ -310,6 +310,11 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     with open(file + "~", "w", encoding="utf8") as f:
         f.write("".join(lines))
 
+    # Probably not the best way to fix that.
+    # For some reason, nbconvert adds None as the first row.
+    if lines[0] == 'None\n':
+        lines[0] = '\n'
+
     if any(line == 'None\n' for line in lines):
         raise HelpGenException(  # pragma: no cover
             "One row unexpectedly contains only None in '{}'\n{}".format(

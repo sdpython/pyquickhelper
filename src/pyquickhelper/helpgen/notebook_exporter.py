@@ -43,16 +43,17 @@ def process_raw_html(source, extra_args=None):
         return source
     if 'var update_menu = function() {' in source:
         return "\n\n.. contents::\n    :local:\n\n"
-    else:
-        return "\n\n.. raw:: html\n\n" + indent(source, prefix='    ')
+    return "\n\n.. raw:: html\n\n" + indent(source, prefix='    ')
 
 
 class UpgradedRSTExporter(RSTExporter):
     """
     Exports :epkg:`rst` documents.
-    Overwrites `RSTExporter <https://github.com/jupyter/nbconvert/blob/master/nbconvert/exporters/rst.py>`_.
+    Overwrites `RSTExporter <https://github.com/jupyter/
+    nbconvert/blob/master/nbconvert/exporters/rst.py>`_.
 
-    * It replaces `convert_pandoc <https://github.com/jupyter/nbconvert/blob/master/nbconvert/filters/pandoc.py>`_
+    * It replaces `convert_pandoc <https://github.com/jupyter/
+    nbconvert/blob/master/nbconvert/filters/pandoc.py>`_
       by @see fn convert_pandoc_rst.
     * It converts :epkg:`svg` into :epkg:`png` if possible,
       see @see fn process_raw_html.
@@ -69,7 +70,8 @@ class UpgradedRSTExporter(RSTExporter):
     src/pyquickhelper/helpgen/rst_modified.tpl>`_.
     It follows the hints given at
     `Programatically creating templates
-    <https://nbconvert.readthedocs.io/en/latest/nbconvert_library.html#Programatically-creating-templates>`_.
+    <https://nbconvert.readthedocs.io/en/latest/
+    nbconvert_library.html#Programatically-creating-templates>`_.
 
     :epkg:`jyquickhelper` should add a string highly recognizable when adding a menu.
     """

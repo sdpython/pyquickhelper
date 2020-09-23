@@ -187,9 +187,10 @@ def nb2rst(nb_file, outfile, exc=True, post_process=True):
                                     False, False, False, exc=exc)
         except HelpGenException as e:
             raise HelpGenException(  # pragma: no cover
-                "Unable to post process notebook '{}' with writer '{}' and "
+                "Unable to postprocess notebook '{}' with writer '{}' and "
                 "exporter '{}'".format(
-                    nb_file, type(writer), type(exporter))) from e
+                    getattr(nb_file, '_filename', nb_file),
+                    type(writer), type(exporter))) from e
 
     res = [outfile]
     return res
