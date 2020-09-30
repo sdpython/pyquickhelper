@@ -133,7 +133,7 @@ class TestModuleC(ExtTestCase):
         self.assertNotEmpty(store_obj)
         self.assertEqual(len(store_obj), 4)
         if len(actions) != 2:
-            raise Exception("{0}\n{1}".format(
+            raise AssertionError("{0}\n{1}".format(
                 len(actions), "\n".join(str(_) for _ in actions)))
         self.assertEqual(len(indexes), 1)
 
@@ -208,8 +208,8 @@ class TestModuleC(ExtTestCase):
             return
         self.assertNotEmpty(store_obj)
         self.assertEqual(len(store_obj), 1)
-        if len(actions) not in (3, 4):
-            raise Exception("{0}\n{1}".format(
+        if len(actions) not in (3, 4, 5):
+            raise AssertionError("len(actions)={0}\n{1}".format(
                 len(actions), "\n".join(str(_) for _ in actions)))
         self.assertEqual(len(indexes), 1)
 
