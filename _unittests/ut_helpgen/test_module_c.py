@@ -211,7 +211,7 @@ class TestModuleC(ExtTestCase):
         if len(actions) not in (3, 4, 5):
             raise AssertionError("len(actions)={0}\n{1}".format(
                 len(actions), "\n".join(str(_) for _ in actions)))
-        self.assertEqual(len(indexes), 1)
+        self.assertIn(len(indexes), (1, 2))
 
 
 if __name__ == "__main__":
