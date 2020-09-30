@@ -153,7 +153,9 @@ def noLOG(*args, **kwargs):
     """
     does nothing
     """
-    pass
+    if len(args[0]) > 0:
+        return args[0]
+    return None
 
 
 def fLOG(*args, **kwargs):
@@ -243,6 +245,9 @@ def fLOG(*args, **kwargs):
                 myprint(mes2)
 
     GetLogFile().flush()
+    if len(args) > 0:
+        return args[0]
+    return
 
 
 def fLOGFormat(sep, *args, **kwargs):
