@@ -247,7 +247,7 @@ def fLOG(*args, **kwargs):
     GetLogFile().flush()
     if len(args) > 0:
         return args[0]
-    return
+    return None
 
 
 def fLOGFormat(sep, *args, **kwargs):
