@@ -211,13 +211,20 @@ def get_urls_content_timeout(urls, timeout=10, folder=None, encoding=None,
     The function raises the exception @see cl InternetException.
     """
     import pandas
+    import pandas.errors
     if not isinstance(urls, list):
         raise TypeError("urls must be a list")
     if folder is None:
         raise ValueError("folder should not be None")
     summary = os.path.join(folder, "summary.csv")
     if os.path.exists(summary):
-        df = pandas.read_csv(summary)
+        try:
+            df = pandas.read_csv(summary)
+        except pandas.errors.EmptyDataError:
+            df = None
+    else:
+        df = None
+    if df is not None:
         all_obs = [dict(url=df.loc[i, 'url'],
                         size=df.loc[i, 'size'],
                         date=df.loc[i, 'date'],

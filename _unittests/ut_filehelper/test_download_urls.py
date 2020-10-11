@@ -28,10 +28,10 @@ class TestDownloadUrls(ExtTestCase):
         get_urls_content_timeout(urls, folder=temp, fLOG=fLOG)
         content = os.listdir(temp)
         self.assertEqual(
-            content, ['dd5ba53e5e4efe59f0ce3b0ef.bin', 'summary.csv'])
+            set(content), set(['dd5ba53e5e4efe59f0ce3b0ef.bin', 'summary.csv']))
         get_urls_content_timeout(urls, folder=temp, fLOG=fLOG)
         content2 = os.listdir(temp)
-        self.assertEqual(content, content2)
+        self.assertEqual(set(content), set(content2))
         self.assertRaise(lambda: local_url(urls[0]), FileNotFoundError)
         loc = local_url(urls[0], folder=temp)
         self.assertIn('.bin', loc)

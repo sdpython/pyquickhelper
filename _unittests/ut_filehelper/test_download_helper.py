@@ -26,8 +26,7 @@ class TestDownloadHelper(ExtTestCase):
         url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
         content = get_url_content_timeout(url, encoding="utf8")
         self.assertIn("MagicCommandParser", content)
-        self.assertIsInstance(content, str  # unicode#
-                              )
+        self.assertIsInstance(content, str)
 
     def test_download_notimeout_chunk(self):
         fLOG(
