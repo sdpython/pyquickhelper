@@ -2,9 +2,12 @@
 @file
 @brief A function to download the content of a url.
 """
+import os
+from datetime import datetime
 import socket
 import gzip
 import warnings
+import hashlib
 import urllib.error as urllib_error
 import urllib.request as urllib_request
 import http.client as http_client
@@ -18,7 +21,8 @@ class InternetException(Exception):
     pass
 
 
-def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise_exception=True, chunk=None, fLOG=None):
+def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
+                            raise_exception=True, chunk=None, fLOG=None):
     """
     Downloads a file from internet (by default, it assumes
     it is text information, otherwise, encoding should be None).
@@ -85,7 +89,8 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
             else:
                 with urllib_request.urlopen(url) as ur:
                     res = ur.read()
-    except (urllib_error.HTTPError, urllib_error.URLError) as e:
+    except (urllib_error.HTTPError, urllib_error.URLError,
+            ConnectionRefusedError) as e:
         if raise_exception:
             raise InternetException(
                 "Unable to retrieve content, url='{0}'".format(url)) from e
@@ -168,3 +173,93 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8", raise
         save_content(content)
 
     return content
+
+
+def _hash_url(url):
+    m = hashlib.sha256()
+    m.update(url.encode('utf-8'))
+    return m.hexdigest()[:25]
+
+
+def get_urls_content_timeout(urls, timeout=10, folder=None, encoding=None,
+                             raise_exception=True, chunk=None, fLOG=None):
+    """
+    Downloads data from urls (by default, it assumes
+    it is text information, otherwise, encoding should be None).
+
+    :param urls: urls
+    :param timeout: in seconds, after this time, the function drops an returns None, -1 for forever
+    :param folder: if None, the content is stored in that file
+    :param encoding: None by default, but if it is None, the returned information is binary
+    :param raise_exception: True to raise an exception, False to send a warnings
+    :param chunk: save data every chunk (only if output is not None)
+    :param fLOG: logging function (only applies when chunk is not None)
+    :return: list of downloaded content
+
+    If the function automatically detects that the downloaded data is in gzip
+    format, it will decompress it.
+
+    The function raises the exception @see cl InternetException.
+    """
+    import pandas
+    if not isinstance(urls, list):
+        raise TypeError("urls must be a list")
+    if folder is None:
+        raise ValueError("folder should not be None")
+    summary = os.path.join(folder, "summary.csv")
+    if os.path.exists(summary):
+        df = pandas.read_csv(summary)
+        all_obs = [dict(url=df.loc[i, 'url'],
+                        size=df.loc[i, 'size'],
+                        date=df.loc[i, 'date'],
+                        dest=df.loc[i, 'dest']) for i in range(df.shape[0])]
+        done = set(d['dest'] for d in all_obs)
+    else:
+        all_obs = []
+        done = set()
+    for i, url in enumerate(urls):
+        dest = _hash_url(url)
+        if dest in done:
+            continue
+        full_dest = os.path.join(folder, dest + '.bin')
+        content = get_url_content_timeout(url, timeout=timeout, output=full_dest,
+                                          encoding=encoding, chunk=chunk,
+                                          raise_exception=raise_exception)
+        if content is None:
+            continue
+        if fLOG is not None:
+            fLOG("{}/{} downloaded {} bytes from '{}' to '{}'.".format(
+                i + 1, len(urls), len(content), url, dest + '.bin'))
+
+        obs = dict(url=url, size=len(content), date=datetime.now(),
+                   dest=dest)
+        all_obs.append(obs)
+        done.add(dest)
+
+    new_df = pandas.DataFrame(all_obs)
+    new_df.to_csv(summary, index=False)
+    return all_obs
+
+
+def local_url(url, folder=None, envvar='REPO_LOCAL_URLS'):
+    """
+    Replaces the url by a local file in a folder
+    or an environment variable
+    if *folder* is None.
+
+    :param url: url to replace
+    :param folder: local folder
+    :param envvar: environment variable
+    :return: local file or url
+    """
+    if folder is None:
+        folder = os.environ.get(envvar, None)  # pragma: no cover
+    if folder is None:
+        raise FileNotFoundError(
+            "Unable to find local folder '{}' or environment variable '{}'.".format(
+                folder, envvar))
+    loc = _hash_url(url)
+    name = os.path.join(folder, loc + '.bin')
+    if os.path.exists(name):
+        return name
+    return url

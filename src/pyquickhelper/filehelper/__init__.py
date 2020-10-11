@@ -6,9 +6,10 @@ import os
 from .anyfhelper import change_file_status, read_content_ufs
 from .compression_helper import (
     zip_files, gzip_files, zip7_files, unzip_files, ungzip_files,
-    un7zip_files, unrar_files, untar_files
-)
-from .download_helper import get_url_content_timeout, InternetException
+    un7zip_files, unrar_files, untar_files)
+from .download_helper import (
+    get_url_content_timeout, get_urls_content_timeout,
+    InternetException, local_url)
 from .encrypted_backup import EncryptedBackup
 from .encryption import decrypt_stream, encrypt_stream
 from .file_info import FileInfo, is_file_string, checksum_md5, is_url_string

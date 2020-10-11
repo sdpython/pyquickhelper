@@ -109,14 +109,13 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
         if sub_pattern:
             keys = [sub_pattern.sub(sub_replace, _) for _ in keys]
         return keys, files
-    elif return_only == 'f':
+    if return_only == 'f':
         return files
-    elif return_only == 'd':
+    if return_only == 'd':
         if sub_pattern:
             keys = [sub_pattern.sub(sub_replace, _) for _ in keys]
         return keys
-    else:
-        raise ValueError("return_only must be either None, 'f' or 'd'.")
+    raise ValueError("return_only must be either None, 'f' or 'd'.")
 
 
 def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
@@ -547,3 +546,19 @@ def walk(top, onerror=None, followlinks=False, neg_filter=None):
                     del dirs[i]
 
             yield root, dirs, files
+
+
+def download_urls_iterfile(folder, pattern=None, neg_pattern=None,
+                           fullname=False, recursive=True):
+    """
+    Same as @see fn explore_folder but iterates on files
+    included in a folder and its subfolders.
+
+    :param folder: folder
+    :param pattern: if None, get all files, otherwise, it is a regular expression,
+        the filename must verify (with the folder is fullname is True)
+    :param neg_pattern: negative pattern to exclude files
+    :param fullname: if True, include the subfolder while checking the regex
+    :param recursive: look into subfolders
+    :return: iterator on files
+    """
