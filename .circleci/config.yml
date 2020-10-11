@@ -24,7 +24,6 @@ jobs:
       - run:
           name: Install tex (unstable)
           command: |
-                    sudo echo "deb http://ftp.debian.org/debian sid main" | sudo tee /etc/apt/sources.list.d/texlive.list
                     sudo apt-get update
                     sudo apt-get install -y texlive
                     sudo apt-get install -y texlive-latex-extra
