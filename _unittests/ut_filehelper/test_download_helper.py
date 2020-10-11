@@ -2,7 +2,6 @@
 @brief      test log(time=7s)
 """
 
-import sys
 import os
 import unittest
 
@@ -18,7 +17,6 @@ from pyquickhelper.filehelper import get_url_content_timeout, InternetException
 
 class TestDownloadHelper(ExtTestCase):
 
-    @unittest.skipIf(sys.version_info[0] == 2, reason="timeout")
     def test_download_notimeout(self):
         fLOG(
             __file__,
@@ -31,7 +29,6 @@ class TestDownloadHelper(ExtTestCase):
         self.assertIsInstance(content, str  # unicode#
                               )
 
-    @unittest.skipIf(sys.version_info[0] == 2, reason="timeout")
     def test_download_notimeout_chunk(self):
         fLOG(
             __file__,
@@ -41,27 +38,23 @@ class TestDownloadHelper(ExtTestCase):
         temp = get_temp_folder(__file__, "temp_download_notimeout_chunk")
         url = "https://raw.githubusercontent.com/sdpython/pyquickhelper/master/src/pyquickhelper/ipythonhelper/magic_parser.py"
         self.assertRaise(lambda: get_url_content_timeout(
-            url, encoding="utf8", chunk=100), ValueError)
+            url, encoding="utf8", chunk=100), InternetException)
         name = os.path.join(temp, "m.py")
         content = get_url_content_timeout(
             url, encoding="utf8", chunk=100, output=name)
         with open(name, "r", encoding="utf-8") as f:
             content = f.read()
         self.assertIn("MagicCommandParser", content)
-        self.assertIsInstance(content, str  # unicode#
-                              )
-
+        self.assertIsInstance(content, str)
         self.assertRaise(lambda: get_url_content_timeout(
-            url, chunk=100), ValueError)
+            url, chunk=100), InternetException)
         name = os.path.join(temp, "m2.py")
         content = get_url_content_timeout(url, chunk=100, output=name)
         with open(name, "r", encoding="utf-8") as f:
             content = f.read()
         self.assertIn("MagicCommandParser", content)
-        self.assertIsInstance(content, str  # unicode#
-                              )
+        self.assertIsInstance(content, str)
 
-    @unittest.skipIf(sys.version_info[0] == 2, reason="timeout")
     def test_download_timeout(self):
         fLOG(
             __file__,
