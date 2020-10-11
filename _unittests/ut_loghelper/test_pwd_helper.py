@@ -5,7 +5,8 @@ import sys
 import os
 import unittest
 
-from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.pycode import (
+    ExtTestCase, skipif_appveyor, skipif_travis, skipif_circleci)
 from pyquickhelper.loghelper import set_password, get_password
 
 
@@ -17,6 +18,9 @@ class TestPwdHelper(ExtTestCase):
         self.assertRaise(lambda: get_password(
             'pyq', 'jj', 'keyring2'), RuntimeError)
 
+    @skipif_appveyor('stuck')
+    @skipif_travis('stuck')
+    @skipif_circleci('stuck')
     def test_password(self):
         pwd = 'bibi'
         set_password('pyq', 'jj', pwd)
