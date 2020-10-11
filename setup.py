@@ -278,6 +278,7 @@ if not r:
                 "jupyter_client",
                 "jupyter_sphinx",
                 "jyquickhelper",
+                "keyring",
                 "matplotlib",
                 "metakernel",
                 "multi_key_dict",

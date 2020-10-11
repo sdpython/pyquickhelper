@@ -423,7 +423,7 @@ windows_publish = """
 %pythonexe% %current%setup.py rotate --match=.whl --keep=10
 rem %pythonexe% %current%setup.py sdist register
 pushd %current%
-%pythonexe% %current%setup.py bdist_wheel sdist --formats=gztar 
+%pythonexe% %current%setup.py bdist_wheel sdist --formats=gztar
 %pythonexe% -m twine %current%/dist upload *.whl
 %pythonexe% -m twine %current%/dist upload *.gz
 set /P NVERSION=< version.txt

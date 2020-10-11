@@ -125,6 +125,7 @@ def get_epkg_dictionary():
         'JupyterLab': 'https://jupyterlab.readthedocs.io/en/stable/',
         'Jupyter Lab': 'https://jupyterlab.readthedocs.io/en/stable/',
         'jupyter_sphinx': 'https://jupyter-sphinx.readthedocs.io/en/latest/index.html',
+        'keyring': 'https://github.com/jaraco/keyring',
         'latex': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTeX': 'https://en.wikipedia.org/wiki/LaTeX',
         'LaTex': 'https://en.wikipedia.org/wiki/LaTeX',

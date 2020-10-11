@@ -153,7 +153,7 @@ def noLOG(*args, **kwargs):
     """
     does nothing
     """
-    if len(args[0]) > 0:
+    if len(args) > 0:
         return args[0]
     return None
 
