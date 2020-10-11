@@ -11,6 +11,10 @@ import hashlib
 import urllib.error as urllib_error
 import urllib.request as urllib_request
 import http.client as http_client
+try:
+    from http.client import InvalidURL
+except ImportError:
+    InvalidURL = ValueError
 
 
 class InternetException(Exception):
@@ -125,8 +129,13 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
         warnings.warn(
             "Unable to retrieve content from '{0}' because of http.client.IncompleteRead: {1}".format(url, e), ResourceWarning)
         return None
-    except ValueError as e:
-        raise e
+    except (ValueError, InvalidURL) as e:
+        if raise_exception:
+            raise InternetException(
+                "Unable to retrieve content url='{0}'".format(url)) from e
+        warnings.warn(
+            "Unable to retrieve content from '{0}' because of {1}".format(url, e), ResourceWarning)
+        return None
     except Exception as e:
         if raise_exception:
             raise InternetException(
