@@ -7,7 +7,18 @@ from datetime import datetime
 import xmlrpc.client as xmlrpc_client
 
 
-def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):
+class RateLimitedServerProxy(xmlrpc_client.ServerProxy):
+    """
+    See this `issue
+    <https://github.com/pypa/warehouse/issues/8753>`_.
+    """
+
+    def __getattr__(self, name):
+        time.sleep(1)
+        return super(RateLimitedServerProxy, self).__getattr__(name)
+
+
+def enumerate_pypi_versions_date(name, url='https://pypi.org/pypi'):
     """
     Retrieves version and releases dates for modules
     hosted on :epkg:`pypi`.
@@ -16,7 +27,7 @@ def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):
     @param      url         url
     @return                 list tuple (date, version, size)
     """
-    pypi = xmlrpc_client.ServerProxy(url)
+    pypi = RateLimitedServerProxy(url)
     available = pypi.package_releases(name, True)
     for i, ver in enumerate(available):
         try:
@@ -37,4 +48,3 @@ def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):
                         "Unable to parse '{0}'".format(r['upload_time'])) from e
             yield dt, ver, r['size']
             break
-        time.sleep(0.2)
