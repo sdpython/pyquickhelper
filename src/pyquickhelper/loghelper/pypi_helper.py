@@ -18,8 +18,13 @@ def enumerate_pypi_versions_date(name, url='https://pypi.python.org/pypi'):
     """
     pypi = xmlrpc_client.ServerProxy(url)
     available = pypi.package_releases(name, True)
-    for ver in available:
-        res = pypi.release_urls(name, ver)
+    for i, ver in enumerate(available):
+        try:
+            res = pypi.release_urls(name, ver)
+        except xmlrpc_client.Fault as e:
+            raise RuntimeError(
+                "Unable to retrieve url for package '{}-{}': tentative {}/{}."
+                "".format(name, ver, i + 1, len(available))) from e
         for r in res:
             if isinstance(r['upload_time'], str):
                 dt = datetime.strptime(
