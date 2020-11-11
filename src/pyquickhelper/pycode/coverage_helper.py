@@ -15,7 +15,7 @@ from io import StringIO
 def _attr_(var, name1, name2):
     try:
         return getattr(var, name1, getattr(var, name2))
-    except AttributeError:
+    except AttributeError:  # pragma: no cover
         raise AttributeError(
             "Unable to find '{}' or '{}' ({}) in \n{}\n--".format(
                 name1, name2, type(var),
@@ -50,7 +50,8 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
 
     report = os.path.normpath(report)
     if not os.path.exists(report):
-        raise FileNotFoundError("Unable to find '{}'.".format(report))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find '{}'.".format(report))
 
     proj = os.path.normpath(os.path.join(
         os.path.dirname(report), "..", "..", "..", ".."))
@@ -69,7 +70,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
         out = new_out.getvalue()
         err = new_err.getvalue()
         if err:
-            raise Exception(
+            raise RuntimeError(  # pragma: no cover
                 "Unable to run:\nCMD:\n{0}\nOUT:\n{1}\n[pyqerror]\n{2}".format(cmd, out, err))
         return out, err
     return cmd
@@ -165,7 +166,7 @@ def coverage_combine(data_files, output_path, source, process=None):
         The function was refactored to handle better relative files.
     """
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source,
-                  dests, inter, cov, infos):
+                  dests, inter, cov, infos):  # pragma: no cover
 
         def shorten(t):
             if len(t) > 2000:
@@ -317,7 +318,7 @@ def coverage_combine(data_files, output_path, source, process=None):
             report = False
         else:
             msg = pprint.pformat(infos)
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Unable to process report in '{0}'.\n----\n{1}".format(
                     output_path, msg)) from e
 

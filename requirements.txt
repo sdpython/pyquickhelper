@@ -1,7 +1,7 @@
 autopep8
 babel!=2.0
 bokeh
-cairosvg
+cairosvg>=2.5.0
 cffi
 codecov
 coverage>=5.0
@@ -11,7 +11,7 @@ fire
 git-pandas
 gitdb
 img2pdf
-ipython>=5.0.0
+ipython>=7.0.0
 js2py
 jupyter
 jupyter-client
@@ -44,7 +44,7 @@ PyYAML
 scipy
 semantic_version
 setuptools
-Sphinx>=2.3
+Sphinx>=3.3
 sphinx-gallery
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo

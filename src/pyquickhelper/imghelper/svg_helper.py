@@ -61,9 +61,9 @@ def svg2img(svg, dpi=None, scale=1., **kwargs):
             head = '<svg width="{}" height="{}">'.format(*size)
             svg = head + svg[5:]
             return svg2img(svg, **kwargs)
-        else:
-            raise PYQImageException(  # pragma: no cover
-                "width and height must be specified. This might be the error.") from e
+        raise PYQImageException(  # pragma: no cover
+            "width and height must be specified. "
+            "This might be the error.") from e
     png = img.getvalue()
     st = BytesIO(png)
     from PIL import Image

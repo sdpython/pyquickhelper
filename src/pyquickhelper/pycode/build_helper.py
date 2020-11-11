@@ -43,7 +43,8 @@ def choose_path(*paths):
         elif os.path.exists(path):
             return path
     if paths[-1] != _default_nofolder:
-        raise FileNotFoundError("No path exist in: " + ", ".join(paths))
+        raise FileNotFoundError(  # pragma: no cover
+            "No path exist in: " + ", ".join(paths))
     return _default_nofolder
 
 
@@ -70,14 +71,13 @@ def private_path_choice(path):
     current = '%current%' if sys.platform.startswith('win') else '~'
     if "/" in s or "\\" in s:
         return s
-    elif 'ROOT' in s:
+    if 'ROOT' in s:
         return os.path.join(current, "..", s.replace('ROOT', ''))
-    elif 'BLIB' in s:
+    if 'BLIB' in s:
         return os.path.join(current, "..", s.replace('BLIB', ''), "build", "lib")
-    elif 'NSRC' in s:
+    if 'NSRC' in s:
         return os.path.join(current, "..", s.replace("NSRC", ''))
-    else:
-        return os.path.join(current, "..", s, "src")
+    return os.path.join(current, "..", s, "src")
 
 
 def private_replacement_(script, paths, key="__ADDITIONAL_LOCAL_PATH__"):
@@ -163,8 +163,10 @@ def private_script_replacements(script, module, requirements, port, raise_except
         values = [v for v in def_values[
             plat].values() if v is not None and v != _default_nofolder]
         if raise_exception and len(values) != len(set(values)):
-            raise FileNotFoundError("One path is wrong among:\n" +
-                                    "\n".join("{0}={1}".format(k, v) for k, v in def_values[plat].items()))
+            raise FileNotFoundError(  # pragma: no cover
+                "One path is wrong among:\n %s" % (
+                    "\n".join("{0}={1}".format(k, v)
+                              for k, v in def_values[plat].items())))
 
         if module is not None:
             script = script.replace("__MODULE__", module)
@@ -248,7 +250,8 @@ def get_build_script(module, requirements=None, port=8067, default_engine_paths=
 
 
 def get_script_command(command, module, requirements, port=8067, platform=sys.platform,
-                       default_engine_paths=None, additional_local_path=None):
+                       default_engine_paths=None,
+                       additional_local_path=None):  # pragma: no cover
     """
     Produces a script which runs a command available through the setup.
 
@@ -264,7 +267,8 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
     The available list of commands is given by function @see fn process_standard_options_for_setup.
     """
     if not platform.startswith("win"):
-        raise NotImplementedError("not yet available on linux")
+        raise NotImplementedError(  # pragma: no cover
+            "not yet available on linux")
     global windows_error, windows_prefix, windows_setup
     rows = [windows_prefix]
 
@@ -306,7 +310,8 @@ def get_script_command(command, module, requirements, port=8067, platform=sys.pl
 
 def get_extra_script_command(command, module, requirements, port=8067, blog_list=None, platform=sys.platform,
                              default_engine_paths=None, unit_test_folder=None, unittest_modules=None,
-                             additional_notebook_path=None, additional_local_path=None):
+                             additional_notebook_path=None,
+                             additional_local_path=None):  # pragma: no cover
     """
     Produces a script which runs the notebook, a documentation server, which
     publishes...
@@ -441,7 +446,8 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
                 with open(list_xml, "r", encoding="utf8") as f:
                     list_xml = f.read()
             if "<body>" not in list_xml:
-                raise ValueError("Wrong XML format:\n{0}".format(list_xml))
+                raise ValueError(  # pragma: no cover
+                    "Wrong XML format:\n{0}".format(list_xml))
             script = [("auto_rss_list.xml", list_xml)]
             script.append(("auto_rss_server.py", prefix_setup + """
                         from pyquickhelper.pycode.blog_helper import rss_update_run_server
@@ -468,7 +474,8 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
             script.append("\n".join([windows_prefix, "rem http://localhost:8079/",
                                      windows_docserver]))
     else:
-        raise Exception("unable to interpret command: " + command)
+        raise RuntimeError(  # pragma: no cover
+            "Unable to interpret command: %r" % command)
 
     # common post-processing
     for i, item in enumerate(script):

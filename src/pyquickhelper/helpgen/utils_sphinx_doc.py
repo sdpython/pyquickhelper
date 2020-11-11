@@ -219,7 +219,7 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
             has_sys = True
         if line.startswith(marker_in):
             if inside:
-                raise HelpGenException(
+                raise HelpGenException(  # pragma: no cover
                     "issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
             inside = True
             if use_sys:  # pragma: no cover
@@ -232,7 +232,7 @@ def remove_undesired_part_for_documentation(content, filename, use_sys):
             if use_sys and flask_trick:  # pragma: no cover
                 res.append("    pass")
             if not inside:
-                raise HelpGenException(
+                raise HelpGenException(  # pragma: no cover
                     "issues with undesired blocs in file " + filename + " with: " + marker_in + "|" + marker_out)
             inside = False
             flask_trick = False
@@ -413,8 +413,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
     if not_expected not in ('jenkins', 'vsts', 'runner') and not_expected in fullnamenoext:
-        mes = "The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'" + \
-            "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'"
+        mes = ("The title is probably wrong (5): {0}\nnoext='{1}'\npython='{2}'\nrootm='{3}'\nrootrep='{4}'"
+               "\nfullname='{5}'\nkeepf='{6}'\nnot_expected='{7}'")  # pragma: no cover
         raise HelpGenException(mes.format(  # pragma: no cover
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
@@ -543,8 +543,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
     not_expected = os.environ.get(
         "USERNAME", os.environ.get("USER", "````````````"))
     if not_expected not in ('jenkins', 'vsts', 'runner') and not_expected in fullnamenoext:
-        mes = "The title is probably wrong (3): {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}" + \
-            "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'"
+        mes = ("The title is probably wrong (3): {0}\nnoext={1}\npython={2}\nrootm={3}\nrootrep={4}"
+               "\nfullname={5}\nkeepf={6}\nnot_expected='{7}'")  # pragma: no cover
         raise HelpGenException(mes.format(  # pragma: no cover
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
@@ -1035,7 +1035,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
         additional_sys_path = []
 
     if module_name is None:
-        raise ValueError("module_name cannot be None")
+        raise ValueError(  # pragma: no cover
+            "module_name cannot be None")
 
     fLOG("[prepare_file_for_sphinx_help_generation] output='{}'".format(output))
     rootm = os.path.abspath(output)
@@ -1303,7 +1304,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
             with open(fn, "r", encoding="utf8") as f:
                 content = f.read()
             encoding = "utf8"
-        except Exception:
+        except Exception:  # pragma: no cover
             with open(fn, "r") as f:
                 content = f.read()
             encoding = None
@@ -1784,7 +1785,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                     or "@todo" in row or "@code" in row or "@endcode" in row or "@brief" in row or "@file" in row \
                     or "@rtype" in row or "@exception" in row \
                     or "@example" in row or "@NB" in row or "@endNB" in row or "@endexample" in row:
-                if not silent:
+                if not silent:  # pragma: no cover
                     fLOG("#########################")
                     _private_migrating_doxygen_doc(
                         debugrows, index_first_line, filename, debug=True)
@@ -1792,10 +1793,10 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
                         filename, index_first_line + i + 1, row, "\n".join(rows))
                     fLOG("[sphinxerror]-D ", mes)
-                else:
+                else:  # pragma: no cover
                     mes = "  File \"%s\", line %d, in ???\n    unable to process: %s \nwhole blocks:\n%s" % (
                         filename, index_first_line + i + 1, row, "\n".join(rows))
-                raise SyntaxError(mes)
+                raise SyntaxError(mes)  # pragma: no cover
 
     for k, v in beginends.items():
         if v != 0:  # pragma: no cover

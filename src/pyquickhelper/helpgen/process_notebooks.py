@@ -790,42 +790,41 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, exc=True,
 
     if ext == ".ipynb":
         return res
-    elif ext == ".pdf":
+    if ext == ".pdf":
         return res
-    elif ext == ".html":
+    if ext == ".html":
         post_process_html_output(
             file, pdf, python, slides, exc=exc, nblinks=nblinks,
             fLOG=fLOG, notebook_replacements=notebook_replacements)
         return res
-    elif ext == ".slides.html":
+    if ext == ".slides.html":
         post_process_slides_output(
             file, pdf, python, slides, exc=exc, nblinks=nblinks,
             fLOG=fLOG, notebook_replacements=notebook_replacements)
         return res
-    elif ext == ".slides2p.html":
+    if ext == ".slides2p.html":
         post_process_slides_output(
             file, pdf, python, slides, exc=exc, nblinks=nblinks,
             fLOG=fLOG, notebook_replacements=notebook_replacements)
         return res
-    elif ext == ".tex":
+    if ext == ".tex":
         post_process_latex_output(
             file, True, exc=exc, nblinks=nblinks, fLOG=fLOG,
             notebook_replacements=notebook_replacements)
         return res
-    elif ext == ".py":
+    if ext == ".py":
         post_process_python_output(
             file, True, exc=exc, nblinks=nblinks, fLOG=fLOG,
             notebook_replacements=notebook_replacements)
         return res
-    elif ext == ".rst":
+    if ext == ".rst":
         post_process_rst_output(
             file, html, pdf, python, slides, is_notebook=True, exc=exc,
             github=github, notebook=notebook, nblinks=nblinks, fLOG=fLOG,
             notebook_replacements=notebook_replacements)
         return res
-    else:
-        raise HelpGenException(
-            "unable to add a link to this extension: " + ext)
+    raise HelpGenException(
+        "Unable to add a link to this extension: %r" % ext)
 
 
 def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout, snippet_folder=None, fLOG=None):
@@ -842,9 +841,8 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
                                 itself, snippet must have extension ``.png``
     @return                     RST
 
-    .. versionchanged:: 1.7
-        Modifies the function to bypass the generation of a snippet
-        if a custom one was found. Parameter *snippet_folder* was added.
+    Modifies the function to bypass the generation of a snippet
+    if a custom one was found. Parameter *snippet_folder* was added.
     """
     from ..ipythonhelper import read_nb
     nb = read_nb(nbfile)

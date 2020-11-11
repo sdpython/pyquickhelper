@@ -164,7 +164,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
         spl = ext.split("-")
         if len(spl) != 2:
             raise ValueError(
-                "unable to interpret extension in '{0}'".format(text0))
+                "Unable to interpret extension in '{0}'".format(text0))
         ext, doc = spl
     else:
         doc = "src"
@@ -210,14 +210,14 @@ def githublink_role(role, rawtext, text, lineno, inliner,
         node = make_link_node(rawtext=rawtext, app=app, path=path, lineno=lineno,
                               options=options, anchor=text, settings=inliner.document.settings)
     except (ValueError, AttributeError) as e:
-        msg = inliner.reporter.error('githublink_options must be set to a dictionary with keys (user, project)\n%s' % str(e),
-                                     line=lineno)
+        msg = inliner.reporter.error(
+            'githublink_options must be set to a dictionary with keys '
+            '(user, project)\n%s' % str(e), line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
     if node is None:
         return [], []
-    else:
-        return [node], []
+    return [node], []
 
 
 def setup(app):

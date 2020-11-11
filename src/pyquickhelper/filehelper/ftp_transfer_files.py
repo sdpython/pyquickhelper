@@ -253,7 +253,7 @@ class FolderTransferFTP:
                 try:
                     content = self._content_filter(
                         content, path, force_allow=force_allow)
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     import traceback
                     exc_type, exc_value, exc_traceback = sys.exc_info()
                     trace = traceback.format_exception(
@@ -310,8 +310,9 @@ class FolderTransferFTP:
                           (i, len(total), sum_bytes))
             relp = os.path.relpath(file.fullname, self._root_local)
             if ".." in relp:
-                raise ValueError("the local root is not accurate:\n{0}\nFILE:\n{1}\nRELPATH:\n{2}".format(
-                    self, file.fullname, relp))
+                raise ValueError(  # pragma: no cover
+                    "The local root is not accurate:\n{0}\nFILE:\n{1}"
+                    "\nRELPATH:\n{2}".format(self, file.fullname, relp))
             path = self._root_web + "/" + os.path.split(relp)[0]
             path = path.replace("\\", "/")
 
@@ -326,7 +327,7 @@ class FolderTransferFTP:
                 try:
                     data, size = self.preprocess_before_transfering(
                         file.fullname, force_allow=self._force_allow)
-                except FolderTransferFTPException as ex:
+                except FolderTransferFTPException as ex:  # pragma: no cover
                     stex = str(ex).split("\n")
                     stex = "\n    ".join(stex)
                     warnings.warn(
@@ -363,38 +364,38 @@ class FolderTransferFTP:
                 try:
                     r = self._ftp.transfer(
                         data, path, os.path.split(file.fullname)[-1], blocksize=blocksize, callback=cb)
-                except FileNotFoundError as e:
+                except FileNotFoundError as e:  # pragma: no cover
                     r = False
                     issues.append((file.fullname, "not found", e))
                     self.fLOG("[FolderTransferFTP] - issue", e)
-                except ftplib.error_perm as ee:
+                except ftplib.error_perm as ee:  # pragma: no cover
                     r = False
                     issues.append((file.fullname, str(ee), ee))
                     self.fLOG("[FolderTransferFTP] - issue", ee)
-                except TimeoutError as eee:
+                except TimeoutError as eee:  # pragma: no cover
                     r = False
                     issues.append((file.fullname, "TimeoutError", eee))
                     self.fLOG("[FolderTransferFTP] - issue", eee)
-                except EOFError as eeee:
+                except EOFError as eeee:  # pragma: no cover
                     r = False
                     issues.append((file.fullname, "EOFError", eeee))
                     self.fLOG("[FolderTransferFTP] - issue", eeee)
-                except ConnectionAbortedError as eeeee:
+                except ConnectionAbortedError as eeeee:  # pragma: no cover
                     r = False
                     issues.append(
                         (file.fullname, "ConnectionAbortedError", eeeee))
                     self.fLOG("    issue", eeeee)
-                except ConnectionResetError as eeeeee:
+                except ConnectionResetError as eeeeee:  # pragma: no cover
                     r = False
                     issues.append(
                         (file.fullname, "ConnectionResetError", eeeeee))
                     self.fLOG("[FolderTransferFTP] - issue", eeeeee)
-                except CannotCompleteWithoutNewLoginException as e8:
+                except CannotCompleteWithoutNewLoginException as e8:  # pragma: no cover
                     r = False
                     issues.append(
                         (file.fullname, "CannotCompleteWithoutNewLoginException", e8))
                     self.fLOG("[FolderTransferFTP] - issue", e8)
-                except Exception as e7:
+                except Exception as e7:  # pragma: no cover
                     try:
                         import paramiko
                     except ImportError:
@@ -416,9 +417,10 @@ class FolderTransferFTP:
                 done.append(fi)
 
             if len(issues) >= max_errors:
-                raise FolderTransferFTPException("Too many issues:\n{0}".format(
-                    "\n".join("{0} -- {1} --- {2}".format(a, b,
-                                                          str(c).replace('\n', ' ')) for a, b, c in issues)))
+                raise FolderTransferFTPException(  # pragma: no cover
+                    "Too many issues:\n{0}".format(
+                        "\n".join("{0} -- {1} --- {2}".format(
+                            a, b, str(c).replace('\n', ' ')) for a, b, c in issues)))
 
             if delay is not None and delay > 0:
                 h = random()
