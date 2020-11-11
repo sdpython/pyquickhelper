@@ -55,7 +55,7 @@ def svg2img(svg, dpi=None, scale=1., **kwargs):
     img = BytesIO()
     try:
         svg2png(svg, write_to=img, **kwargs)
-    except OSError as e:
+    except (ValueError, OSError) as e:
         if svg.startswith('<svg>'):
             size = guess_svg_size(svg)
             head = '<svg width="{}" height="{}">'.format(*size)
