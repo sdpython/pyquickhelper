@@ -7,6 +7,7 @@ for a module designed the same way as this one, @see fn generate_help_sphinx.
 import os
 import re
 import warnings
+import glob
 from .utils_sphinx_doc_helpers import HelpGenException
 
 
@@ -112,7 +113,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
                 fLOG("      [update_notebook_link]3 add in ",
                      format, ":", new_url)
             return new_url
-        reg = re.compile("[[]([^[]+?)[]][(]find://([^ ]+)[)]")
+        reg = re.compile("[\\[]([^[]+?)[\\]][(]find://([^ ]+)[)]")
         new_text = reg.sub(repipy, text)
     elif format in ("latex", "elatex"):
         def replat(le):
@@ -295,10 +296,9 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     @param      notebook_replacements   string replacement in notebooks
     @param      fLOG                    logging function
 
-    .. versionchanged:: 1.7
-        Add this replacement:
-        ``st = st.replace("\\\\mathbb{1}", "\\\\mathbf{1\\\\!\\\\!1}")``.
-        Checks that audio is only included in :epkg:`HTML`.
+    The function adds the following replacement
+    ``st = st.replace("\\\\mathbb{1}", "\\\\mathbf{1\\\\!\\\\!1}")``.
+    and checks that audio is only included in :epkg:`HTML`.
     """
     if fLOG:
         fLOG("[post_process_rst_output] %r" % file)
@@ -436,6 +436,25 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             git = os.path.join(folder, ".git")
         if len(folder) > 0:
             path = docname[len(folder):]
+        if path.strip('/\\').startswith('build'):
+            # The notebook may be in a build folder but is not
+            # the original notebooks. The function does something
+            # if the path starts with `build`.
+            subfolds = os.listdir(folder)
+            for sub in subfolds:
+                fulls = os.path.join(folder, sub)
+                if not os.path.isdir(fulls):
+                    continue
+                if not ('doc' in sub or 'notebook' in sub or 'example' in sub):
+                    continue
+                # Search for another version of the file.
+                last_name = os.path.split(docname)[-1]
+                selected = glob.glob(
+                    fulls + "/**/" + last_name, recursive=True)
+                if len(selected) != 1:
+                    docname = selected[0]
+                    path = docname[len(folder):]
+                    break
         links.append(
             ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
     lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
