@@ -652,3 +652,29 @@ def ignore_warnings(warns):
                 return fct(self)
         return call_f
     return wrapper
+
+
+def testlog(logtype="print"):
+    """
+    Logs before and after a function is called.
+
+    :param logtype: kind of logging, only `'print'` is implemented
+        and None to disable it
+    """
+    if logtype is None:
+        def nothing(arg):
+            pass
+
+        logfct = nothing
+    elif logtype == 'print':
+        logfct = print
+    else:
+        raise ValueError("Unexpected logtype %r." % logtype)
+
+    def wrapper(fct):
+        def call_f(self):
+            logfct('START %r' % fct.__name__)
+            fct(self)
+            logfct('DONE- %r' % fct.__name__)
+        return call_f
+    return wrapper

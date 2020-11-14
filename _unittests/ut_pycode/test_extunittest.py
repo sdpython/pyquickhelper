@@ -8,7 +8,7 @@ import warnings
 import pandas
 
 from pyquickhelper.pycode import (
-    ExtTestCase, unittest_require_at_least, ignore_warnings)
+    ExtTestCase, unittest_require_at_least, ignore_warnings, testlog)
 from pyquickhelper.pandashelper import df2rst
 from pyquickhelper import __file__ as rootfile
 
@@ -297,6 +297,17 @@ class TestExtTestCase(ExtTestCase):
                          AssertionError)
         self.assertRaise(lambda: self.assertEqualSparseArray(None, df),
                          AssertionError)
+
+    @testlog(None)
+    def test_testlog_none(self):
+        pass
+
+    def test_testlog_print(self):
+
+        self.assertRaise(lambda: testlog('ttt'), ValueError)
+        fct = testlog('print')
+        self.assertNotEmpty(fct)
+        self.assertIn('wrapper', fct.__name__)
 
 
 if __name__ == "__main__":
