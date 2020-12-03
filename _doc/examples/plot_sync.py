@@ -9,11 +9,12 @@ or creating a backup.
 """
 
 ###############################
+import os
 from pyquickhelper.filehelper import synchronize_folder
 
 ###############################
 dest = "temp_sync"
-import os
+
 if not os.path.exists(dest):
     print("creating", dest)
     os.makedirs(dest)

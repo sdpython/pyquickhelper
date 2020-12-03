@@ -12,6 +12,7 @@ and it defines the jobs in this folder
 """
 ################################################
 # imports
+import sys
 import os
 import warnings
 
@@ -36,7 +37,7 @@ pwd = keyring.get_password("jenkins", "pwd")
 key = "Python%d%d" % sys.version_info[:2]
 engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
 if sys.platform.startswith("win"):
-    folder = "C:\\%s\github\\_whl" % get_user()
+    folder = "C:\\%s\\github\\_whl" % get_user()
     location = "c:\\jenkins\\pymy"
     suf = "win"
 else:
@@ -64,7 +65,7 @@ js = JenkinsExt('http://localhost:8080/', user,
 ymls = []
 for mod in ["polylearn", "dynd-python"]:
     new_content = content.replace("__MODULE__", mod)
-    yml = os.path.join("build", ".local.jenkins.{1}.{0}.yml".format(mod, lin))
+    yml = os.path.join("build", ".local.jenkins.{1}.{0}.yml".format(mod, "lin"))
     with open(yml, "w", encoding="utf-8") as f:
         f.write(new_content)
     batch = os.path.join(folder, "windows", "build_{0}.bat".format(mod))
