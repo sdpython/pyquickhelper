@@ -23,9 +23,13 @@ def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300):
     if temp_dot is None:
         temp_dot = "temp_%d.dot" % id(dot)
         clean_dot = True
+    else:
+        clean_dot = False
     if temp_img is None:
         temp_img = "temp_%d.png" % id(dot)
         clean_img = True
+    else:
+        clean_img = False
     with open(temp_dot, "w", encoding="utf-8") as f:
         f.write(dot)
     dot_path = find_graphviz_dot()
