@@ -678,3 +678,31 @@ def testlog(logtype="print"):
             logfct('DONE- %r' % fct.__name__)
         return call_f
     return wrapper
+
+
+def assert_almost_equal_detailed(expected, value, **kwargs):
+    """
+    Calls :epkg:`numpy:testing:assert_almost_equal`.
+    Add more informations in the exception message.
+
+    :param expected: expected value
+    :param value: value
+    :raises: AssertionError
+    """
+    from numpy.testing import assert_almost_equal
+    try:
+        assert_almost_equal(expected, value, **kwargs)
+    except AssertionError as e:
+        if expected.shape[0] != value.shape[0]:
+            raise e
+        rows = ['INNER EXCEPTION:', str(e), '------', 'ROWS BY ROWS']
+        for i, (r1, r2) in enumerate(zip(expected, value)):
+            try:
+                assert_almost_equal(r1, r2, **kwargs)
+            except AssertionError as e:
+                rows.append('----------------------')
+                rows.append("ISSUE WITH ROW {}/{}:0 {}".format(
+                    i, expected.shape[0], str(e)))
+                if len(rows) > 10:
+                    break
+        raise AssertionError("\n".join(rows))

@@ -65,7 +65,8 @@ js = JenkinsExt('http://localhost:8080/', user,
 ymls = []
 for mod in ["polylearn", "dynd-python"]:
     new_content = content.replace("__MODULE__", mod)
-    yml = os.path.join("build", ".local.jenkins.{1}.{0}.yml".format(mod, "lin"))
+    yml = os.path.join(
+        "build", ".local.jenkins.{1}.{0}.yml".format(mod, "lin"))
     with open(yml, "w", encoding="utf-8") as f:
         f.write(new_content)
     batch = os.path.join(folder, "windows", "build_{0}.bat".format(mod))

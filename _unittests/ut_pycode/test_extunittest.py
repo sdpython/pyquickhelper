@@ -5,10 +5,11 @@ import sys
 import os
 import unittest
 import warnings
+import numpy
 import pandas
-
 from pyquickhelper.pycode import (
-    ExtTestCase, unittest_require_at_least, ignore_warnings, testlog)
+    ExtTestCase, unittest_require_at_least, ignore_warnings, testlog,
+    assert_almost_equal_detailed)
 from pyquickhelper.pandashelper import df2rst
 from pyquickhelper import __file__ as rootfile
 
@@ -303,11 +304,21 @@ class TestExtTestCase(ExtTestCase):
         pass
 
     def test_testlog_print(self):
-
         self.assertRaise(lambda: testlog('ttt'), ValueError)
         fct = testlog('print')
         self.assertNotEmpty(fct)
         self.assertIn('wrapper', fct.__name__)
+
+    def test_assert_almost_equal_detailed(self):
+        mat = numpy.array([[0, 1], [0, 1]])
+        assert_almost_equal_detailed(mat, mat)
+        mat2 = numpy.array([[0, 1], [0.5, 1]])
+        try:
+            assert_almost_equal_detailed(mat, mat2)
+        except AssertionError as e:
+            self.assertIn("ISSUE WITH ROW 1/2:0 ", str(e))
+            return
+        raise AssertionError("unexpected")
 
 
 if __name__ == "__main__":

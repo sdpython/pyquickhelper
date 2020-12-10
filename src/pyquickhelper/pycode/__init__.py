@@ -18,7 +18,7 @@ from .unittestclass import (
     ExtTestCase, skipif_appveyor, skipif_travis, skipif_circleci,
     skipif_linux, skipif_vless, skipif_azure_macosx,
     skipif_azure, skipif_azure_linux, unittest_require_at_least,
-    ignore_warnings, testlog)
+    ignore_warnings, testlog, assert_almost_equal_detailed)
 from .pytest_helper import run_test_function, TestExecutionError
 from .utils_tests import main_wrapper_tests
 from .utils_tests_helper import get_temp_folder, check_pep8, add_missing_development_version
