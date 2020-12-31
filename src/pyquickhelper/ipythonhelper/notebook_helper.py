@@ -498,7 +498,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
         return cellno
 
     content = read_content_ufs(infile)
-    js = json.loads(content, encoding=encoding)
+    js = json.loads(content)
     fixup(js, "execution_count", None)
     st = StringIO()
     json.dump(js, st, indent=indent, sort_keys=True)

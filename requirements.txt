@@ -1,5 +1,4 @@
 autopep8
-babel!=2.0
 bokeh
 cairosvg>=2.5.0
 cffi

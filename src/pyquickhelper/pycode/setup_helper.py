@@ -134,10 +134,10 @@ def process_standard_options_for_setup(
         default_engine_paths = {
             "windows": {
                 "__PY35__": None,
-                "__PY37_X64__": "c:\\Python37_x64",
-                "__PY36_X64__": "c:\\Python36_x64",
-                "__PY35_X64__": "c:\\Python35_x64",
-                "__PY27_X64__": "c:\\Anaconda2",
+                "__PY36_X64__": "c:\\Python365_x64",
+                "__PY37_X64__": "c:\\Python372_x64",
+                "__PY38_X64__": "c:\\Python387_x64",
+                "__PY39_X64__": "c:\\Python391_x64",
             },
         }
 

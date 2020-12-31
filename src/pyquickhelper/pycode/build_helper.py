@@ -54,11 +54,10 @@ def choose_path(*paths):
 
 default_values = {
     "windows": {
-        "__PY27_X64__": choose_path("c:\\Python27_x64", "c:\\Python27", "c:\\Anaconda2", "c:\\Anaconda", _default_nofolder),
-        "__PY35_X64__": choose_path("c:\\Python35[0-9]{1}_x64", "c:\\Python35_x64", 'c:\\python35-x64', _default_nofolder),
         "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", "c:\\Python36-x64", _default_nofolder),
         "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", "c:\\Python37-x64", _default_nofolder),
         "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", "c:\\Python38-x64", _default_nofolder),
+        "__PY39_X64__": choose_path("c:\\Python39[0-9]{1}_x64", "c:\\Python38_x64", "c:\\Python39-x64", _default_nofolder),
     },
 }
 
@@ -116,10 +115,10 @@ def private_script_replacements(script, module, requirements, port, raise_except
         default_engine_paths = {
             "windows": {
                 "__PY35__": None,
-                "__PY35_X64__": "c:\\Python352_x64",
                 "__PY36_X64__": "c:\\Python365_x64",
-                "__PY37_X64__": "c:\\Python370_x64",
-                "__PY27_X64__": "c:\\Anaconda2",
+                "__PY37_X64__": "c:\\Python372_x64",
+                "__PY38_X64__": "c:\\Python387_x64",
+                "__PY39_X64__": "c:\\Python391_x64",
             },
         }
 
