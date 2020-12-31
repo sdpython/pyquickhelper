@@ -3,11 +3,8 @@ sudo: true
 language: python
 matrix:
   include:
-  - python: 3.7.3
-    name: "Py.3.7.3-Sph.2.1"
-    env: sphinxconstraint=">=2.1"
-  - python: 3.8.1
-    name: "Py.3.8.1-Sph.2.3"
+  - python: 3.9.1
+    name: "Py.3.9.1-Sph.2.3"
     env: sphinxconstraint=">=2.3"
 install: 
     - pip install -r requirements.txt

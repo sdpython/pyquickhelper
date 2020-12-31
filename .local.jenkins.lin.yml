@@ -6,8 +6,7 @@ language: python
 # A different script is generated for each PATH.
 # A path cannot be a virtual environment.
 python:
-  - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7, PYTHONPATH: src }
-  - { PATH: "{{Python38}}", VERSION: 3.8, DIST: std, PYINT: python3.8, PYTHONPATH: src }
+  - { PATH: "{{Python38}}", VERSION: 3.9, DIST: std, PYINT: python3.9, PYTHONPATH: src }
   
 # The test happens in a virtual environment not with the original distribution.
 virtualenv:
@@ -42,9 +41,9 @@ script:
 after_script:
   - $PYINT -u setup.py bdist_wheel
   - if [ ${NAME} == "UT" ] then $PYINT -u src/pyquicksetup/setup.py bdist_wheel fi
-  - if [ ${VERSION} == "3.7" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
+  - if [ ${VERSION} == "3.9" and ${DIST} != "conda" and ${NAME} == "UT" ] then cp dist/*.whl {{root_path}}/../local_pypi/local_pypi_server fi
 
 # Same as after script.
 documentation:
   - if [ ${NAME} == "UT" ] then $PYINT -u setup.py build_sphinx fi
-  - if [ ${NAME} == "UT" and ${VERSION} == "3.7" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi
+  - if [ ${NAME} == "UT" and ${VERSION} == "3.9" ] then cp -R -f _doc/sphinxdoc/build/html dist/html fi

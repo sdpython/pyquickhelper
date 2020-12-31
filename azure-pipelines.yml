@@ -4,8 +4,8 @@ jobs:
     vmImage: 'ubuntu-latest'
   strategy:
     matrix:
-      Python37:
-        python.version: '3.8'
+      Python39:
+        python.version: '3.9'
     maxParallel: 3
 
   steps:
@@ -53,8 +53,8 @@ jobs:
     vmImage: 'macOS-latest'
   strategy:
     matrix:
-      Python37:
-        python.version: "3.8"
+      Python39:
+        python.version: "3.9"
 
   steps:
   - task: UsePythonVersion@0
