@@ -54,17 +54,17 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
         exc = []
         try:
             config = app.config
-        except AttributeError as e:
+        except AttributeError as e:  # pragma: no cover
             exc.append(e)
             config = None
         if config is not None:
             try:
                 opt = config.githublink_options
-            except AttributeError as ee:
+            except AttributeError as ee:  # pragma: no cover
                 exc.append(ee)
                 opt = None
         else:
-            opt = None
+            opt = None  # pragma: no cover
         if not opt:
             try:
                 opt = settings.githublink_options
@@ -131,7 +131,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     if content is None:
         content = []
     if not rawtext or len(rawtext) == 0:
-        rawtext = "source"
+        rawtext = "source"  # pragma: no cover
 
     app = inliner.document.settings.env.app
     docname = inliner.document.settings.env.docname
@@ -152,7 +152,8 @@ def githublink_role(role, rawtext, text, lineno, inliner,
                 ext = "." + ext
             lineno = int(no) if no != "*" else None
         elif len(spl) != 2:
-            raise ValueError("Unable to interpret '{0}'.".format(text))
+            raise ValueError(  # pragma: no cover
+                "Unable to interpret '{0}'.".format(text))
         else:
             text, ext = spl
             ext = "." + ext
@@ -163,7 +164,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     if ext is not None and "-" in ext:
         spl = ext.split("-")
         if len(spl) != 2:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Unable to interpret extension in '{0}'".format(text0))
         ext, doc = spl
     else:
@@ -189,11 +190,11 @@ def githublink_role(role, rawtext, text, lineno, inliner,
                     root_doc = "/".join(sub_doc)
                     root_doc_src = os.path.join(root_doc, 'src')
                     if os.path.exists(root_doc_src):
-                        path = os.path.join('src', docname)
+                        path = os.path.join('src', docname)  # pragma: no cover
         elif doc == "doc":
             path = os.path.join('_doc', 'sphinxdoc', 'source', docname)
         else:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Unable to interpret subfolder in '{0}'.".format(text0))
 
     # Path with extension.
@@ -209,7 +210,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
     try:
         node = make_link_node(rawtext=rawtext, app=app, path=path, lineno=lineno,
                               options=options, anchor=text, settings=inliner.document.settings)
-    except (ValueError, AttributeError) as e:
+    except (ValueError, AttributeError) as e:  # pragma: no cover
         msg = inliner.reporter.error(
             'githublink_options must be set to a dictionary with keys '
             '(user, project)\n%s' % str(e), line=lineno)

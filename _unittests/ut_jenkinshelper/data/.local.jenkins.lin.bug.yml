@@ -4,8 +4,8 @@ language: python
 python:
   - { PATH: "{{Python37}}", VERSION: 3.7, DIST: std, PYINT: python3.7,
       LD_LIBRARY_PATH: /usr/local/Python-3.7.2 }
-  - { PATH: "{{Python36}}", VERSION: 3.6, DIST: std, PYINT: python3.6,
-      LD_LIBRARY_PATH: /usr/local/Python-3.6.8 }
+  - { PATH: "{{Python39}}", VERSION: 3.9, DIST: std, PYINT: python3.9,
+      LD_LIBRARY_PATH: /usr/local/Python-3.9.1 }
   
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("$NAME_JENKINS", project_name + "_$VERSION_$DIST_$NAME"), "_venv")}}

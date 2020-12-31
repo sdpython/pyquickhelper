@@ -11,7 +11,7 @@ import urllib.parse as urlparse
 
 def convert_st_date_to_datetime(t):
     """
-    converts a string into a datetime
+    Converts a string into a datetime.
 
     @param      t       str
     @return             datetime
@@ -19,15 +19,13 @@ def convert_st_date_to_datetime(t):
     if isinstance(t, str):
         if "." in t:
             return datetime.datetime.strptime(t, "%Y-%m-%d %H:%M:%S.%f")
-        else:
-            return datetime.datetime.strptime(t, "%Y-%m-%d %H:%M:%S")
-    else:
-        return datetime.datetime.fromtimestamp(t)
+        return datetime.datetime.strptime(t, "%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.fromtimestamp(t)
 
 
 def checksum_md5(filename):
     """
-    computes MD5 for a file
+    Computes MD5 for a file.
 
     @param      filename        filename
     @return                     string
@@ -49,13 +47,13 @@ _allowed = re.compile("^([a-zA-Z]:)?[^:*?\"<>|]+$")
 
 def is_file_string(s):
     """
-    says if the string s could be a filename
+    Tells if the string *s* could be a filename.
 
     @param      s       string
     @return             boolean
     """
-    if len(s) >= 3000:
-        return False
+    if len(s) >= 5000:
+        return False  # pragma: no cover
     global _allowed
     if not _allowed.search(s):
         return False
@@ -67,7 +65,7 @@ def is_file_string(s):
 
 def is_url_string(s):
     """
-    says if the string s could be a url
+    Tells if the string s could be a url.
 
     @param      s       string
     @return             boolean
@@ -76,21 +74,19 @@ def is_url_string(s):
         return False
     sch = urlparse.urlparse(s)
     if len(sch.scheme) > 10:
-        return False
+        return False  # pragma: no cover
     return sch.scheme.lower() not in ("", None, "warning")
 
 
 class FileInfo:
 
     """
-    intermediate class: it represents the data it collects about a file
-    to determine whether or not it was modified
+    Intermediate class: it represents the data it collects about a file
+    to determine whether or not it was modified.
     """
 
     def __init__(self, filename, size, date, mdate, checksum):
         """
-        constructor
-
         @param      filename        filename
         @param      size            size
         @param      date            date (str or datetime)
@@ -105,20 +101,20 @@ class FileInfo:
         self.mdate = mdate    # modification date
         self.checksum = checksum
         if date is not None and not isinstance(self.date, datetime.datetime):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mismatch for date (%s) and file %s" % (str(type(date)), filename))
         if mdate is not None and not isinstance(self.mdate, datetime.datetime):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mismatch for mdate (%s) and file %s" % (str(type(mdate)), filename))
         if not isinstance(size, int):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mismatch for size (%s) and file %s" % (str(type(size)), filename))
         if checksum is not None and not isinstance(checksum, str):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mismatch for checksum (%s) and file %s" % (str(type(checksum)), filename))
         if date is not None and mdate is not None:
             if mdate > date:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "expecting mdate <= date for file " + filename)
 
     def __str__(self):
@@ -140,7 +136,7 @@ class FileInfo:
         """
         self.date = date
         if not isinstance(self.date, datetime.datetime):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mismatch for date (%s) and file %s" % (str(type(date)), self.filename))
 
     def set_mdate(self, mdate):
@@ -151,7 +147,7 @@ class FileInfo:
         """
         self.mdate = mdate
         if not isinstance(self.mdate, datetime.datetime):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mismatch for date (%s) and file %s" % (str(type(mdate)), self.filename))
 
     def set_md5(self, checksum):
@@ -162,5 +158,6 @@ class FileInfo:
         """
         self.checksum = checksum
         if not isinstance(checksum, str):
-            raise ValueError("mismatch for checksum (%s) and file %s" % (
-                str(type(checksum)), self.filename))
+            raise ValueError(  # pragma: no cover
+                "mismatch for checksum (%s) and file %s" % (
+                    str(type(checksum)), self.filename))

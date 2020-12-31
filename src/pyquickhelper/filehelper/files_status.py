@@ -31,7 +31,7 @@ class FilesStatus:
             with open(self.fileKeep, "r", encoding="utf8") as f:
                 for ni, _ in enumerate(f.readlines()):
                     if ni == 0 and _.startswith("\ufeff"):
-                        _ = _[len("\ufeff"):]
+                        _ = _[len("\ufeff"):]  # pragma: no cover
                     spl = _.strip("\r\n ").split("\t")
                     try:
                         if len(spl) >= 2:
@@ -47,10 +47,10 @@ class FilesStatus:
                                 obj.set_md5(spl[4])
                             self.copyFiles[a] = obj
                         else:
-                            raise ValueError(
+                            raise ValueError(  # pragma: no cover
                                 "expecting a filename and a date on this line: " + _)
                     except Exception as e:
-                        raise Exception(
+                        raise Exception(  # pragma: no cover
                             "issue with line:\n  {0} -- {1}".format(_, spl)) from e
 
         # contains all file to update
@@ -89,20 +89,20 @@ class FilesStatus:
             sum5 = "" if obj.checksum is None else str(obj.checksum)
 
             if k in checkfile and len(da) == 0:
-                raise ValueError(
-                    "there should be a date for file " + k + "\n" + str(obj))
+                raise ValueError(  # pragma: no cover
+                    "There should be a date for file " + k + "\n" + str(obj))
             if k in checkfile and len(mda) == 0:
-                raise ValueError(
-                    "there should be a mdate for file " + k + "\n" + str(obj))
+                raise ValueError(  # pragma: no cover
+                    "There should be a mdate for file " + k + "\n" + str(obj))
             if k in checkfile and len(sum5) <= 10:
-                raise ValueError(
-                    "there should be a checksum( for file " + k + "\n" + str(obj))
+                raise ValueError(  # pragma: no cover
+                    "There should be a checksum( for file " + k + "\n" + str(obj))
 
             values = [k, typstr(obj.size), da, mda, sum5]
             sval = "%s\n" % "\t".join(values)
             if "\tNone" in sval:
-                raise AssertionError(
-                    "this case should happen " + sval + "\n" + str(obj))
+                raise AssertionError(  # pragma: no cover
+                    "This case should happen " + sval + "\n" + str(obj))
 
             rows.append(sval)
 
@@ -193,7 +193,8 @@ class FilesStatus:
                     continue
                 nb += 1
                 if nlog is not None and nb % nlog == 0:
-                    self.LOG("[FileTreeStatus], processed", nb, "files")
+                    self.LOG(  # pragma: no cover
+                        "[FileTreeStatus], processed", nb, "files")
 
                 full = file.fullname
                 r, reason = self.has_been_modified_and_reason(full)
@@ -231,16 +232,15 @@ class FilesStatus:
         """
         if delete:
             if file not in self.copyFiles:
-                raise FileNotFoundError(
-                    "unable to find a file in the list of monitored files: {0}".format(file))
+                raise FileNotFoundError(  # pragma: no cover
+                    "Unable to find a file in the list of monitored files: '{0}'.".format(file))
             del self.copyFiles[file]
             return None
-        else:
-            st = os.stat(file)
-            size = st.st_size
-            mdate = convert_st_date_to_datetime(st.st_mtime)
-            date = datetime.datetime.now()
-            md = checksum_md5(file)
-            obj = FileInfo(file, size, date, mdate, md)
-            self.copyFiles[file] = obj
-            return obj
+        st = os.stat(file)
+        size = st.st_size
+        mdate = convert_st_date_to_datetime(st.st_mtime)
+        date = datetime.datetime.now()
+        md = checksum_md5(file)
+        obj = FileInfo(file, size, date, mdate, md)
+        self.copyFiles[file] = obj
+        return obj

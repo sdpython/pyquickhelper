@@ -614,7 +614,8 @@ def skipif_vless(version, msg):
     """
     if sys.version_info[:3] >= version:
         return lambda x: x
-    msg = 'Python {} < {}: {}'.format(sys.version_info[:3], version, msg)  # pragma: no cover
+    msg = 'Python {} < {}: {}'.format(
+        sys.version_info[:3], version, msg)  # pragma: no cover
     return unittest.skip(msg)  # pragma: no cover
 
 

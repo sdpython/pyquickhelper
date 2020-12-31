@@ -88,7 +88,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     """
     # It extracts the pieces of the text.
     spl = text.split(":")
-    if len(spl) == 0:
+    if len(spl) == 0:  # pragma: no cover
         msg = inliner.reporter.error("empty value for role epkg", line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)
         return [prb], [msg]
@@ -117,7 +117,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     if len(spl) == 1:
         value = epkg_dictionary[modname]
         if isinstance(value, tuple):
-            if len(value) == 0:
+            if len(value) == 0:  # pragma: no cover
                 msg = inliner.reporter.error(
                     "Empty values for module '{0}' in epkg_dictionary.".format(modname))
                 prb = inliner.problematic(rawtext, rawtext, msg)
@@ -144,7 +144,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
                     # Defined in the configuration.
                     found = getattr(config, namef)
 
-        if found is None:
+        if found is None:  # pragma: no cover
             msg = inliner.reporter.error(
                 "Unable to find a tuple with '{0}' parameters in epkg_dictionary['{1}']"
                 "".format(expected, modname))
@@ -164,7 +164,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
         else:
             url = found.format(*tuple(spl[1:]))
             if spl[0].startswith("*"):
-                anchor = ".".join(spl[1:])
+                anchor = ".".join(spl[1:])  # pragma: no cover
             else:
                 anchor = ".".join(spl)
 
@@ -175,7 +175,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     memo = ClassStruct(document=inliner.document, reporter=inliner.reporter,
                        language=inliner.language)
     processed, messages = inliner.parse(extref, lineno, memo, node)
-    if len(messages) > 0:
+    if len(messages) > 0:  # pragma: no cover
         msg = inliner.reporter.error(
             "unable to interpret '{0}', messages={1}".format(
                 text, ", ".join(str(_) for _ in messages)), line=lineno)

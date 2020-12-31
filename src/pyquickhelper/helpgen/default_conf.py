@@ -387,8 +387,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             except (ImportError, ModuleNotFoundError):  # pragma: no cover
                 mod = None
             if mod is None:
-                raise RuntimeError("Unknown module version. You should import '{0}' or specify 'doc_version'.".format(
-                    module_name))
+                raise RuntimeError(  # pragma: no cover
+                    "Unknown module version. You should import '{0}' or specify "
+                    "'doc_version'.".format(
+                        module_name))
         try:
             version = mod.__version__
         except AttributeError:  # pragma: no cover
@@ -396,7 +398,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                                  "__file__='{}'\n--PATH--\n{}".format(
                                      module_name, mod.__file__, "\n".join(sys.path)))
     else:
-        version = doc_version
+        version = doc_version  # pragma: no cover
 
     # settings sphinx
     pygments_style = 'sphinx'
@@ -461,7 +463,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     shtml_theme_options = {"bodyfont": "Calibri"}
     if theme_path is not None:
         if isinstance(theme_path, list):
-            html_theme_path = theme_path
+            html_theme_path = theme_path  # pragma: no cover
         else:
             html_theme_path = [theme_path]
 
@@ -485,7 +487,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # jupyter_sphinx
     # See https://thebelab.readthedocs.io/en/latest/config_reference.html
     if github_user:
-        jupyter_sphinx_thebelab_config = {
+        jupyter_sphinx_thebelab_config = {  # pragma: no cover
             'requestKernel': True,
             'binderOptions': {
                 'repo': "sdpython/pyquickhelper/master?filepath=_doc"
@@ -709,7 +711,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             # "projectlink": "http://myproject.url",
         }
     elif html_theme == "foundation_sphinx_theme":  # pragma: no cover
-        import foundation_sphinx_theme
+        import foundation_sphinx_theme  # pylint: disable=E0401
         html_theme_path = foundation_sphinx_theme.HTML_THEME_PATH
         if "foundation_sphinx_theme" not in extensions:
             extensions.append('foundation_sphinx_theme')
@@ -782,16 +784,16 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                     "sphinx_gallery is not present for gallery '{0}'".format(exa))
             last = res.parts[-2]
             if last.startswith("temp_"):
-                continue
+                continue  # pragma: no cover
             parts = last.replace("\\", "/").split("/")
             if any(filter(lambda x: x.startswith("temp_"), parts)):
-                continue
+                continue  # pragma: no cover
             nn = res.parent
 
             # We check that a readme.txt is not present in the parent folder.
             nn_parent_read = os.path.join(os.path.split(nn)[0], "README.txt")
             if os.path.exists(nn_parent_read):
-                continue
+                continue  # pragma: no cover
 
             # Main gallery.
             examples_dirs.append(str(nn))

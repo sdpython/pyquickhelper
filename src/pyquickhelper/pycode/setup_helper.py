@@ -220,32 +220,31 @@ def process_standard_options_for_setup(
             g = None
 
         if f is None and d is None and e is None and g is None:
-            return skip_function
+            return skip_function  # pragma: no cover
+
+        def ereg(name):
+            return (e is None) or (e.search(name) is not None)
+
+        def greg(name):
+            return (g is None) or (g.search(name) is None)
+
+        if f is not None:
+            if d is not None:  # pragma: no cover
+                raise NotImplementedError(
+                    "Options -f and -d cannot be specified at the same time.")
+
+            def allow(name, code, duration):  # pragma: no cover
+                name = os.path.split(name)[-1]
+                return f not in name and ereg(name) and greg(name)
+            return allow  # pragma: no cover
         else:
-
-            def ereg(name):
-                return (e is None) or (e.search(name) is not None)
-
-            def greg(name):
-                return (g is None) or (g.search(name) is None)
-
-            if f is not None:
-                if d is not None:
-                    raise NotImplementedError(  # pragma: no cover
-                        "Options -f and -d cannot be specified at the same time.")
-
-                def allow(name, code, duration):
-                    name = os.path.split(name)[-1]
-                    return f not in name and ereg(name) and greg(name)
-                return allow
-            else:
-                # d is not None
-                def skip_allowd(name, code, duration):
-                    name = os.path.split(name)[-1]
-                    cond = (duration is None or d is None or duration <=
-                            d) and ereg(name) and greg(name)
-                    return not cond
-                return skip_allowd
+            # d is not None
+            def skip_allowd(name, code, duration):
+                name = os.path.split(name)[-1]
+                cond = (duration is None or d is None or duration <=
+                        d) and ereg(name) and greg(name)
+                return not cond
+            return skip_allowd
 
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -676,7 +675,7 @@ def clean_notebooks_for_numbers(file_or_folder):
     for nbf in explore_folder_iterfile(fold2, pattern=".*[.]ipynb"):
         t = upgrade_notebook(nbf)
         if t:
-            mod.append(nbf)
+            mod.append(nbf)  # pragma: no cover
         # remove numbers
         s = remove_execution_number(nbf, nbf)
         if s:
@@ -725,7 +724,7 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
         from ..helpgen.sphinx_main import generate_help_sphinx
 
         if layout is None:
-            layout = ["html", "pdf"]
+            layout = ["html", "pdf"]  # pragma: no cover
         if module_name is None:
             module_name = project_var_name
 
@@ -735,9 +734,10 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
         if not os.path.exists(source):
             raise FileNotFoundError(  # pragma: no cover
                 "you must get the source from GitHub to build the documentation,\nfolder {0} "
-                "should exist\n(file_or_folder={1})\n(ffolder={2})\n(cwd={3})".format(source, file_or_folder, ffolder, os.getcwd()))
+                "should exist\n(file_or_folder={1})\n(ffolder={2})\n(cwd={3})".format(
+                    source, file_or_folder, ffolder, os.getcwd()))
 
-        if "conf" in sys.modules:
+        if "conf" in sys.modules:  # pragma: no cover
             warnings.warn("module conf was imported, this function expects not to:\n{0}".format(
                 sys.modules["conf"].__file__))
             del sys.modules["conf"]
@@ -927,7 +927,7 @@ def process_standard_options_for_setup_help(argv):
             if k in argv:
                 docu += 1
 
-        if docu == 0:
+        if docu == 0:  # pragma: no cover
             print("pyquickhelper commands:")
             print()
             for k in sorted(commands):
@@ -951,7 +951,7 @@ def process_standard_options_for_setup_help(argv):
                         print(
                             "      -g regex       run all unit tests files not matching the regular expression")
                         print()
-                    elif k == "local_jenkins":
+                    elif k == "local_jenkins":  # pragma: no cover
                         print()
                         print(
                             "      {0} user password [location] [server]".format(k))
@@ -1007,7 +1007,7 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
         sc = get_script_module(
             c, platform=sys.platform, blog_list=blog_list, default_engine_paths=default_engine_paths)
         if sc is None:
-            continue
+            continue  # pragma: no cover
         tobin = os.path.join(folder, "bin")
         if not os.path.exists(tobin):
             os.mkdir(tobin)
@@ -1017,7 +1017,7 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
                 with open(name, "w", encoding="utf8") as f:
                     f.write(item[1])
                 res.append(name)
-            else:
+            else:  # pragma: no cover
                 name = os.path.join(
                     folder, "bin", "auto_run_%s.%s" % (c, get_script_extension()))
                 with open(name, "w") as f:
@@ -1074,7 +1074,7 @@ def hash_list(argv, size=8):
 
 
 def build_history_from_setup(dest, owner, module, existing_history=None,
-                             skip_issues=None, fLOG=None):
+                             skip_issues=None, fLOG=None):  # pragma: no cover
     """
     Builds the history from :epkg:`github` and :epkg:`pypi`.
 

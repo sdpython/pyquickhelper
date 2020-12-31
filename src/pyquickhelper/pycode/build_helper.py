@@ -37,11 +37,11 @@ def choose_path(*paths):
                 reg = re.compile(path.replace("\\", "\\\\"))
             found = [(_, reg.search(_)) for _ in founds]
             found = [_ for _ in found if _[1]]
-            if len(found) > 0:
+            if len(found) > 0:  # pragma: no cover
                 full = found[0][0]
                 return full
         elif os.path.exists(path):
-            return path
+            return path  # pragma: no cover
     if paths[-1] != _default_nofolder:
         raise FileNotFoundError(  # pragma: no cover
             "No path exist in: " + ", ".join(paths))
@@ -49,8 +49,8 @@ def choose_path(*paths):
 
 
 #: default values, to be replaced in the build script
-#: ``'c:\\python36-x64'`` --> appveyor
-#: ``'c:\\python36_x64'`` --> custom installation
+#: ``'c:\\python39x64'`` --> appveyor
+#: ``'c:\\python39_x64'`` --> custom installation
 
 default_values = {
     "windows": {
@@ -69,13 +69,13 @@ def private_path_choice(path):
     s = path
     current = '%current%' if sys.platform.startswith('win') else '~'
     if "/" in s or "\\" in s:
-        return s
+        return s  # pragma: no cover
     if 'ROOT' in s:
         return os.path.join(current, "..", s.replace('ROOT', ''))
     if 'BLIB' in s:
         return os.path.join(current, "..", s.replace('BLIB', ''), "build", "lib")
     if 'NSRC' in s:
-        return os.path.join(current, "..", s.replace("NSRC", ''))
+        return os.path.join(current, "..", s.replace("NSRC", ''))  # pragma: no cover
     return os.path.join(current, "..", s, "src")
 
 
@@ -126,20 +126,6 @@ def private_script_replacements(script, module, requirements, port, raise_except
     we assume these requirements are available from a local PyPi server.
     There can be extra requirements obtained from PiPy. In that case,
     those can be specified as a tuple *(requirements_local, requirements_pipy)*.
-
-    With Python 3.5, I get the following error on Windows::
-
-        Using base prefix 'c:\\\\python35_x64'
-        New python executable in c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\
-                pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe
-        ERROR: The executable c:\\jenkins\\pymy\\py35_pyquickhelper\\_virtualenv\\
-                pyquickhelper_virpy35_22316CE015_22316CE015\\Scripts\\python.exe is not functioning
-        ERROR: It thinks sys.prefix is 'c:\\\\jenkins\\\\pymy\\\\py35_pyquickhelper' (should be
-                'c:\\\\jenkins\\\\pymy\\\\py36_pyquickhelper\\\\_virtualenv\\\\pyquickhelper_virpy35_22316ce015_22316ce015')
-        ERROR: virtualenv is not compatible with this system or executable
-        Note: some Windows users have reported this error when they installed Python for
-              "Only this user" or have multiple versions of Python installed. Copying the appropriate PythonXX.dll
-              to the virtualenv Scripts/ directory may fix this problem.
 
     The function replaces ``rem _PATH_VIRTUAL_ENV_``
     with an instruction to copy these DLLs.

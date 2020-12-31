@@ -270,7 +270,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):  # pragma: no 
     return message
 
 
-def get_repo_version(path=None, commandline=True, log=False):
+def get_repo_version(path=None, commandline=True, log=False):  # pragma: no cover
     """
     get the latest check in number for a specific path
     @param      path            path to look

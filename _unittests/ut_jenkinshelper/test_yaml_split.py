@@ -26,7 +26,9 @@ class TestYamlSplit(unittest.TestCase):
             this, "data", "local.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python35="fake", Python36="C:\\Python35_x64",
+        context = dict(Python35="fake", Python36="C:\\Python36_x64",
+                       Python38="C:\\Python38_x64",
+                       Python39="C:\\Python39_x64",
                        project_name="pyquickhelper", root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
         assert name is not None

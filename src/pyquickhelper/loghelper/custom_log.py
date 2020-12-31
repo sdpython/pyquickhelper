@@ -32,7 +32,7 @@ class CustomLog:
         self._folder = folder
         self._parent = parent
         if not os.path.exists(folder):
-            os.makedirs(folder)
+            os.makedirs(folder)  # pragma: no cover
         typstr = str
         if filename is None:
             i = 0
@@ -100,12 +100,12 @@ class CustomLog:
                 if isinstance(s, str):
                     return s
                 if isinstance(s, bytes):
-                    return s.decode("utf8")
+                    return s.decode("utf8")  # pragma: no cover
                 try:
                     return str(s)
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise Exception(
-                        "unable to convert s into string: type(s)=" + str(type(s))) from e
+                        "Unable to convert s into string: type(s)=%r" % type(s)) from e
 
             message = str(dt).split(
                 ".")[0] + " " + " ".join([_str_process(s) for s in args]) + "\n"
@@ -113,13 +113,13 @@ class CustomLog:
             self._handle.write(message)
             st = "                    "
         else:
-            st = typstr(dt).split(".")[0] + " "
+            st = typstr(dt).split(".")[0] + " "  # pragma: no cover
 
         for k, v in kwargs.items():
             message = st + \
                 "%s = %s%s" % (
                     typstr(k), typstr(v), "\n")
             if "INNER JOIN" in message:
-                break
+                break  # pragma: no cover
             self._handle.write(message)
         self._handle.flush()

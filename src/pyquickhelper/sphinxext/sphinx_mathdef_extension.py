@@ -14,7 +14,7 @@ import sphinx
 from sphinx.locale import _
 try:
     from sphinx.errors import NoUri
-except ImportError:
+except ImportError:  # pragma: no cover
     from sphinx.environment import NoUri
 from docutils.parsers.rst import Directive
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
@@ -96,7 +96,7 @@ class MathDef(BaseAdmonition):
         elif hasattr(env, "config") and hasattr(env.config, "mathdef_link_number"):
             number_format = env.config.mathdef_link_number
         else:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "mathdef_link_number is not defined in the configuration")
 
         if not self.options.get('class'):
@@ -120,7 +120,7 @@ class MathDef(BaseAdmonition):
         # mid
         mathtag = self.options.get('tag', '').strip()
         if len(mathtag) == 0:
-            raise ValueError("tag is empty")
+            raise ValueError("tag is empty")  # pragma: no cover
         if env is not None:
             mid = int(env.new_serialno('indexmathe-u-%s' % mathtag)) + 1
         else:
@@ -132,7 +132,7 @@ class MathDef(BaseAdmonition):
         try:
             label_number = number_format.format(
                 number=number, first_letter=first_letter)
-        except ValueError as e:
+        except ValueError as e:  # pragma: no cover
             raise Exception(
                 "Unable to interpret format '{0}'.".format(number_format)) from e
 
@@ -141,7 +141,7 @@ class MathDef(BaseAdmonition):
         if len(title) > 0:
             title = "{0} {1} : {2}".format(mathtag, label_number, title)
         else:
-            raise ValueError("title is empty")
+            raise ValueError("title is empty")  # pragma: no cover
 
         # main node
         ttitle = title
@@ -164,9 +164,11 @@ class MathDef(BaseAdmonition):
             set_source_info(self, targetnode)
             try:
                 self.state.add_target(targetid, '', targetnode, lineno)
-            except Exception as e:
-                raise Exception("Issue in\n  File '{0}', line {1}\ntid={2}\ntnode={3}".format(
-                    None if env is None else env.docname, lineno, targetid, targetnode)) from e
+            except Exception as e:  # pragma: no cover
+                raise Exception(
+                    "Issue in\n  File '{0}', line {1}\ntid={2}\ntnode={3}".format(
+                        None if env is None else env.docname, lineno,
+                        targetid, targetnode)) from e
 
             # index node
             index = self.options.get('index', None)
@@ -204,8 +206,8 @@ def process_mathdefs(app, doctree):
         try:
             targetnode = node.parent[node.parent.index(node) - 1]
             if not isinstance(targetnode, nodes.target):
-                raise IndexError
-        except IndexError:
+                raise IndexError  # pragma: no cover
+        except IndexError:  # pragma: no cover
             targetnode = None
         newnode = node.deepcopy()
         mathtag = newnode['mathtag']
@@ -266,12 +268,12 @@ class MathDefList(Directive):
             n["mathcontents"] = contents
             n['docname'] = env.docname if env else "none"
             return [targetnode, n]
-        else:
-            n = mathdeflist('')
-            n["mathtag"] = tag
-            n["mathcontents"] = contents
-            n['docname'] = env.docname if env else "none"
-            return [n]
+
+        n = mathdeflist('')
+        n["mathtag"] = tag
+        n["mathcontents"] = contents
+        n['docname'] = env.docname if env else "none"
+        return [n]
 
 
 def process_mathdef_nodes(app, doctree, fromdocname):
@@ -343,10 +345,10 @@ def process_mathdef_nodes(app, doctree, fromdocname):
                     fromdocname, mathdef_info['docname'])
                 try:
                     newnode['refuri'] += '#' + mathdef_info['target']['refid']
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise KeyError("refid in not present in '{0}'".format(
                         mathdef_info['target'])) from e
-            except NoUri:
+            except NoUri:  # pragma: no cover
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass
             newnode.append(innernode)
@@ -368,7 +370,7 @@ def process_mathdef_nodes(app, doctree, fromdocname):
                     newnode['refuri'] = app.builder.get_relative_uri(
                         fromdocname, mathdocname)
                     newnode['refuri'] += '#' + idss[0]
-                except NoUri:
+                except NoUri:  # pragma: no cover
                     # ignore if no URI can be determined, e.g. for LaTeX output
                     pass
                 newnode.append(innernode)

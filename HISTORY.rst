@@ -5,8 +5,26 @@
 History
 =======
 
-current - 2020-07-09 - 0.00Mb
+current - 2020-12-31 - 0.00Mb
 =============================
+
+* `314`: fixes function _process_notebooks_in_private for newer version of nbconvert + missing file rst.tpl (2020-12-31)
+* `323`: Add function assert_almost_equal_detailed with more feedback (2020-12-10)
+* `322`: Implements function testlog to log information around a test function (2020-11-14)
+* `320`: Fix notebook links on github when inserted into the documentation (2020-11-11)
+* `321`: svg2png fails after cairosvg update (2020-11-11)
+* `318`: Add function to download url content in a folder and a local link from it (2020-10-11)
+* `310`: Add common interface to retrieve password with keyring (2020-10-11)
+* `312`: use twine to publish a package (2020-10-11)
+* `317`: fLOG shoud return the first object sent as argument (2020-09-30)
+* `316`: Fix issue when image name for .. image:: is a pattern (2020-09-22)
+* `315`: Small fix for nbconvert 6.0.3 (2020-09-14)
+* `311`: Bump node-sass from 3.13.1 to 4.14.1 in /src/pyquickhelper/sphinxext/revealjs/templates/revealjs/static (2020-09-05)
+* `313`: Update reveal.js (2020-09-05)
+* `309`: Add option linenos to extension runpython (2020-07-17)
+
+1.9.3418 - 2020-07-09 - 2.06Mb
+==============================
 
 * `307`: Add a function to plot a graph on a matplotlib (2020-07-07)
 * `306`: Remove numpydoc added by default, it fails with other extensions (2020-06-28)

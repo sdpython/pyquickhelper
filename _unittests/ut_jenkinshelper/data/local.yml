@@ -1,8 +1,8 @@
 language: python
 
 python:
-  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.4, DIST: std }
-  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
+  - { PATH: "{{replace(Python39, '\\', '\\\\')}}", VERSION: 3.9, DIST: std }
+  - { PATH: "{{replace(Python38, '\\', '\\\\')}}", VERSION: 3.8, DIST: std }
   
 virtualenv:
   - path: {{ospathjoin(root_path, pickname("%NAME_JENKINS%", project_name + "_%VERSION%_%DIST%_%NAME%"), "_venv")}}

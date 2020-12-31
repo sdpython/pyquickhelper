@@ -101,7 +101,7 @@ def get_default_extensions(load_bokeh=False):
     backend = get_backend()
     from matplotlib.sphinxext.plot_directive import setup as setup_plot
     backend_ = get_backend()
-    if backend_ != backend:
+    if backend_ != backend:  # pragma: no cover
         import matplotlib
         try:
             with warnings.catch_warnings(record=True):
@@ -133,7 +133,7 @@ def get_default_extensions(load_bokeh=False):
             import bokeh  # pylint: disable=W0611
             from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
             default_setups.append(setup_bokeh)
-        except ImportError:
+        except ImportError:  # pragma: no cover
             # bokeh is not installed.
             pass
 
@@ -162,7 +162,7 @@ def get_default_standard_extensions(use_mathjax=False):
         import sphinxcontrib.jsdemo
         assert sphinxcontrib.jsdemo is not None
         extensions.append('sphinxcontrib.jsdemo')
-    except ImportError:
+    except ImportError:  # pragma: no cover
         # No module sphinxcontrib.jsdemo.
         pass
 

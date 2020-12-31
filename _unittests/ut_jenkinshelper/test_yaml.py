@@ -419,11 +419,17 @@ class TestYaml(unittest.TestCase):
                 this, "..", "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34=None, Python35="C:\\Python35_x64",
+        context = dict(Python34=None,
+                       Python35="C:\\Python35_x64",
                        Python36="C:\\Python36_x64",
                        Python37="C:\\Python37_x64",
-                       Python27="C:\\Python27_x64", Anaconda3=None, Anaconda2=None,
-                       WinPython36=None, project_name="pyquickhelper",
+                       Python38="C:\\Python38_x64",
+                       Python39="C:\\Python39_x64",
+                       Python27="C:\\Python27_x64",
+                       Anaconda3=None,
+                       Anaconda2=None,
+                       WinPython36=None,
+                       project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]
         context["Python%s" % vers] = "C:\\Python%s_x64" % vers

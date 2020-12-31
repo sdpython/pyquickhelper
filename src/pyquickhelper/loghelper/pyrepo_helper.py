@@ -33,7 +33,7 @@ class SourceRepository:
         @return                 module to use
         """
         git = GIT.IsRepo(location, commandline=self.commandline)
-        if not git:
+        if not git:  # pragma: no cover
             svn = SVN.IsRepo(location, commandline=self.commandline)
             if not svn:
                 try:

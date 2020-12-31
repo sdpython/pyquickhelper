@@ -28,6 +28,7 @@ class TestYamlSplit2(ExtTestCase):
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python35="py35", Python36="C:\\Python36_x64",
+                       Python39="C:\\Python39_x64",
                        Python27="py27", Anaconda3="ana3", Anaconda2="ana2",
                        project_name="pyquickhelper", root_path="ROOT")
         obj, name = load_yaml(yml, context=context, platform=platform)
@@ -43,7 +44,7 @@ class TestYamlSplit2(ExtTestCase):
             convs.append(conv)
         self.assertNotEmpty(res)
 
-        self.assertEqual(len(convs), 17)
+        self.assertEqual(len(convs), 4)
         for conv in convs:
             assert conv
             assert isinstance(conv, list)

@@ -284,11 +284,12 @@ class JenkinsExt(jenkins.Jenkins):
             raise JenkinsJobException(  # pragma: no cover
                 "Unable to find engine in job '{}', available: {}".format(
                     job, ", ".join(self.engines.keys())))
-        if "[27]" in job and "python34" in res.lower():
+        if "[27]" in job and "python34" in res.lower():  # pragma: no cover
             mes = "\n".join("  {0}={1}".format(k, v)
                             for k, v in sorted(self.engines.items()))
             raise ValueError(
-                "Python mismatch in version:\nJOB = {0}\nRES = {1}\nENGINES\n{2}".format(job, res, mes))
+                "Python mismatch in version:\nJOB = {0}\nRES = {1}\nENGINES\n{2}"
+                "".format(job, res, mes))
         return (res, key) if return_key else res
 
     def get_cmd_standalone(self, job):
@@ -380,10 +381,9 @@ class JenkinsExt(jenkins.Jenkins):
         m.update(s.encode("ascii"))
         r = m.hexdigest().upper()
         if len(r) < le:
-            return r
-        else:
-            m = le // 2
-            return r[:m] + r[len(r) - le + m:]
+            return r  # pragma: no cover
+        m = le // 2
+        return r[:m] + r[len(r) - le + m:]
 
     def extract_requirements(self, job):
         """
@@ -410,8 +410,7 @@ class JenkinsExt(jenkins.Jenkins):
                 else:
                     rl = [_.strip() for _ in o.split(",")]
             return job, rl, rp
-        else:
-            return job, None, None
+        return job, None, None
 
     def get_jenkins_script(self, job):
         """
@@ -473,7 +472,7 @@ class JenkinsExt(jenkins.Jenkins):
                 lines = res.split("\n")
                 for i, line in enumerate(lines):
                     if "/simple/ pyquickhelper" in line and "--find-links http://localhost" in line:
-                        lines[i] = ""
+                        lines[i] = ""  # pragma: no cover
                 res = "\n".join(lines)
 
             return res
@@ -536,16 +535,18 @@ class JenkinsExt(jenkins.Jenkins):
                     cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
                         "__COMMAND__", "unittests_LONG")
                 elif "[SKIP]" in spl:
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
-                        "__COMMAND__", "unittests_SKIP")
+                    cmd = _modified_windows_jenkins_any(  # pragma: no cover
+                        requirements_local, requirements_pypi, platform=self.platform).replace(
+                            "__COMMAND__", "unittests_SKIP")
                 elif "[GUI]" in spl:
-                    cmd = _modified_windows_jenkins_any(requirements_local, requirements_pypi, platform=self.platform).replace(
-                        "__COMMAND__", "unittests_GUI")
+                    cmd = _modified_windows_jenkins_any(  # pragma: no cover
+                        requirements_local, requirements_pypi, platform=self.platform).replace(
+                            "__COMMAND__", "unittests_GUI")
                 elif "[27]" in spl:
                     cmd = _modified_windows_jenkins_27(
                         requirements_local, requirements_pypi, anaconda=" [anaconda" in job, platform=self.platform)
                     if not isinstance(cmd, list):
-                        cmd = [cmd]
+                        cmd = [cmd]  # pragma: no cover
                     else:
                         cmd = list(cmd)
                     if spl[0] == "pyquickhelper":
@@ -674,7 +675,7 @@ class JenkinsExt(jenkins.Jenkins):
         It creates it if it does not exist.
         """
         if not adjust_scheduler:
-            return scheduler
+            return scheduler  # pragma: no cover
         if scheduler is None:
             raise ValueError("scheduler is None")  # pragma: no cover
         if not hasattr(self, "_scheduled_jobs"):
@@ -700,8 +701,8 @@ class JenkinsExt(jenkins.Jenkins):
                     a += 1
                     b += 1
                     if a >= 24 or b > 24:
-                        a = 0
-                        b = 1 + iter // 24
+                        a = 0  # pragma: no cover
+                        b = 1 + iter // 24  # pragma: no cover
                     r = 'H(%d-%d)' % (a, b)
                     new_value = scheduler.replace(rep, r)
                     iter += 1
@@ -805,7 +806,7 @@ class JenkinsExt(jenkins.Jenkins):
             if scheduler.lower() == "startup":
                 trigger = JenkinsExt._trigger_startup
             elif scheduler.lower() == "NONE":
-                trigger = ""
+                trigger = ""  # pragma: no cover
             else:
                 new_scheduler = self.adjust_scheduler(
                     scheduler, adjust_scheduler)
@@ -893,7 +894,7 @@ class JenkinsExt(jenkins.Jenkins):
         publishers = []
         mails = kwargs.get("mails", None)
         if mails is not None:
-            publishers.append(
+            publishers.append(  # pragma: no cover
                 JenkinsExt._publishers.replace("__MAIL__", mails))
         publishers.append(JenkinsExt._artifacts.replace(
             "__PATTERN__", "dist/*.whl,dist/*.zip"))
@@ -938,9 +939,9 @@ class JenkinsExt(jenkins.Jenkins):
             elif k == "post":
                 script.append(v)
             elif k == "pre_set":
-                script = [v + "\n" + _ for _ in script]
+                script = [v + "\n" + _ for _ in script]  # pragma: no cover
             elif k == "post_set":
-                script = [_ + "\n" + v for _ in script]
+                script = [_ + "\n" + v for _ in script]  # pragma: no cover
             elif k == "script":
                 script = [_.replace("__SCRIPTOPTIONS__", v) for _ in script]
             else:
@@ -1293,7 +1294,7 @@ class JenkinsExt(jenkins.Jenkins):
             raise TypeError("Issue with {}.".format(description)) from e
 
         # credentials
-        if isinstance(credentials, dict):
+        if isinstance(credentials, dict):  # pragma: no cover
             cred = credentials.get(gitrepo, None)
             if cred is None:
                 cred = credentials.get("default", "")
@@ -1317,7 +1318,7 @@ class JenkinsExt(jenkins.Jenkins):
             if overwrite or j is None:
 
                 update_job = False
-                if j is not None:
+                if j is not None:  # pragma: no cover
                     if update:
                         update_job = True
                     else:
@@ -1337,7 +1338,7 @@ class JenkinsExt(jenkins.Jenkins):
 
                     # set up location
                     if location is None:
-                        loc = None
+                        loc = None  # pragma: no cover
                     else:
                         if "_" in jname:
                             loc = os.path.join(location, name, jname)
@@ -1369,7 +1370,7 @@ class JenkinsExt(jenkins.Jenkins):
 
                     locations.append((job, loc))
                     created.append((job, name, loc, job, r))
-                else:
+                else:  # pragma: no cover
                     # skip the job
                     loc = None if location is None else os.path.join(
                         location, jname)

@@ -197,7 +197,7 @@ The role *epkg* will import it based on its name.
 *postcontents*: dynamic contents
 ++++++++++++++++++++++++++++++++
 
-Location: :class:`PostContentsDirective <pyquickhelper.sphinxext.sphinxext_postcontents_extension.PostContentsDirective>`.
+Location: :class:`PostContentsDirective <pyquickhelper.sphinxext.sphinx_postcontents_extension.PostContentsDirective>`.
 
 In *conf.py*:
 
@@ -232,7 +232,7 @@ It looks into the page and adds a link to each local sections.
 *runpython*: execute a script
 +++++++++++++++++++++++++++++
 
-Location: :py:class:`RunPythonDirective <pyquickhelper.sphinxext.sphinxext_runpython_extension.RunPythonDirective>`.
+Location: :py:class:`RunPythonDirective <pyquickhelper.sphinxext.sphinx_runpython_extension.RunPythonDirective>`.
 
 In *conf.py*:
 
@@ -310,6 +310,13 @@ with a tweak however. It consists in writing *rst*
 code. The variable ``__WD__`` indicates the local
 directory.
 
+.. runpython::
+    :showcode:
+
+    print('__WD__=%r' % __WD__)
+
+Applied to images...
+
 .. sidebar:: runpython and image
 
     ::
@@ -336,7 +343,7 @@ the *rst* file.
     ax.plot([0, 1], [0, 1], '--')
     fig.savefig(os.path.join(__WD__, "oo.png"))
 
-    text = ".. image:: oo.png\\n    :width: 201px"
+    text = ".. image:: oo.png\\\\n    :width: 201px"
     print(text)
 
 Option ``:toggle:`` can hide the code or the output or both

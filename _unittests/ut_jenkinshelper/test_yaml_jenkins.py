@@ -147,7 +147,7 @@ class TestYamlJenkins(unittest.TestCase):
                 raise Exception(conf)
             if "anything\\python3_module_template\\%NAME_JENKINS%" not in conf:
                 nb_jen += 1
-            if "python3_module_template_UT_36_std" in conf or exp_ut in conf:
+            if "UT_39_std" in conf or exp_ut in conf:
                 nb += 1
             if "H H(20-21) * * 0" in conf:
                 sch += 1

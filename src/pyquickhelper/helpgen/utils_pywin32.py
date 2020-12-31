@@ -4,7 +4,7 @@
 """
 
 
-def import_pywin32():
+def import_pywin32():  # pragma: no cover
     """
     For the module ``pywin32``,
     this function tries to add the path to the DLL to ``PATH``

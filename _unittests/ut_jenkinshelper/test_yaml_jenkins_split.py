@@ -21,7 +21,9 @@ class TestYamlJenkinsSplit(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         engines = {'Python36': 'c:\\Python36_x64',
-                   'Python35': 'c:\\Python35_x64'}
+                   'Python35': 'c:\\Python35_x64',
+                   'Python38': 'c:\\Python38_x64',
+                   'Python39': 'c:\\Python39_x64'}
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
             engines=engines, fLOG=fLOG, platform="win32")
@@ -62,6 +64,7 @@ class TestYamlJenkinsSplit(unittest.TestCase):
             OutputPrint=__name__ == "__main__")
 
         engines = dict(Python35="py35", Python36="C:\\Python36_x64",
+                       Python39="C:\\Python39_x64",
                        Python27="py27", Anaconda3="ana3", Anaconda2="ana2",
                        project_name="pyquickhelper", root_path="ROOT")
         srv = JenkinsExt(

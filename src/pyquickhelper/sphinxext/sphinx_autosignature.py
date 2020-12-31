@@ -332,7 +332,7 @@ class AutoSignatureDirective(Directive):
                 continue
             if name not in cl.__dict__:
                 # Not a method of this class.
-                continue
+                continue  # pragma: no cover
             try:
                 signature = inspect.signature(value)
             except TypeError as e:  # pragma: no cover
@@ -347,10 +347,10 @@ class AutoSignatureDirective(Directive):
             if signature is not None:
                 parameters = signature.parameters
             else:
-                parameters = []
+                parameters = []  # pragma: no cover
 
             if signature is None:
-                continue
+                continue  # pragma: no cover
 
             signature = self.build_parameters_list(parameters, annotation)
             text = "\n:py:meth:`{0} <{1}.{0}>` ({2})\n\n".format(
@@ -388,21 +388,21 @@ class AutoSignatureDirective(Directive):
             if sline.startswith("Parameters"):
                 break
             if sline.startswith(":returns:") or sline.startswith(":return:"):
-                break
+                break  # pragma: no cover
             if sline.startswith(":rtype:") or sline.startswith(":raises:"):
-                break
+                break  # pragma: no cover
             if sline.startswith(".. ") and "::" in sline:
                 break
             if sline == "::":
-                break
+                break  # pragma: no cover
             if sline.startswith(":githublink:"):
-                break
+                break  # pragma: no cover
             if sline.startswith("@warning") or sline.startswith(".. warning::"):
-                break
+                break  # pragma: no cover
             keep.append(line)
         res = "\n".join(keep).rstrip("\n\r\t ")
         if res.endswith(":"):
-            res = res[:-1] + "..."
+            res = res[:-1] + "..."  # pragma: no cover
         res = AutoSignatureDirective.reformat(res)
         return res
 

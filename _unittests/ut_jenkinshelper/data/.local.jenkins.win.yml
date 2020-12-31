@@ -6,12 +6,9 @@ language: python
 # A different script is generated for each PATH.
 # A path cannot be a virtual environment.
 python:
-  - { PATH: "{{replace(Python35, '\\', '\\\\')}}", VERSION: 3.5, DIST: std }
-  - { PATH: "{{replace(Python36, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
-  - { PATH: "{{replace(Python27, '\\', '\\\\')}}", VERSION: 2.7, DIST: std }
+  - { PATH: "{{replace(Python39, '\\', '\\\\')}}", VERSION: 3.6, DIST: std }
   - { PATH: "{{replace(Anaconda3, '\\', '\\\\')}}", VERSION: 3.6, DIST: conda }
-  - { PATH: "{{replace(Anaconda2, '\\', '\\\\')}}", VERSION: 2.7, DIST: conda }
-  - { PATH: "{{replace(WinPython36, '\\', '\\\\')}}", VERSION: 3.6, DIST: winpython }
+  - { PATH: "{{replace(WinPython39, '\\', '\\\\')}}", VERSION: 3.6, DIST: winpython }
   
 # The test happens in a virtual environment not with the original distribution.
 virtualenv:
@@ -34,7 +31,7 @@ install:
 before_script:
   - if [ ${VERSION} == "2.7" ] then pip uninstall jyquickhelper fi
   - if [ ${VERSION} == "2.7" ] then pip install bin\jyquickhelper-0.2-py2-none-any.whl fi
-  - if [ ${VERSION} == "2.7" ] then {{Python35}}\python -u setup.py copy27 fi
+  - if [ ${VERSION} == "2.7" ] then {{Python39}}\python -u setup.py copy27 fi
   - if [ ${VERSION} == "2.7" ] then cd dist_module27 fi
   
 # The script to run.

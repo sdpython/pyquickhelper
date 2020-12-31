@@ -85,18 +85,17 @@ class QuoteNode(BaseAdmonition):
         # body
         (quote,) = super(QuoteNode, self).run()
         if isinstance(quote, nodes.system_message):
-            return [quote]
+            return [quote]  # pragma: no cover
 
         # mid
         tag = self.options.get('tag', 'quotetag').strip()
         if len(tag) == 0:
-            raise ValueError("tag is empty")
+            raise ValueError("tag is empty")  # pragma: no cover
 
         def __(text):
             if text:
                 return _(text)
-            else:
-                return ""
+            return ""
 
         # book
         author = __(self.options.get('author', "").strip())
@@ -109,14 +108,14 @@ class QuoteNode(BaseAdmonition):
 
         indexes = []
         if index:
-            indexes.append(index)
+            indexes.append(index)  # pragma: no cover
 
         # add a label
         lid = self.options.get('lid', self.options.get('label', None))
         if lid:
             tnl = ['', ".. _{0}:".format(lid), ""]
         else:
-            tnl = []
+            tnl = []  # pragma: no cover
 
         if author:
             tnl.append("**{0}**, ".format(author))
@@ -143,7 +142,7 @@ class QuoteNode(BaseAdmonition):
 
         try:
             nested_parse_with_titles(self.state, content, node)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(

@@ -40,7 +40,7 @@ class TestYamlJenkinsBug(ExtTestCase):
                                        location="anything", disable_schedule=False,
                                        credentials="")
         res = list(res)
-        self.assertEqual(len(res), 4)
+        self.assertEqual(len(res), 3)
         scripts = [''.join(s) for s in res]
         for sc in scripts:
             self.assertNotIn("Python370_x64", sc)
