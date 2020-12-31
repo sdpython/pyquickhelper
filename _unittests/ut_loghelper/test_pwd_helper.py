@@ -6,7 +6,8 @@ import os
 import unittest
 
 from pyquickhelper.pycode import (
-    ExtTestCase, skipif_appveyor, skipif_travis, skipif_circleci)
+    ExtTestCase, skipif_appveyor, skipif_travis, skipif_circleci,
+    skipif_azure)
 from pyquickhelper.loghelper import set_password, get_password
 
 
@@ -21,6 +22,7 @@ class TestPwdHelper(ExtTestCase):
     @skipif_appveyor('stuck')
     @skipif_travis('stuck')
     @skipif_circleci('stuck')
+    @skipif_azure('stuck')
     def test_password(self):
         pwd = 'bibi'
         set_password('pyq', 'jj', pwd)
