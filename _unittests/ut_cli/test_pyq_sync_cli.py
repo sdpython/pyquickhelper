@@ -28,7 +28,7 @@ class TestPyqSyncCli(unittest.TestCase):
         pyq_sync(args=['-h'], fLOG=flog)
 
         r = rows[0][0]
-        if not r.startswith("usage: synchronize_folder [-h] [--p1 P1] [--p2 P2] [-ha HASH_SIZE] [-r REPO1]"):
+        if not r.startswith("usage: synchronize_folder"):
             raise Exception(r)
 
     def test_clean_documentation_for_cli(self):

@@ -62,7 +62,7 @@ class TestAutoCompletion(ExtTestCase):
         res = parser.parse_cmd('this.py -n x+y', context=params)
         self.assertNotEmpty(res)
         r = parser.format_help()
-        self.assertIn("usage: test_command [-h] [-n N] [-e ENCODING] f", r)
+        self.assertIn("usage: test_command", r)
         self.assertEqual(res.n, 7)
 
     def test_class_magic(self):

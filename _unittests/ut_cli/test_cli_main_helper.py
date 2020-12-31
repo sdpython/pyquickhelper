@@ -32,7 +32,7 @@ class TestCliMainHelper(ExtTestCase):
         main(args=["df2rst", "--help"], fLOG=st.fprint)
         res = str(st)
         self.assertIn(
-            "usage: df2rst [-h] [--df DF] [-a ADD_LINE] [-al ALIGN] [-c COLUMN_SIZE]", res)
+            "usage: df2rst", res)
 
         st = BufferedPrint()
         main(args=["encrypt", "--help"], fLOG=st.fprint)

@@ -67,7 +67,7 @@ class TestProcessNotebook(ExtTestCase):
         st = BufferedPrint()
         main(args=['run_notebook', '--help'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("run_notebook [-h]", res)
+        self.assertIn("usage: run_notebook", res)
 
     @skipif_travis("No latex installed.")
     @skipif_appveyor("No latex installed.")

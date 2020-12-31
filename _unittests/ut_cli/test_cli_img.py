@@ -19,7 +19,7 @@ class TestCliImgHelper(ExtTestCase):
         st = BufferedPrint()
         main(args=['zoom_img', '--help'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("zoom_img [-h]", res)
+        self.assertIn("usage: zoom_img", res)
 
     def test_images2pdf_help(self):
         st = BufferedPrint()

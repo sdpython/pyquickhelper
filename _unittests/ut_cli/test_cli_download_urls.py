@@ -19,7 +19,7 @@ class TestCliDownloadUrls(ExtTestCase):
         st = BufferedPrint()
         main(args=['download_urls_in_folder_content', '--help'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("download_urls_in_folder_content [-h]", res)
+        self.assertIn("usage: download_urls_in_folder_content", res)
 
 
 if __name__ == "__main__":

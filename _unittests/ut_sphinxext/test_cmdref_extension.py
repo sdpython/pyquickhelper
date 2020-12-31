@@ -164,10 +164,10 @@ class TestCmdRefExtension(ExtTestCase):
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
             f.write(html)
 
-        t1 = "usage: decrypt [-h] [-r REGEX] source dest password"
+        t1 = "usage: decrypt"
         if t1 in html:
             raise Exception(html)
-        t1 = "usage: encrypt2 [-h] [-r REGEX] source dest password"
+        t1 = "usage: encrypt2"
         if t1 not in html:
             raise Exception(html)
 

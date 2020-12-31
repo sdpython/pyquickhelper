@@ -19,7 +19,7 @@ class TestCliSetPassword(ExtTestCase):
         st = BufferedPrint()
         main(args=['set_password', '--help'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("set_password [-h]", res)
+        self.assertIn("usage: set_password", res)
 
 
 if __name__ == "__main__":
