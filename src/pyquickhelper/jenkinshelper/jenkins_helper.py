@@ -154,9 +154,10 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
         modules = default_jenkins_jobs(js.platform)
     if delete_first:
         js.delete_all_jobs()
-    r = js.setup_jenkins_server(github=github, modules=modules, overwrite=overwrite,
-                                location=location, prefix=prefix, disable_schedule=disable_schedule,
-                                **kwargs)
+    r = js.setup_jenkins_server(
+        github=github, modules=modules, overwrite=overwrite,
+        location=location, prefix=prefix, disable_schedule=disable_schedule,
+        **kwargs)
     return r
 
 

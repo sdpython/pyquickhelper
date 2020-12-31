@@ -1159,14 +1159,15 @@ class JenkinsExt(jenkins.Jenkins):
                         "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\n" +
                         "Not: {0}".format(jobs))
 
-            cre, ds, locs = self._setup_jenkins_server_modules_loop(jobs=jobs, counts=counts,
-                                                                    get_jenkins_script=get_jenkins_script,
-                                                                    location=location, adjust_scheduler=adjust_scheduler,
-                                                                    add_environ=add_environ, yml_engine=yml_engine,
-                                                                    overwrite=overwrite, prefix=prefix,
-                                                                    credentials=credentials, github=github,
-                                                                    disable_schedule=disable_schedule, jenkins_server=self,
-                                                                    update=update, indexes=indexes, deps=deps)
+            cre, ds, locs = self._setup_jenkins_server_modules_loop(
+                jobs=jobs, counts=counts,
+                get_jenkins_script=get_jenkins_script,
+                location=location, adjust_scheduler=adjust_scheduler,
+                add_environ=add_environ, yml_engine=yml_engine,
+                overwrite=overwrite, prefix=prefix,
+                credentials=credentials, github=github,
+                disable_schedule=disable_schedule, jenkins_server=self,
+                update=update, indexes=indexes, deps=deps)
             created.extend(cre)
             locations.extend(locs)
             deps.extend(ds)
@@ -1183,16 +1184,17 @@ class JenkinsExt(jenkins.Jenkins):
         locations = []
         for i, job in enumerate(jobs):
             indexes["unit"] += 1
-            cre, dep, loc = self._setup_jenkins_server_job_iteration(job, counts=counts,
-                                                                     get_jenkins_script=get_jenkins_script,
-                                                                     location=location, adjust_scheduler=adjust_scheduler,
-                                                                     add_environ=add_environ, yml_engine=yml_engine,
-                                                                     overwrite=overwrite, prefix=prefix,
-                                                                     credentials=credentials, github=github,
-                                                                     disable_schedule=disable_schedule,
-                                                                     jenkins_server=jenkins_server,
-                                                                     update=update, indexes=indexes,
-                                                                     deps=deps, i=i)
+            cre, dep, loc = self._setup_jenkins_server_job_iteration(
+                job, counts=counts,
+                get_jenkins_script=get_jenkins_script,
+                location=location, adjust_scheduler=adjust_scheduler,
+                add_environ=add_environ, yml_engine=yml_engine,
+                overwrite=overwrite, prefix=prefix,
+                credentials=credentials, github=github,
+                disable_schedule=disable_schedule,
+                jenkins_server=jenkins_server,
+                update=update, indexes=indexes,
+                deps=deps, i=i)
             created.extend(cre)
             new_dep.extend(dep)
             locations.extend(loc)
@@ -1390,13 +1392,14 @@ class JenkinsExt(jenkins.Jenkins):
             jobdef = job[0] if isinstance(job, tuple) else job
 
             done = {}
-            for aj, name, var in enumerate_processed_yml(jobdef, context=options, engine=yml_engine,
-                                                         add_environ=add_environ, server=self, git_repo=gitrepo,
-                                                         scheduler=scheduler, description=description, credentials=cred,
-                                                         success_only=success_only, timeout=timeout, platform=self.platform,
-                                                         adjust_scheduler=adjust_scheduler, overwrite=overwrite,
-                                                         build_location=location, mails=self.mails,
-                                                         job_options=scheduler_options):
+            for aj, name, var in enumerate_processed_yml(
+                    jobdef, context=options, engine=yml_engine,
+                    add_environ=add_environ, server=self, git_repo=gitrepo,
+                    scheduler=scheduler, description=description, credentials=cred,
+                    success_only=success_only, timeout=timeout, platform=self.platform,
+                    adjust_scheduler=adjust_scheduler, overwrite=overwrite,
+                    build_location=location, mails=self.mails,
+                    job_options=scheduler_options):
                 if name in done:
                     s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"  # pragma: no cover
                     raise ValueError(  # pragma: no cover

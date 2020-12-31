@@ -15,7 +15,6 @@ from pyquickhelper.jenkinshelper.jenkins_helper import (
 
 class TestYamlJenkins2(unittest.TestCase):
 
-    @unittest.skipIf(sys.version_info[:2] < (3, 7), "Python37 is a constant in this test")
     @skipif_appveyor("discrepencies with python 3.8 on windows")
     def test_jenkins_ext_setup_server_yaml2_url(self):
         fLOG(
@@ -23,27 +22,39 @@ class TestYamlJenkins2(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        self._jenkins_ext_setup_server_yaml2(True)
+        self._jenkins_ext_setup_server_yaml2(True, "win32")
 
-    @unittest.skipIf(sys.version_info[:2] < (3, 7), reason="Python37 is a constant")
+    def test_jenkins_ext_setup_server_yaml2_url_linux(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        self._jenkins_ext_setup_server_yaml2(True, "linux")
+
     def test_jenkins_ext_setup_server_yaml2_local(self):
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        self._jenkins_ext_setup_server_yaml2(False)
+        self._jenkins_ext_setup_server_yaml2(False, "win32")
 
-    def _jenkins_ext_setup_server_yaml2(self, use_url):
+    def _jenkins_ext_setup_server_yaml2(self, use_url, platform):
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
-            engines=default_engines(platform="win32"), fLOG=fLOG, platform="win32")
+            engines=default_engines(platform="win32"), fLOG=fLOG, platform=platform)
 
         fLOG("---------------------")
         modules = default_jenkins_jobs()
         if not use_url:
             this = os.path.abspath(os.path.dirname(__file__))
-            local_file = os.path.join(this, "data", ".local.jenkins.win.yml")
+            if platform == 'win32':
+                local_file = os.path.join(
+                    this, "data", ".local.jenkins.win.yml")
+            else:
+                local_file = os.path.join(
+                    this, "data", ".local.jenkins.lin.yml")
             modules = [('yml', local_file, 'H H(5-6) * * 0')]
         fLOG("[modules]", modules)
         res = setup_jenkins_server_yml(srv, github="sdpython", modules=modules,
@@ -68,14 +79,25 @@ class TestYamlJenkins2(unittest.TestCase):
             if "PYQUICKHELPER27" in conf:
                 raise Exception(conf)
 
-            if "SET VERSION=" not in conf:
-                raise Exception(conf)
-            if "SET NAME=" not in conf:
-                raise Exception(conf)
-            if "SET DIST=" not in conf:
-                raise Exception(conf)
-            if use_url and "anything\\pyquickhelper\\%NAME_JENKINS%" not in conf:
-                raise Exception(conf)
+            if platform == 'win32':
+                if "SET VERSION=" not in conf:
+                    raise Exception(conf)
+                if "SET NAME=" not in conf:
+                    raise Exception(conf)
+                if "SET DIST=" not in conf:
+                    raise Exception(conf)
+            else:
+                if "export VERSION=" not in conf:
+                    raise Exception(conf)
+                if "export NAME=" not in conf:
+                    raise Exception(conf)
+                if "export DIST=" not in conf:
+                    raise Exception(conf)
+            if use_url:
+                if platform == 'win32' and "anything\\pyquickhelper\\%NAME_JENKINS%" not in conf:
+                    raise Exception(conf)
+                if platform == 'linux' and "anything/pyquickhelper/$NAME_JENKINS" not in conf:
+                    raise Exception(conf)
             if "pyquickhelper_UT_%d%d_std" % sys.version_info[:2] in conf:
                 nb += 1
             if "H H(5-6) * * 0" in conf:
@@ -92,4 +114,5 @@ class TestYamlJenkins2(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    TestYamlJenkins2().test_jenkins_ext_setup_server_yaml2_url_linux()
     unittest.main()
