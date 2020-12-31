@@ -181,6 +181,7 @@ def process_standard_options_for_setup(
         process_standard_options_for_setup_help(argv)
         return not len(get_available_build_commands() & set(argv))
     fLOG("[process_standard_options_for_setup]", argv)
+    fLOG("[process_standard_options_for_setup] python version:", sys.version_info)
 
     def process_argv_for_unittest(argv):
         if "-d" in argv:

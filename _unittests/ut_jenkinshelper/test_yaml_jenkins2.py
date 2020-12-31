@@ -7,7 +7,7 @@ import unittest
 import re
 
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.pycode import skipif_appveyor
+from pyquickhelper.pycode import skipif_appveyor, skipif_azure
 from pyquickhelper.jenkinshelper.jenkins_server import JenkinsExt
 from pyquickhelper.jenkinshelper.jenkins_helper import (
     default_engines, default_jenkins_jobs, setup_jenkins_server_yml)
@@ -15,6 +15,7 @@ from pyquickhelper.jenkinshelper.jenkins_helper import (
 
 class TestYamlJenkins2(unittest.TestCase):
 
+    @skipif_azure("issue with python version")
     @skipif_appveyor("discrepencies with python 3.8 on windows")
     def test_jenkins_ext_setup_server_yaml2_url(self):
         fLOG(
@@ -24,6 +25,7 @@ class TestYamlJenkins2(unittest.TestCase):
 
         self._jenkins_ext_setup_server_yaml2(True, "win32")
 
+    @skipif_azure("issue with python version")
     def test_jenkins_ext_setup_server_yaml2_url_linux(self):
         fLOG(
             __file__,
@@ -116,5 +118,4 @@ class TestYamlJenkins2(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    TestYamlJenkins2().test_jenkins_ext_setup_server_yaml2_url_linux()
     unittest.main()

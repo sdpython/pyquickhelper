@@ -117,7 +117,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         # if "DISPLAY" not in os.environ:
         #    os.environ["DISPLAY"] = ':10.0'
         if fLOG:
-            fLOG("Call mpl.use('Agg')")
+            fLOG("[fix_tkinter_issues_virtualenv] Call mpl.use('Agg')")
         if "matplotlib" in sys.modules:
             if _first_execution:
                 warnings.warn(
