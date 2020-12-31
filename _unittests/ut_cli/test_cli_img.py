@@ -25,7 +25,7 @@ class TestCliImgHelper(ExtTestCase):
         st = BufferedPrint()
         main(args=['images2pdf', '--help'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("images2pdf [-h]", res)
+        self.assertIn("usage: images2pdf", res)
 
     def test_zoom_img_do(self):
         temp = get_temp_folder(__file__, 'temp_img_zoom')
@@ -35,7 +35,7 @@ class TestCliImgHelper(ExtTestCase):
         win = main(args=['zoom_img', '-f', '0.5', '--img',
                          data, '-o', dest], fLOG=st.fprint)
         res = str(st)
-        self.assertNotIn("zoom_img [-h]", res)
+        self.assertNotIn("usage: zoom_img", res)
         self.assertIn("Writing '", res)
 
 
