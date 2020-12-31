@@ -109,7 +109,9 @@ class TestYamlJenkins2(unittest.TestCase):
         if use_url:
             if nb == 0:
                 raise AssertionError(
-                    "\n##############\n".join(r[-1] for r in res))
+                    "############# %s\n#############\n%s" % (
+                        "pyquickhelper_UT_%d%d_std" % sys.version_info[:2],
+                        "\n##############\n".join(r[-1] for r in res)))
         self.assertEqual(sch, 2)
 
 

@@ -86,7 +86,8 @@ jobs:
     displayName: Take ownership of conda installation
   - bash: conda update conda --yes --quiet
     displayName: Update conda.
-  - script: brew cask install mactex
+  - script: brew install --cask mactex
+    continueOnError: true
     displayName: 'Install latex'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
