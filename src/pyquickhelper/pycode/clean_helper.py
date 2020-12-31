@@ -29,8 +29,8 @@ def clean_exts(folder=".", fLOG=print, exts=None, fclean=None):
     for root, _, files in os.walk(folder):
         for f in files:
             ext = os.path.splitext(f)[-1]
-            if ext in exts and "exe.win" not in root and "site-packages" not in root and \
-               "_venv" not in root:
+            if (ext in exts and "exe.win" not in root and "site-packages" not in root and
+                    "_venv" not in root):  # pragma: no cover
                 filename = os.path.join(root, f)
                 if fclean is not None and not fclean(filename):
                     continue

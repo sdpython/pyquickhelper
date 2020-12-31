@@ -19,7 +19,7 @@ def must_build(argv=None):
     *built* means calling ``setup.py build_ext --inplace``.
     """
     if argv is None:
-        argv = sys.argv
+        argv = sys.argv  # pragma: no cover
     for k in {'unittests', 'unittests_LONG', 'unittests_SKIP',
               'unittests_GUI', 'build_sphinx'}:
         if k in argv:
@@ -72,5 +72,5 @@ def _filter_out_warning(out):
                 skip = skip or "UserWarning: Module {} was already imported".format(
                     mod) in line
         if not skip:
-            new_lines.append(line)
+            new_lines.append(line)  # pragma: no cover
     return "\n".join(new_lines)

@@ -28,8 +28,8 @@ def clean_readme(content):
             if line[indent] == " ":
                 blank = sline.strip()
                 if len(blank) == 0:
-                    rows.append("")
-                    continue
+                    rows.append("")  # pragma: no cover
+                    continue  # pragma: no cover
                 if less is None:
                     less = len(line) - len(sline)
                     if less == indent:

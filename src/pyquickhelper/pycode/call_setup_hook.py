@@ -99,22 +99,23 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
 
     fLOG("[call_setup_hook] calls _setup_hook from", module_name)
     if not force_call and sys.platform.startswith("win"):
-        out, err = run_cmd(cmd, wait=True, fLOG=fLOG, log_error=False)
-        exit = 0
+        out, err = run_cmd(  # pragma: no cover
+            cmd, wait=True, fLOG=fLOG, log_error=False)
+        exit = 0  # pragma: no cover
     else:
         if use_print:  # pragma: no cover
             print("subprocess.call", cmd)
         if not sys.platform.startswith("win"):
             args = shlex.split(cmd)
         else:
-            args = cmd
+            args = cmd  # pragma: no cover
         exit = subprocess.call(args)
         out = "linux"
         err = ""
 
         if exit != 0:
             src = os.path.abspath(os.path.join(folder, "src"))
-            if not os.path.exists(src):
+            if not os.path.exists(src):  # pragma: no cover
                 src = os.path.abspath(folder)
             if not os.path.exists(src):
                 raise FileNotFoundError(  # pragma: no cover
@@ -138,9 +139,10 @@ def call_setup_hook(folder, module_name, fLOG=noLOG, must_be=False,
                 print("[pyqerror]\n", err)
 
     def error():
-        mes = "**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]\n{2}\nexit={4}".format(
-            code.replace(";", "\n"), out, err, cmd, exit)
-        return mes
+        mes = ("**CMD:\n{3}\n**CODE:\n{0}\n**OUT:\n{1}\n**[pyqerror]"
+               "\n{2}\nexit={4}").format(  # pragma: no cover
+                    code.replace(";", "\n"), out, err, cmd, exit)
+        return mes  # pragma: no cover
 
     if not must_be and (
         "ImportError: cannot import name '{0}'".format(function_name) in err or

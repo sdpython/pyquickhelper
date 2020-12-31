@@ -173,8 +173,9 @@ class ExtTestCase(unittest.TestCase):
             self.assertEqualArray(d1.indices, d2.indices)
             self.assertEqualArray(d1.indptr, d2.indptr)
             return
-        raise NotImplementedError("Comparison not implemented for types {} and {}.".format(
-            type(d1), type(d2)))
+        raise NotImplementedError(  # pragma: no cover
+            "Comparison not implemented for types {} and {}.".format(
+                type(d1), type(d2)))
 
     def assertNotEqualArray(self, d1, d2, squeeze=False, **kwargs):
         """
@@ -213,13 +214,13 @@ class ExtTestCase(unittest.TestCase):
                 raise AssertionError("d1 != d2: {0} != {1}".format(d1, d2))
         else:
             if mi == 0:
-                if diff > tol:
+                if diff > tol:  # pragma: no cover
                     raise AssertionError(
                         "d1 != d2: {0} != {1} +/- {2}".format(d1, d2, tol))
             else:
                 rel = diff / mi
                 if rel > tol:
-                    raise AssertionError(
+                    raise AssertionError(  # pragma: no cover
                         "d1 != d2: {0} != {1} +/- {2}".format(d1, d2, tol))
 
     def assertRaise(self, fct, exc=None, msg=None):
@@ -235,17 +236,19 @@ class ExtTestCase(unittest.TestCase):
             fct()
         except Exception as e:
             if exc is None:
-                return
+                return  # pragma: no cover
             elif isinstance(e, exc):
                 if msg is None:
                     return
                 if msg not in str(e):
-                    raise AssertionError(
-                        "Function '{0}' raise exception with wrong message '{1}' (must contain '{2}').".format(fct, e, msg))
+                    raise AssertionError(  # pragma: no cover
+                        "Function '{0}' raise exception with wrong message '{1}' "
+                        "(must contain '{2}').".format(fct, e, msg))
                 return
             raise AssertionError(
-                "Function '{0}' does not raise exception '{1}' but '{2}' of type '{3}'.".format(fct, exc, e, type(e)))
-        raise AssertionError(
+                "Function '{0}' does not raise exception '{1}' but '{2}' of type "
+                "'{3}'.".format(fct, exc, e, type(e)))
+        raise AssertionError(  # pragma: no cover
             "Function '{0}' does not raise exception.".format(fct))
 
     def capture(self, fct):
@@ -268,7 +271,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if not whole.startswith(sub):
             if len(whole) > len(sub) * 2:
-                whole = whole[:len(sub) * 2]
+                whole = whole[:len(sub) * 2]  # pragma: no cover
             raise AssertionError(
                 "'{1}' does not start with '{0}'".format(sub, whole))
 
@@ -278,7 +281,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if whole.startswith(sub):
             if len(whole) > len(sub) * 2:
-                whole = whole[:len(sub) * 2]
+                whole = whole[:len(sub) * 2]  # pragma: no cover
             raise AssertionError(
                 "'{1}' starts with '{0}'".format(sub, whole))
 
@@ -288,7 +291,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if not whole.endswith(sub):
             if len(whole) > len(sub) * 2:
-                whole = whole[-len(sub) * 2:]
+                whole = whole[-len(sub) * 2:]  # pragma: no cover
             raise AssertionError(
                 "'{1}' does not end with '{0}'".format(sub, whole))
 
@@ -325,19 +328,20 @@ class ExtTestCase(unittest.TestCase):
                 if isinstance(a, numpy.ndarray) and isinstance(b, numpy.ndarray):
                     self.assertEqualArray(a, b)
                     return
-            raise AssertionError("Unable to check equality for types {0} and {1}".format(
-                type(a), type(b))) from e
+            raise AssertionError(  # pragma: no cover
+                "Unable to check equality for types {0} and {1}".format(
+                    type(a), type(b))) from e
 
     def assertNotEqual(self, a, b):  # pylint: disable=W0221
         """
         Checks that ``a != b``.
         """
         if a is None and b is None:
-            raise AssertionError("a is None, b is too")
+            raise AssertionError("a is None, b is too")  # pragma: no cover
         if a is None and b is not None:
-            return
+            return  # pragma: no cover
         if a is not None and b is None:
-            return
+            return  # pragma: no cover
         try:
             unittest.TestCase.assertNotEqual(self, a, b)
         except ValueError as e:
@@ -354,7 +358,7 @@ class ExtTestCase(unittest.TestCase):
                 if isinstance(a, numpy.ndarray) and isinstance(b, numpy.ndarray):
                     self.assertNotEqualArray(a, b)
                     return
-            raise e
+            raise e  # pragma: no cover
 
     def assertEqualFloat(self, a, b, precision=1e-5):
         """
@@ -411,8 +415,8 @@ class ExtTestCase(unittest.TestCase):
         @see fn fLOG.
         """
         # delayed import
-        from ..loghelper import fLOG as _flog
-        _flog(*args, **kwargs)
+        from ..loghelper import fLOG as _flog  # pragma: no cover
+        _flog(*args, **kwargs)  # pragma: no cover
 
     def profile(self, fct, sort='cumulative', rootrem=None):
         """
@@ -461,11 +465,11 @@ class ExtTestCase(unittest.TestCase):
         @raises                 AssertionError
         """
         if sub is None:
-            return
+            return  # pragma: no cover
         if ensemble is None:
-            raise AssertionError(msg or "'text' is None")
+            raise AssertionError(msg or "'text' is None")  # pragma: no cover
         if sub not in ensemble:
-            raise AssertionError(
+            raise AssertionError(  # pragma: no cover
                 msg or "Unable to find '{}' in\n{}".format(
                     sub, pprint.pformat(ensemble)))
 
@@ -513,7 +517,7 @@ class ExtTestCase(unittest.TestCase):
 
         hs = list(logger.handlers)
         for h in logger.handlers:
-            logger.removeHandler(h)
+            logger.removeHandler(h)  # pragma: no cover
 
         log_capture_string = MyStream()
         ch = StreamHandler(log_capture_string)
@@ -526,7 +530,7 @@ class ExtTestCase(unittest.TestCase):
         logger.removeHandler(ch)
 
         for h in hs:
-            logger.addHandler(h)
+            logger.addHandler(h)  # pragma: no cover
         return res, logs
 
 
@@ -536,8 +540,8 @@ def skipif_appveyor(msg):
     """
     if is_travis_or_appveyor() != 'appveyor':
         return lambda x: x
-    msg = 'Test does not work on appveyor due to: ' + msg
-    return unittest.skip(msg)
+    msg = 'Test does not work on appveyor due to: ' + msg  # pragma: no cover
+    return unittest.skip(msg)  # pragma: no cover
 
 
 def skipif_travis(msg):
@@ -546,8 +550,8 @@ def skipif_travis(msg):
     """
     if is_travis_or_appveyor() != 'travis':
         return lambda x: x
-    msg = 'Test does not work on travis due to: ' + msg
-    return unittest.skip(msg)
+    msg = 'Test does not work on travis due to: ' + msg  # pragma: no cover
+    return unittest.skip(msg)  # pragma: no cover
 
 
 def skipif_circleci(msg):
@@ -556,8 +560,8 @@ def skipif_circleci(msg):
     """
     if is_travis_or_appveyor() != 'circleci':
         return lambda x: x
-    msg = 'Test does not work on circleci due to: ' + msg
-    return unittest.skip(msg)
+    msg = 'Test does not work on circleci due to: ' + msg  # pragma: no cover
+    return unittest.skip(msg)  # pragma: no cover
 
 
 def skipif_azure(msg):
@@ -565,9 +569,9 @@ def skipif_azure(msg):
     Skips a unit test if it runs on :epkg:`azure pipeline`.
     """
     if is_travis_or_appveyor() != 'azurepipe':
-        return lambda x: x
-    msg = 'Test does not work on azure pipeline due to: ' + msg
-    return unittest.skip(msg)
+        return lambda x: x  # pragma: no cover
+    msg = 'Test does not work on azure pipeline due to: ' + msg  # pragma: no cover
+    return unittest.skip(msg)  # pragma: no cover
 
 
 def skipif_azure_linux(msg):
@@ -575,7 +579,7 @@ def skipif_azure_linux(msg):
     Skips a unit test if it runs on :epkg:`azure pipeline` on :epkg:`linux`.
     """
     if not sys.platform.startswith('lin') and is_travis_or_appveyor() != 'azurepipe':
-        return lambda x: x
+        return lambda x: x  # pragma: no cover
     msg = 'Test does not work on azure pipeline (linux) due to: ' + msg
     return unittest.skip(msg)
 
@@ -598,8 +602,8 @@ def skipif_linux(msg):
     """
     if not sys.platform.startswith('lin'):
         return lambda x: x
-    msg = 'Test does not work on travis due to: ' + msg
-    return unittest.skip(msg)
+    msg = 'Test does not work on travis due to: ' + msg  # pragma: no cover
+    return unittest.skip(msg)  # pragma: no cover
 
 
 def skipif_vless(version, msg):
@@ -610,8 +614,8 @@ def skipif_vless(version, msg):
     """
     if sys.version_info[:3] >= version:
         return lambda x: x
-    msg = 'Python {} < {}: {}'.format(sys.version_info[:3], version, msg)
-    return unittest.skip(msg)
+    msg = 'Python {} < {}: {}'.format(sys.version_info[:3], version, msg)  # pragma: no cover
+    return unittest.skip(msg)  # pragma: no cover
 
 
 def unittest_require_at_least(mod, version, msg=""):
@@ -627,7 +631,8 @@ def unittest_require_at_least(mod, version, msg=""):
     """
     v = getattr(mod, '__version__', None)
     if v is None:
-        raise RuntimeError("Module '{}' has no version.".format(mod))
+        raise RuntimeError(  # pragma: no cover
+            "Module '{}' has no version.".format(mod))
     if compare_module_version(v, version) >= 0:
         return lambda x: x
     msg = "Module '{}'  is older than '{}' (= '{}'). {}".format(

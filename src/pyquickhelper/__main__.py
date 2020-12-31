@@ -26,8 +26,8 @@ def main(args, fLOG=print):
         from .cli.simplified_fct import sphinx_rst
         from .imghelper.img_helper import zoom_img
         from .imghelper.img_export import images2pdf
-        from .script_exec import repeat_script
-        from .ftp_cli import ftp_upload
+        from .cli.script_exec import repeat_script
+        from .cli.ftp_cli import ftp_upload
         from .cli.notebook import run_notebook, convert_notebook
         from .loghelper import set_password
         from .filehelper.download_urls_helper import download_urls_in_folder_content

@@ -29,6 +29,11 @@ class TestProfiling(ExtTestCase):
         self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
         self.assertNotEmpty(ps)
 
+        ps, res = profile(simple)
+        res = res.replace('\\', '/')
+        self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
+        self.assertNotEmpty(ps)
+
     def test_profile_df(self):
 
         def simple():
@@ -54,7 +59,7 @@ class TestProfiling(ExtTestCase):
             return df2rst(df)
 
         ps, res = profile(simple, pyinst_format='text')
-        self.assertIn('setup.py', res)
+        self.assertIn('.py', res)
         ps, res = profile(simple, pyinst_format='textu')
         self.assertIn('Recorded', res)
         ps, res = profile(simple, pyinst_format='html')

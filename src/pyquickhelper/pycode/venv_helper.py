@@ -330,7 +330,7 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
     elif hasattr(sys, "base_exec_prefix"):  # pragma: no cover
         exe = sys.base_exec_prefix
     else:
-        exe = sys.exec_prefix
+        exe = sys.exec_prefix  # pragma: no cover
 
     if platform.startswith("win"):
         exe = os.path.join(exe, "python")  # pragma: no cover
@@ -356,12 +356,15 @@ def run_base_script(script, fLOG=None, file=False, is_cmd=False,
                 raise FileNotFoundError(script)  # pragma: no cover
             cmd = " ".join([exe, "-u", '"{0}"'.format(script)])
         else:
-            cmd = " ".join([exe, "-u", "-c", '"{0}"'.format(script)])
+            cmd = " ".join(
+                [exe, "-u", "-c", '"{0}"'.format(script)])  # pragma: no cover
         if argv is not None:
-            cmd += " " + " ".join(argv)
+            cmd += " " + " ".join(argv)  # pragma: no cover
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, **kwargs)
         if len(err) > 0 and true_err(err):
-            p = sys.base_prefix if hasattr(sys, "base_prefix") else sys.prefix
+            p = (sys.base_prefix  # pragma: no cover
+                 if hasattr(sys, "base_prefix")
+                 else sys.prefix)
             raise VirtualEnvError(  # pragma: no cover
                 "unable to run script with {2}\nCMD:\n{3}\nOUT:\n{0}\n[pyqerror]\n{1}".format(out, err, p, cmd))
         return out

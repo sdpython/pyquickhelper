@@ -320,6 +320,12 @@ class TestExtTestCase(ExtTestCase):
             return
         raise AssertionError("unexpected")
 
+    def test_assert_warnings(self):
+        def fw():
+            warnings.warn("g", UserWarning)
+        r = self.assertWarning(fw)
+        self.assertEqual(len(r[1]), 1)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,33 +2,30 @@
 """
 @brief      test tree node (time=5s)
 """
-
-
 import sys
-import os
 import unittest
-
-from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.pycode.open_script_file import open_script, detect_encoding
+from pyquickhelper.pycode.linux_scripts import _sversion
 
 
-class TestOpenScript(unittest.TestCase):
+class TestOpenScript(ExtTestCase):
 
     def test_open_script(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         s = "éé"
         self.assertEqual(len(s), 2)
         file = __file__.replace(".pyc", ".py")
         enc = detect_encoding(file)
-        if enc != "utf-8":
-            raise Exception(enc)
+        self.assertEqual(enc, "utf-8")
         with open_script(file, "r") as f:
             r = f.read()
-        assert len(r) > 0
+        self.assertGreater(len(r), 0)
+        enc = detect_encoding(b"rr")
+        self.assertEqual(enc, None)
+        self.assertRaise(lambda: detect_encoding(1), TypeError)
+
+    def test__sversion(self):
+        self.assertEqual(_sversion(), "PY%d%d" % sys.version_info[:2])
 
 
 if __name__ == "__main__":

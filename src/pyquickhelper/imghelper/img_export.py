@@ -29,7 +29,7 @@ def images2pdf(images, output, fLOG=None):
         if ',' in images:
             images = images.split(',')
         else:
-            images = [images]
+            images = [images]  # pragma: no cover
     elif not isinstance(images, list):
         raise TypeError("Images must be a list.")  # pragma: no cover
 
@@ -48,7 +48,7 @@ def images2pdf(images, output, fLOG=None):
     if isinstance(output, str):
         st = open(output, 'wb')
         close = True
-    else:
+    else:  # pragma: no cover
         close = False
         st = output
 

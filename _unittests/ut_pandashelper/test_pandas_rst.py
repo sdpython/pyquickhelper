@@ -76,6 +76,17 @@ class TestPandasRst(ExtTestCase):
                  """.replace("                 ", "")
         self.assertEqual(rst, exp)
 
+        rst = df2rst(df, align="c", number_format={'A': 'gg'})
+        exp = """+----+---------+-----+
+                 | A  |   AA    | AAA |
+                 +====+=========+=====+
+                 | gg |   xx    | xxx |
+                 +----+---------+-----+
+                 |    | xxxxxxx | xxx |
+                 +----+---------+-----+
+                 """.replace("                 ", "")
+        self.assertEqual(rst, exp)
+
         df = pandas.DataFrame([{"A": "x", "AA": "xx", "AAA": "xxx", 'N': 0.5123456},
                                {"AA": "xxxxxxx", "AAA": "xxx"}])
         rst = df2rst(df, number_format=4)

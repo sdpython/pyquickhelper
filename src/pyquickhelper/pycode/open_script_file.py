@@ -2,18 +2,25 @@
 @file
 @brief A function to read a script and reading the encoding on the first line.
 """
+import os
 
 
 def detect_encoding(filename):
     """
-    guess the encoding from ``# -*- coding: ...``
+    Guesses the encoding from ``# -*- coding: ...``.
 
     @param      filename    filename
     @return                 encoding or None
     """
-    with open(filename, 'rb') as f:
-        enc = f.read(30)
-    s = enc.decode("ascii", errors="ignore").replace(" ", "").replace("\r", "")
+    if isinstance(filename, str) and os.path.exists(filename):
+        with open(filename, 'rb') as f:
+            enc = f.read(30)
+    elif isinstance(filename, bytes):
+        enc = filename
+    else:
+        raise TypeError("Unexpected type %r." % type(filename))
+    s = enc.decode("ascii", errors="ignore")
+    s = s.replace(" ", "").replace("\r", "")
     d = "#-*-coding:"
     if s.startswith(d):
         s = s[len(d):]
@@ -25,7 +32,7 @@ def detect_encoding(filename):
 
 def open_script(filename, mode="r"):
     """
-    open a filename but read the encoding from the first line
+    Open a filename but read the encoding from the first line.
 
     @param      filename        filename
     @param      mode            r, only r
@@ -35,4 +42,4 @@ def open_script(filename, mode="r"):
         encoding = detect_encoding(filename)
         return open(filename, mode, encoding=encoding)
     raise ValueError(  # pragma: no cover
-        "this function only works for mode='r'")
+        "This function only works for mode='r'.")

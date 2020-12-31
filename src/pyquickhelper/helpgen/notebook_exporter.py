@@ -16,7 +16,8 @@ from nbconvert.filters.pandoc import convert_pandoc
 
 def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
     """
-    Overwrites `convert_pandoc <https://github.com/jupyter/nbconvert/blob/master/nbconvert/filters/pandoc.py>`_.
+    Overwrites `convert_pandoc
+    <https://github.com/jupyter/nbconvert/blob/master/nbconvert/filters/pandoc.py>`_.
 
     @param      source          string to convert
     @param      from_format     from format
@@ -30,7 +31,8 @@ def convert_pandoc_rst(source, from_format, to_format, extra_args=None):
 def process_raw_html(source, extra_args=None):
     """
     Replaces the output of
-    `add_menu_notebook <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/
+    `add_menu_notebook
+    <http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/jyquickhelper/
     helper_in_notebook.html#jyquickhelper.helper_in_notebook.add_notebook_menu>`_
     by:
 
@@ -83,8 +85,11 @@ class UpgradedRSTExporter(RSTExporter):
         filename = os.path.join(os.path.dirname(__file__), 'rst_modified.tpl')
         with open(filename, 'r', encoding='utf-8') as f:
             content = f.read()
+        filename = os.path.join(os.path.dirname(__file__), 'rst.tpl')
+        with open(filename, 'r', encoding='utf-8') as f:
+            content2 = f.read()
 
-        dl = DictLoader({'rst_modified.tpl': content})
+        dl = DictLoader({'rst_modified.tpl': content, 'rst.tpl': content2})
         kwargs['extra_loaders'] = [dl]
         RSTExporter.__init__(self, *args, **kwargs)
 
@@ -104,9 +109,20 @@ class UpgradedRSTExporter(RSTExporter):
         yield ('convert_pandoc_rst', convert_pandoc_rst)
         yield ('process_raw_html', process_raw_html)
 
+    output_mimetype = 'text/restructuredtext'
+    export_from_notebook = "reST"
+
     @default('template_file')
     def _template_file_default(self):
         return "rst_modified.tpl"
+
+    @default('file_extension')
+    def _file_extension_default(self):
+        return '.rst'
+
+    @default('template_name')
+    def _template_name_default(self):
+        return 'rst'
 
     @property
     def default_config(self):

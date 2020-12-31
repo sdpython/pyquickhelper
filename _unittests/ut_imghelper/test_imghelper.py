@@ -26,6 +26,8 @@ class TestImgHelper(ExtTestCase):
         obj = zoom_img(data, max_dim=10, out_file=dest)
         self.assertExists(dest)
         self.assertNotEmpty(obj)
+        obj2 = zoom_img(obj, max_dim=10, out_file=dest)
+        self.assertEqual(obj.size, obj2.size)
 
     def test_img_zoom_folder(self):
         temp = get_temp_folder(__file__, "temp_img_zoom_folder")

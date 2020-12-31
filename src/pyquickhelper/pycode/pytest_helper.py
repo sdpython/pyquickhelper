@@ -85,7 +85,7 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
         if not reg.search(name):
             continue
         if not callable(fct):
-            continue
+            continue  # pragma: no cover
         sig = signature(fct)
         if sig.parameters:
             continue

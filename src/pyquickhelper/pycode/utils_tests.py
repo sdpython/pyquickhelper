@@ -140,11 +140,11 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     # delayed import
     from ..loghelper.os_helper import get_user
 
-    if skip_function is None:
+    if skip_function is None:  # pragma: no cover
         from .utils_tests_private import default_skip_function
         skip_function = default_skip_function
 
-    if fLOG is None:
+    if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
 
@@ -154,7 +154,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     stdout_this = stdout if stdout else sys.stdout
     datetime_begin = datetime.now()
 
-    def _find_source(fold):
+    def _find_source(fold):  # pragma: no cover
         fold0 = fold
         exists = os.path.exists(os.path.join(fold, ".gitignore"))
         while not exists:
@@ -181,7 +181,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         pass
 
     # other coverage reports
-    if add_coverage_folder is not None and dump_coverage is not None:
+    if add_coverage_folder is not None and dump_coverage is not None:  # pragma: no cover
         sub = os.path.split(dump_coverage)[0]
         sub = os.path.split(sub)[-1]
         other_cov_folders = find_coverage_report(
@@ -246,7 +246,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         if name.startswith('_') or name.startswith('.'):
             return False
         if name in ('bin', 'dist', 'build'):
-            return False
+            return False  # pragma: no cover
         if '.egg' in name or 'dist_module27' in name:
             return False
         fold = os.path.join(folder, name)
@@ -254,7 +254,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             return False
         init = os.path.join(fold, '__init__.py')
         if not os.path.exists(init):
-            return False
+            return False  # pragma: no cover
         return True
 
     content = [_ for _ in os.listdir(folder) if selec_name(folder, _)]
@@ -271,12 +271,14 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     if not os.path.exists(root_src):
         root_src = os.path.join(src_abs, project_var_name)
     if not os.path.exists(root_src):
-        raise FileNotFoundError("Unable to find '{}'.".format(root_src))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find '{}'.".format(root_src))
     srcp = os.path.relpath(root_src, os.getcwd())
 
     if get_user() in srcp:
-        raise Exception(
-            "The location of the source should not contain '{0}': {1}".format(get_user(), srcp))
+        raise FileNotFoundError(  # pragma: no cover
+            "The location of the source should not contain "
+            "'{0}': {1}".format(get_user(), srcp))
 
     if only_setup_hook:
         tested_module(src_abs, project_var_name, setup_params)
@@ -485,11 +487,11 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         for r in res["tests"]:
             k = str(r[1])
             if "errors=0" not in k or "failures=0" not in k:
-                fLOG("*", r[1], r[0])
+                fLOG("*", r[1], r[0])  # pragma: no cover
 
         fLOG("[main_wrapper_tests] CHECK EXCEPTION -----------------")
         err = res.get("err", "")
-        if len(err) > 0:
+        if len(err) > 0:  # pragma: no cover
             # Remove most of the Sphinx warnings (sphinx < 1.8)
             lines = err.split("\n")
             lines = [

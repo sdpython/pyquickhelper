@@ -9,7 +9,7 @@ Single HTML builders.
 """
 
 from os import path
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, Tuple
 from docutils import nodes
 from docutils.nodes import Node
 from sphinx.builders.html import StandaloneHTMLBuilder
@@ -31,7 +31,7 @@ class CustomSingleFileHTMLBuilder(StandaloneHTMLBuilder):
 
     copysource = False
 
-    def get_outdated_docs(self) -> Union[str, List[str]]:  # type: ignore
+    def get_outdated_docs(self):
         return 'all documents'
 
     def get_target_uri(self, docname: str, typ: str = None) -> str:

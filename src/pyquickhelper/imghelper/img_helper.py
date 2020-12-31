@@ -39,7 +39,7 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
             return res
         from PIL import Image
         obj = Image.open(img)
-    elif hasattr(obj, 'size'):
+    elif hasattr(img, 'size'):
         obj = img
     else:
         raise TypeError(  # pragma: no cover

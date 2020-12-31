@@ -9,9 +9,9 @@ Some links to look:
 """
 
 
-class PQPipError (Exception):
+class PQPipError(Exception):
     """
-    any exception raised by one of the following function
+    Any exception raised by one of the following function.
     """
 
     def __init__(self, *args):
@@ -19,7 +19,7 @@ class PQPipError (Exception):
         @param      args    either a string 3 strings (cmd, out, err)
         """
         if len(args) == 1:
-            Exception.__init__(self, args[0])
+            Exception.__init__(self, args[0])  # pragma: no cover
         else:
             cmd, out, err = args
             mes = "CMD:\n{0}\nOUT:\n{1}\n[piperror]\n{2}".format(cmd, out, err)
@@ -65,7 +65,7 @@ def get_package_info(name=None, start=0, end=-1):
         res = []
         packs = get_packages_list()
         if end == -1:
-            end = len(packs)
+            end = len(packs)  # pragma: no cover
         subp = packs[start:end]
         if len(subp) == 0:
             raise PQPipError(  # pragma: no cover
