@@ -31,6 +31,7 @@ class TestYaml(unittest.TestCase):
                        Python36=os.path.dirname(sys.executable),
                        Python37=os.path.dirname(sys.executable),
                        Python38=os.path.dirname(sys.executable),
+                       Python39=os.path.dirname(sys.executable),
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -80,9 +81,12 @@ class TestYaml(unittest.TestCase):
                 this, "..", "..", "..", ".local.jenkins.win.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34="fake", Python35=os.path.dirname(sys.executable) + "35",
+        context = dict(Python34="fake",
+                       Python35=os.path.dirname(sys.executable) + "35",
                        Python36=os.path.dirname(sys.executable) + "36",
                        Python37=os.path.dirname(sys.executable) + "37",
+                       Python38=os.path.dirname(sys.executable) + "38",
+                       Python39=os.path.dirname(sys.executable) + "39",
                        Python27="fake2", Anaconda3=None, Anaconda2=None,
                        WinPython36=None, root_path="ROOT", project_name="pyquickhelper")
         obj, name = load_yaml(yml, context=context, platform="win32")
@@ -95,7 +99,7 @@ class TestYaml(unittest.TestCase):
                 raise Exception(r)
             if r[1][0] != "python" and r[1][0] != "INFO":
                 raise Exception(r)
-        if len(res) != 10:
+        if len(res) != 4:
             rows = [str(_) for _ in res]
             raise Exception("len(res)={0}\n{1}".format(
                 len(res), "\n".join(rows)))
@@ -103,9 +107,9 @@ class TestYaml(unittest.TestCase):
         doc = [[s[0] for s in seq if s[1] is not None] for seq, _ in res]
         fLOG(doc)
         doc = [s for s in doc if "documentation" in s]
-        if len(doc) != 2:
-            raise Exception("len(doc)={0}\n{1}".format(
-                len(doc), "\n".join(str(_) for _ in doc)))
+        if len(doc) != 1:
+            raise AssertionError(
+                "len(doc)={0}\n{1}".format(len(doc), "\n".join(str(_) for _ in doc)))
         fLOG("**", doc)
 
     def test_jconvert_sequence_into_batch_file(self):
@@ -127,10 +131,12 @@ class TestYaml(unittest.TestCase):
                 this, "..", "..", "..", ".local.jenkins.%s.yml" % plat))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
-        context = dict(Python34="fake", Python35="C:/Python35_x64",
+        context = dict(Python34="fake",
+                       Python35="C:/Python35_x64",
                        Python36="C:/Python36_x64",
                        Python37="C:/Python37_x64",
                        Python38="C:/Python38_x64",
+                       Python39="C:/Python39_x64",
                        Python27=None, Anaconda3=None, Anaconda2=None,
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
@@ -156,16 +162,20 @@ class TestYaml(unittest.TestCase):
         set_name = "SET" if platform.startswith("win") else "export"
         vers_ = "%d.%d" % sys.version_info[:2]
         conv = [
-            _ for _ in convs if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+            _ for _ in convs
+            if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
         if len(conv) != 3:
-            vers_ = "3.7"
-            vers = "37"
+            vers_ = "3.9"
+            vers = "39"
             conv = [
-                _ for _ in convs if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
-        if len(conv) not in (3, 5, 4, 6, 7):
+                _ for _ in convs
+                if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+        if len(conv) not in (3, 4, 5, 6, 7):
             rows = [str(_) for _ in conv]
-            raise Exception("len(convs)={3}-len(conv)={0}\n----\n{1}\n-----\n{2}\n***\n{4}".format(
-                len(conv), "\n".join(conv), "\n".join(rows), len(convs), "\n*****\n".join(convs)))
+            raise AssertionError(
+                "len(convs)={3}-len(conv)={0}\n----\n{1}\n-----\n{2}\n***\n{4}".format(
+                    len(conv), "\n".join(conv), "\n".join(rows), len(convs),
+                    "\n*****\n".join(convs)))
         conv = conv[0]
         if platform.startswith("win"):
             expected = """
@@ -432,92 +442,7 @@ class TestYaml(unittest.TestCase):
         fLOG("number of jobs", len(res))
         convs = [jenkins_final_postprocessing(
             _, True) for _ in convs if "VERSION=2.7" in _]
-        self.assertTrue(len(convs) > 0)
-        conv = convs[0]
-
-        if platform.startswith("win"):
-            expected = """
-            @echo off
-            set PATH0=%PATH%
-            SET DIST=std
-            SET VERSION=2.7
-            SET NAME=UT
-            SET TIMEOUT=899
-
-            @echo AUTOMATEDSETUP
-            set current=ROOT\\pyquickhelper\\%NAME_JENKINS%
-
-            @echo interpreter=C:\\Python27_x64\\python
-
-            @echo CREATE VIRTUAL ENVIRONMENT in ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv
-            if not exist "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv" mkdir "ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv"
-            set KEEPPATH=%PATH%
-            set PATH=C:\\Python27_x64;%PATH%
-            "C:\\Python27_x64\\python" -m virtualenv ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv --system-site-packages
-            set PATH=%KEEPPATH%
-            if %errorlevel% neq 0 exit /b %errorlevel%
-
-            @echo INSTALL
-            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            pip install --upgrade pip
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            pip install --no-cache-dir --no-deps --index http://localhost:8067/simple/ jyquickhelper tkinterquickhelper --extra-index-url=https://pypi.python.org/simple/
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            pip install -r requirements.txt
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            pip uninstall -y pyquickhelper
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            python --version
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            pip freeze
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            pip freeze > pip_freeze.txt
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            set PYTHONPATH=src
-            if %errorlevel% neq 0 exit /b %errorlevel%
-
-            @echo BEFORE_SCRIPT
-            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            pip uninstall jyquickhelper
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            pip install bin\\jyquickhelper-0.2-py2-none-any.whl
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            C:\\Python37_x64\\python -u setup.py copy27
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            cd dist_module27
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            set JOB_NAME=UT
-
-            @echo SCRIPT
-            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -u setup.py unittests
-            if %errorlevel% neq 0 exit /b %errorlevel%
-
-            @echo AFTER_SCRIPT
-            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -u setup.py bdist_wheel
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            $PYINT -u src\\pyquicksetup\\setup.py bdist_wheel
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            copy dist\\*.whl ROOT\\pyquickhelper\\..\\..\\local_pypi\\local_pypi_server
-            if %errorlevel% neq 0 exit /b %errorlevel%
-
-            @echo DOCUMENTATION
-            set PATH=ROOT\\pyquickhelper\\%NAME_JENKINS%\\_venv\\Scripts;%PATH%
-            python -u setup.py build_sphinx
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            xcopy /E /C /I /Y _doc\\sphinxdoc\\build\\html dist\\html
-            if %errorlevel% neq 0 exit /b %errorlevel%
-            """.replace("            ", "").strip("\n \t\r")
-            val = conv.strip("\n \t\r")
-            if expected != val:
-                mes = "EXP:\n{0}\n###########\nGOT:\n---\n{1}\n---".format(
-                    expected, val)
-                for i, (a, b) in enumerate(zip(expected.split("\n"), val.split("\n"))):
-                    if a != b:
-                        raise Exception(
-                            "error on line {3}:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes, i))
-                raise Exception(mes)
+        self.assertEqual(len(convs), 0)
 
 
 if __name__ == "__main__":

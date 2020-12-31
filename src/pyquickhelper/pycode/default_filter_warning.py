@@ -37,9 +37,16 @@ def default_filter_warning(w):  # pragma: no cover
         if "matplotlib" in w.filename:
             if "findfont: Font family" in str(w.message):
                 return False
+        if "pyquickhelper" in w.filename:
+            if "pymyinstall" in str(w.message):
+                return False
     elif isinstance(w.message, MatplotlibDeprecationWarning):
         if "basemap" in w.filename:
             if "The ishold function was deprecated in version 2.0." in str(w.message):
+                return False
+    elif isinstance(w.message, ResourceWarning):
+        if "pyquickhelper" in w.filename:
+            if "Unable to retrieve content from" in str(w):
                 return False
     elif isinstance(w.message, DeprecationWarning):
         if "RemovedInSphinx40Warning" in str(w):

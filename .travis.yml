@@ -1,4 +1,4 @@
-dist: xenial
+dist: focal
 sudo: true
 language: python
 matrix:

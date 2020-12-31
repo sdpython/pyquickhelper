@@ -27,6 +27,7 @@ class TestYamlJenkinsBug(ExtTestCase):
         engines = dict(Python38="/usr/bin/python3.8",
                        Python37="/usr/bin/python3.7",
                        Python36="/usr/bin/python3.6",
+                       Python39="/usr/bin/python3.9",
                        root_path="./rootpath/")
         vers = "%d%d" % sys.version_info[:2]
 
