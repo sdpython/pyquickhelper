@@ -409,8 +409,9 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                     PyLinterRunV(opt, do_exit=False)
 
     pylint_lines = sout.getvalue().split('\n')
-    pylint_lines = [_ for _ in pylint_lines if '(pylint)' in _ and fkeep(_) and _[
-        0] != ' ' and ':' in _]
+    pylint_lines = [
+        _ for _ in pylint_lines if (
+            '(pylint)' in _ and fkeep(_) and _[0] != ' ' and len(_.split(':')) > 2)]
     pylint_lines = [_ for _ in pylint_lines if not _.startswith(
         "except ") and not _.startswith("else:") and not _.startswith(
         "try:") and "# noqa" not in _]
