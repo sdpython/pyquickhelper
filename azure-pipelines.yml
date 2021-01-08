@@ -71,7 +71,8 @@ jobs:
     displayName: 'export'
   - script: gcc --version
     displayName: 'gcc version'
-  - script: brew install upgrade p7zip
+  - script: brew upgrade p7zip
+    continueOnError: true
     displayName: 'Install p7zip'
   - script: brew install pandoc
     displayName: 'Install Pandoc'
