@@ -1,6 +1,7 @@
 """
 @file
-@brief Modified version of `runipy.notebook_runner <https://github.com/paulgb/runipy/blob/master/runipy/notebook_runner.py>`_.
+@brief Modified version of `runipy.notebook_runner
+<https://github.com/paulgb/runipy/blob/master/runipy/notebook_runner.py>`_.
 """
 
 import base64
@@ -127,10 +128,11 @@ class NotebookRunner(object):
         self.code_init = code_init
         self._filename = filename if filename is not None else "memory"
         self.replacements = replacements
-        self.init_args = dict(profile_dir=profile_dir, working_dir=working_dir,
-                              comment=comment, fLOG=fLOG, theNotebook=theNotebook, code_init=code_init,
-                              kernel_name="python", log_level="30", extended_args=None,
-                              kernel=kernel, filename=filename, replacements=replacements)
+        self.init_args = dict(
+            profile_dir=profile_dir, working_dir=working_dir,
+            comment=comment, fLOG=fLOG, theNotebook=theNotebook, code_init=code_init,
+            kernel_name="python", log_level="30", extended_args=None,
+            kernel=kernel, filename=filename, replacements=replacements)
         args = []
 
         if profile_dir:
@@ -161,7 +163,7 @@ class NotebookRunner(object):
                             "ignore", category=ResourceWarning)
                         self.km.start_kernel(extra_arguments=args)
                 except Exception as e:  # pragma: no cover
-                    raise Exception(
+                    raise NotebookKernelError(
                         "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
 
                 if platform.system() == 'Darwin':
@@ -361,8 +363,8 @@ class NotebookRunner(object):
                 tr = [ansi_escape.sub('', _)
                       for _ in reply['content']['traceback']]
             except KeyError:  # pragma: no cover
-                tr = ["No traceback, available keys in reply['content']"] + \
-                    list(reply['content'])
+                tr = (["No traceback, available keys in reply['content']"] +
+                      list(reply['content']))
             traceback_text = '\n'.join(tr)
             self.fLOG("[nberror]\n", traceback_text)
             if self.detailed_log:
@@ -487,12 +489,13 @@ class NotebookRunner(object):
                 scode = [code]
             else:
                 scode = ""
-            mes = "FILENAME\n{10}:1:1\n{7}\nCELL status={8}, reason={9} -- {4} length={5} -- {6}:\n-----------------\n{0}" + \
-                  "\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}"
+            mes = ("FILENAME\n{10}:1:1 - cell:{11}\n{7}\nCELL status={8}, reason='{9}' -- {4} "
+                   "length={5} -- {6}:\n-----------------\n{0}"
+                   "\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}")
             raise NotebookError(mes.format(
                 code, traceback_text, sraw, sreply, index_cell, len(
                     code), scode, self.comment, status, reason,
-                self._filename))
+                self._filename, index_cell))
         if self.detailed_log:
             self.detailed_log('[run_cell] status={0}'.format(status))
         return outs
@@ -916,9 +919,10 @@ class NotebookRunner(object):
         @param      additional_path     additional paths (as a list or None if none)
         @param      valid               if not None, valid is a function which returns whether
                                         or not the cell should be executed or not, if the function
-                                        returns None, the execution of the notebooks and skip the execution
-                                        of the other cells
-        @param      clean_function      function which cleans a cell's code before executing it (None for None)
+                                        returns None, the execution of the notebooks and skip
+                                        the execution of the other cells
+        @param      clean_function      function which cleans a cell's code before executing
+                                        it (None for None)
         @return                         dictionary with statistics
 
         The function adds the local variable ``theNotebook`` with
