@@ -315,14 +315,15 @@ class NotebookRunner(object):
         except AttributeError:  # pragma: no cover
             return iscell, cell.input
 
-    def run_cell(self, index_cell, cell, clean_function=None):
+    def run_cell(self, index_cell, cell, clean_function=None, max_nbissue=15):
         '''
         Runs a notebook cell and update the output of that cell inplace.
 
-        @param      index_cell          index of the cell
-        @param      cell                cell to execute
-        @param      clean_function      cleaning function to apply to the code before running it
-        @return                         output of the cell
+        :param index_cell: index of the cell
+        :param cell: cell to execute
+        :param clean_function: cleaning function to apply to the code before running it
+        :param max_nbissue: number of times an issue can be raised before stopping
+        :return: output of the cell
         '''
         if self.detailed_log:
             self.detailed_log("[run_cell] index_cell={0} clean_function={1}".format(
@@ -376,19 +377,25 @@ class NotebookRunner(object):
 
         outs = list()
         nbissue = 0
+        statuses = [status]
         while True:
             try:
                 msg = self.kc.get_iopub_msg(timeout=1)
                 if msg['msg_type'] == 'status':
                     if msg['content']['execution_state'] == 'idle':
+                        status = 'ok'
+                        statuses.append(status)
                         break
-            except Empty:  # pragma: no cover
-                # execution state should return to idle before the queue becomes empty,
+                statuses.append(status)
+            except Empty as e:  # pragma: no cover
+                # execution state should return to idle before
+                # the queue becomes empty,
                 # if it doesn't, something bad has happened
                 status = "error"
+                statuses.append(status)
                 reason = "exception Empty was raised"
                 nbissue += 1
-                if nbissue > 10:
+                if nbissue > max_nbissue:
                     # the notebook is empty
                     return ""
                 else:
@@ -490,12 +497,16 @@ class NotebookRunner(object):
             else:
                 scode = ""
             mes = ("FILENAME\n{10}:1:1 - cell:{11}\n{7}\nCELL status={8}, reason='{9}' -- {4} "
-                   "length={5} -- {6}:\n-----------------\n{12}\n{11}\n-----------------\n{0}"
+                   "length={5} -- {6}:\n-----------------\n"
+                   "content={12}\nmsg_type: {13} nbissue={14}"
+                   "\nstatuses={15}"
+                   "\n-----------------\n{0}"
                    "\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}")
             raise NotebookError(mes.format(
-                code, traceback_text, sraw, sreply, index_cell,
-                len(code), scode, self.comment, status, reason,
-                self._filename, index_cell, content, msg_type))
+                code, traceback_text, sraw, sreply, index_cell,  # 0-4
+                len(code), scode, self.comment, status, reason,  # 5-9
+                self._filename, index_cell, content, msg_type, nbissue,  # 10-14
+                statuses))  # 15
         if self.detailed_log:
             self.detailed_log('[run_cell] status={0}'.format(status))
         return outs
