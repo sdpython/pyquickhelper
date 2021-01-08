@@ -490,12 +490,12 @@ class NotebookRunner(object):
             else:
                 scode = ""
             mes = ("FILENAME\n{10}:1:1 - cell:{11}\n{7}\nCELL status={8}, reason='{9}' -- {4} "
-                   "length={5} -- {6}:\n-----------------\n{0}"
+                   "length={5} -- {6}:\n-----------------\n{12}\n{11}\n-----------------\n{0}"
                    "\n-----------------\nTRACE:\n{1}\nRAW:\n{2}REPLY:\n{3}")
             raise NotebookError(mes.format(
-                code, traceback_text, sraw, sreply, index_cell, len(
-                    code), scode, self.comment, status, reason,
-                self._filename, index_cell))
+                code, traceback_text, sraw, sreply, index_cell,
+                len(code), scode, self.comment, status, reason,
+                self._filename, index_cell, content, msg_type))
         if self.detailed_log:
             self.detailed_log('[run_cell] status={0}'.format(status))
         return outs
