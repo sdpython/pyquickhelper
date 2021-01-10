@@ -25,14 +25,15 @@ class TestPwdHelper(ExtTestCase):
     @skipif_azure('stuck')
     def test_password_keyring(self):
         pwd = 'bibi'
-        set_password('pyq', 'jj', pwd, lib='keyring')
+        try:
+            set_password('pyq', 'jj', pwd, lib='keyring')
+        except Exception as e:
+            if "Prompt dismissed" in str(e):
+                return
+            raise e
         pwd2 = get_password('pyq', 'jj', lib='keyring')
         self.assertEqual(pwd, pwd2)
 
-    @skipif_appveyor('stuck')
-    @skipif_travis('stuck')
-    @skipif_circleci('stuck')
-    @skipif_azure('stuck')
     def test_password_cryptfile(self):
         os.environ['UTTESTPYQ'] = 'bypass'
         pwd = 'bibi'
