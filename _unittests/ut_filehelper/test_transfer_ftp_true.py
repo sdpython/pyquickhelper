@@ -43,6 +43,10 @@ class TestTransferFTPTrue(ExtTestCase):
 
         try:
             web = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
+        except ftplib.error_perm as e:
+            if "Non-anonymous sessions must use encryption." in str(e):
+                return
+            raise e
         except ftplib.error_temp as e:
             if "421 Home directory not available" in str(e):
                 return
@@ -90,6 +94,10 @@ class TestTransferFTPTrue(ExtTestCase):
         # one
         try:
             ftp = TransferFTP(ftpsite, user, pwd, fLOG=fLOG)
+        except ftplib.error_perm as e:
+            if "Non-anonymous sessions must use encryption." in str(e):
+                return
+            raise e
         except ftplib.error_temp as e:
             if "421 Home directory not available" in str(e):
                 return
