@@ -7,7 +7,7 @@ from os import getenv
 
 
 def set_password(system, username, password, lib='keyrings.cryptfile',
-                 env='KEYRING_CRYPTFILE_PASSWORD'):
+                 env='KEYRING_CRYPTFILE_PASSWORD', ask=True):
     """
     Stores a password.
     By default, uses :epkg:`keyring` or
@@ -18,6 +18,7 @@ def set_password(system, username, password, lib='keyrings.cryptfile',
     :param password: password
     :param lib: which lib to use to store the password
     :param env: see below
+    :param ask: ask for password if missing
 
     If `lib == 'keyrings.cryptfile'`, the function used the environment
     variable *env*, if present, no password is asked.
@@ -36,14 +37,16 @@ def set_password(system, username, password, lib='keyrings.cryptfile',
     if lib == 'keyrings.cryptfile':
         from keyrings.cryptfile.cryptfile import CryptFileKeyring
         kr = CryptFileKeyring()
-        kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD") or getpass()
+        kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD")
+        if kr.keyring_key is None and ask:
+            kr.keyring_key = getpass()
         kr.set_password(system, username, password)
     raise RuntimeError(
         "Unknown library '{}'.".format(lib))
 
 
 def get_password(system, username, lib='keyrings.cryptfile',
-                 env='KEYRING_CRYPTFILE_PASSWORD'):
+                 env='KEYRING_CRYPTFILE_PASSWORD', ask=True):
     """
     Restores a password.
     By default, uses :epkg:`keyring`.
@@ -52,6 +55,7 @@ def get_password(system, username, lib='keyrings.cryptfile',
     :param username: username
     :param lib: which lib to use to store the password
     :param env: see below
+    :param ask: ask for password if missing
     :return: password
 
     If `lib == 'keyrings.cryptfile'`, the function used the environment
@@ -68,7 +72,9 @@ def get_password(system, username, lib='keyrings.cryptfile',
     if lib == 'keyrings.cryptfile':
         from keyrings.cryptfile.cryptfile import CryptFileKeyring
         kr = CryptFileKeyring()
-        kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD") or getpass()
+        kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD")
+        if kr.keyring_key is None and ask:
+            kr.keyring_key = getpass()
         return kr.get_password(system, username)
     raise RuntimeError(
         "Unknown library '{}'.".format(lib))

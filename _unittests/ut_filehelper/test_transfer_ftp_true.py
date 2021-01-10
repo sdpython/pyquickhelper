@@ -26,8 +26,8 @@ class TestTransferFTPTrue(ExtTestCase):
 
         prefix = "pyquickhelper,"
         try:
-            user = get_password("web", prefix + "user")
-            pwd = get_password("web", prefix + "pwd")
+            user = get_password("web", prefix + "user", ask=False)
+            pwd = get_password("web", prefix + "pwd", ask=False)
             ftpsite = get_password("web", prefix + "ftp")
         except RuntimeError:
             user = None
@@ -66,9 +66,9 @@ class TestTransferFTPTrue(ExtTestCase):
 
         prefix = "pyquickhelper,"
         try:
-            user = get_password("web", prefix + "user")
-            pwd = get_password("web", prefix + "pwd")
-            ftpsite = get_password("web", prefix + "ftp")
+            user = get_password("web", prefix + "user", ask=False)
+            pwd = get_password("web", prefix + "pwd", ask=False)
+            ftpsite = get_password("web", prefix + "ftp", ask=False)
         except RuntimeError:
             user = None
             pwd = None
