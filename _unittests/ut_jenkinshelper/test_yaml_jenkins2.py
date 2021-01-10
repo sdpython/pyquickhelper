@@ -100,8 +100,12 @@ class TestYamlJenkins2(unittest.TestCase):
                     raise Exception(conf)
                 if platform == 'linux' and "anything/pyquickhelper/$NAME_JENKINS" not in conf:
                     raise Exception(conf)
-            if "pyquickhelper_UT_%d%d_std" % sys.version_info[:2] in conf:
-                nb += 1
+            if use_url:
+                if "pyquickhelper_UT_39_std" in conf:
+                    nb += 1
+            else:
+                if "pyquickhelper_UT_%d%d_std" % sys.version_info[:2] in conf:
+                    nb += 1
             if "H H(5-6) * * 0" in conf:
                 sch += 1
             if "H H(6-7) * * 0" in conf:

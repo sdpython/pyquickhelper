@@ -130,7 +130,9 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
 
     Example::
 
-        from pyquickhelper.jenkinshelper import JenkinsExt, setup_jenkins_server_yml, default_jenkins_jobs, default_engines
+        from pyquickhelper.jenkinshelper (
+            import JenkinsExt, setup_jenkins_server_yml,
+            default_jenkins_jobs, default_engines)
 
         user = "<user>"
         password = "<password>"
@@ -141,10 +143,12 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
                                  overwrite=True, delete_first=False,
                                  location="d:\\\\jenkins\\\\pymy")
 
-    See `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_
-    (Windows) or
-    `.local.jenkins.lin.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.lin.yml>`_
-    (Linux)
+    See `.local.jenkins.win.yml
+    <https://github.com/sdpython/pyquickhelper/blob/
+    master/.local.jenkins.win.yml>`_ (Windows) or
+    `.local.jenkins.lin.yml
+    <https://github.com/sdpython/pyquickhelper/blob/
+    master/.local.jenkins.lin.yml>`_ (Linux)
     about the syntax of a :epkg:`yml` job description.
     If *modules* is None, it is replaced by the results of
     @see fn default_jenkins_jobs.

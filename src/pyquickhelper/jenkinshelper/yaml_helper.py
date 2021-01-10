@@ -137,11 +137,11 @@ def interpret_instruction(inst, variables=None):
 
     Example of a statement::
 
-        - if [ ${PYTHON} == "C:\\\\Python370_x64" ] then python setup.py build_sphinx fi
+        - if [ ${PYTHON} == "C:\\\\Python391_x64" ] then python setup.py build_sphinx fi
 
     Another example::
 
-        - if [ ${VERSION} == "3.7" and ${DIST} == "std" ]
+        - if [ ${VERSION} == "3.9" and ${DIST} == "std" ]
           then
             --CMD=$PYINT -u scikit-learn/bench_plot_polynomial_features_partial_fit.py;;
             --NAME=SKL_POLYF_PF;;
@@ -644,8 +644,10 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                 if isinstance(conv, list):
                     conv = ["export NAME_JENKINS=" +
                             name + "\n" + _ for _ in conv]
+                    conv.append("export $(cat ~/.profile)")
                 else:
-                    conv = "export NAME_JENKINS=" + name + "\n" + conv
+                    conv = ("export NAME_JENKINS=" + name +
+                            "\nexport $(cat ~/.profile)\n" + conv)
 
             import jenkins
             try:
