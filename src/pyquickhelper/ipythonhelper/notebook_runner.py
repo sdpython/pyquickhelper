@@ -393,7 +393,7 @@ class NotebookRunner(object):
                 # if it doesn't, something bad has happened
                 status = "error"
                 statuses.append(status)
-                reason = "exception Empty was raised"
+                reason = "exception Empty was raised (%r)" % e
                 nbissue += 1
                 if nbissue > max_nbissue:
                     # the notebook is empty
