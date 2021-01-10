@@ -13,6 +13,7 @@ from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
 from pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
 from pyquickhelper.loghelper.os_helper import get_machine, get_user
+from pyquickhelper.loghelper import get_password
 
 
 class TestTransferFTPTrue(ExtTestCase):
@@ -23,14 +24,11 @@ class TestTransferFTPTrue(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore', DeprecationWarning)
-            import keyring
         prefix = "pyquickhelper,"
         try:
-            user = keyring.get_password("web", prefix + "user")
-            pwd = keyring.get_password("web", prefix + "pwd")
-            ftpsite = keyring.get_password("web", prefix + "ftp")
+            user = get_password("web", prefix + "user")
+            pwd = get_password("web", prefix + "pwd")
+            ftpsite = get_password("web", prefix + "ftp")
         except RuntimeError:
             user = None
             pwd = None
@@ -66,14 +64,11 @@ class TestTransferFTPTrue(ExtTestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        with warnings.catch_warnings():
-            warnings.simplefilter('ignore', DeprecationWarning)
-            import keyring
         prefix = "pyquickhelper,"
         try:
-            user = keyring.get_password("web", prefix + "user")
-            pwd = keyring.get_password("web", prefix + "pwd")
-            ftpsite = keyring.get_password("web", prefix + "ftp")
+            user = get_password("web", prefix + "user")
+            pwd = get_password("web", prefix + "pwd")
+            ftpsite = get_password("web", prefix + "ftp")
         except RuntimeError:
             user = None
             pwd = None

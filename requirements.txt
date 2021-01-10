@@ -18,6 +18,7 @@ jupyter_sphinx>=0.2.0
 jyquickhelper>=0.3.128
 keyring
 keyrings.alt
+keyrings.cryptfile
 Mako
 matplotlib
 mistune

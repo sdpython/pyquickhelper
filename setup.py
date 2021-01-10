@@ -262,7 +262,8 @@ if not r:
         extras_require={
             'cli': ['tkinterquickhelper', 'pysftp', 'fire'],
             # cryptography
-            'filehelper': ['cffi', 'cryptography', 'pylzma', 'pysftp'],
+            'filehelper': ['cffi', 'cryptography', 'pylzma', 'pysftp',
+                           'keyrings.cryptfile'],
             'jenkinshelper': ['python-jenkins>=1.0.0', 'pyyaml'],
             'loghelper': ['psutil'],
             'all': [
@@ -272,6 +273,7 @@ if not r:
                 'cryptography',
                 "docformatter",
                 "docutils",
+                'flake8',
                 'fire',
                 "IPython>=5.0.0",
                 "jupyter",
@@ -279,6 +281,7 @@ if not r:
                 "jupyter_sphinx",
                 "jyquickhelper",
                 "keyring",
+                "keyrings.cryptfile",
                 "matplotlib",
                 "metakernel",
                 "multi_key_dict",
