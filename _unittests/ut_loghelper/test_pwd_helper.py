@@ -34,6 +34,10 @@ class TestPwdHelper(ExtTestCase):
         pwd2 = get_password('pyq', 'jj', lib='keyring')
         self.assertEqual(pwd, pwd2)
 
+    @skipif_appveyor('stuck')
+    @skipif_travis('stuck')
+    @skipif_circleci('stuck')
+    @skipif_azure('stuck')
     def test_password_cryptfile(self):
         os.environ['UTTESTPYQ'] = 'bypass'
         pwd = 'bibi'
