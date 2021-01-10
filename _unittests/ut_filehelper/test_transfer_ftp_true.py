@@ -28,7 +28,7 @@ class TestTransferFTPTrue(ExtTestCase):
         try:
             user = get_password("web", prefix + "user", ask=False)
             pwd = get_password("web", prefix + "pwd", ask=False)
-            ftpsite = get_password("web", prefix + "ftp")
+            ftpsite = get_password("web", prefix + "ftp", ask=False)
         except RuntimeError:
             user = None
             pwd = None
