@@ -41,6 +41,7 @@ def set_password(system, username, password, lib='keyrings.cryptfile',
         if kr.keyring_key is None and ask:
             kr.keyring_key = getpass()
         kr.set_password(system, username, password)
+        return
     raise RuntimeError(
         "Unknown library '{}'.".format(lib))
 
