@@ -43,7 +43,7 @@ class TestTransferFTPTrue(ExtTestCase):
         web = TransferFTP(ftpsite, user, pwd, fLOG=fLOG, ftps='SFTP')
         return web
 
-    def test_transfer_ftp_true(self):
+    def test_transfer_sftp_true(self):
         fLOG(__file__, self._testMethodName, OutputPrint=__name__ == "__main__")
 
         web = self.get_web()
@@ -56,7 +56,7 @@ class TestTransferFTPTrue(ExtTestCase):
         web.close()
         fLOG([pf])
 
-    def test_transfer_ftp_start_transfering(self):
+    def test_transfer_sftp_start_transfering(self):
         fLOG(
             __file__,
             self._testMethodName,
