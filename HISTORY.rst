@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2021-01-08 - 0.00Mb
+current - 2021-01-13 - 0.00Mb
 =============================
+
+* `325`: Implements a scenario with keyrings.cryptfile for get_password, set_password (2021-01-10)
+
+1.10.3508 - 2021-01-08 - 2.10Mb
+===============================
 
 * `324`: Fixes issue with jupyter-client-6.1.10 on Windows (2021-01-08)
 
