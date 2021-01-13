@@ -12,6 +12,7 @@ import sys
 import shutil
 import warnings
 from io import StringIO
+from nbconvert.exporters.base import ExporterNameError
 
 from .utils_sphinx_doc_helpers import HelpGenException
 from .conf_path_tools import find_latex_path, find_pandoc_path
@@ -219,6 +220,8 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
             # We do nothing in this case.
             exc = e
     except (AttributeError, FileNotFoundError, ValueError) as e:
+        exc = e
+    except ExporterNameError as e:  # pragma: no cover
         exc = e
     sys.stdout = memo_out
     sys.stderr = memo_err
