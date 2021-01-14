@@ -15,7 +15,9 @@ def run_nbconvert(argv):
     try:
         nbconvert_main(argv=argv)
     except Exception as e:
-        warnings.warn(e)
+        warnings.warn(
+            "[run_nbconvert-ERROR] Unable to to convert a notebook with "
+            "args=%r due to %r." % (argv, e), RuntimeWarning)
 
 
 def main():

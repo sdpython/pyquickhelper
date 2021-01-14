@@ -560,9 +560,17 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             "No latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(
                                 len(tex), notebook, "\n".join(thisfiles)))
                     tex = list(tex)[0]
-                    post_process_latex_output_any(
-                        tex, custom_latex_processing=None, nblinks=nblinks,
-                        remove_unicode=remove_unicode_latex, fLOG=fLOG)
+                    try:
+                        post_process_latex_output_any(
+                            tex, custom_latex_processing=None, nblinks=nblinks,
+                            remove_unicode=remove_unicode_latex, fLOG=fLOG)
+                    except FileNotFoundError as e:
+                        mes = ("[_process_notebooks_in-ERROR] Unable to to convert into latex"
+                               "notebook %r due to %r.") % (rex, e)
+                        warnings.warn(mes, RuntimeWarning)
+                        fLOG(mes)
+                        continue
+
                     # -interaction=batchmode
                     c = '"{0}" "{1}" -max-print-line=900 -output-directory="{2}"'.format(
                         lat, tex, os.path.split(tex)[0])

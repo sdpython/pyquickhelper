@@ -558,8 +558,9 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
         text = f.read()
 
     # mathjax
-    text = text.replace("https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
-                        "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
+    text = text.replace(
+        "https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS_HTML",
+        "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML")
 
     # notebook replacements
     if fLOG:
