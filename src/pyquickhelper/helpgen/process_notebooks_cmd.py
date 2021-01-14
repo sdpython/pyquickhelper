@@ -3,6 +3,8 @@
 @brief Calls :epkg:`nbconvert` in command line for latex and pdf.
 """
 import sys
+import warnings
+
 try:
     from nbconvert.nbconvertapp import main as nbconvert_main
 except AttributeError as e:
@@ -10,7 +12,10 @@ except AttributeError as e:
 
 
 def run_nbconvert(argv):
-    nbconvert_main(argv=argv)
+    try:
+        nbconvert_main(argv=argv)
+    except Exception as e:
+        warnings.warn(e)
 
 
 def main():
