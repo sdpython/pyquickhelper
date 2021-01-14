@@ -6,10 +6,10 @@
 import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper import fLOG
-from pyquickhelper.helpgen.sphinx_main import process_notebooks
-from pyquickhelper.helpgen.sphinx_main import setup_environment_for_help
+from nbconvert.preprocessors.svg2pdf import SVG2PDFPreprocessor
+from pyquickhelper.loghelper import fLOG, run_cmd
+from pyquickhelper.helpgen.sphinx_main import (
+    process_notebooks, setup_environment_for_help)
 from pyquickhelper.helpgen.post_process import post_process_latex
 from pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 
@@ -42,9 +42,15 @@ class TestNoteBooksBugSvg(ExtTestCase):
             return
 
         setup_environment_for_help()
+        obj = SVG2PDFPreprocessor()
+        self.assertIn('inkscape', obj.inkscape)
+        cmd = '%s --version' % obj.inkscape
+        out, err = run_cmd(cmd, wait=True, shell=False)
+        self.assertIn('inkscape', out.lower())
+        vers = obj.inkscape_version
+        self.assertIn('inkscape', out.lower())
 
         res = process_notebooks(nbs, temp, temp, formats=formats)
-        fLOG("*****", len(res))
         for _ in res:
             fLOG(_)
             self.assertExists(_[0])
