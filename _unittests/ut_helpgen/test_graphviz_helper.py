@@ -4,6 +4,7 @@
 
 import sys
 import os
+import warnings
 from textwrap import dedent
 import unittest
 
@@ -30,7 +31,12 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
         """)
         import matplotlib.pyplot as plt
         fig, ax = plt.subplots(1, 1)
-        plot_graphviz(dot, ax=ax)
+        try:
+            plot_graphviz(dot, ax=ax)
+        except FileNotFoundError as e:
+            if "No such file or directory: 'dot'" in str(e):
+                warnings.warn("graphviz not installed: %r." % e)
+                return
         plt.close('all')
 
     @skipif_travis('graphviz is not installed')
@@ -52,7 +58,12 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
         img = os.path.join(temp, "dot.png")
         dotf = os.path.join(temp, "dot.dot")
         fig, ax = plt.subplots(1, 1)
-        plot_graphviz(dot, ax=ax, temp_dot=dotf, temp_img=img)
+        try:
+            plot_graphviz(dot, ax=ax, temp_dot=dotf, temp_img=img)
+        except FileNotFoundError as e:
+            if "No such file or directory: 'dot'" in str(e):
+                warnings.warn("graphviz not installed: %r." % e)
+                return
         plt.close('all')
         self.assertExists(dotf)
         self.assertExists(img)
