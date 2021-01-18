@@ -201,7 +201,7 @@ if is_local() and not ({"history"} & set(sys.argv)):
         requirements=requirements, blog_list=pyquickhelper.__blog__,
         layout=["rst", "html"], additional_notebook_path=["jyquickhelper"],
         fLOG=logging_function, covtoken=(
-            "69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_37_std' in outfile"),
+            "69193a28-dc79-4a24-98ed-aedf441a8249", "'_UT_39_std' in outfile"),
         github_owner=github_owner)
 
     if not r and not ({"bdist_msi", "sdist",
