@@ -44,8 +44,10 @@ def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300):
         if clean_img and os.path.exists(temp_img):
             os.remove(temp_img)
         raise RuntimeError(
-            "Unable to run command line\n---OUT---\n{}\n---ERR---\n{}".format(
-                out, err))
+            "Unable to run command line"
+            "\n---CMD---\n{}\n---OUT---\n{}"
+            "\n---ERR---\n{}".format(
+                cmd, out, err))
     if ax is None:
         import matplotlib.pyplot as plt
         ax = plt.gca()
