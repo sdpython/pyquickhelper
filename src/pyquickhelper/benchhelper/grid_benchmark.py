@@ -136,8 +136,8 @@ class GridBenchMark(BenchMark):
 
     def bench(self, **params):
         """
-        run an experiment multiple times,
-        parameter *di* is the dataset to use
+        Runs an experiment multiple times,
+        parameter *di* is the dataset to use.
         """
         if "di" not in params:
             raise KeyError(
@@ -184,7 +184,7 @@ class GridBenchMark(BenchMark):
 
     def preprocess_dataset(self, dsi, **params):
         """
-        split the dataset into train and test
+        Splits the dataset into train and test.
 
         @param      dsi         dataset index
         @param      params      additional parameters
