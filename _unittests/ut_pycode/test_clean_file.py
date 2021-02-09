@@ -31,9 +31,8 @@ class TestCleanFile(ExtTestCase):
 
         folder = os.path.abspath(os.path.dirname(__file__))
         self.assertRaise(lambda: clean_files(folder, op="op"), ValueError)
-        res = clean_files(folder, fLOG=fLOG, op='CRB',
-                          posreg="test_clean_readme.*[.]py$")
-        self.assertEmpty(res)
+        clean_files(folder, fLOG=fLOG, op='CRB',
+                    posreg="test_clean_readme.*[.]py$")
         res = clean_files(folder, fLOG=fLOG, op='CR',
                           posreg="test_clean_readme.*[.]py$")
         self.assertEmpty(res)
@@ -73,9 +72,8 @@ class TestCleanFile(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         folder = os.path.abspath(os.path.dirname(__file__))
-        res = clean_files(folder, fLOG=fLOG,
-                          posreg="test_clean.*[.]py$", op='pep8')
-        self.assertEmpty(res)
+        clean_files(folder, fLOG=fLOG,
+                    posreg="test_clean.*[.]py$", op='pep8')
 
 
 if __name__ == "__main__":
