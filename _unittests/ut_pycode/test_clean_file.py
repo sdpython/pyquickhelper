@@ -23,6 +23,21 @@ class TestCleanFile(ExtTestCase):
         res = clean_files(folder, fLOG=fLOG, posreg="test_clean.*[.]py$")
         self.assertEmpty(res)
 
+    def test_clean_file_crb(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        folder = os.path.abspath(os.path.dirname(__file__))
+        self.assertRaise(lambda: clean_files(folder, op="op"), ValueError)
+        res = clean_files(folder, fLOG=fLOG, op='CRB',
+                          posreg="test_clean_readme.*[.]py$")
+        self.assertEmpty(res)
+        res = clean_files(folder, fLOG=fLOG, op='CR',
+                          posreg="test_clean_readme.*[.]py$")
+        self.assertEmpty(res)
+
     def test_clean_file_cr_nefg_pattern(self):
         fLOG(
             __file__,
