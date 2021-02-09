@@ -23,6 +23,20 @@ class TestCleanFile(ExtTestCase):
         res = clean_files(folder, fLOG=fLOG, posreg="test_clean.*[.]py$")
         self.assertEmpty(res)
 
+    def test_clean_file_crb(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+
+        folder = os.path.abspath(os.path.dirname(__file__))
+        self.assertRaise(lambda: clean_files(folder, op="op"), ValueError)
+        clean_files(folder, fLOG=fLOG, op='CRB',
+                    posreg="test_clean_readme.*[.]py$")
+        res = clean_files(folder, fLOG=fLOG, op='CR',
+                          posreg="test_clean_readme.*[.]py$")
+        self.assertNotEmpty(res)
+
     def test_clean_file_cr_nefg_pattern(self):
         fLOG(
             __file__,
@@ -58,9 +72,8 @@ class TestCleanFile(ExtTestCase):
             OutputPrint=__name__ == "__main__")
 
         folder = os.path.abspath(os.path.dirname(__file__))
-        res = clean_files(folder, fLOG=fLOG,
-                          posreg="test_clean.*[.]py$", op='pep8')
-        self.assertEmpty(res)
+        clean_files(folder, fLOG=fLOG,
+                    posreg="test_clean.*[.]py$", op='pep8')
 
 
 if __name__ == "__main__":

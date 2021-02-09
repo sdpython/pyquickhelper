@@ -50,13 +50,15 @@ def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
     :param folder: folder to clean
     :param posreg: regular expression to select files to process
     :param negreg: regular expression to skip files to process
-    :param op: kind of cleaning to do, see below for the available option
+    :param op: kind of cleaning to do, options are CR, CRb, pep8,
+        see below for more details
     :param fLOG: logging function
     :return: list of processed files
 
     The following cleaning are available:
 
     * ``'CR'``: replaces ``'\\r\\n'`` by ``'\\n'``
+    * ``'CRB'``: replaces end of lines ``'\\n'`` by ``'\\r\\n'``
     * ``'pep8'``: applies :epkg:`pep8` convention
     """
     def clean_file_cr(name):
@@ -67,11 +69,28 @@ def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
             with open(name, "wb") as f:
                 f.write(new_content)
             return True
-        else:
-            return False
+        return False
+
+    def clean_file_cr_back(name):
+        with open(name, "rb") as f:
+            lines = f.read().split(b'\n')
+        new_lines = []
+        changes = False
+        for li in lines:
+            if not li.endswith(b'\r'):
+                new_lines.append(li + b'\r')
+                changes = True
+            else:
+                new_lines.append(li)
+        if changes:
+            with open(name, "wb") as f:
+                f.write(b'\n'.join(new_lines))
+        return changes
 
     if op == 'CR':
         clean_file = clean_file_cr
+    elif op == 'CRB':
+        clean_file = clean_file_cr_back
     elif op == 'pep8':
         from .code_helper import remove_extra_spaces_and_pep8
         clean_file = remove_extra_spaces_and_pep8
