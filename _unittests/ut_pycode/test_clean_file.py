@@ -35,7 +35,7 @@ class TestCleanFile(ExtTestCase):
                     posreg="test_clean_readme.*[.]py$")
         res = clean_files(folder, fLOG=fLOG, op='CR',
                           posreg="test_clean_readme.*[.]py$")
-        self.assertEmpty(res)
+        self.assertNotEmpty(res)
 
     def test_clean_file_cr_nefg_pattern(self):
         fLOG(
