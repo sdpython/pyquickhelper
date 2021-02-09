@@ -50,7 +50,8 @@ def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
     :param folder: folder to clean
     :param posreg: regular expression to select files to process
     :param negreg: regular expression to skip files to process
-    :param op: kind of cleaning to do, see below for the available option
+    :param op: kind of cleaning to do, options are CR, CRb, pep8,
+        see below for more details
     :param fLOG: logging function
     :return: list of processed files
 
