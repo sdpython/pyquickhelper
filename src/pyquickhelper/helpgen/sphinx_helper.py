@@ -57,6 +57,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
 
     res = []
     for full in explore_folder_iterfile(build, pattern=".*[.]html"):
+        modif = False
         with open(full, "r", encoding="utf8") as f:
             try:
                 content = f.read()
@@ -68,13 +69,37 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
                         content = content.replace(
                             "charset=cp1252", "charset=utf-8")
                     except UnicodeDecodeError:
-                        raise Exception(
-                            "unable to load: " + full + "\n" + os.path.abspath(full)) from e
+                        raise FileNotFoundError(
+                            "Unable to load %r\n%r" % (full, os.path.abspath(full))) from e
 
         if tofind in content:
             res.append(full)
-            fLOG("[post_process_html_nb_output_static_file]", full)
             content = content.replace(tofind, torep)
+            modif = True
+
+        # js
+        repl = {'https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js':
+                '../_static/embed-amd.js'}
+        lines = content.split('\n')
+        new_lines = []
+        for line in lines:
+            if "https://cdnjs.cloudflare.com/ajax/libs/require.js" in line:
+                if fLOG:
+                    fLOG(
+                        "[post_process_html_nb_output_static_file] js: skip %r" % line)
+                modif = True
+                continue
+            new_lines.append(line)
+        content = "\n".join(new_lines)
+        for k, v in repl.items():
+            if k in content:
+                if fLOG:
+                    fLOG("[post_process_html_output] js: replace %r -> %r" % (k, v))
+                content = content.replace(k, v)
+                modif = True
+
+        if modif:
+            fLOG("[post_process_html_nb_output_static_file] %r" % full)
             with open(full, "w", encoding="utf8") as f:
                 f.write(content)
 

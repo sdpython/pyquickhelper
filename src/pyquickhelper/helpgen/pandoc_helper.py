@@ -19,8 +19,10 @@ def call_pandoc(params, fLOG=noLOG):
     cmd = '"{0}" {1}'.format(pandoc, params)
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     if err is not None and "Cannot decode byte" in err:
-        raise Exception(
-            "Issue with pandac:\n{0}\nOUT:\n{1}\nERR\n{2}".format(cmd, out, err))
+        raise RuntimeError(
+            "Issue with pandoc:\n{0}\n"
+            "--OUT--\n{1}\n--ERR--\n{2}".format(
+                cmd, out, err))
     return out, err
 
 

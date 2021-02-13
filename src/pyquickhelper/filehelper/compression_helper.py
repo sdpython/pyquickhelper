@@ -298,7 +298,9 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     out, err = run_cmd(cmd, wait=True)
     if "Error:" in out or not os.path.exists(filename_7z):
         raise FileException(  # pragma: no cover
-            "An error occurred with cmd: '{0}'\nOUT:\n{1}\nERR\n{2}\n----".format(cmd, out, err))
+            "An error occurred with cmd: '{0}'\n"
+            "--OUT--\n{1}\n--ERR--\n{2}\n----".format(
+                cmd, out, err))
     return len(file_set)
 
 
@@ -462,7 +464,9 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         if len(err) > 0 or "Error:" in out:
             raise FileException(
-                "Unable to unrar file '{0}'\nOUT\n{1}\nERR\n{2}".format(zipf, out, err))
+                "Unable to unrar file '{0}'\n"
+                "--OUT--\n{1}\n--ERR--\n{2}".format(
+                    zipf, out, err))
 
         return explore_folder(where_to)[1]
     else:

@@ -179,8 +179,10 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
             return out, err, None
         except Exception as ee:
             if not exception:
-                message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}".format(
-                    script, params, comment, "", str(ee), ee)
+                message = ("--SCRIPT--\n{0}\n--PARAMS--\n{1}\n--COMMENT--\n"
+                           "{2}\n--ERR--\n{3}\n--OUT--\n{4}\n--EXC--\n{5}"
+                           "").format(script, params, comment, "",
+                                      str(ee), ee)
                 if exc_path:
                     message += "\n---EXC--\n{0}".format(exc_path)
                 raise RunPythonExecutionError(message) from ee
@@ -243,8 +245,11 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                             _ for _ in lines if "sphinx_runpython_extension.py" not in _)
 
                         if not exception:
-                            message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}\nERR\n{3}\nOUT\n{4}\nEXC\n{5}\nTRACEBACK\n{6}".format(
-                                script, params, comment, gout, gerr, ee, excs)
+                            message = ("--SCRIPT--\n{0}\n--PARAMS--\n{1}\n--COMMENT--"
+                                       "\n{2}\n--ERR--\n{3}\n--OUT--\n{4}\n--EXC--"
+                                       "\n{5}\n--TRACEBACK--\n{6}").format(
+                                script, params, comment, gout, gerr,
+                                ee, excs)
                             raise RunPythonExecutionError(message) from ee
                         return (gout + "\n" + gerr), (gerr + "\n" + excs), None
 

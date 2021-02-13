@@ -6,7 +6,8 @@
 import os
 from ..loghelper.flog import noLOG
 from .install_custom import download_revealjs, download_requirejs
-from ..filehelper import synchronize_folder, change_file_status
+from ..filehelper import (
+    synchronize_folder, change_file_status, download)
 
 
 def install_javascript_tools(root, dest, fLOG=noLOG,
@@ -34,7 +35,6 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     else:
         rev = os.path.join(dest, "reveal.js")
         if not os.path.exists(rev):
-
             folder = os.path.dirname(revealjs.__file__)
             js = os.path.join(folder, "templates", "revealjs", "static")
             os.mkdir(rev)
@@ -49,6 +49,15 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     expected = os.path.join(dest, "require.js")
     if not os.path.exists(expected):
         one = download_requirejs(dest, fLOG=fLOG)
+    else:
+        one = [expected]
+    lfiles.extend(one)
+
+    # embed-ams.js
+    expected = os.path.join(dest, "embed-amd.js")
+    if not os.path.exists(expected):
+        url = "https://unpkg.com/@jupyter-widgets/html-manager@0.20.0/dist/embed-amd.js"
+        one = [download(url, dest, fLOG=fLOG)]
     else:
         one = [expected]
     lfiles.extend(one)

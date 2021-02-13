@@ -95,8 +95,10 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
             "\n".join(lines2), options=autopep8.parse_args(options))
 
         if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
-            raise ValueError("Resulting file is empty for '{3}',\ninitial number of lines {0} encoding='{1}' diff={2}".format(
-                len(lines), encoding, diff, filename))
+            raise ValueError(
+                "Resulting file is empty for '{3}',\ninitial number of lines "
+                "{0} encoding='{1}' diff={2}".format(
+                    len(lines), encoding, diff, filename))
         if filename is None:
             return r
         elif r != initial_content:

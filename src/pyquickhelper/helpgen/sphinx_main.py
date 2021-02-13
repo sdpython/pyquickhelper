@@ -255,20 +255,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     *remove_unicode* can set to False or True in the documentation
     configuration file to allow or remove unicode characters
     before compiling the latex output.
-
-    .. versionchanged:: 1.7
-        Upgrade to Sphinx 1.7. It introduced a breaking
-        change with method ``app.status_iterator`` must be
-        replaced by ``status_iterator``.
-        See issue `bokeh:7520 <https://github.com/bokeh/bokeh/issues/7520>`_.
-
-    .. versionchanged:: 1.8
-        Uses own image directive.
-
-    .. versionchanged:: 1.9
-        Import ``conf.py`` in a separate process before running
-        the generation of the documentation. Do not import it
-        directly.
+    Import ``conf.py`` in a separate process before running
+    the generation of the documentation. Do not import it
+    directly.
     """
     datetime_rows = [("begin", datetime.now())]
 
@@ -966,16 +955,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
 
         if kind == "html":
-            fLOG(
-                "##############################################################")
+            fLOG("#########################################################")
             fLOG("[generate_help_sphinx] check that index.html exists")
             findex = os.path.join(build, kind, "index.html")
             if not os.path.exists(findex):
-                raise FileNotFoundError("something went wrong, unable to find {0}\nCMD\n{1}\nOUT\n{2}\nERR\n{3}\nLAY\n{4}\nINDEX\n{5}"
-                                        .format(findex, cmd, out, err, kind, os.path.abspath(findex)))
+                raise FileNotFoundError(
+                    "something went wrong, unable to find {0}\n"
+                    "--CMD--\n{1}\n--OUT--\n{2}\n--ERR--\n{3}\n"
+                    "--LAY--\n{4}\n--INDEX--\n{5}"
+                    "".format(findex, cmd, out, err, kind,
+                              os.path.abspath(findex)))
 
-            fLOG(
-                "##############################################################")
+            fLOG("#########################################################")
             verification_html_format(os.path.join(build, kind), fLOG=fLOG)
 
         fLOG(
