@@ -16,8 +16,10 @@ from nbconvert.exporters.base import ExporterNameError
 
 from .utils_sphinx_doc_helpers import HelpGenException
 from .conf_path_tools import find_latex_path, find_pandoc_path
-from .post_process import post_process_latex_output, post_process_latex_output_any, post_process_rst_output
-from .post_process import post_process_html_output, post_process_slides_output, post_process_python_output
+from .post_process import (
+    post_process_latex_output, post_process_latex_output_any,
+    post_process_rst_output, post_process_html_output,
+    post_process_slides_output, post_process_python_output)
 from .helpgen_exceptions import NotebookConvertError
 from .install_js_dep import install_javascript_tools
 from .style_css_template import THUMBNAIL_TEMPLATE, THUMBNAIL_TEMPLATE_TABLE
@@ -236,8 +238,9 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
                         for k, v in sorted(os.environ.items()))
         raise RuntimeError(  # pragma: no cover
             "Notebook conversion failed.\nfnbcexe\n{}\noptions_args\n{}"
-            "\nARGS:\n{}\nOUT\n{}\nERR\n{}\nENVIRON\n{}".format(
-                fnbcexe, options_args, list_args, out, err, env)) from exc
+            "\n--ARGS--\n{}\n--OUT--\n{}\n--ERR--\n{}\n--ENVIRON--\n{}"
+            "".format(fnbcexe, options_args, list_args, out, err,
+                      env)) from exc
     return out, err
 
 
@@ -527,8 +530,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                                 "Unable to convert a notebook\n----\n{}----\n{}\n"
                                 "---ERR---\n{}\n---OUT---\n{}".format(
                                     fnbcexe, list_args, err, out))
-                        fLOG("[_process_notebooks_in] LATEX ERR\n" + err)
-                        fLOG("[_process_notebooks_in] LATEX OUT\n" + out)
+                        fLOG("[_process_notebooks_in] LATEX --ERR--\n" + err)
+                        fLOG("[_process_notebooks_in] LATEX --OUT--\n" + out)
                     else:
                         err = err.lower()
                         if "critical" in err or "bad config" in err:
@@ -588,9 +591,9 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         catch_exit=True, prefix_log="[latex] ", change_path=change_path)
                     if out is not None and ("Output written" in out or 'bytes written' in out):
                         # The output was produced. We ignore the return code.
-                        fLOG(
-                            "[_process_notebooks_in] WARNINGS: Latex compilation had warnings:", c)
-                        out += "\nERR\n" + err
+                        fLOG("[_process_notebooks_in] WARNINGS: "
+                             "Latex compilation had warnings:", c)
+                        out += "\n--ERR--\n" + err
                         err = ""
                     if len(err) > 0:
                         raise HelpGenException(

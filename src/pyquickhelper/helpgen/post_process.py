@@ -179,6 +179,8 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
     """
     if os.path.isfile(root):
         file = root
+        if fLOG:
+            fLOG("[post_process_latex_output] clean %r" % file)
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         with open(file + ".tex1~", "w", encoding="utf8") as f:
@@ -224,6 +226,8 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None, n
     """
     if os.path.isfile(root):
         file = root
+        if fLOG:
+            fLOG("[post_process_python_output] clean %r" % file)
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_python(
@@ -301,7 +305,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     and checks that audio is only included in :epkg:`HTML`.
     """
     if fLOG:
-        fLOG("[post_process_rst_output] %r" % file)
+        fLOG("[post_process_rst_output] clean %r" % file)
 
     name = os.path.split(file)[1]
     noext = os.path.splitext(name)[0]
@@ -455,6 +459,9 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                     docname = selected[0]
                     path = docname[len(folder):]
                     break
+        if "blob/master/build" in path:
+            raise RuntimeError(  # pragma: no cover
+                "Unexpected substring found in %r." % path)
         links.append(
             ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
     lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
@@ -554,6 +561,8 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
     """
     if not os.path.exists(file):
         raise FileNotFoundError(file)  # pragma: no cover
+    if fLOG:
+        fLOG("[post_process_html_output] clean %r" % file)
     with open(file, "r", encoding="utf8") as f:
         text = f.read()
 
@@ -564,7 +573,7 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
 
     # notebook replacements
     if fLOG:
-        fLOG("[post_process_html_output] ", notebook_replacements)
+        fLOG("[post_process_html_output] nb:", notebook_replacements)
     text = _notebook_replacements(text, notebook_replacements, fLOG)
 
     text = update_notebook_link(text, "html", nblinks=nblinks, fLOG=fLOG)
@@ -572,6 +581,26 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
         raise HelpGenException(  # pragma: no cover
             "find:// was found in '{0}'.\nYou should add "
             "or extend 'nblinks' in conf.py.".format(file))
+
+    # js
+    if fLOG:
+        fLOG("[post_process_html_output] js: replacements")
+    repl = {'https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js':
+            '../_static/embed-amd.js'}
+    lines = text.split('\n')
+    new_lines = []
+    for line in lines:
+        if "https://cdnjs.cloudflare.com/ajax/libs/require.js" in line:
+            if fLOG:
+                fLOG("[post_process_html_output] js: skip %r" % line)
+            continue
+        new_lines.append(line)
+    text = "\n".join(new_lines)
+    for k, v in repl.items():
+        if k in text:
+            if fLOG:
+                fLOG("[post_process_html_output] js: replace %r -> %r" % (k, v))
+            text = text.replace(k, v)
 
     with open(file, "w", encoding="utf8") as f:
         f.write(text)
@@ -599,6 +628,8 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
     else:
         if not os.path.exists(file):
             raise FileNotFoundError(file)
+        if fLOG:
+            fLOG("[post_process_slides_output] clean %r" % file)
         # fold, name = os.path.split(file)
         with open(file, "r", encoding="utf8") as f:
             text = f.read()
@@ -606,7 +637,12 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
 
     # reveal.js
     require = "require(" in text
-    text = text.replace("reveal.js/js/reveal.js", "reveal.js/js/reveal.js")
+    text = text.replace("reveal.js/dist/reveal.css",
+                        "reveal.js/css/reveal.css")
+    text = text.replace("reveal.js/dist/theme/simple.css",
+                        "reveal.js/css/theme/simple.css")
+    text = text.replace("https://unpkg.com/@jupyter-widgets/html-manager@0.20.0/dist/embed-amd.js",
+                        "embed-amd.js")
     lines = text.split("\n")
     for i, line in enumerate(lines):
         if '<script src="reveal.js/lib/js/head.min.js"></script>' in line:
@@ -614,7 +650,7 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
                 i] = '<script src="reveal.js/js/jquery.min.js"></script>\n' + lines[i]
         if '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>' in line:
             lines[i] = ""
-        if '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>' in line:
+        if '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/' in line:
             lines[i] = ""
         if lines[i] == "</script>" and require:
             lines[i] += '\n<script src="require.js"></script>'

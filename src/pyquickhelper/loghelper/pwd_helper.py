@@ -35,7 +35,7 @@ def set_password(system, username, password, lib='keyrings.cryptfile',
                     system, username))
         return
     if lib == 'keyrings.cryptfile':
-        from keyrings.cryptfile.cryptfile import CryptFileKeyring
+        from keyrings.cryptfile.cryptfile import CryptFileKeyring  # pylint: disable=E0401
         kr = CryptFileKeyring()
         kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD")
         if kr.keyring_key is None and ask:
@@ -71,7 +71,7 @@ def get_password(system, username, lib='keyrings.cryptfile',
                     system, username))
         return pwd
     if lib == 'keyrings.cryptfile':
-        from keyrings.cryptfile.cryptfile import CryptFileKeyring
+        from keyrings.cryptfile.cryptfile import CryptFileKeyring  # pylint: disable=E0401
         kr = CryptFileKeyring()
         kr.keyring_key = getenv("KEYRING_CRYPTFILE_PASSWORD")
         if kr.keyring_key is None and ask:

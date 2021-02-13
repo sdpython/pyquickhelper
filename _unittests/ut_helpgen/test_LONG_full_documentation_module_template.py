@@ -141,7 +141,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 fLOG("[test_full_documentation] **********************************")
 
                 direct_call = i % 2 == 0
-                layout = ["pdf", "html"]
+                layout = ["html"]
 
                 logger1 = getLogger("docassert")
                 logger2 = getLogger("tocdelay")
@@ -295,6 +295,23 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 if tofind not in content:
                     raise Exception(
                         "Unable to find '{0}' in\n{1}".format(tofind, content))
+
+                # notebook links
+                files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html",
+                                      "notebooks", "custom_notebooks.html"),
+                         os.path.join(root, "_doc", "sphinxdoc", "build", "html",
+                                      "notebooks", "custom_notebooks.slides.html")
+                         ]
+                for name in files:
+                    with open(name, "r", encoding="utf-8") as f:
+                        content = f.read()
+                    if "https://unpkg.com/@jupyter-widgets/html-manager@%5E0.20.0/dist/embed-amd.js" in content:
+                        raise AssertionError("Absolute link in %r." % name)
+                    if "https://cdnjs.cloudflare" in content:
+                        raise AssertionError(
+                            "Absolute cloudflare link in %r." % name)
+                    if "reveal.js/dist" in content:
+                        raise AssertionError("Wrong link in slides %r." % name)
 
             # final check
             logs = os.path.join(temp, "log_custom_000.txt")

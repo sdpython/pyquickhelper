@@ -24,14 +24,15 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
         """
         This test might fail in sphinx-gallery due to a very long filename.
         Please look into the following commit:
-        https://github.com/sdpython/sphinx-gallery/commit/3ae9f13250cf25c75e1b17b2fade98b7a9940b0d.
+        https://github.com/sdpython/sphinx-gallery/commit/
+        3ae9f13250cf25c75e1b17b2fade98b7a9940b0d.
         """
         fLOG(
             __file__,
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        if is_travis_or_appveyor() in ('travis', 'appveyor') or sys.version_info[0] == 2:
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # travis fails due to the following:
             #       sitep = [_ for _ in site.getsitepackages() if "packages" in _]
             # AttributeError: 'module' object has no attribute

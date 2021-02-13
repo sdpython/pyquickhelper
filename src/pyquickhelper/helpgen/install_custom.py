@@ -63,10 +63,9 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
         for r in res:
             if os.path.isdir(r):
                 continue
-            if ".gitignore" in r or ".travis.yml" in r or "index.html" in r \
-               or ".appveyor.yml" in r \
-               or "requirement" in r \
-               or "README" in r or "CONTRIBUTING.md" in r:
+            if (".gitignore" in r or ".travis.yml" in r or "index.html" in r or
+                ".appveyor.yml" in r or "requirement" in r or "README" in r or
+                    "CONTRIBUTING.md" in r):
                 os.remove(r)
             elif "/test/" in r.replace("\\", "/"):
                 os.remove(r)
