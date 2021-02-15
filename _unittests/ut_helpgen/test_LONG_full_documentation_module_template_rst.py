@@ -159,7 +159,8 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
                     generate_help_sphinx(var, module_name=var, root=root,
                                          layout=layout, extra_ext=["tohelp"],
                                          from_repo=False, direct_call=direct_call,
-                                         parallel=1, fLOG=clog, extra_paths=[this_pyq])
+                                         parallel=1, fLOG=clog, extra_paths=[this_pyq],
+                                         nbformats=['html'])
                     for w in ww:
                         if isinstance(w, dict):
                             rows = [

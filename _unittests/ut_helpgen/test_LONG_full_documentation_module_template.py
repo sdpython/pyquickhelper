@@ -299,8 +299,6 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 # notebook links
                 files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html",
                                       "notebooks", "custom_notebooks.html"),
-                         os.path.join(root, "_doc", "sphinxdoc", "build", "html",
-                                      "notebooks", "custom_notebooks.slides.html")
                          ]
                 for name in files:
                     with open(name, "r", encoding="utf-8") as f:
