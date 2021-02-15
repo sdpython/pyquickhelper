@@ -171,7 +171,8 @@ class TestLatexBuilder(ExtTestCase):
             raise Exception(html)
 
         t1 = "a&b1"
-        if t1 not in html.replace("\n", ""):
+        t1b = "a&\\sphinxAtStartParb1"  # sphinx 3.5
+        if t1 not in html.replace("\n", "") and t1b not in html.replace("\n", ""):
             raise Exception(html)
 
         t1 = "\\begin{tabulary}{\\linewidth}[t]{|T|T|}"
