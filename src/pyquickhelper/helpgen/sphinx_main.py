@@ -684,8 +684,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                                         formats=nbformats, latex_path=latex_path,
                                         pandoc_path=pandoc_path, fLOG=fLOG, nblinks=nblinks,
                                         notebook_replacements=notebook_replacements)
-            nbs_all = set(_[0]
-                          for _ in nbs_all if os.path.splitext(_[0])[-1] == ".rst")
+            nbs_all = set(_[0] for _ in nbs_all
+                          if os.path.splitext(_[0])[-1] == ".rst")
             if len(nbs_all) != len(indexlistnote):  # pragma: no cover
                 ext1 = "nbs_all:\n{0}".format("\n".join(nbs_all))
                 ext2 = "indexlistnote:\n{0}".format(
