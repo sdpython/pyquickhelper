@@ -5,8 +5,16 @@
 History
 =======
 
-current - 2021-01-13 - 0.00Mb
+current - 2021-02-15 - 0.00Mb
 =============================
+
+* `330`: Fixes for sphinx 3.5 (2021-02-15)
+* `328`: Github link for notebooks is broken (2021-02-13)
+* `329`: Fixes #328, improves links in notebooks (2021-02-13)
+* `326`: Add option CRB to put \r back in a file (2021-02-09)
+
+1.10.3519 - 2021-01-13 - 2.10Mb
+===============================
 
 * `325`: Implements a scenario with keyrings.cryptfile for get_password, set_password (2021-01-10)
 

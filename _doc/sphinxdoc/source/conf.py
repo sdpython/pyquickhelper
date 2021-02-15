@@ -6,6 +6,7 @@
 import sys
 import os
 import alabaster
+from sphinx.builders.html import Stylesheet
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables, get_default_stylesheet
@@ -27,5 +28,5 @@ blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
 nbneg_pattern = ".*[\\\\/]temp_.*"
 
 html_context = {
-    'css_files': get_default_stylesheet() + ['_static/my-styles.css', '_static/gallery.css'],
+    'css_files': get_default_stylesheet(['_static/my-styles.css', '_static/gallery.css']),
 }

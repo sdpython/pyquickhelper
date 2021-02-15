@@ -1010,18 +1010,22 @@ def custom_setup(app, author):
     return app
 
 
-def get_default_stylesheet():
+def get_default_stylesheet(css=None):
     """
     Returns the style of additional style sheets.
 
+    @param     css  additional css files
     @return         list of files
     """
     # delayed import to speed up time
     from sphinx.builders.html import Stylesheet
     rel = "_static/" + style_figure_notebook[0]
-    # rel2 = "_static/gallery.css"  # This should not be needed for sphinx-gallery.
-    return [Stylesheet(rel="stylesheet", title="style_figure_notebook", filename=rel)]
-    # Stylesheet(rel="stylesheet", title="sphinx_gallery_missing", filename=rel2)
+    res = [Stylesheet(rel="stylesheet", title="style_figure_notebook", filename=rel)]
+    if css is not None:
+        for cs in css:
+            res.append(Stylesheet(rel="stylesheet", title=os.path.split(cs)[-1],
+                                  filename=cs)
+    return res
 
 
 def get_default_javascript():
