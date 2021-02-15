@@ -1024,7 +1024,7 @@ def get_default_stylesheet(css=None):
     if css is not None:
         for cs in css:
             res.append(Stylesheet(rel="stylesheet", title=os.path.split(cs)[-1],
-                                  filename=cs)
+                                  filename=cs))
     return res
 
 
