@@ -158,9 +158,18 @@ class _AdditionalVisitDepart:
             # The program should not necessarily be here.
             pass
 
+    def visit_viewcode_anchor(self, node):
+        # Removed in sphinx 3.5
+        pass
+
+    def depart_viewcode_anchor(self, node):
+        # Removed in sphinx 3.5
+        pass
+
     def unknown_visit(self, node):  # pragma: no cover
-        raise NotImplementedError("[_AdditionalVisitDepart] Unknown node: '{0}' in '{1}'".format(
-            node.__class__.__name__, self.__class__.__name__))
+        raise NotImplementedError(
+            "[_AdditionalVisitDepart] Unknown node: '{0}' in '{1}'".format(
+                node.__class__.__name__, self.__class__.__name__))
 
 
 class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator):
