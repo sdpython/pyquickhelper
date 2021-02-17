@@ -1114,7 +1114,7 @@ def run_pylint_for_setup(folder, pattern=".*[.]py$", neg_pattern=None,
     @param      folder          folder where to look
     @param      pattern         file to checks
     @param      neg_pattern     negative pattern
-    @parm       pylint_ignore   ignore these :epkg:`pylint` warnings or errors
+    @param      pylint_ignore   ignore these :epkg:`pylint` warnings or errors
     @param      verbose         verbose
     @param      fLOG            logging function
     """

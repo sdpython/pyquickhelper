@@ -56,7 +56,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
     @param  warningout          warning to disable (name of warnings)
     @param  chdir               change directory before running this script (if not None)
     @param  context             if not None, added to the local context
-    @parm   store_in_file       stores the script into this file
+    @param  store_in_file       stores the script into this file
                                 and calls tells python the source can be found here,
                                 that is useful is the script is using module
                                 ``inspect`` to retrieve the source which are not

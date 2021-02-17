@@ -528,9 +528,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     nbref_include_nbrefs = True
     mathdef_link_number = "{first_letter}{number}"
 
-    # viewcode
-    viewcode_follow_imported_members = True
-
     # extensions
     extensions = []
     try:
@@ -550,7 +547,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                        'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
                        'sphinx.ext.inheritance_diagram', 'sphinx.ext.intersphinx',
                        'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
-                       'sphinx.ext.todo', 'sphinx.ext.viewcode',
+                       'sphinx.ext.todo',
                        'sphinxcontrib.imagesvg', 'jupyter_sphinx.execute',
                        'pyquickhelper.sphinxext.sphinx_rst_builder',
                        'pyquickhelper.sphinxext.sphinx_md_builder',
@@ -820,6 +817,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'expected_failing_examples': [],
             'capture_repr': ('_repr_html_', '__repr__'),
             'ignore_repr_types': r'matplotlib.text|matplotlib.axes',
+            'inspect_global_variables': False,
+            'remove_config_comments': True, 
         }
 
         if github_repo is not None and github_user is not None:
