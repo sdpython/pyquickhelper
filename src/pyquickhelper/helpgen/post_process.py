@@ -441,6 +441,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             git = os.path.join(folder, ".git")
         if len(folder) > 0:
             path = docname[len(folder):]
+        tried = []
         if path.strip('/\\').startswith('build'):
             # The notebook may be in a build folder but is not
             # the original notebook. The function does something
@@ -454,18 +455,18 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                     continue
                 # Search for another version of the file.
                 last_name = os.path.split(docname)[-1]
+                tried.append((last_name, fulls))
                 selected = glob.glob(
                     fulls + "/**/" + last_name, recursive=True)
-                if len(selected) != 1:
+                if len(selected) == 1:
                     docname = selected[0]
                     path = docname[len(folder):]
                     break
-        if "blob/master/build" in path:
-            raise RuntimeError(  # pragma: no cover
-                "Unexpected substring found in %r in folder %r (1)." % (path, folder))
-        if "build/notebooks" in path:
-            raise RuntimeError(  # pragma: no cover
-                "Unexpected substring found in %r in folder %r (2)." % (path, folder))
+        if "blob/master/build" in path or "build/notebooks" in path:
+            #raise RuntimeError(  # pragma: no cover
+            warnings.warn(
+                "Unexpected substring found in %r in folder %r\n"
+                "--TRIED--\n%r" % (path, folder, "\n".join(map(str, tried))))
         links.append(
             ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
     lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
