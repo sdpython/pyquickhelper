@@ -431,7 +431,8 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     if github:
         if notebook is None:
             raise ValueError(  # pragma: no cover
-                "Cannot add a link on github, notebook is None for file='{0}'".format(file))
+                "Cannot add a link on github, notebook is None for "
+                "file='{0}'".format(file))
         docname = notebook
         folder = docname
         git = os.path.join(folder, ".git")
@@ -442,14 +443,14 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             path = docname[len(folder):]
         if path.strip('/\\').startswith('build'):
             # The notebook may be in a build folder but is not
-            # the original notebooks. The function does something
+            # the original notebook. The function does something
             # if the path starts with `build`.
             subfolds = os.listdir(folder)
             for sub in subfolds:
                 fulls = os.path.join(folder, sub)
                 if not os.path.isdir(fulls):
                     continue
-                if not ('doc' in sub or 'notebook' in sub or 'example' in sub):
+                if not ('_doc' in sub or 'notebook' in sub or 'example' in sub):
                     continue
                 # Search for another version of the file.
                 last_name = os.path.split(docname)[-1]
@@ -461,7 +462,10 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                     break
         if "blob/master/build" in path:
             raise RuntimeError(  # pragma: no cover
-                "Unexpected substring found in %r." % path)
+                "Unexpected substring found in %r in folder %r (1)." % (path, folder))
+        if "build/notebooks" in path:
+            raise RuntimeError(  # pragma: no cover
+                "Unexpected substring found in %r in folder %r (2)." % (path, folder))
         links.append(
             ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
     lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
