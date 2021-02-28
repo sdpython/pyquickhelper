@@ -1535,20 +1535,20 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('post_transform', transform))
         Sphinx.add_post_transform(self, transform)
 
-    def add_js_file(self, filename, **kwargs):
+    def add_js_file(self, filename, priority=500, **kwargs):
         self._added_objects.append(('js', filename))
         try:
             # Sphinx >= 1.8
-            Sphinx.add_js_file(self, filename, **kwargs)
+            Sphinx.add_js_file(self, filename, priority=priority, **kwargs)
         except AttributeError:  # pragma: no cover
             # Sphinx < 1.8
             Sphinx.add_javascript(self, filename, **kwargs)
 
-    def add_css_file(self, filename, **kwargs):
+    def add_css_file(self, filename, priority=500, **kwargs):
         self._added_objects.append(('css', filename))
         try:
             # Sphinx >= 1.8
-            Sphinx.add_css_file(self, filename, **kwargs)
+            Sphinx.add_css_file(self, filename, priority=priority, **kwargs)
         except AttributeError:  # pragma: no cover
             # Sphinx < 1.8
             Sphinx.add_stylesheet(self, filename, **kwargs)

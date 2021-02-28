@@ -818,7 +818,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'capture_repr': ('_repr_html_', '__repr__'),
             'ignore_repr_types': r'matplotlib.text|matplotlib.axes',
             'inspect_global_variables': False,
-            'remove_config_comments': True, 
+            'remove_config_comments': True,
         }
 
         if github_repo is not None and github_user is not None:
