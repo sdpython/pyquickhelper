@@ -7,7 +7,7 @@ Tutorial
 
 The module *pyquickhelper* is mostly used to automated the testing
 of all the materials I use for my teachings in
-French `Python dans tous ses états <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx3/index.html>`_
+French `Python dans tous ses états <http://www.xavierdupre.fr/app/ensae_teaching_cs/helpsphinx/index.html>`_
 or English such as this module. Everytime I create a new notebooks, it is being added
 in a specific place in the documentation `_doc/notebooks`, a unit test is created to test
 it every week and check it does not break with a module update, it is then converted into HTML, Slides
