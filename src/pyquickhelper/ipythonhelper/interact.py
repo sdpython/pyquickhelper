@@ -162,7 +162,8 @@ class StaticInteract(object):
         """
         names = list(self.widgets)
         values = [widget.values() for widget in self.widgets.values()]
-        defaults = tuple([widget.default for widget in self.widgets.values()])
+        defaults = tuple([widget.default  # pylint: disable=R1728
+                          for widget in self.widgets.values()])
 
         # Now reorder alphabetically by names so divnames match javascript
         names, values, defaults = zip(*sorted(zip(names, values, defaults)))
