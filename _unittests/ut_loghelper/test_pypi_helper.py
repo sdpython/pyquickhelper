@@ -12,12 +12,13 @@ if "temp_" in os.path.abspath(__file__):
         "this file should not be imported in that location: " +
         os.path.abspath(__file__))
 
-from pyquickhelper.loghelper import fLOG
-from pyquickhelper.loghelper import enumerate_pypi_versions_date
+from pyquickhelper.pycode import ExtTestCase, skipif_circleci
+from pyquickhelper.loghelper import fLOG, enumerate_pypi_versions_date
 
 
 class TestPypiHelper(unittest.TestCase):
 
+    @skipif_circleci("connectivity issue")
     def test_clone_repo(self):
         fLOG(
             __file__,
