@@ -34,6 +34,7 @@ class GDotDirective(Directive):
     * *script*: boolean or a string to indicate than the standard output
         should only be considered after this substring
     * *url*: url to :epkg:`viz.js`, only if format *SVG* is selected
+    * *process*: run the script in an another process
 
     Example::
 
@@ -54,7 +55,8 @@ class GDotDirective(Directive):
     The directive also accepts scripts producing
     dot graphs on the standard output. Option *script*
     must be specified. This extension loads
-    `sphinx.ext.graphviz <https://www.sphinx-doc.org/en/master/usage/extensions/graphviz.html>`_
+    `sphinx.ext.graphviz <https://www.sphinx-doc.org/
+    en/master/usage/extensions/graphviz.html>`_
     if not added to the list of extensions:
 
     Example::
@@ -82,6 +84,7 @@ class GDotDirective(Directive):
         'format': directives.unchanged,
         'script': directives.unchanged,
         'url': directives.unchanged,
+        'process': directives.unchanged,
     }
 
     _default_url = "http://www.xavierdupre.fr/js/vizjs/viz.js"
@@ -96,6 +99,8 @@ class GDotDirective(Directive):
         else:
             format = '?'
         url = self.options.get('url', 'local')
+        bool_set_ = (True, 1, "True", "1", "true", '')
+        process = 'process' in self.options and self.options['process'] in bool_set_
         if url == 'local':
             try:
                 import jyquickhelper
@@ -139,7 +144,7 @@ class GDotDirective(Directive):
         # executes script if any
         content = "\n".join(self.content)
         if script or script == '':
-            stdout, stderr, _ = run_python_script(content)
+            stdout, stderr, _ = run_python_script(content, process=process)
             if stderr:
                 raise RuntimeError(
                     "A graph cannot be draw due to {}".format(stderr))

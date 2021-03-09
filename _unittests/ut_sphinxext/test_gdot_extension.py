@@ -85,6 +85,25 @@ class TestGDotExtension(ExtTestCase):
         self.assertIn("document.getElementById('gdot-", content)
         self.assertIn('foo {\\n  \\"bar\\" -> \\"baz\\";\\n}");', content)
 
+    def test_gdot3_svg_process(self):
+        content = """
+                    before
+
+                    .. gdot::
+                        :format: svg
+                        :process:
+
+                        digraph foo {
+                          "bar" -> "baz";
+                        }
+
+                    after
+                    """.replace("                    ", "")
+
+        content = rst2html(content, writer="html", keep_warnings=True)
+        self.assertIn("document.getElementById('gdot-", content)
+        self.assertIn('foo {\\n  \\"bar\\" -> \\"baz\\";\\n}");', content)
+
     def test_gdot4_png(self):
         content = """
                     before
