@@ -735,13 +735,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/', None),
         'python': ('https://docs.python.org/{.major}'.format(
             sys.version_info), None),
-        'scikit-learn': (
-            'https://scikit-learn.org/stable/',
-            None),
+        'scikit-learn': ('https://scikit-learn.org/stable/', None),
         'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-        'sklearn': (
-            'https://scikit-learn.org/stable/',
-            None),
+        'sklearn': ('https://scikit-learn.org/stable/', None),
     }
 
     # information about code
@@ -818,7 +814,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             'backreferences_dir': example_dir,
             'expected_failing_examples': [],
             'capture_repr': ('_repr_html_', '__repr__'),
-            'ignore_repr_types': r'matplotlib.text|matplotlib.axes',
+            'ignore_repr_types': r'matplotlib[text, axes]',
             'inspect_global_variables': False,
             'remove_config_comments': True,
         }
@@ -1021,11 +1017,10 @@ def get_default_stylesheet(css=None):
     # delayed import to speed up time
     from sphinx.builders.html import Stylesheet
     rel = "_static/" + style_figure_notebook[0]
-    res = [Stylesheet(rel="stylesheet", title="style_figure_notebook", filename=rel)]
+    res = [Stylesheet(rel="stylesheet", filename=rel)]
     if css is not None:
         for cs in css:
-            res.append(Stylesheet(rel="stylesheet", title=os.path.split(cs)[-1],
-                                  filename=cs))
+            res.append(Stylesheet(rel="stylesheet", filename=cs))
     return res
 
 
