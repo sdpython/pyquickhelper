@@ -105,18 +105,84 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
               - anythings
             ...
 
-    .. runpython::
-        :showcode:
+    .. exref::
+        :title: Convert a dataframe into RST
 
-        from pandas import DataFrame
-        from pyquickhelper.pandashelper import df2rst
+        .. runpython::
+            :showcode:
 
-        df = DataFrame([{'A': 0, 'B': 'text'},
-                        {'A': 1e-5, 'C': 'longer text'}])
-        print(df2rst(df))
+            from pandas import DataFrame
+            from pyquickhelper.pandashelper import df2rst
 
-    .. versionchanged:: 1.8
-        Parameter *number_format* was added.
+            df = DataFrame([{'A': 0, 'B': 'text'},
+                            {'A': 1e-5, 'C': 'longer text'}])
+            print(df2rst(df))
+
+    .. exref::
+        :title: Convert a dataframe into markdown
+
+        .. runpython::
+            :showcode:
+
+            from io import StringIO
+            import pandas
+
+            from_excel = '''
+            Op	axes	shape	SpeedUp
+            ReduceMax	(3,)	(8, 24, 48, 8)	 2.96 
+            ReduceMax	(3,)	(8, 24, 48, 16)	 2.57 
+            ReduceMax	(3,)	(8, 24, 48, 32)	 2.95 
+            ReduceMax	(3,)	(8, 24, 48, 64)	 3.28 
+            ReduceMax	(3,)	(8, 24, 48, 100)	 3.05 
+            ReduceMax	(3,)	(8, 24, 48, 128)	 3.11 
+            ReduceMax	(3,)	(8, 24, 48, 200)	 2.86 
+            ReduceMax	(3,)	(8, 24, 48, 256)	 2.50 
+            ReduceMax	(3,)	(8, 24, 48, 400)	 2.48 
+            ReduceMax	(3,)	(8, 24, 48, 512)	 2.90 
+            ReduceMax	(3,)	(8, 24, 48, 1024)	 2.76 
+            ReduceMax	(0,)	(8, 24, 48, 8)	 19.29 
+            ReduceMax	(0,)	(8, 24, 48, 16)	 11.83 
+            ReduceMax	(0,)	(8, 24, 48, 32)	 5.69 
+            ReduceMax	(0,)	(8, 24, 48, 64)	 5.49 
+            ReduceMax	(0,)	(8, 24, 48, 100)	 6.13 
+            ReduceMax	(0,)	(8, 24, 48, 128)	 6.27 
+            ReduceMax	(0,)	(8, 24, 48, 200)	 5.46 
+            ReduceMax	(0,)	(8, 24, 48, 256)	 4.76 
+            ReduceMax	(0,)	(8, 24, 48, 400)	 2.21 
+            ReduceMax	(0,)	(8, 24, 48, 512)	 4.52 
+            ReduceMax	(0,)	(8, 24, 48, 1024)	 4.38
+            ReduceSum	(3,)	(8, 24, 48, 8)	 1.79 
+            ReduceSum	(3,)	(8, 24, 48, 16)	 0.79 
+            ReduceSum	(3,)	(8, 24, 48, 32)	 1.67 
+            ReduceSum	(3,)	(8, 24, 48, 64)	 1.19 
+            ReduceSum	(3,)	(8, 24, 48, 100)	 2.08 
+            ReduceSum	(3,)	(8, 24, 48, 128)	 2.96 
+            ReduceSum	(3,)	(8, 24, 48, 200)	 1.66 
+            ReduceSum	(3,)	(8, 24, 48, 256)	 2.26 
+            ReduceSum	(3,)	(8, 24, 48, 400)	 1.76 
+            ReduceSum	(3,)	(8, 24, 48, 512)	 2.61 
+            ReduceSum	(3,)	(8, 24, 48, 1024)	 2.21 
+            ReduceSum	(0,)	(8, 24, 48, 8)	 2.56 
+            ReduceSum	(0,)	(8, 24, 48, 16)	 2.05 
+            ReduceSum	(0,)	(8, 24, 48, 32)	 3.04 
+            ReduceSum	(0,)	(8, 24, 48, 64)	 2.57 
+            ReduceSum	(0,)	(8, 24, 48, 100)	 2.41 
+            ReduceSum	(0,)	(8, 24, 48, 128)	 2.77 
+            ReduceSum	(0,)	(8, 24, 48, 200)	 2.02 
+            ReduceSum	(0,)	(8, 24, 48, 256)	 1.61 
+            ReduceSum	(0,)	(8, 24, 48, 400)	 1.59 
+            ReduceSum	(0,)	(8, 24, 48, 512)	 1.48 
+            ReduceSum	(0,)	(8, 24, 48, 1024)	 1.50 
+            '''
+
+            df = pandas.read_csv(StringIO(from_excel), sep="\\t")
+            print(df.columns)
+
+            sub = df[["Op", "axes", "shape", "SpeedUp"]]
+            piv = df.pivot_table(values="SpeedUp", index=['axes', "shape"], columns="Op")
+            piv = piv.reset_index(drop=False)
+
+            print(piv.to_markdown(index=False))
 
     .. versionchanged:: 1.9
         Nan value are replaced by empty string even if
@@ -356,11 +422,12 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
     """
     Converts the table into a :epkg:`html` string.
 
-    @param  self            dataframe (to be added as a class method)
-    @param  class_table     adds a class to the tag ``table`` (None for none)
-    @param  class_td        adds a class to the tag ``td`` (None for none)
-    @param  class_tr        adds a class to the tag ``tr`` (None for none)
-    @param  class_th        adds a class to the tag ``th`` (None for none)
+    :param self: dataframe (to be added as a class method)
+    :param class_table: adds a class to the tag ``table`` (None for none)
+    :param class_td: adds a class to the tag ``td`` (None for none)
+    :param class_tr: adds a class to the tag ``tr`` (None for none)
+    :param class_th: adds a class to the tag ``th`` (None for none)
+    :return: HTML
     """
     clta = ' class="%s"' % class_table if class_table is not None else ""
     cltr = ' class="%s"' % class_tr if class_tr is not None else ""
