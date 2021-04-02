@@ -559,11 +559,11 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     if format == "html":
         from IPython.core.display import HTML
         return HTML(html)
-    elif format in ("rawhtml", 'rst', 'md', 'doctree'):
+    if format in ("rawhtml", 'rst', 'md', 'doctree'):
         return html
-    else:
-        raise ValueError(
-            "Unexpected format: '" + format + "', should be html, rawhtml, text, rst, md, doctree.")
+    raise ValueError(
+        "Unexpected format: '{}', should be html, rawhtml, text, rst, "
+        "md, doctree.".format(format))
 
 
 def rst2rst_folder(rststring, folder, document_name="index", **options):

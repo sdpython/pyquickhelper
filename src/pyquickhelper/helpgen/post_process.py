@@ -463,7 +463,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                     path = docname[len(folder):]
                     break
         if "blob/master/build" in path or "build/notebooks" in path:
-            #raise RuntimeError(  # pragma: no cover
+            # raise RuntimeError(  # pragma: no cover
             warnings.warn(
                 "Unexpected substring found in %r in folder %r\n"
                 "--TRIED--\n%r" % (path, folder, "\n".join(map(str, tried))))

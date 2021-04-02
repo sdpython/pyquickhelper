@@ -125,57 +125,58 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             :showcode:
 
             from io import StringIO
+            from textwrap import dedent
             import pandas
 
-            from_excel = '''
-            Op	axes	shape	SpeedUp
-            ReduceMax	(3,)	(8, 24, 48, 8)	 2.96 
-            ReduceMax	(3,)	(8, 24, 48, 16)	 2.57 
-            ReduceMax	(3,)	(8, 24, 48, 32)	 2.95 
-            ReduceMax	(3,)	(8, 24, 48, 64)	 3.28 
-            ReduceMax	(3,)	(8, 24, 48, 100)	 3.05 
-            ReduceMax	(3,)	(8, 24, 48, 128)	 3.11 
-            ReduceMax	(3,)	(8, 24, 48, 200)	 2.86 
-            ReduceMax	(3,)	(8, 24, 48, 256)	 2.50 
-            ReduceMax	(3,)	(8, 24, 48, 400)	 2.48 
-            ReduceMax	(3,)	(8, 24, 48, 512)	 2.90 
-            ReduceMax	(3,)	(8, 24, 48, 1024)	 2.76 
-            ReduceMax	(0,)	(8, 24, 48, 8)	 19.29 
-            ReduceMax	(0,)	(8, 24, 48, 16)	 11.83 
-            ReduceMax	(0,)	(8, 24, 48, 32)	 5.69 
-            ReduceMax	(0,)	(8, 24, 48, 64)	 5.49 
-            ReduceMax	(0,)	(8, 24, 48, 100)	 6.13 
-            ReduceMax	(0,)	(8, 24, 48, 128)	 6.27 
-            ReduceMax	(0,)	(8, 24, 48, 200)	 5.46 
-            ReduceMax	(0,)	(8, 24, 48, 256)	 4.76 
-            ReduceMax	(0,)	(8, 24, 48, 400)	 2.21 
-            ReduceMax	(0,)	(8, 24, 48, 512)	 4.52 
-            ReduceMax	(0,)	(8, 24, 48, 1024)	 4.38
-            ReduceSum	(3,)	(8, 24, 48, 8)	 1.79 
-            ReduceSum	(3,)	(8, 24, 48, 16)	 0.79 
-            ReduceSum	(3,)	(8, 24, 48, 32)	 1.67 
-            ReduceSum	(3,)	(8, 24, 48, 64)	 1.19 
-            ReduceSum	(3,)	(8, 24, 48, 100)	 2.08 
-            ReduceSum	(3,)	(8, 24, 48, 128)	 2.96 
-            ReduceSum	(3,)	(8, 24, 48, 200)	 1.66 
-            ReduceSum	(3,)	(8, 24, 48, 256)	 2.26 
-            ReduceSum	(3,)	(8, 24, 48, 400)	 1.76 
-            ReduceSum	(3,)	(8, 24, 48, 512)	 2.61 
-            ReduceSum	(3,)	(8, 24, 48, 1024)	 2.21 
-            ReduceSum	(0,)	(8, 24, 48, 8)	 2.56 
-            ReduceSum	(0,)	(8, 24, 48, 16)	 2.05 
-            ReduceSum	(0,)	(8, 24, 48, 32)	 3.04 
-            ReduceSum	(0,)	(8, 24, 48, 64)	 2.57 
-            ReduceSum	(0,)	(8, 24, 48, 100)	 2.41 
-            ReduceSum	(0,)	(8, 24, 48, 128)	 2.77 
-            ReduceSum	(0,)	(8, 24, 48, 200)	 2.02 
-            ReduceSum	(0,)	(8, 24, 48, 256)	 1.61 
-            ReduceSum	(0,)	(8, 24, 48, 400)	 1.59 
-            ReduceSum	(0,)	(8, 24, 48, 512)	 1.48 
-            ReduceSum	(0,)	(8, 24, 48, 1024)	 1.50 
-            '''
+            from_excel = dedent('''
+            Op;axes;shape;SpeedUp
+            ReduceMax;(3,);(8, 24, 48, 8);2.96
+            ReduceMax;(3,);(8, 24, 48, 16);2.57
+            ReduceMax;(3,);(8, 24, 48, 32);2.95
+            ReduceMax;(3,);(8, 24, 48, 64);3.28
+            ReduceMax;(3,);(8, 24, 48, 100);3.05
+            ReduceMax;(3,);(8, 24, 48, 128);3.11
+            ReduceMax;(3,);(8, 24, 48, 200);2.86
+            ReduceMax;(3,);(8, 24, 48, 256);2.50
+            ReduceMax;(3,);(8, 24, 48, 400);2.48
+            ReduceMax;(3,);(8, 24, 48, 512);2.90
+            ReduceMax;(3,);(8, 24, 48, 1024);2.76
+            ReduceMax;(0,);(8, 24, 48, 8);19.29
+            ReduceMax;(0,);(8, 24, 48, 16);11.83
+            ReduceMax;(0,);(8, 24, 48, 32);5.69
+            ReduceMax;(0,);(8, 24, 48, 64);5.49
+            ReduceMax;(0,);(8, 24, 48, 100);6.13
+            ReduceMax;(0,);(8, 24, 48, 128);6.27
+            ReduceMax;(0,);(8, 24, 48, 200);5.46
+            ReduceMax;(0,);(8, 24, 48, 256);4.76
+            ReduceMax;(0,);(8, 24, 48, 400);2.21
+            ReduceMax;(0,);(8, 24, 48, 512);4.52
+            ReduceMax;(0,);(8, 24, 48, 1024);4.38
+            ReduceSum;(3,);(8, 24, 48, 8);1.79
+            ReduceSum;(3,);(8, 24, 48, 16);0.79
+            ReduceSum;(3,);(8, 24, 48, 32);1.67
+            ReduceSum;(3,);(8, 24, 48, 64);1.19
+            ReduceSum;(3,);(8, 24, 48, 100);2.08
+            ReduceSum;(3,);(8, 24, 48, 128);2.96
+            ReduceSum;(3,);(8, 24, 48, 200);1.66
+            ReduceSum;(3,);(8, 24, 48, 256);2.26
+            ReduceSum;(3,);(8, 24, 48, 400);1.76
+            ReduceSum;(3,);(8, 24, 48, 512);2.61
+            ReduceSum;(3,);(8, 24, 48, 1024);2.21
+            ReduceSum;(0,);(8, 24, 48, 8);2.56
+            ReduceSum;(0,);(8, 24, 48, 16);2.05
+            ReduceSum;(0,);(8, 24, 48, 32);3.04
+            ReduceSum;(0,);(8, 24, 48, 64);2.57
+            ReduceSum;(0,);(8, 24, 48, 100);2.41
+            ReduceSum;(0,);(8, 24, 48, 128);2.77
+            ReduceSum;(0,);(8, 24, 48, 200);2.02
+            ReduceSum;(0,);(8, 24, 48, 256);1.61
+            ReduceSum;(0,);(8, 24, 48, 400);1.59
+            ReduceSum;(0,);(8, 24, 48, 512);1.48
+            ReduceSum;(0,);(8, 24, 48, 1024);1.50
+            ''')
 
-            df = pandas.read_csv(StringIO(from_excel), sep="\\t")
+            df = pandas.read_csv(StringIO(from_excel), sep=";")
             print(df.columns)
 
             sub = df[["Op", "axes", "shape", "SpeedUp"]]
