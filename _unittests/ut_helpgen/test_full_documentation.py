@@ -94,7 +94,8 @@ class TestSphinxDocFull (ExtTestCase):
                     else:
                         stk.append("stored  %s=%s " % (k, v.rst_link()))
                 mes += "\nstored:\n" + "\n".join(sorted(stk))
-                with open(func[0][1], "r", encoding="utf-8") as f:
+                name = func[0][1].split("'")[-2]
+                with open(name, "r", encoding="utf-8") as f:
                     content = f.read()
                 mes += "\n-------------FILE------------\n" + content
                 raise AssertionError(
