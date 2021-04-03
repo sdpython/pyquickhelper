@@ -63,7 +63,7 @@ class TestGitHelper(ExtTestCase):
 
         this = os.path.abspath(__file__).replace(".pyc", ".py")
         last = get_file_last_modification(this)
-        self.assertTrue("2019" in last or '2020' in last)
+        self.assertTrue("2019" in last or '2020' in last or '2021' in last)
 
 
 if __name__ == "__main__":

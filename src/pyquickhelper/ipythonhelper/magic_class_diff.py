@@ -86,7 +86,8 @@ class MagicDiff(MagicClassWithHelpers):
     @line_magic
     def difftext(self, line):
         """
-        Defines ``%difftext`` which calls @see me textdiff.
+        Defines ``%difftext`` which calls :meth:`textdiff
+        <pyquickhelper.ipythonhelper.magic_class_diff.MagicDiff.textdiff>`.
         but should be easier to remember
         """
         return self.textdiff(line)
