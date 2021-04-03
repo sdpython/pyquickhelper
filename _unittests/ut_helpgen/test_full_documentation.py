@@ -94,8 +94,11 @@ class TestSphinxDocFull (ExtTestCase):
                     else:
                         stk.append("stored  %s=%s " % (k, v.rst_link()))
                 mes += "\nstored:\n" + "\n".join(sorted(stk))
-                raise Exception(
-                    "issues detected for function '{0}' - {1}".format(f, mes))
+                with open(func[0][1], "r", encoding="utf-8") as f:
+                    content = f.read()
+                mes += "\n-------------FILE------------\n" + content
+                raise AssertionError(
+                    "issues detected for function '{0}' - {1}\n{2}".format(f, func, mes))
 
         exclude = os.path.join(temp, "pyquickhelper",
                                "helpgen", "utils_sphinx_doc.py")

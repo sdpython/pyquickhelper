@@ -21,7 +21,7 @@ class MagicDiff(MagicClassWithHelpers):
     @staticmethod
     def textdiff_parser():
         """
-        defines the way to parse the magic command ``%textdiff``
+        Defines the way to parse the magic command ``%textdiff``.
         """
         parser = MagicCommandParser(prog="textdiff",
                                     description='show the differences between two files, two text')
@@ -75,10 +75,10 @@ class MagicDiff(MagicClassWithHelpers):
         args = self.get_args(line, parser)
 
         if args is not None:
-            html, js = create_visual_diff_through_html_files(args.f1, args.f2, encoding=args.encoding, notebook=True,
-                                                             context_size=None if args.context in [
-                                                                 None, ""] else int(args.context),
-                                                             inline_view=args.inline)
+            html, js = create_visual_diff_through_html_files(
+                args.f1, args.f2, encoding=args.encoding, notebook=True,
+                context_size=None if args.context in [None, ""] else int(args.context),
+                inline_view=args.inline)
             display_html(html)
             return js
         return None

@@ -1348,7 +1348,8 @@ def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
                         "  w,unable to replace key ", key, ": ", all, "in file", fn)
                     if issues is not None:
                         issues.append(("fix_incomplete_references",
-                                       "unable to replace key %s, link %s in file %s" % (key, all, fn)))
+                                       "Unable to replace key '%s', link '%s' in file "
+                                       "'%s'." % (key, all, fn)))
 
             rline.append(line)
 
