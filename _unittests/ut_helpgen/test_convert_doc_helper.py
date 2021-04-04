@@ -56,7 +56,7 @@ class TestConvertDocHelper(ExtTestCase):
             ::
 
 
-                this_fold = os.path.dirname(pyquickhelper.serverdoc.documentation_server.__file__)
+                this_fold = os.path.dirname(pyquickhelper.server.documentation_server.__file__)
                 this_path = os.path.abspath( os.path.join( this_fold, "..", "..", "..", "dist", "html") )
                 run_doc_server(None, mappings = { "pyquickhelper": this_path } )
 

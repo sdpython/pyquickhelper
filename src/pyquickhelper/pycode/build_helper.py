@@ -445,7 +445,7 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
         script.append(("auto_doc_server.py", prefix_setup + """
                     # address http://localhost:8079/
                     from pyquickhelper import fLOG
-                    from pyquickhelper.serverdoc import run_doc_server, get_jenkins_mappings
+                    from pyquickhelper.server import run_doc_server, get_jenkins_mappings
                     fLOG(OutputPrint=True)
                     fLOG("running documentation server")
                     thisfile = os.path.dirname(__file__)

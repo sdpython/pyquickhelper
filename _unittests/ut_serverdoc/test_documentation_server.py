@@ -10,7 +10,7 @@ import unittest
 from http.server import HTTPServer as skip_
 
 from pyquickhelper.loghelper import fLOG, get_url_content
-from pyquickhelper.serverdoc import run_doc_server
+from pyquickhelper.server import run_doc_server
 from pyquickhelper.pycode import skipif_appveyor, ExtTestCase
 
 
