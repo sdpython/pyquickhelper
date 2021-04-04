@@ -6,6 +6,7 @@ codecov
 coverage>=5.0
 cryptography
 docformatter
+fastapi
 fire
 git-pandas
 gitdb
