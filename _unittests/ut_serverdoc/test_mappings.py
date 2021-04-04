@@ -9,7 +9,7 @@ import os
 import unittest
 
 from pyquickhelper.loghelper import fLOG
-from pyquickhelper.serverdoc import get_jenkins_mappings
+from pyquickhelper.server import get_jenkins_mappings
 
 
 class TestMappings(unittest.TestCase):
