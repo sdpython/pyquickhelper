@@ -43,6 +43,16 @@ class TestfileStoreRest(ExtTestCase):
             "/query/", json=dict(name="essai", password="BBB"))
         self.assertEqual(response.status_code, 200)
         js = response.json()
+        self.assertEqual(len(js), 1)
+
+        response = client.post(
+            "/metrics/", json=dict(name="essai", password="CCC"))
+        self.assertEqual(response.status_code, 401)
+
+        response = client.post(
+            "/metrics/", json=dict(name="essai", password="BBB"))
+        self.assertEqual(response.status_code, 200)
+        js = response.json()
         self.assertEqual(len(js), 0)
 
 
