@@ -16,7 +16,12 @@ class Item(BaseModel):
     project: Optional[str]  # pylint: disable=E1136
     version: Optional[str]  # pylint: disable=E1136
     content: Optional[str]  # pylint: disable=E1136
-    password: Optional[str]  # pylint: disable=E1136
+    password: str
+
+
+class Query(BaseModel):
+    name: str
+    password: str
 
 
 def create_fast_api_app(db_path, password):
@@ -42,7 +47,14 @@ def create_fast_api_app(db_path, password):
             del res['content']
         return res
 
+    async def query(query: Query, request: Request):
+        if query.password != password:
+            raise HTTPException(status_code=401, detail="Wrong password")
+        res = list(store.enumerate_data(name=query.name, join=True))
+        return res
+
     app = FastAPI()
     app.get("/")(get_root)
-    app.put("/add/")(add)
+    app.post("/add/")(add)
+    app.post("/query/")(query)
     return app

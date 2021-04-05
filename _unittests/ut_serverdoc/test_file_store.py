@@ -32,6 +32,23 @@ class TestfileStore(ExtTestCase):
         got = list(store.enumerate(name="zoo"))
         self.assertEqual(len(got), 1)
 
+        # data
+        idfile = record['id']
+        store.add_data(idfile=idfile, name="ZOO", value="5.6")
+        res = list(store.enumerate_data(idfile))
+        self.assertEqual(len(res), 1)
+        del res[0]['date']
+        self.assertEqual(res, [{'id': 1, 'idfile': 1, 'name': 'ZOO',
+                                'value': 5.6}])
+
+        # data join
+        res = list(store.enumerate_data(idfile, join=True))
+        self.assertEqual(len(res), 1)
+        del res[0]['date']
+        self.assertEqual(
+            res, [{'id': 1, 'idfile': 1, 'name': 'ZOO',
+                   'name_f': 'zoo', 'value': 5.6}])
+
     def test_file_store_exc(self):
         temp = get_temp_folder(__file__, "temp_file_storage_exc")
         name = os.path.join(temp, "filestore.db3")

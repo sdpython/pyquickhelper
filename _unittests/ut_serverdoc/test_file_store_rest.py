@@ -22,17 +22,28 @@ class TestfileStoreRest(ExtTestCase):
         self.assertEqual(
             response.json(),
             {'pyquickhelper': 'FastAPI to load and query files'})
-        response = client.put(
+        response = client.post(
             "/add/", json=dict(name="essai", content="a,b\ne,0\nhh, 1.5",
                                password="CCC"))
         self.assertEqual(response.status_code, 401)
-        response = client.put(
+
+        response = client.post(
             "/add/", json=dict(name="essai", content="a,b\ne,0\nhh, 1.5",
                                password="BBB"))
         self.assertEqual(response.status_code, 200)
         js = response.json()
         self.assertIn('date', js)
         self.assertNotIn('content', js)
+
+        response = client.post(
+            "/query/", json=dict(name="essai", password="CCC"))
+        self.assertEqual(response.status_code, 401)
+
+        response = client.post(
+            "/query/", json=dict(name="essai", password="BBB"))
+        self.assertEqual(response.status_code, 200)
+        js = response.json()
+        self.assertEqual(len(js), 0)
 
 
 if __name__ == "__main__":

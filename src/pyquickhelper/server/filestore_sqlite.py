@@ -30,12 +30,21 @@ class SqlLite3FileStore:
         cur = self.con_.cursor()
         cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
         res = cur.fetchall()
+        commit = False
         if ('files',) not in res:
             cur.execute(
                 '''CREATE TABLE files
                    (id INTEGER PRIMARY KEY, date TEXT, name TEXT,
                     format TEXT, metadata TEXT, team TEXT,
                     project TEXT, version TEXT, content BLOB)''')
+            commit = True
+        if ('files',) not in res:
+            cur.execute(
+                '''CREATE TABLE data
+                   (id INTEGER PRIMARY KEY, idfile INTEGER,
+                    name TEXT, value REAL, date TEXT)''')
+            commit = True
+        if commit:
             self.con_.commit()
 
     def add(self, name, content, format=None, date=None, metadata=None,
@@ -51,6 +60,7 @@ class SqlLite3FileStore:
         :param team: another name
         :param project: another name
         :param version: version
+        :return: added data as a dictionary (no content)
         """
         if date is None:
             date = datetime.now()
@@ -88,6 +98,29 @@ class SqlLite3FileStore:
                       metadata=metadata, team=team, project=project,
                       version=version, date=date)
         return {k: v for k, v in output.items() if v is not None}
+
+    def add_data(self, idfile, name, value, date=None):
+        """
+        Adds a file to the database.
+
+        :param idfile: refers to database files
+        :param date: date, by default now
+        :param name: name
+        :param value: data value
+        :return: added data
+        """
+        if date is None:
+            date = datetime.now()
+        date = date.isoformat()
+
+        fields = ['idfile', 'date', 'name', 'value']
+        values = [idfile, date, name, value]
+        sqlite_insert_blob_query = """
+            INSERT INTO data (%s) VALUES (%s)""" % (
+            ",".join(fields), ",".join("%r" % v for v in values))
+        cur = self.con_.cursor()
+        cur.execute(sqlite_insert_blob_query)
+        self.con_.commit()
 
     def _enumerate(self, condition, fields):
         cur = self.con_.cursor()
@@ -159,3 +192,46 @@ class SqlLite3FileStore:
                   "team", "project", "version"]
         for it in self._enumerate(cond, fields):
             yield it
+
+    def enumerate_data(self, idfile=None, name=None, join=False):
+        """
+        Queries the database, enumerates the results.
+
+        :param idfile: file identifier
+        :param name: value name, None if not specified
+        :param join: join with the table *files*
+        :return: results
+        """
+        record = dict(name=name, idfile=idfile)
+        cond = []
+        for k, v in record.items():
+            if v is None:
+                continue
+            if join:
+                cond.append('data.%s="%s"' % (k, v))
+            else:
+                cond.append('%s="%s"' % (k, v))
+        cur = self.con_.cursor()
+        if join:
+            fields = ["data.id", "idfile", "data.name", "data.date", "value"]
+            fields2 = ['name', 'project', 'team', 'version']
+            query = '''
+                SELECT %s, %s
+                FROM data INNER JOIN files AS B on B.id = idfile
+                WHERE %s''' % (
+                ",".join(fields),
+                ",".join(map(lambda s: "B.%s" % s, fields2)),
+                " AND ".join(cond))
+        else:
+            fields = ["id", "idfile", "name", "date", "value"]
+            query = '''SELECT %s FROM data WHERE %s''' % (
+                ",".join(fields), " AND ".join(cond))
+        res = cur.execute(query)
+
+        if join:
+            fields = ([s.replace('data.', '') for s in fields] +
+                      ['name_f', 'project', 'team', 'version'])
+        for line in res:
+            res = {k: v for k, v in zip(fields, line)  # pylint: disable=R1721
+                   if v is not None}
+            yield res
