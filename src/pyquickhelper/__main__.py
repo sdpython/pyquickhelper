@@ -31,6 +31,7 @@ def main(args, fLOG=print):
         from .cli.notebook import run_notebook, convert_notebook
         from .loghelper import set_password
         from .filehelper.download_urls_helper import download_urls_in_folder_content
+        from .cli.uvicorn_cli import uvicorn_app
     except ImportError:  # pragma: no cover
         from pyquickhelper.cli.pyq_sync_cli import pyq_sync
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
@@ -47,6 +48,7 @@ def main(args, fLOG=print):
         from pyquickhelper.cli.notebook import run_notebook, convert_notebook
         from pyquickhelper.loghelper import set_password
         from pyquickhelper.filehelper.download_urls_helper import download_urls_in_folder_content
+        from pyquickhelper.cli.uvicorn_cli import uvicorn_app
 
     fcts = dict(synchronize_folder=pyq_sync, encrypt_file=encrypt_file,
                 decrypt_file=decrypt_file, encrypt=encrypt,
@@ -58,7 +60,8 @@ def main(args, fLOG=print):
                 zoom_img=zoom_img, images2pdf=images2pdf,
                 repeat_script=repeat_script,
                 ftp_upload=ftp_upload, set_password=set_password,
-                download_urls_in_folder_content=download_urls_in_folder_content)
+                download_urls_in_folder_content=download_urls_in_folder_content,
+                uvicorn_app=uvicorn_app)
     return cli_main_helper(fcts, args=args, fLOG=fLOG)
 
 

@@ -77,7 +77,8 @@ class MagicDiff(MagicClassWithHelpers):
         if args is not None:
             html, js = create_visual_diff_through_html_files(
                 args.f1, args.f2, encoding=args.encoding, notebook=True,
-                context_size=None if args.context in [None, ""] else int(args.context),
+                context_size=None if args.context in [
+                    None, ""] else int(args.context),
                 inline_view=args.inline)
             display_html(html)
             return js

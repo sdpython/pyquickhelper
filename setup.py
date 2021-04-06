@@ -266,6 +266,7 @@ if not r:
                            'keyrings.cryptfile'],
             'jenkinshelper': ['python-jenkins>=1.0.0', 'pyyaml'],
             'loghelper': ['psutil'],
+            'server': ['fastapi'],
             'all': [
                 "autopep8",     # part of the minimal list
                 'cffi',
@@ -274,6 +275,7 @@ if not r:
                 "docformatter",
                 "docutils",
                 'flake8',
+                'fastapi',
                 'fire',
                 "IPython>=5.0.0",
                 "jupyter",
