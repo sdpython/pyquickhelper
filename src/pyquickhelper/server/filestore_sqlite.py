@@ -22,6 +22,17 @@ class SqlLite3FileStore:
         self.path_ = path
         self._create()
 
+    def _get_column_table(self, table):
+        cur = self.con_.cursor()
+        res = cur.execute("PRAGMA table_info(%s);" % table)
+        res = cur.fetchall()
+        return res
+
+    def _check_same_column(self, table, columns):
+        cols = self._get_column_table(table)
+        names = [_[1] for _ in cols]
+        return names == columns
+
     def _create(self):
         """
         Creates the database if it does not exists.
@@ -38,11 +49,19 @@ class SqlLite3FileStore:
                     format TEXT, metadata TEXT, team TEXT,
                     project TEXT, version TEXT, content BLOB)''')
             commit = True
-        if ('files',) not in res:
+
+        if (('data',) in res and not self._check_same_column(
+                "data", ["id", "idfile", "name", "value", "date", "comment"])):
+            cur.execute("DROP TABLE data;")
+            self.con_.commit()
+            cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            res = cur.fetchall()
+
+        if ('data',) not in res:
             cur.execute(
                 '''CREATE TABLE data
                    (id INTEGER PRIMARY KEY, idfile INTEGER,
-                    name TEXT, value REAL, date TEXT)''')
+                    name TEXT, value REAL, date TEXT, comment TEXT)''')
             commit = True
         if commit:
             self.con_.commit()
@@ -99,7 +118,7 @@ class SqlLite3FileStore:
                       version=version, date=date)
         return {k: v for k, v in output.items() if v is not None}
 
-    def submit_data(self, idfile, name, value, date=None):
+    def submit_data(self, idfile, name, value, date=None, comment=None):
         """
         Submits data to the database.
 
@@ -107,14 +126,17 @@ class SqlLite3FileStore:
         :param date: date, by default now
         :param name: name
         :param value: data value
+        :param comment: additional comment
         :return: added data
         """
         if date is None:
             date = datetime.now()
         date = date.isoformat()
+        if comment is None:
+            comment = ""
 
-        fields = ['idfile', 'date', 'name', 'value']
-        values = [idfile, date, name, value]
+        fields = ['idfile', 'date', 'name', 'value', 'comment']
+        values = [idfile, date, name, value, comment]
         sqlite_insert_blob_query = """
             INSERT INTO data (%s) VALUES (%s)""" % (
             ",".join(fields), ",".join("%r" % v for v in values))
@@ -124,8 +146,10 @@ class SqlLite3FileStore:
 
     def _enumerate(self, condition, fields):
         cur = self.con_.cursor()
-        query = '''SELECT %s FROM files WHERE %s''' % (
-            ",".join(fields), " AND ".join(condition))
+        query = '''SELECT %s FROM files %s %s''' % (
+            ",".join(fields),
+            "WHERE" if len(condition) > 0 else "",
+            " AND ".join(condition))
         res = cur.execute(query)
 
         for line in res:
@@ -193,39 +217,53 @@ class SqlLite3FileStore:
         for it in self._enumerate(cond, fields):
             yield it
 
-    def enumerate_data(self, idfile=None, name=None, join=False):
+    def enumerate_data(self, idfile=None, name=None, join=False,
+                       project=None):
         """
         Queries the database, enumerates the results.
 
         :param idfile: file identifier
         :param name: value name, None if not specified
         :param join: join with the table *files*
+        :param project: filter by project
         :return: results
         """
-        record = dict(name=name, idfile=idfile)
+        fields2 = ['name', 'project', 'team', 'version']
+
+        record = dict(name=name, idfile=idfile, project=project)
         cond = []
         for k, v in record.items():
             if v is None:
                 continue
             if join:
-                cond.append('data.%s="%s"' % (k, v))
+                if k in fields2:
+                    if not join:
+                        raise RuntimeError(
+                            "join must be true if metrics are "
+                            "filtered by project.")
+                    cond.append('B.%s="%s"' % (k, v))
+                else:
+                    cond.append('data.%s="%s"' % (k, v))
             else:
                 cond.append('%s="%s"' % (k, v))
+
         cur = self.con_.cursor()
         if join:
-            fields = ["data.id", "idfile", "data.name", "data.date", "value"]
-            fields2 = ['name', 'project', 'team', 'version']
+            fields = ["data.id", "idfile", "data.name", "data.date",
+                      "data.value", "data.comment"]
             query = '''
                 SELECT %s, %s
                 FROM data INNER JOIN files AS B on B.id = idfile
-                WHERE %s''' % (
+                %s %s''' % (
                 ",".join(fields),
                 ",".join(map(lambda s: "B.%s" % s, fields2)),
+                "WHERE" if len(cond) > 0 else "",
                 " AND ".join(cond))
         else:
-            fields = ["id", "idfile", "name", "date", "value"]
-            query = '''SELECT %s FROM data WHERE %s''' % (
-                ",".join(fields), " AND ".join(cond))
+            fields = ["id", "idfile", "name", "date", "value", "comment"]
+            query = '''SELECT %s FROM data %s %s''' % (
+                ",".join(fields), "WHERE" if len(cond) > 0 else "",
+                " AND ".join(cond))
         res = cur.execute(query)
 
         if join:

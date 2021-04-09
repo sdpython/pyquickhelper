@@ -21,7 +21,8 @@ class Item(BaseModel):
 
 
 class Metric(BaseModel):
-    name: str
+    name: Optional[str]
+    project: Optional[str]
     password: str
 
 
@@ -59,7 +60,8 @@ def create_fast_api_app(db_path, password):
     async def metrics(query: Metric, request: Request):
         if query.password != password:
             raise HTTPException(status_code=401, detail="Wrong password")
-        res = list(store.enumerate_data(name=query.name, join=True))
+        res = list(store.enumerate_data(
+            name=query.name, project=query.project, join=True))
         return res
 
     async def query(query: Query, request: Request):
