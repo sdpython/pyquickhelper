@@ -16,7 +16,7 @@ class TestfileStore(ExtTestCase):
         name = os.path.join(temp, "filestore.db3")
         store = SqlLite3FileStore(name)
         df = pandas.DataFrame({"A": ["un", "deux"], "B": [0.5, 0.6]})
-        store.add(name="zoo", metadata={'hh': 'kk'}, content=df)
+        store.submit(name="zoo", metadata={'hh': 'kk'}, content=df)
         got = list(store.enumerate_content(name="zoo"))
         self.assertEqual(len(got), 1)
         record = got[0]
@@ -34,7 +34,7 @@ class TestfileStore(ExtTestCase):
 
         # data
         idfile = record['id']
-        store.add_data(idfile=idfile, name="ZOO", value="5.6")
+        store.submit_data(idfile=idfile, name="ZOO", value="5.6")
         res = list(store.enumerate_data(idfile))
         self.assertEqual(len(res), 1)
         del res[0]['date']
@@ -55,8 +55,8 @@ class TestfileStore(ExtTestCase):
         store = SqlLite3FileStore(name)
         df = pandas.DataFrame({"A": ["un", "deux"], "B": [0.5, 0.6]})
         self.assertRaise(
-            lambda: store.add(name="zoo", metadata="{'hh': 'kk'}",
-                              content=df),
+            lambda: store.submit(name="zoo", metadata="{'hh': 'kk'}",
+                                 content=df),
             TypeError)
 
     def test_file_store1(self):

@@ -44,14 +44,14 @@ def create_fast_api_app(db_path, password):
     async def get_root():
         return {"pyquickhelper": "FastAPI to load and query files"}
 
-    async def add(item: Item, request: Request):
+    async def submit(item: Item, request: Request):
         if item.password != password:
             raise HTTPException(status_code=401, detail="Wrong password")
         kwargs = dict(name=item.name, format=item.format,
                       team=item.team, project=item.project,
                       version=item.version, content=item.content)
         kwargs['metadata'] = dict(client=request.client)
-        res = store.add(**kwargs)
+        res = store.submit(**kwargs)
         if 'content' in res:
             del res['content']
         return res
@@ -71,7 +71,7 @@ def create_fast_api_app(db_path, password):
 
     app = FastAPI()
     app.get("/")(get_root)
-    app.post("/add/")(add)
+    app.post("/submit/")(submit)
     app.post("/metrics/")(metrics)
     app.post("/query/")(query)
     return app
@@ -96,12 +96,22 @@ def create_app():
         uvicorn --factory pyquickhelper.server.filestore_fastapi:create_app --port 8798
                 --ssl-keyfile=./key.pem --ssl-certfile=./cert.pem
         gunicorn --keyfile=./key.pem --certfile=./cert.pem -k uvicorn.workers.UvicornWorker
-                 --factory pyquickhelper.server.filestore_fastapi:create_app
+                 --factory pyquickhelper.server.filestore_fastapi:create_app --port 8798
+
+    ::
+
+        nohup python -m uvicorn --factory pyquickhelper.server.filestore_fastapi:create_app
+              --port xxxx --ssl-keyfile=./key.pem --ssl-certfile=./cert.pem
+              --host xx.xxx.xx.xxx --ssl-keyfile-password xxxx > fastapi.log &
 
     ::
 
         uvicorn.run("pyquickhelper.server.filestore_fastapi:create_app",
                     host="127.0.0.1", port=8798, log_level="info", factory=True)
+
+    ::
+
+        openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
     """
     if "PYQUICKHELPER_FASTAPI_PWD" not in os.environ:
         raise RuntimeError(

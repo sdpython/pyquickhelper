@@ -47,10 +47,10 @@ class SqlLite3FileStore:
         if commit:
             self.con_.commit()
 
-    def add(self, name, content, format=None, date=None, metadata=None,
-            team=None, project=None, version=None):
+    def submit(self, name, content, format=None, date=None, metadata=None,
+               team=None, project=None, version=None):
         """
-        Adds a file to the database.
+        Submits a file to the database.
 
         :param name: filename
         :param content: file content (it can be a dataframe)
@@ -99,9 +99,9 @@ class SqlLite3FileStore:
                       version=version, date=date)
         return {k: v for k, v in output.items() if v is not None}
 
-    def add_data(self, idfile, name, value, date=None):
+    def submit_data(self, idfile, name, value, date=None):
         """
-        Adds a file to the database.
+        Submits data to the database.
 
         :param idfile: refers to database files
         :param date: date, by default now
