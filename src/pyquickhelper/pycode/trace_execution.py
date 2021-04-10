@@ -15,10 +15,17 @@ class ErrorOnPurpose(Exception):
 
 def get_call_stack():
     """
-    returns a string showing the call stack
-    when this function is called
+    Returns a string showing the call stack
+    when this function is called.
 
-    @return                     string
+    .. exref::
+        :title: Display the call stack
+
+        .. runpython::
+            :showcode:
+
+            from pyquickhelper.pycode import get_call_stack
+            print(get_call_stack())
     """
     s = StringIO()
     traceback.print_stack(file=s)

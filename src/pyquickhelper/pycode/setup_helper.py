@@ -480,7 +480,7 @@ def process_standard_options_for_setup(
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP", "unittests_GUI",
                   "unittests -d 5", "setup_hook", "copy27",
-                  "test_local_pypi", 'run_pylint'):
+                  "local_pypi", 'run_pylint'):
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
@@ -537,7 +537,7 @@ def process_standard_options_for_setup(
             root, dest, unittest_modules=unittest_modules_py3to2, pattern_copy=pattern_copy)
         return True
 
-    elif "test_local_pypi" in argv:  # pragma: no cover
+    elif "local_pypi" in argv:  # pragma: no cover
         # delayed import
         from ..filehelper import get_url_content_timeout
         url = "http://localhost:{0}/".format(port)

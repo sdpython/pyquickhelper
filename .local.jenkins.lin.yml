@@ -31,7 +31,7 @@ install:
 # This means the job will be stop if it produces no output for 20 minutes.
 script:
   - { CMD: "$PYINT -u setup.py unittests", NAME: "UT", TIMEOUT: 899 }
-  - { CMD: "$PYINT -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)|(gitjs)).*\"", NAME: "UT_SKIP", TIMEOUT: 900 }
+  - { CMD: "$PYINT -u setup.py unittests -e \".*SKIP.*\" -g \".*((api)|(pylint)|(gitjs)).*\" --covtoken=69193a28-dc79-4a24-98ed-aedf441a8249", NAME: "UT_SKIP", TIMEOUT: 900 }
   - { CMD: "$PYINT -u setup.py unittests -e \".*api.*\"", NAME: "UT_SKIP_API" }
   - { CMD: "$PYINT -u setup.py unittests -e \".*pylint.*\"", NAME: "UT_SKIP_PYLINT", TIMEOUT: 3000 }
   - { CMD: "$PYINT -u setup.py unittests -e \".*gitjs.*\"", NAME: "UT_SKIP_GITJS", TIMEOUT: 1500 }
