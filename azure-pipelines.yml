@@ -37,9 +37,13 @@ jobs:
     displayName: 'uninstall pyquickhelper'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
-  - script: python -u setup.py unittests -d 5
+  - script: |
+          export PYTHONPATH=src
+          python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
-  - script: python -u setup.py bdist_wheel
+  - script: |
+          export PYTHONPATH=src
+          python -u setup.py bdist_wheel
     displayName: 'Build Package'
 #  - script: python -u setup.py build_sphinx
 #    displayName: 'Builds Documentation'
@@ -105,11 +109,13 @@ jobs:
     displayName: 'uninstall pyquickhelper'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
-  - script: python -u setup.py unittests -d 5
+  - script: |
+          export PYTHONPATH=src
+          python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
-  - script: pip freeze
-    displayName: 'pip freeze'
-  - script: python -u setup.py bdist_wheel
+  - script: |
+          export PYTHONPATH=src
+          python -u setup.py bdist_wheel
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
     inputs:
