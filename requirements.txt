@@ -39,6 +39,7 @@ pydocstyle
 pyinstrument
 pylint
 pylzma
+pyquicksetup
 pysftp
 python-jenkins>=1.0.0
 PyYAML
