@@ -24,8 +24,7 @@ DESCRIPTION = "Various functionalities: folder synchronization, simple logging f
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
     'Intended Audience :: Developers',
-    'Topic :: Scientific/Engineering',
-    'Topic :: Education',
+    'Topic :: Software Development :: Build Tools',
     'License :: OSI Approved :: MIT License',
     'Development Status :: 5 - Production/Stable'
 ]

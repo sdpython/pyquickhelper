@@ -27,6 +27,10 @@ def default_filter_warning(w):  # pragma: no cover
         except ImportError:
             MatplotlibDeprecationWarning = UnusedException
 
+    if "ConvergenceWarning" in str(type(w.message)):
+        return False
+    if isinstance(w.message, FutureWarning):
+        return False
     if isinstance(w.message, RuntimeWarning):
         if "_bootstrap.py" in w.filename:
             if "numpy.dtype size changed" in str(w.message):
@@ -49,13 +53,15 @@ def default_filter_warning(w):  # pragma: no cover
             if "Unable to retrieve content from" in str(w):
                 return False
     elif isinstance(w.message, DeprecationWarning):
+        if w.filename in ('', None):
+            return False
         if "RemovedInSphinx40Warning" in str(w):
             return False
         if w.filename.endswith("kernelspec.py"):
             return False
         if "jupyter_client" in w.filename:
             return False
-        if "IPython" in w.filename:
+        elif "IPython" in w.filename:
             if "DisplayFormatter." in str(w.message):
                 return False
             if "ScriptMagics." in str(w.message):
