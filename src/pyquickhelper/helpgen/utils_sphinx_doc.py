@@ -1545,7 +1545,8 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
         row = rows[i]
 
         if debug:
-            fLOG("-- indent=%s openi=%s row=%s" % (indent, openi, row))
+            fLOG(  # pragma: no cover
+                "-- indent=%s openi=%s row=%s" % (indent, openi, row))
 
         if "__sphinx__skip__" in row:
             if not silent:

@@ -16,12 +16,13 @@ readme = 'README.rst'
 history = "HISTORY.rst"
 requirements = None
 
-KEYWORDS = project_var_name + \
-    ', synchronization, files, documentation, Xavier Dupré, sphinx, ' + \
-    'extension, notebooks, rst, builder, cli, setup, unit tests'
-DESCRIPTION = "Various functionalities: folder synchronization, simple logging function, " + \
-              "helpers to generate documentation with sphinx, sphinx extension, " + \
-              "to run a command line, to run a notebook..."
+KEYWORDS = project_var_name + (
+    ', synchronization, files, documentation, Xavier Dupré, sphinx, '
+    'extension, notebooks, rst, builder, cli, setup, unit tests')
+DESCRIPTION = (
+    "Various functionalities: folder synchronization, simple logging function, "
+    "helpers to generate documentation with sphinx, sphinx extension, "
+    "to run a command line, to run a notebook...")
 CLASSIFIERS = [
     'Programming Language :: Python :: 3',
     'Intended Audience :: Developers',
@@ -36,35 +37,36 @@ CLASSIFIERS = [
 
 packages = find_packages('src', exclude='src')
 package_dir = {k: "src/" + k.replace(".", "/") for k in packages}
-package_data = {project_var_name + ".sphinxext": ["*.png"],
-                project_var_name + ".ipythonhelper": ["*.png"],
-                project_var_name + ".filehelper": ["*.js", "*.css"],
-                project_var_name + ".helpgen": ["*.js", "*.tpl"],
-                project_var_name + ".sphinxext.bokeh": ["*.txt"],
-                project_var_name + ".sphinxext.sphinximages.sphinxtrib": ["*.png"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs": ["*.conf", "*.html", "*.txt"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static": ["LICENSE", "*.json", "*.css_t"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css": ["*.css", "*.scss"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.print": ["*.css"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme": ["*.css", "*.md"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.source": ["*.scss"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.template": ["*.scss"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.js": ["*.js"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.css": ["*.css"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.font": [
-                    "league-gothic/*.*", "source-sans-pro/*.*"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.js": ["*.js"],
-                project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin": [
-                    "highlight/*.js", "markdown/*.*", "math/*.js", "multiplex/*.*",
-                    "notes/*.*", "notes-server/*.*", "print-pdf/*.js", "search/*js", "zoom-js/*.js"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
-                project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
-                project_var_name + ".sphinxext.sphinximages.sphinxtrib": ["*.png"],
-                project_var_name + ".sphinxext.templates": ["*.txt"],
-                }
+package_data = {
+    project_var_name + ".sphinxext": ["*.png"],
+    project_var_name + ".ipythonhelper": ["*.png"],
+    project_var_name + ".filehelper": ["*.js", "*.css"],
+    project_var_name + ".helpgen": ["*.js", "*.tpl"],
+    project_var_name + ".sphinxext.bokeh": ["*.txt"],
+    project_var_name + ".sphinxext.sphinximages.sphinxtrib": ["*.png"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs": ["*.conf", "*.html", "*.txt"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static": ["LICENSE", "*.json", "*.css_t"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css": ["*.css", "*.scss"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.print": ["*.css"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme": ["*.css", "*.md"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.source": ["*.scss"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.css.theme.template": ["*.scss"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.js": ["*.js"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.css": ["*.css"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.font": [
+        "league-gothic/*.*", "source-sans-pro/*.*"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.js": ["*.js"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin": [
+        "highlight/*.js", "markdown/*.*", "math/*.js", "multiplex/*.*",
+        "notes/*.*", "notes-server/*.*", "print-pdf/*.js", "search/*js", "zoom-js/*.js"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.js": ["*.js", "*.map"],
+    project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.sass": ["*.sass"],
+    project_var_name + ".sphinxext.sphinximages.sphinxtrib": ["*.png"],
+    project_var_name + ".sphinxext.templates": ["*.txt"],
+}
 
 #######
 # data

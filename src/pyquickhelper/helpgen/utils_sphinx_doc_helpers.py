@@ -10,6 +10,7 @@ import copy
 import re
 import sys
 import importlib
+import traceback
 from ..pandashelper.tblformat import df2rst
 from .helpgen_exceptions import HelpGenException, ImportErrorHelpGen
 
@@ -185,7 +186,7 @@ class ModuleMemberDoc:
         @param      module  module name if belongs to
         """
         if module is None:
-            raise ValueError("module cannot be null")
+            raise ValueError("module cannot be null.")  # pragma: no cover
 
         self.owner = module
         self.obj = obj
@@ -236,7 +237,7 @@ class ModuleMemberDoc:
             elif inspect.isgenerator(obj):
                 self.type = "generator"
             else:
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "E/unable to deal with this type: " + typstr(type(obj)))
 
         if ty == "method":
@@ -261,8 +262,10 @@ class ModuleMemberDoc:
             else:
                 self.module = None
             if self.name is None:
-                raise IndexError("Unable to find a name for this object type={0}, self.type={1}, owner='{2}'".format(
-                    type(obj), self.type, self.owner))
+                raise IndexError(  # pragma: no cover
+                    "Unable to find a name for this object type={0}, "
+                    "self.type={1}, owner='{2}'".format(
+                        type(obj), self.type, self.owner))
 
         # full path for the module
         if self.module is not None:
@@ -274,16 +277,17 @@ class ModuleMemberDoc:
         if self.type == "staticmethod":
             try:
                 self.doc = obj.__func__.__doc__
-            except Exception as ie:
+            except Exception as ie:  # pragma: no cover
                 try:
                     self.doc = obj.__doc__
                 except Exception as ie2:
-                    self.doc = typstr(
-                        ie) + " - " + typstr(ie2) + " \n----------\n " + typstr(dir(obj))
+                    self.doc = (
+                        typstr(ie) + " - " + typstr(ie2) + " \n----------\n " +
+                        typstr(dir(obj)))
         else:
             try:
                 self.doc = obj.__doc__
-            except Exception as ie:
+            except Exception as ie:  # pragma: no cover
                 self.doc = typstr(ie) + " \n----------\n " + typstr(dir(obj))
 
         try:
@@ -314,7 +318,8 @@ class ModuleMemberDoc:
         Returns a sphinx link on the object.
 
         @param      prefix              to correct the path with a prefix
-        @param      class_in_bracket    if True, adds the class in bracket for methods and properties
+        @param      class_in_bracket    if True, adds the class in bracket
+                                        for methods and properties
         @return                         a string style, see below
 
         String style:
@@ -464,7 +469,8 @@ class IndexInformation:
         Returns a new label given the existing ones.
 
         @param  existing    existing labels stored in a dictionary
-        @param  suggestion  the suggestion will be chosen if it does not exists, ``suggestion + zzz`` otherwise
+        @param  suggestion  the suggestion will be chosen if it does not exists,
+                            ``suggestion + zzz`` otherwise
         @return             string
         """
         if existing is None:
@@ -574,7 +580,8 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                     "Unable to guess extension from '{}'.".format(li))
         ext_rem = li[search:]
     if not ext_rem:
-        raise ValueError("Unable to guess file extension '{0}'".format(li))
+        raise ValueError(  # pragma: no cover
+            "Unable to guess file extension '{0}'".format(li))
     if ext_rem != ".py":
         log_function("[import_module] found extension='{0}'".format(ext_rem))
 
@@ -629,14 +636,15 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             mo = importlib.import_module(fi, context)
         except ImportError:  # pragma: no cover
             log_function(
-                "[import_module] unable to import module '{0}' fullname '{1}'".format(fi, filename))
+                "[import_module] unable to import module '{0}' fullname "
+                "'{1}'".format(fi, filename))
             mo_spec = importlib.util.find_spec(fi, context)
             log_function("[import_module] imported spec", mo_spec)
             mo = mo_spec.loader.load_module()
             log_function("[import_module] successful try", mo_spec)
 
-        if not mo.__file__.replace(  # pragma: no cover
-                "\\", "/").endswith(filename.replace("\\", "/").strip("./")):
+        if not mo.__file__.replace("\\", "/").endswith(
+                filename.replace("\\", "/").strip("./")):  # pragma: no cover
             namem = os.path.splitext(os.path.split(filename)[-1])[0]
 
             if "src" in sys.path:
@@ -654,11 +662,15 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
 
                 if not mo.__file__.replace(
                         "\\", "/").endswith(filename.replace("\\", "/").strip("./")):
-                    raise ImportError("the wrong file was imported (2):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}"
-                                      .format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                    raise ImportError(
+                        "The wrong file was imported (2):\nEXP: {0}\nIMP: {1}\n"
+                        "PATHS:\n   - {2}".format(
+                            filename, mo.__file__, "\n   - ".join(sys.path)))
             else:
-                raise ImportError("the wrong file was imported (1):\nEXP: {0}\nIMP: {1}\nPATHS:\n   - {2}"
-                                  .format(filename, mo.__file__, "\n   - ".join(sys.path)))
+                raise ImportError(
+                    "The wrong file was imported (1):\nEXP: {0}\nIMP: {1}\n"
+                    "PATHS:\n   - {2}".format(
+                        filename, mo.__file__, "\n   - ".join(sys.path)))
 
         sys.path = memo
         log_function("[import_module] import '{0}' successfully".format(
@@ -674,14 +686,14 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         if find:
             module = find.groups()[0]
             log_function(
-                "[warning] unable to import module " + module + " --- " + str(e).replace("\n", " "))
+                "[warning] unable to import module " + module +
+                " --- " + str(e).replace("\n", " "))
 
         log_function("  File \"%s\", line %d" % (__file__, 501))
         log_function("[warning] -- unable to import module (1) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
         log_function("    cwd ", os.getcwd())
         log_function("    path", sdir)
-        import traceback
         stack = traceback.format_exc()
         log_function("      executable", sys.executable)
         log_function("      version", sys.version_info)
@@ -754,7 +766,6 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     except Exception as e:  # pragma: no cover
         log_function("[warning] -- unable to import module (3) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
-        import traceback
         stack = traceback.format_exc()
         log_function("      executable", sys.executable)
         log_function("      version", sys.version_info)
@@ -789,15 +800,13 @@ def get_module_objects(mod):
     for _, obj in inspect.getmembers(mod):
         try:
             stobj = str(obj)
-        except RuntimeError:
+        except RuntimeError:  # pragma: no cover
             # One issue met in werkzeug
             # Working outside of request context.
             stobj = ""
-        if inspect.isclass(obj) or \
-           inspect.isfunction(obj) or \
-           inspect.isgenerator(obj) or \
-           inspect.ismethod(obj) or \
-           ("built-in function" in stobj and not isinstance(obj, dict)):
+        if (inspect.isclass(obj) or inspect.isfunction(obj) or
+                inspect.isgenerator(obj) or inspect.ismethod(obj) or
+                ("built-in function" in stobj and not isinstance(obj, dict))):
             cl.append(ModuleMemberDoc(obj, module=mod))
             if inspect.isclass(obj):
                 for n, o in inspect.getmembers(obj):
@@ -808,7 +817,7 @@ def get_module_objects(mod):
                             cl.append(ok)
                     except Exception as e:
                         if str(e).startswith("S/"):
-                            raise e
+                            raise e  # pragma: no cover
 
     res = []
     for _ in cl:
@@ -816,7 +825,7 @@ def get_module_objects(mod):
             # if _.module != None :
             if _.module == mod.__name__:
                 res.append(_)
-        except Exception:
+        except Exception:  # pragma: no cover
             pass
 
     res.sort()
@@ -913,13 +922,17 @@ def make_label_index(title, comment):
         r = "".join(map(accept, title))
         if len(r) == 0:
             typstr = str
-            raise HelpGenException("unable to interpret this title (empty?): {0} (type: {2})\nCOMMENT:\n{1}".format(
-                typstr(title), comment, typstr(type(title))))
+            raise HelpGenException(
+                "Unable to interpret this title (empty?): {0} (type: {2})\n"
+                "COMMENT:\n{1}".format(
+                    typstr(title), comment, typstr(type(title))))
         return r
     except TypeError as e:  # pragma: no cover
         typstr = str
-        raise HelpGenException("unable to interpret this title: {0} (type: {2})\nCOMMENT:\n{1}".format(
-            typstr(title), comment, typstr(type(title)))) from e
+        raise HelpGenException(
+            "Unable to interpret this title: {0} (type: {2})\nCOMMENT:"
+            "\n{1}".format(
+                typstr(title), comment, typstr(type(title)))) from e
 
 
 def process_look_for_tag(tag, title, files):
@@ -958,8 +971,7 @@ def process_look_for_tag(tag, title, files):
         if "___" in a:
             page, b = a.split("___")
             return "_" + page, b.lower(), b
-        else:
-            return "", a.lower(), a
+        return "", a.lower(), a
     repl = "__!LI!NE!__"
     exp = re.compile(
         "[.][.] %s[(](.*?);;(.*?)[)][.](.*?)[.][.] end%s[.]" % (tag, tag))
@@ -985,11 +997,12 @@ def process_look_for_tag(tag, title, files):
         all = exp.findall(content)
         all2 = exp2.findall(content)
         if len(all2) > len(all):
-            raise HelpGenException(
-                "an issue was detected in file: " + file.file)
+            raise HelpGenException(  # pragma: no cover
+                "An issue was detected in file %r." % file.file)
 
         coll += [noneempty(a) +
-                 (fix_image_page_for_root(c.replace(repl, "\n"), file), b) for a, b, c in all]
+                 (fix_image_page_for_root(c.replace(repl, "\n"), file), b)
+                 for a, b, c in all]
 
     coll.sort()
     coll = [(_[0],) + _[2:] for _ in coll]
@@ -1023,7 +1036,8 @@ def process_look_for_tag(tag, title, files):
             "USERNAME", os.environ.get("USER", "````````````"))
         if not_expected != "jenkins" and not_expected in rows[0]:
             raise HelpGenException(
-                "The title is probably wrong (4): {0}\ntag={1}\ntit={2}\nnot_expected='{3}'".format(rows[0], tag, tit, not_expected))
+                "The title is probably wrong (4): {0}\ntag={1}\ntit={2}\n"
+                "not_expected='{3}'".format(rows[0], tag, tit, not_expected))
 
         for pa, a, b, c in coll:
             pan = re.sub(r'([^a-zA-Z0-9_])', "", pa)
