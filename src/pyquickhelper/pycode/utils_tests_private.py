@@ -287,7 +287,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @return                         dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
     """
     if os.environ.get('PYTHONPATH', '') == 'src':
-        full_src = os.path.abspath(src)
+        full_src = os.path.abspath('src')
         if not os.path.exists(full_src):
             raise FileNotFoundError(
                 "Unable to interpret path %r - %r." % ('src', full_src))
