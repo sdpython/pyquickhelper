@@ -436,7 +436,7 @@ def format_history(src, dest, format="basic"):
     @param      src     source history (file)
     @param      dest    destination (file)
 
-    Parameter *format* was added. :epkg:`Sphinx` 
+    Parameter *format* was added. :epkg:`Sphinx`
     extension *release* no longer used but the
     formatting is still available.
     """

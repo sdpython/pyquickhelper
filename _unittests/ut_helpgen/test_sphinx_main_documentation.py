@@ -24,7 +24,8 @@ class TestSphinxMainDocumentation(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        temp = get_temp_folder(__file__, "temp_sphinx_main", clean=__name__ != "__main__")
+        temp = get_temp_folder(__file__, "temp_sphinx_main",
+                               clean=__name__ != "__main__")
         root = os.path.join(temp, "..", "data_project", "pp")
         var = "python3_module_template"
         generate_help_sphinx(var, module_name=var, root=root,

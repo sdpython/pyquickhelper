@@ -307,7 +307,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             if report_folder is None:
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(logfile)), "..", "_doc",
-                                    "sphinxdoc", "source", "coverage")
+                    "sphinxdoc", "source", "coverage")
 
             fLOG("[main_wrapper_tests] call _setup_hook",
                  src_abs, "name=", project_var_name)
