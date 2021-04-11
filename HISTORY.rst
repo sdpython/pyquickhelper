@@ -5,12 +5,18 @@
 History
 =======
 
-current - 2021-02-15 - 0.00Mb
+current - 2021-04-11 - 0.00Mb
 =============================
 
+* `336`: Refactors setup.py, moves setup command to pyquicksetup (2021-04-10)
+* `335`: Adds class to store files with sqlite3, access with FastAPI (2021-04-06)
+* `334`: Renames serverdoc into server (2021-04-04)
+* `332`: Javascript for examples galleries is not working (2021-03-31)
+* `333`: Fixes issue #332, fix style in gallery of examples (2021-03-29)
+* `331`: Add option process to gdot sphinx extension (2021-03-09)
 * `330`: Fixes for sphinx 3.5 (2021-02-15)
-* `328`: Github link for notebooks is broken (2021-02-13)
 * `329`: Fixes #328, improves links in notebooks (2021-02-13)
+* `328`: Github link for notebooks is broken (2021-02-13)
 * `326`: Add option CRB to put \r back in a file (2021-02-09)
 
 1.10.3519 - 2021-01-13 - 2.10Mb
@@ -182,15 +188,7 @@ current - 2021-02-15 - 0.00Mb
 
 * `247`: Use of command in setup.py (2019-04-25)
 * `246`: Supports projects without src folder (2019-04-25)
-
-1.9.3100 - 2019-04-06 - 2.04Mb
-==============================
-
 * `245`: make test pass for sphinx 2.0.0 (2019-03-30)
-
-1.9.3069 - 2019-03-25 - 2.04Mb
-==============================
-
 * `244`: remove need of __init__.py in folder src, do not import conf.py in the same process while generating the documentation (2019-03-25)
 * `243`: refactor unit tests (2019-03-20)
 * `242`: add command line sphinx_rst to convert rst document (2019-03-16)
@@ -200,10 +198,6 @@ current - 2021-02-15 - 0.00Mb
 * `237`: add parameter number_format to df2rst (2019-02-28)
 * `235`: removes FutureWarning when using ExtTestClass (2019-02-24)
 * `234`: fix RSS stream (2019-02-21)
-
-1.8.2973 - 2019-02-16 - 2.03Mb
-==============================
-
 * `233`: add a function to run all test function in a file (2019-02-14)
 * `232`: Missing blog posts between two pages (2019-01-28)
 * `230`: autosignature does not work for C++ function in cpyquickhelper (2019-01-19)

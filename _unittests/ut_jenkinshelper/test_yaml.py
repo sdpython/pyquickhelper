@@ -381,8 +381,6 @@ class TestYaml(unittest.TestCase):
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
             $PYINT -u setup.py bdist_wheel
             if [ $? -ne 0 ]; then exit $?; fi
-            $PYINT -u src/pyquicksetup/setup.py bdist_wheel
-            if [ $? -ne 0 ]; then exit $?; fi
             cp dist/*.whl ROOT/pyquickhelper/../local_pypi/local_pypi_server
             if [ $? -ne 0 ]; then exit $?; fi
 
