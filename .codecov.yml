@@ -1,0 +1,3 @@
+fixes:
+  # see https://docs.codecov.io/docs/fixing-paths
+  - "::src/pyquickhelper/"
