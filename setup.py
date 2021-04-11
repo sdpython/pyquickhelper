@@ -89,6 +89,7 @@ setup(
     package_data=package_data,
     ext_modules=[],
     cmdclass=default_cmdclass(),
+    setup_requires=['pyquicksetup>=0.2'],
     install_requires=[
         'fire',
         'numpy>=1.16.0',
