@@ -1,5 +1,5 @@
 """
-@brief      test log(time=287s)
+@brief      test log(time=63s)
 @author     Xavier Dupre
 """
 import sys

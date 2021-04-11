@@ -40,8 +40,7 @@ class sys_path_append:
 
 class python_path_append:
     """
-    Appends one path into
-    ``PYTHONPATH``.
+    Appends one path into ``PYTHONPATH``.
     """
 
     def __init__(self, paths, first=False):

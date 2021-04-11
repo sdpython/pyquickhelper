@@ -930,8 +930,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             len(out), len(err)))
 
         if len(err) > 0 or len(out) > 0:
-            if (len(err) > 0 and "Exception occurred:" in err) or \
-               (len(out) > 0 and "Exception occurred:" in out):
+            if ((len(err) > 0 and "Exception occurred:" in err) or
+                    (len(out) > 0 and "Exception occurred:" in out)):
                 def keep_line(_):  # pragma: no cover
                     if "RemovedInSphinx" in _:
                         return False
@@ -962,9 +962,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 raise FileNotFoundError(
                     "something went wrong, unable to find {0}\n"
                     "--CMD--\n{1}\n--OUT--\n{2}\n--ERR--\n{3}\n"
-                    "--LAY--\n{4}\n--INDEX--\n{5}"
+                    "--LAY--\n{4}\n--INDEX--\n{5}\n-----\nPYTHONPATH={6}"
+                    "\n-----"
                     "".format(findex, cmd, out, err, kind,
-                              os.path.abspath(findex)))
+                              os.path.abspath(findex),
+                              os.environ.get('PYTHONPATH', 'empty')))
 
             fLOG("#########################################################")
             verification_html_format(os.path.join(build, kind), fLOG=fLOG)
