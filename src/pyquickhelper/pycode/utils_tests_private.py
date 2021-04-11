@@ -154,12 +154,15 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                     sys.path.append(p)
         tl = os.path.split(le)[1]
         fi = tl.replace(".py", "")
+        if "test_do_not_include" in fi:
+            continue
 
         try:
             mo = __import__(fi)
         except Exception as e:  # pragma: no cover
-            raise ImportError("Unable to import '{}' due to {}.\nsys.path=\n{}".format(
-                fi, e, "\n".join(sys.path)))
+            raise ImportError(
+                "Unable to import '{}' due to {}.\nsys.path=\n{}".format(
+                    fi, e, "\n".join(sys.path)))
 
         # some tests can mess up with the import path
         sys.path = copypath
