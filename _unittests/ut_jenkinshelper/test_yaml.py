@@ -374,7 +374,7 @@ class TestYaml(unittest.TestCase):
 
             echo SCRIPT
             export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
-            $PYINT -u setup.py unittests
+            $PYINT -u setup.py unittests --covtoken=69193a28-dc79-4a24-98ed-aedf441a8249
             if [ $? -ne 0 ]; then exit $?; fi
 
             echo AFTER_SCRIPT

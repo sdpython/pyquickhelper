@@ -23,7 +23,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
         """
         This test might fail in sphinx-gallery due to a very long filename.
         Please look into the following commit:
-        https://github.com/sdpython/sphinx-gallery/commit/3ae9f13250cf25c75e1b17b2fade98b7a9940b0d.
+        `https://github.com/sdpython/sphinx-gallery/commit/
+        3ae9f13250cf25c75e1b17b2fade98b7a9940b0d`.
         """
         fLOG(
             __file__,
@@ -72,8 +73,10 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
         with sys_path_append(os.path.join(root, "src")):
             # Checks that the unit test might fails.
-            coucou = os.path.join(temp, "python3_module_template-master", "_doc", "sphinxdoc", "source", "gallery",
-                                  "python3_module_template.subproject2.exclude_from_code_coverage.NotImplementedClass.__init__.examples")
+            coucou = os.path.join(
+                temp, "python3_module_template-master", "_doc", "sphinxdoc",
+                "source", "gallery",
+                "python3_module_template.subproject2.exclude_from_code_coverage.NotImplementedClass.__init__.examples")
             if not os.path.exists(coucou):
                 fLOG("[ut] creating file '{0}'".format(coucou))
                 clog("[ut] creating file '{0}'".format(coucou))

@@ -1,0 +1,11 @@
+
+.. blogpost::
+    :title: More simple example
+    :keywords: exemple
+    :date: 2019-02-20
+    :categories: example
+
+    I created a more simple example about CI,
+    `td1a_unit_test_ci <https://github.com/sdpython/td1a_unit_test_ci>`_,
+    which follows a more standard pattern than this one which
+    is processed by :epkg:`pyquickhelper`.
