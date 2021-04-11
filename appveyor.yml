@@ -16,7 +16,7 @@ cache:
 
 install:
     - set "PATH=%PATH%;c:\miktex\miktex\bin"
-    - if not exist c:\miktex\miktex\bin\pdflatex.exe .\miktex-install.bat    
+    - if not exist c:\miktex\miktex\bin\pdflatex.exe .\bin\miktex-install.bat    
     # Python
     - "%PYTHON%\\python -m pip install --upgrade pip"
     - "%PYTHON%\\Scripts\\pip install -r requirements.txt"
