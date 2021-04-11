@@ -30,6 +30,7 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
     """
     if no_subfolder:
         dirs = [folder]
+        expected = {}
     else:
         expected = {"_nrt", "_unittest", "_unittests"}
         if folder is None:
@@ -48,6 +49,22 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
             for d in dirs:
                 if not os.path.exists(d):
                     raise FileNotFoundError(d)
+
+    def simplify(folds):
+        if len(expected) == 0:
+            expe = {"_nrt", "_unittest", "_unittests"}
+        else:
+            expe = expected
+        res = []
+        for fold in folds:
+            nn = fold
+            nf = fold.replace("\\", "/").split('/')
+            for nr in expe:
+                if nr in nf:
+                    i = nf.index(nr) - 1
+                    nn = "/".join(nf[i:])
+            res.append(nn)
+        return res
 
     copypaths = list(sys.path)
 
@@ -81,7 +98,7 @@ def get_test_file(filter, folder=None, no_subfolder=False, fLOG=noLOG, root=None
                         ".so" not in il and ".py~" not in il:
                     content.append(fu)
         li.extend(content)
-        fLOG("[get_test_file], inspecting", dirs)
+        fLOG("[get_test_file], inspecting", simplify(dirs))
 
         lid = glob.glob(fold + "/*")
         for il in lid:
@@ -269,6 +286,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     @param      fLOG                logging function
     @return                         dictionnary: ``{ "err": err, "tests":list of couple (file, test results) }``
     """
+    if os.environ.get('PYTHONPATH', '') == 'src':
+        full_src = os.path.abspath(src)
+        if not os.path.exists(full_src):
+            raise FileNotFoundError(
+                "Unable to interpret path %r - %r." % ('src', full_src))
+        os.environ['PYTHONPATH'] = full_src
     if skip_list is None:
         skip_list = set()
     else:
@@ -291,10 +314,10 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         return cut
 
     # sort the test by increasing expected time
-    fLOG("[main_run_test] path_test", path_test)
+    fLOG("[main_run_test] path_test %r" % path_test)
     li = get_test_file("test*", folder=path_test, fLOG=fLOG, root=path_test)
     if len(li) == 0:
-        raise FileNotFoundError("no test files in " + path_test)
+        raise FileNotFoundError("No test files in %r." % path_test)
     est = [get_estimation_time(el) for el in li]
     co = [(e, short_name(el), el) for e, el in zip(est, li)]
     co.sort()
@@ -311,17 +334,17 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         s = list(set(duplicate))
         s.sort()
         mes = "\n".join(str(_) for _ in s)
-        raise Exception("duplicated test file were detected:\n" + mes)
+        raise Exception("Duplicated test files were detected:\n" + mes)
 
     # check existing
     if len(co) == 0:
         raise FileNotFoundError(  # pragma: no cover
-            "unable to find any test files in {0}".format(path_test))
+            "Unable to find any test files in '{0}'.".format(path_test))
 
     if skip != -1:
-        fLOG("[main_run_test] found ", len(co), " test files skipping", skip)
+        fLOG("[main_run_test] found %d test files skipping." % len(co))
     else:
-        fLOG("[main_run_test] found ", len(co), " test files")
+        fLOG("[main_run_test] found %d test files." % len(co))
 
     # extract the test classes
     cco = []
@@ -358,7 +381,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     # displays
     memout.write("[main_run_test] ---- JENKINS BEGIN UNIT TESTS ----")
     memout.write(
-        "[main_run_test] ---- BEGIN UNIT TEST for {0}\n".format(path_test))
+        "[main_run_test] ---- BEGIN UNIT TEST for '{0}'".format(path_test))
 
     # display all tests
     for i, s in enumerate(suite):
@@ -375,7 +398,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 continue
 
         if cut not in duration:
-            raise Exception("{0} not found in\n{1}".format(
+            raise Exception("[{0}] not found in\n{1}".format(
                 cut, "\n".join(sorted(duration.keys()))))
         dur = duration[cut]
         zzz = "\ntest % 3d (%04ds), %s" % (i + 1, dur, cut)
@@ -384,10 +407,14 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # displays
     memout.write("[main_run_test] ---- RUN UT\n")
+    memout.write(
+        "[main_run_test] ---- len(suite)=%d len(skip_list)=%d skip=%d\n" % (
+            len(suite), len(skip_list), skip))
     original_stream = runner.stream.stream if isinstance(
         runner.stream.stream, StringIOAndFile) else None
 
     # run all tests
+    n_runs = 0
     last_s = None
     for i, s in enumerate(suite):
         last_s = s
@@ -419,24 +446,17 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             if len(err) > 0:
                 sys.stderr.write(err)
         else:
-            if sys.version_info[0] >= 3:
-                with warnings.catch_warnings(record=True) as w:
-                    warnings.simplefilter("always")
-                    if original_stream is not None:
-                        original_stream.begin_test(s[1])
-                    r = runner.run(s[0])
-                    out = r.stream.getvalue()
-                    if original_stream is not None:
-                        original_stream.end_test(s[1])
-                    for ww in w:
-                        list_warn.append((ww, s))
-            else:
+            with warnings.catch_warnings(record=True) as w:
+                warnings.simplefilter("always")
                 if original_stream is not None:
                     original_stream.begin_test(s[1])
                 r = runner.run(s[0])
                 out = r.stream.getvalue()
                 if original_stream is not None:
                     original_stream.end_test(s[1])
+                for ww in w:
+                    list_warn.append((ww, s))
+        n_runs += 1
 
         ti = exp.findall(out)[-1]
         # don't modify it, PyCharm does not get it right (ti is a tuple)
@@ -526,6 +546,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     # displays
     memout.write("[main_run_test] ---- END UT\n")
     memout.write("[main_run_test] ---- JENKINS END UNIT TESTS ----\n")
+    if n_runs == 0:
+        raise RuntimeError(  # pragma: no cover
+            "No unit tests was run.")
 
     fLOG("[main_run_test] restore stdout, stderr")
 

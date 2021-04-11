@@ -36,10 +36,12 @@ def find_graphviz_dot(exc=True):
     :raises FileNotFoundError: if graphviz not found
     """
     if sys.platform.startswith("win"):  # pragma: no cover
-        version = range(34, 45)
+        version = list(range(34, 50))
+        version.append("44.1")
         for v in version:
-            graphviz_dot = "C:\\Program Files (x86)\\Graphviz2.{0}\\bin\\dot.exe".format(
-                v)
+            graphviz_dot = (
+                "C:\\Program Files (x86)\\Graphviz2.{0}\\bin\\dot.exe"
+                "".format(v))
             if os.path.exists(graphviz_dot):
                 return graphviz_dot
         extra = ['build/update_modules/Graphviz/bin']
@@ -52,14 +54,12 @@ def find_graphviz_dot(exc=True):
             if exc:
                 typstr = str
                 raise FileNotFoundError(
-                    "Unable to find graphviz, look into paths such as: {}".format(
-                        typstr(graphviz_dot)))
+                    "Unable to find graphviz, look into paths such as {}"
+                    ".".format(typstr(graphviz_dot)))
             return None
-        else:
-            return os.path.join(p, "dot.exe")
-    else:
-        # linux
-        return "dot"
+        return os.path.join(p, "dot.exe")
+    # linux
+    return "dot"
 
 
 def find_latex_path(exc=True):
@@ -68,7 +68,8 @@ def find_latex_path(exc=True):
     Returns an empty string on :epkg:`linux`.
 
     :param exc: raises an exception or be silent
-    :return: something like ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
+    :return: something like
+    ``C:\\Program Files\\MiKTeX 2.9\\miktex\\bin\\x64``
     :raises FileNotFoundError: if latex not found
     """
     if sys.platform.startswith("win"):  # pragma: no cover
@@ -79,12 +80,12 @@ def find_latex_path(exc=True):
                 if exc:
                     typstr = str
                     raise FileNotFoundError(
-                        "unable to find latex (miktex), look into paths such as: " + typstr(latex0))
+                        "Unable to find latex (miktex), "
+                        "look into paths such as %r." % typstr(latex0))
                 return None
         return latex
-    else:
-        # linux, should be in PATH.
-        return ""
+    # linux, should be in PATH.
+    return ""
 
 
 def find_pandoc_path(exc=True):
@@ -110,8 +111,8 @@ def find_pandoc_path(exc=True):
         tries.append(pandoc)
 
         if not os.path.exists(pandoc):
-            # we try others users because pandoc goes into a user folder by
-            # default
+            # we try others users because pandoc goes into
+            # a user folder by default.
             root = os.path.normpath(os.path.join(path, ".."))
             users = os.listdir(root)
             for u in users:
@@ -124,13 +125,12 @@ def find_pandoc_path(exc=True):
             pandoc = find_in_PATH("pandoc.exe")
             if pandoc is None and exc:
                 raise FileNotFoundError(
-                    "unable to find pandoc, look into paths such as:\n" + "\n".join(tries))
+                    "Unable to find pandoc, look into paths such "
+                    "as:" + "\n".join(tries))
             return pandoc
-        else:
-            return pandoc
-    else:
-        # linux, should be in PATH.
-        return ""
+        return pandoc
+    # linux, should be in PATH.
+    return ""
 
 
 def custom_ensuredir(path):

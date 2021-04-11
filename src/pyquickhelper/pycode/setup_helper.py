@@ -204,7 +204,10 @@ def process_standard_options_for_setup(
             if le >= len(argv) - 1:
                 raise ValueError(  # pragma: no cover
                     "Option -e should be follow by a regular expression.")
-            e = re.compile(argv[le + 1])
+            pattern = argv[le + 1]
+            if len(pattern) >= 2 and pattern[0] == pattern[-1] == '"':
+                pattern = pattern[1:-1]
+            e = re.compile(pattern)
         else:
             e = None
 
@@ -213,7 +216,10 @@ def process_standard_options_for_setup(
             if lg >= len(argv) - 1:
                 raise ValueError(  # pragma: no cover
                     "Option -g should be follow by a regular expression.")
-            g = re.compile(argv[lg + 1])
+            pattern = argv[lg + 1]
+            if len(pattern) >= 2 and pattern[0] == pattern[-1] == '"':
+                pattern = pattern[1:-1]
+            g = re.compile(pattern)
         else:
             g = None
 
@@ -239,8 +245,9 @@ def process_standard_options_for_setup(
             # d is not None
             def skip_allowd(name, code, duration):
                 name = os.path.split(name)[-1]
-                cond = (duration is None or d is None or duration <=
-                        d) and ereg(name) and greg(name)
+                cond = (
+                    (duration is None or d is None or duration <= d) and
+                    ereg(name) and greg(name))
                 return not cond
             return skip_allowd
 
@@ -346,13 +353,13 @@ def process_standard_options_for_setup(
                 "Unable to import nbconvert, cannot generate the documentation") from e
         if setup_params is None:
             setup_params = {}
-        out, err = call_setup_hook(folder,
-                                   project_var_name if module_name is None else module_name,
-                                   fLOG=fLOG,
-                                   **setup_params)
+        out, err = call_setup_hook(
+            folder, project_var_name if module_name is None else module_name,
+            fLOG=fLOG, **setup_params)
         if len(err) > 0 and err != "no _setup_hook":
             raise Exception(  # pragma: no cover
-                "unable to run _setup_hook\nOUT:\n{0}\n[setuperror]\n{1}".format(out, err))
+                "Unable to run _setup_hook\nOUT:\n{0}\n[setuperror]\n"
+                "{1}".format(out, err))
 
         if func_sphinx_begin is not None:
             func_sphinx_begin(
