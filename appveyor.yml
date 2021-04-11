@@ -11,7 +11,7 @@ cache:
   # the MKL numpy and scipy wheels mirrored on a rackspace cloud
   # container, speed up the appveyor jobs and reduce bandwidth.
   # Tips taken from scikit-learn.
-  - c:\miktex -> .\miktex-install.bat
+  - c:\miktex -> .\bin\miktex-install.bat
   - '%APPDATA%\pip\Cache'
 
 install:
