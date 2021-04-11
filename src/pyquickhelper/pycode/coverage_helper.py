@@ -160,10 +160,6 @@ def coverage_combine(data_files, output_path, source, process=None):
 
     On :epkg:`Windows`, file name have to have the right case.
     If not, coverage reports an empty coverage and raises an exception.
-
-    .. versionchanged:: 1.8
-        Parameter *remove_unexpected_root* was added.
-        The function was refactored to handle better relative files.
     """
     def raise_exc(exc, content, ex, ex2, outfile, destcov, source,
                   dests, inter, cov, infos):  # pragma: no cover

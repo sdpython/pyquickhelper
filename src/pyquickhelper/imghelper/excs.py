@@ -1,8 +1,6 @@
 """
 @file
 @brief Exceptions.
-
-.. versionadded:: 1.7
 """
 
 

@@ -150,9 +150,8 @@ def find_dvipng_path(exc=True):
     """
     Determines :epkg:`dvipng` location.
 
-    @return         *imgmath_latex*, *imgmath_dvipng*, *imgmath_dvisvgm*
-
-    .. versionadded:: 1.8
+    @return         *imgmath_latex*, *imgmath_dvipng*,
+                    *imgmath_dvisvgm*
     """
 
     if sys.platform.startswith("win"):  # pragma: no cover

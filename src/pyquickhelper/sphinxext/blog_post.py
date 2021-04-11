@@ -282,9 +282,6 @@ class BlogPost:
         @param      directive   to specify a different behavior based on
         @param      cut         truncate the post after the first paragraph
         @return                 blog post as RST
-
-        .. versionadded:: 1.7
-            Parameter *cut* was added.
         """
         rows = []
         rows.append(".. %s::" % directive)

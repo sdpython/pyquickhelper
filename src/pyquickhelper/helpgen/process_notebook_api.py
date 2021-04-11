@@ -17,9 +17,6 @@ def get_exporter(format, add_writer=False):
 
     Available formats: *slides*, *pdf*, *latex*, *markdown*, *html*,
     *rst*, *python*, *notebook*, *template*.
-
-    ..versionchanged:: 1.7
-        Add parameter *add_writer*.
     """
     if format == "python":
         from nbconvert import PythonExporter

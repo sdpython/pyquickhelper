@@ -223,10 +223,6 @@ class BlogPostList:
         @param      only_html_agg       add item ``.. only:: html`` and indent everything
                                         for aggregated pages
         @return                         list of produced files
-
-        .. versionchanged:: 1.7
-            Splits *only_html* into *only_html_index*
-            and *only_html_agg*.
         """
         link_up = self.get_rst_links_up()
         link_down = self.get_rst_links_down()
@@ -290,9 +286,6 @@ class BlogPostList:
                                         after the main index
         @param      hidden_files_html   add item ``.. only:: html`` for these pages
         @return                         filename
-
-        .. versionchanged:: 1.7
-            Parameter *hidden_files_html* was added.
         """
         indent = "    " if only_html else ""
         name = os.path.join(folder, "blogindex.rst")

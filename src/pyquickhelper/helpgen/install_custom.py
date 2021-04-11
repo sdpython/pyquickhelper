@@ -82,7 +82,9 @@ def download_requirejs(to=".", fLOG=print,
                        location="http://requirejs.org/docs/download.html",
                        clean=True):
     """
-    Downloads `require.js <http://requirejs.org/docs/download.html>`_ release.
+    Downloads `require.js
+    <http://requirejs.org/docs/download.html>`_
+    release.
 
     @param      to              where to unzip the files
     @param      fLOG            logging function
@@ -90,8 +92,8 @@ def download_requirejs(to=".", fLOG=print,
     @param      clean           clean unnecessary files
     @return                     list of downloaded and unzipped files
 
-    .. versionchanged:: 1.7
-        *require.js* can be locally obtained if :epkg:`notebook` is installed.
+    *require.js* can be locally obtained
+    if :epkg:`notebook` is installed.
     """
     if location is None:
         from notebook import __file__ as local_location

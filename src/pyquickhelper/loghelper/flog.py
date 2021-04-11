@@ -198,9 +198,8 @@ def fLOG(*args, **kwargs):
 
             fLOG(OutputPrint=True, LogFile="log_file.txt")
 
-    .. versionchanged:: 1.8
-        Parameter *OutputStream* allows to print
-        the message on a different stream.
+    Parameter *OutputStream* allows to print
+    the message on a different stream.
     """
     path_add = kwargs.get("LogPathAdd", [])
     outstream = kwargs.get('OutputStream', None)

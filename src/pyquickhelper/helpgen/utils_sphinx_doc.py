@@ -51,8 +51,7 @@ def replace_relative_import_fct(fullname, content=None):
                                 the content if it is None
     @return                     content of the file without relative imports
 
-    .. versionchanged:: 1.8
-        Does not change imports in comments.
+    Does not change imports in comments.
     """
     if content is None:
         with open(fullname, "r", encoding="utf8") as f:

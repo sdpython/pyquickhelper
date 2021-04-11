@@ -1,8 +1,6 @@
 """
 @file
 @brief Helpers around images and :epkg:`SVG`.
-
-.. versionadded:: 1.7
 """
 import xml.etree.ElementTree as ET
 from io import BytesIO

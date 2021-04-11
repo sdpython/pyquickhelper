@@ -19,9 +19,6 @@ def clean_exts(folder=".", fLOG=print, exts=None, fclean=None):
 
     If *exts* is None, it will be replaced by
     ``{".pyd", ".so", ".o", ".def", ".obj"}``.
-
-    .. versionchanged:: 1.8
-        Parameter *fclean* was added.
     """
     if exts is None:
         exts = {".pyd", ".so", ".o", ".def", ".obj"}

@@ -47,12 +47,8 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
     The function extracts the file which runs this test and will name
     the temporary folder base on the name of the method. *name* must be None.
 
-    .. versionchanged:: 1.7
-        Parameter *clean* can be a function.
-        Signature is ``def clean(folder)``.
-
-    .. versionchanged:: 1.8
-        Renames parameters *max_path* and *max_path_name*.
+    Parameter *clean* can be a function.
+    Signature is ``def clean(folder)``.
     """
     if name is None:
         name = thisfile.__name__
@@ -220,10 +216,9 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     It produces the following list of errors
     :epkg:`pylint error codes`.
 
-    .. versionchanged:: 1.8
-        If *neg_pattern* is empty, it populates with a default value
-        which skips unnecessary folders:
-        ``".*[/\\\\\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)).*"``.
+    If *neg_pattern* is empty, it populates with a default value
+    which skips unnecessary folders:
+    ``".*[/\\\\\\\\]((_venv)|([.]git)|(__pycache__)|(temp_)).*"``.
     """
     # delayed import to speed up import time of pycode
     import pycodestyle

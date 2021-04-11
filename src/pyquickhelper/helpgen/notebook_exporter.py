@@ -2,8 +2,6 @@
 """
 @file
 @brief Customer notebook exporters.
-
-.. versionadded:: 1.7
 """
 import os
 from textwrap import indent

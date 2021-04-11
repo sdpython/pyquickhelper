@@ -1,8 +1,6 @@
 """
 @file
 @brief Check code style.
-
-.. versionadded:: 1.8
 """
 import os
 from .utils_tests_helper import check_pep8

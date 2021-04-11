@@ -2,8 +2,6 @@
 """
 @file
 @brief Helpers about versionning.
-
-.. versionadded:: 1.8
 """
 
 

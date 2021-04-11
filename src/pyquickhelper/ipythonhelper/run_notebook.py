@@ -115,14 +115,10 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
 
     The function adds the local variable ``theNotebook`` with
     the absolute file name of the notebook.
-
     The execution of a notebook might fail because it relies on remote data
     specified by url. The function downloads the data first and stores it in
     folder *working_dir* (must not be None). The url string is replaced by
     the absolute path to the file.
-
-    .. versionchanged:: 1.8
-        Parameters *detailed_log*, *startup_timeout* were added.
     """
     cached_rep = _cache_url_to_file(cache_urls, working_dir, fLOG=fLOG)
     if replacements is None:
@@ -237,9 +233,6 @@ def execute_notebook_list(folder, notebooks, clean_function=None, valid=None, fL
     specified by url. The function downloads the data first and stores it in
     folder *working_dir* (must not be None). The url string is replaced by
     the absolute path to the file.
-
-    .. versionchanged:: 1.8
-        Parameters *detailed_log*, *startup_timeout* were added.
     """
     if additional_path is None:
         additional_path = []

@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Overwrites latex writer as Sphinx's version is bugged in version 1.8.0.
-
-.. versionadded:: 1.8
+@brief Overwrites latex writer as Sphinx's version is
+bugged in version 1.8.0.
 """
 import os
 from docutils import nodes

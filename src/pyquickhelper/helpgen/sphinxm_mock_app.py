@@ -280,9 +280,6 @@ class MockSphinxApp:
         * a docutils node: see @see cl runpython_node as an example
         * two functions: see @see fn visit_runpython_node,
           @see fn depart_runpython_node as an example
-
-        .. versionchanged:: 1.8
-            Parameter *load_bokeh* was added.
         """
         logger = logging.getLogger('gdot')
         if not logger.disabled:

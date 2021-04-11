@@ -159,9 +159,6 @@ def process_standard_options_for_setup(
     Parameter *covtoken* was added to post the coverage report to :epkg:`codecov`.
     Option ``-e`` and ``-g`` were added to
     filter file by regular expressions (in with *e*, out with *g*).
-
-    .. versionchanged:: 1.8
-        Parameters *coverage_root*, *direct_call* were added.
     """
     if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
@@ -611,9 +608,6 @@ def write_version_for_setup(file_or_folder, exc=False, module_name=None):
     @param      exc                 raises an exception if cannot look into git folder
     @param      module_name         module name
     @return                         version number
-
-    .. versionchanged:: 1.8
-        Parameter *exc* was added.
     """
     # delayed import to speed up import of pycode
     from ..loghelper.pyrepo_helper import SourceRepository
@@ -786,9 +780,6 @@ def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=Non
     `codecov <https://codecov.io/>`_.
     Parameter *dump_coverage*
     dumps the unit test coverage in another location.
-
-    .. versionchanged:: 1.8
-        Parameter *coverage_root* was added.
     """
     # delayed import
     from .tkinter_helper import fix_tkinter_issues_virtualenv

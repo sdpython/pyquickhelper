@@ -436,9 +436,9 @@ def format_history(src, dest, format="basic"):
     @param      src     source history (file)
     @param      dest    destination (file)
 
-    .. versionchanged:: 1.7
-        Parameter *format* was added. :epkg:`Sphinx` extension *release*
-        is no longer used but the formatting is still available.
+    Parameter *format* was added. :epkg:`Sphinx` 
+    extension *release* no longer used but the
+    formatting is still available.
     """
     with open(src, "r", encoding="utf-8") as f:
         lines = f.readlines()

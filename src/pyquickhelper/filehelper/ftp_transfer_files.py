@@ -296,9 +296,6 @@ class FolderTransferFTP:
         :raises FolderTransferFTPException: the class raises
             an exception (@see cl FolderTransferFTPException)
             more than *max_errors* issues happened
-
-        .. versionchanged:: 1.8
-            Parameter *delay* was added.
         """
         issues = []
         done = []

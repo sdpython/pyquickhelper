@@ -254,9 +254,6 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
         The function is able to go through 90.000 files and 90 Gb
         in 12 minutes (for an update).
-
-    .. versionchanged:: 1.7
-        Parameter *create_dest* was added.
     """
 
     fLOG("[synchronize_folder] from '{0}'".format(p1))

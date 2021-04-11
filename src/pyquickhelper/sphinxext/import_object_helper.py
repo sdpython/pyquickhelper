@@ -190,9 +190,6 @@ def import_path(obj, class_name=None, err_msg=None, fLOG=None):
 
     The function does not work for methods or properties.
     It raises an exception or returns irrelevant results.
-
-    .. versionchanged:: 1.8
-        Parameter *err_msg* was added.
     """
     try:
         _ = obj.__module__

@@ -25,8 +25,7 @@ def default_sphinx_options(fLOG=noLOG, **options):
         for k, v in sorted(options.items()):
             print("{0} = {1}".format(k, v))
 
-    .. versionchanged:: 1.8
-        Disables :epkg:`latex` if not available on :epkg:`Windows`.
+    :epkg:`latex` is not available on :epkg:`Windows`.
     """
     # delayed import to speed up time
     from .conf_path_tools import find_graphviz_dot, find_dvipng_path
@@ -239,11 +238,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     The function is more consistent.
     Format ``rst`` is available as well as
     custom builders.
-
-    .. versionchanged:: 1.8
-        New nodes are now optional in *directives*.
-        Markdown format was added.
-        Parameters *ret_doctree*, *load_bokeh* were added.
+    New nodes are optional in *directives*.
+    Markdown format was added.
     """
     # delayed import to speed up time
     def _get_MockSphinxApp():
@@ -504,9 +500,6 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     * ``'rawhtml'``: :epkg:`HTML` as text + style
     * ``'rst'``: :epkg:`rst`
     * ``'text'``: raw text
-
-    .. versionchanged:: 1.8
-        Markdown format was added.
     """
     if not isinstance(function_or_string, str):
         doc = function_or_string.__doc__

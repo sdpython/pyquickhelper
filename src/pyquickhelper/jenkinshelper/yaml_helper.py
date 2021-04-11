@@ -152,9 +152,8 @@ def interpret_instruction(inst, variables=None):
     left unchanged as the function assumes it can only be solved
     in a bash script.
 
-    .. versionchanged:: 1.8
-        Switch to ``;;`` instead of ``;`` as a instruction separator
-        for conditional instructions.
+    Switch to ``;;`` instead of ``;`` as a instruction separator
+    for conditional instructions.
     """
     if isinstance(inst, list):
         res = [interpret_instruction(_, variables) for _ in inst]

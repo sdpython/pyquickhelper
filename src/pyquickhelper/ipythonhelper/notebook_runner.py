@@ -106,9 +106,6 @@ class NotebookRunner(object):
                                     see `wait_for_ready
                                     <https://github.com/jupyter/jupyter_client/blob/master/
                                     jupyter_client/blocking/client.py#L84>`_
-
-        .. versionchanged:: 1.8
-            Parameter *startup_timeout* was added.
         """
         if kernel:
             try:

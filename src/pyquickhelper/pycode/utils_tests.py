@@ -8,8 +8,11 @@ import unittest
 from datetime import datetime
 import warnings
 import sqlite3
-from .code_exceptions import CoverageException, SetupHookException
-from .coverage_helper import publish_coverage_on_codecov, find_coverage_report, coverage_combine
+from .code_exceptions import (
+    CoverageException, SetupHookException)
+from .coverage_helper import (
+    publish_coverage_on_codecov, find_coverage_report,
+    coverage_combine)
 from .utils_tests_stringio import StringIOAndFile
 
 
@@ -36,11 +39,13 @@ def _modifies_coverage_report(name, bsrcp, bproj):
     conn.close()
 
 
-def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False, report_folder=None,
-                       skip_function=None, setup_params=None, only_setup_hook=False,
-                       coverage_options=None, coverage_exclude_lines=None, additional_ut_path=None,
-                       covtoken=None, hook_print=True, stdout=None, stderr=None, filter_warning=None,
-                       dump_coverage=None, add_coverage_folder=None, coverage_root="src", fLOG=None):
+def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False,
+                       report_folder=None, skip_function=None, setup_params=None,
+                       only_setup_hook=False, coverage_options=None,
+                       coverage_exclude_lines=None, additional_ut_path=None,
+                       covtoken=None, hook_print=True, stdout=None, stderr=None,
+                       filter_warning=None, dump_coverage=None,
+                       add_coverage_folder=None, coverage_root="src", fLOG=None):
     """
     Calls function :func:`main <pyquickhelper.unittests.utils_tests.main>`
     and throws an exception if it fails.
@@ -104,14 +109,19 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     using the module `coverage <http://nedbatchelder.com/code/coverage/>`_.
     The function does something about the following error:
 
-            _tkinter.TclError: no display name and no $DISPLAY environment variable
+    ::
+
+        _tkinter.TclError: no display name and no $DISPLAY environment variable
 
     It is due to :epkg:`matplotlib`.
     See `Generating matplotlib graphs without a running X server
-    <http://stackoverflow.com/questions/4931376/generating-matplotlib-graphs-without-a-running-x-server>`_.
-    If the skip function is None, it will replace it by the function @see fn default_skip_function.
-    Calls function @see fn _setup_hook if it is available in the unit tested module.
-    Parameter *tested_module* was added, the function then checks the presence of
+    <http://stackoverflow.com/questions/4931376/
+    generating-matplotlib-graphs-without-a-running-x-server>`_.
+    If the skip function is None, it will replace it by
+    the function @see fn default_skip_function.
+    Calls function @see fn _setup_hook if it is available
+    in the unit tested module. Parameter *tested_module* was added,
+    the function then checks the presence of
     function @see fn _setup_hook, it is the case, it runs it.
 
     Parameter *setup_params*: a mechanism was put in place
@@ -119,11 +129,14 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     in a separate process. They are described in @see fn _setup_hook
     which must be found in the main file ``__init__.py``.
     Parameter *only_setup_hook*:
-    saves the report in XML format, binary format, replace full paths by relative path.
+    saves the report in XML format, binary format,
+    replace full paths by relative path.
 
     Parameters *coverage_options*, *coverage_exclude_lines*, *additional_ut_path*:
-    see class `Coverage <http://coverage.readthedocs.org/en/coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
-    and `Configuration files <http://coverage.readthedocs.org/en/coverage-4.0b1/config.html>`_
+    see class `Coverage <http://coverage.readthedocs.org/en/
+    coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
+    and `Configuration files <http://coverage.readthedocs.org/
+    en/coverage-4.0b1/config.html>`_
     to specify those options. If both values are left to None, this function will
     compute the code coverage for all files in this module. The function
     now exports the coverage options which were used.
@@ -133,9 +146,6 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
 
     Parameter *covtoken*: used to post the coverage report to
     `codecov <https://codecov.io/>`_.
-
-    .. versionchanged:: 1.8
-        Parameter *coverage_root* was added.
     """
     # delayed import
     from ..loghelper.os_helper import get_user
@@ -168,20 +178,23 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     def run_main():
         # delayed import to speed up import of pycode
         from .utils_tests_private import main_run_test
-        res = main_run_test(runner, path_test=path, skip=-1, skip_list=skip_list,
-                            processes=processes, skip_function=skip_function,
-                            additional_ut_path=additional_ut_path, stdout=stdout, stderr=stderr,
-                            filter_warning=filter_warning, fLOG=fLOG)
+        res = main_run_test(
+            runner, path_test=path, skip=-1, skip_list=skip_list,
+            processes=processes, skip_function=skip_function,
+            additional_ut_path=additional_ut_path, stdout=stdout, stderr=stderr,
+            filter_warning=filter_warning, fLOG=fLOG)
         return res
 
     if "win" not in sys.platform and "DISPLAY" not in os.environ:
         # issue detected with travis
-        # _tkinter.TclError: no display name and no $DISPLAY environment variable
-        #os.environ["DISPLAY"] = "localhost:0"
+        # _tkinter.TclError: no display name and
+        # no $DISPLAY environment variable
+        # os.environ["DISPLAY"] = "localhost:0"
         pass
 
     # other coverage reports
-    if add_coverage_folder is not None and dump_coverage is not None:  # pragma: no cover
+    if (add_coverage_folder is not None and
+            dump_coverage is not None):  # pragma: no cover
         sub = os.path.split(dump_coverage)[0]
         sub = os.path.split(sub)[-1]
         other_cov_folders = find_coverage_report(
@@ -223,12 +236,15 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             keep = []
             for line in lines:
                 line = line.rstrip("\r\t ")
-                if line and not line.startswith(" ") and "RuntimeWarning: Config variable" not in line:
+                if (line and not line.startswith(" ") and
+                        "RuntimeWarning: Config variable" not in line):
                     keep.append(line)
             if len(keep) > 0:
                 raise SetupHookException(
-                    "unable to run _setup_hook\n**OUT:\n{0}\n**[pyqerror]\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}\n**KEEP:\n{4}\n**"
-                    .format(out, err, folder, project_var_name, "\n".join(keep)))
+                    "Unable to run _setup_hook\n**OUT:\n{0}\n**[pyqerror]"
+                    "\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}\n**KEEP:\n{4}\n**"
+                    "".format(out, err, folder, project_var_name,
+                              "\n".join(keep)))
             out += "\nWARNINGS:\n" + err
             err = None
         return out, err
@@ -260,8 +276,9 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     content = [_ for _ in os.listdir(folder) if selec_name(folder, _)]
     if len(content) != 1:
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to guess the project name in '{0}', content=\n{1}\n---\n{2}\n---".format(
-                folder, "\n".join(content), "\n".join(os.listdir(folder))))
+            "Unable to guess the project name in '{0}', content=\n{1}\n---"
+            "\n{2}\n---".format(folder, "\n".join(content),
+                                "\n".join(os.listdir(folder))))
 
     project_var_name = content[0]
     src_abs = os.path.normpath(os.path.abspath(
@@ -289,7 +306,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
             if report_folder is None:
                 report_folder = os.path.join(
-                    os.path.abspath(os.path.dirname(logfile)), "..", "_doc", "sphinxdoc", "source", "coverage")
+                    os.path.abspath(os.path.dirname(logfile)), "..", "_doc",
+                                    "sphinxdoc", "source", "coverage")
 
             fLOG("[main_wrapper_tests] call _setup_hook",
                  src_abs, "name=", project_var_name)
@@ -330,16 +348,18 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
 
             cov.stop()
             stdout_this.write(
-                "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}\n'".format(report_folder))
+                "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}"
+                "\n'".format(report_folder))
 
             from coverage.misc import CoverageException as RawCoverageException
             try:
                 cov.html_report(directory=report_folder)
             except RawCoverageException as e:
-                raise RuntimeError("Unable to publish the coverage repot into '{}',"
-                                   "\nsource='{}'\ndata='{}'".format(
-                                       report_folder, coverage_options["source"],
-                                       coverage_options.get("data_file", ''))) from e
+                raise RuntimeError(
+                    "Unable to publish the coverage repot into '{}',"
+                    "\nsource='{}'\ndata='{}'".format(
+                        report_folder, coverage_options["source"],
+                        coverage_options.get("data_file", ''))) from e
             outfile = os.path.join(report_folder, "coverage_report.xml")
             cov.xml_report(outfile=outfile)
             cov.save()
@@ -421,8 +441,9 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 # delayed import
                 from ..filehelper import synchronize_folder
                 src = os.path.dirname(outfile)
-                stdout_this.write("[main_wrapper_tests] dump coverage from '{1}' to '{0}'\n".format(
-                    dump_coverage, outfile))
+                stdout_this.write(
+                    "[main_wrapper_tests] dump coverage from '{1}' to '{0}'"
+                    "\n".format(dump_coverage, outfile))
                 synchronize_folder(src, dump_coverage,
                                    copy_1to2=True, fLOG=fLOG)
 
@@ -430,18 +451,21 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                     source = _find_source(src)
                     if not source:
                         raise FileNotFoundError(
-                            "Unable to find source '{0}' from '{1}'".format(source, src))
+                            "Unable to find source '{0}' from '{1}'".format(
+                                source, src))
                     if coverage_root:
                         source_src = os.path.join(source, coverage_root)
                         if os.path.exists(source_src):
                             source = source_src
                     stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE for source='{0}'\n".format(source))
+                        "[main_wrapper_tests] ADD COVERAGE for source='{0}'"
+                        "\n".format(source))
                     covs = list(_[0] for _ in other_cov_folders.values())
                     covs.append(os.path.abspath(
                         os.path.normpath(os.path.join(src, '.coverage'))))
                     stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE COMBINE={0}\n".format(covs))
+                        "[main_wrapper_tests] ADD COVERAGE COMBINE={0}"
+                        "\n".format(covs))
                     stdout_this.write(
                         "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
                     try:
@@ -455,8 +479,10 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 if isinstance(covtoken, tuple):
                     if eval(covtoken[1]):
                         # publishing token
-                        mes = "[main_wrapper_tests] PUBLISH COVERAGE to codecov '{0}' EVAL ({1})".format(
-                            covtoken[0], covtoken[1])
+                        mes = (
+                            "[main_wrapper_tests] PUBLISH COVERAGE to "
+                            "codecov '{0}' EVAL ({1})".format(
+                                covtoken[0], covtoken[1]))
                         if stdout is not None:
                             stdout.write(mes)
                         stdout_this.write(mes + '\n')
@@ -465,13 +491,19 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                             token=covtoken[0], path=outfile, fLOG=fLOG)
                     else:
                         fLOG(
-                            "[main_wrapper_tests] skip publishing coverage to codecov due to False:", covtoken[1])
+                            "[main_wrapper_tests] skip publishing "
+                            "coverage to codecov due to False:",
+                            covtoken[1])
                 else:
                     # publishing token
                     fLOG(
-                        "[main_wrapper_tests] publishing coverage to codecov", covtoken)
+                        "[main_wrapper_tests] publishing coverage to "
+                        "codecov %r." % covtoken)
                     publish_coverage_on_codecov(
                         token=covtoken, path=outfile, fLOG=fLOG)
+            else:
+                stdout_this.write(
+                    "[main_wrapper_tests] NO PUBLISHING {}.\n".format(covtoken))
             stdout_this.write("[main_wrapper_tests] --- COVERAGE END ---\n")
         else:
             stdout_this.write(

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Defines a sphinx extension to hide / unhide section of the
-HTML page.
-
-.. versionadded:: 1.7
+@brief Defines a sphinx extension to hide / unhide
+section of the page.
 """
 import logging
 from docutils import nodes

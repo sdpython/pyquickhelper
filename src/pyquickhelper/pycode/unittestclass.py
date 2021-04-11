@@ -597,8 +597,6 @@ def skipif_azure_macosx(msg):
 def skipif_linux(msg):
     """
     Skips a unit test if it runs on :epkg:`linux`.
-
-    .. versionadded:: 1.7
     """
     if not sys.platform.startswith('lin'):
         return lambda x: x
@@ -608,9 +606,8 @@ def skipif_linux(msg):
 
 def skipif_vless(version, msg):
     """
-    Skips a unit test if the version is stricly below *version* (tuple).
-
-    .. versionadded:: 1.7
+    Skips a unit test if the version is stricly below
+    *version* (tuple).
     """
     if sys.version_info[:3] >= version:
         return lambda x: x

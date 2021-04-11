@@ -69,15 +69,9 @@ def update_docutils_languages(values=None):
 class _AdditionalVisitDepart:
     """
     Additional visitors and departors.
-
-    .. versionchanged:: 1.7
-        Update for Sphinx 1.7.
     """
 
     def __init__(self, output_format):
-        """
-        .. versionadded:: 1.7
-        """
         self.output_format = output_format
 
     def is_html(self):
@@ -178,10 +172,6 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
     """
 
     def __init__(self, builder, *args, **kwds):
-        """
-        .. versionchanged:: 1.7
-            Does something specific for :epkg:`HTML`. only is a node.
-        """
         HTMLTranslator.__init__(self, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'html')
         nodes_list = getattr(builder, '_function_node', None)

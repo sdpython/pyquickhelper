@@ -3,8 +3,6 @@
 @file
 @brief Defines a :epkg:`sphinx` extension to show a link instead of downloading it.
 This extension does not work for :epkg:`Sphinx` < 1.8.
-
-.. versionadded:: 1.8
 """
 import os
 import sphinx

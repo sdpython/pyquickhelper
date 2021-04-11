@@ -23,8 +23,6 @@ def get_platform(platform=None):
 
         from pyquickhelper.jenkinshelper.jenkins_helper import get_platform
         print(get_platform())
-
-    .. versionadded:: 1.8
     """
     return platform or sys.platform
 

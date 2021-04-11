@@ -1,8 +1,6 @@
 """
 @file
 @helper Build history for a module.
-
-.. versionadded:: 1.7
 """
 from datetime import datetime, timedelta
 import re

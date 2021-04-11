@@ -53,8 +53,6 @@ def find_pdflatex(latex_path):
 
     @param      latex_path  path to look (only on Windows)
     @return                 executable
-
-    .. versionadded:: 1.7
     """
     if sys.platform.startswith("win"):  # pragma: no cover
         lat = os.path.join(latex_path, "xelatex.exe")
@@ -983,11 +981,8 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
     *nbs* can be a list of tuple.
     the function adds a thumbnail, organizes the list of notebook
     as a galley, it adds a link on notebook coverage.
-    Parameters *layout*, *neg_pattern* were added.
-
-    .. versionchanged:: 1.7
-        Modifies the function to bypass the generation of a snippet
-        if a custom one was found. Parameter *snippet_folder* was added.
+    The function bypasses the generation of a snippet
+    if a custom one was found.
     """
     from ..ipythonhelper import read_nb
     if not isinstance(nbs, list):

@@ -2,8 +2,6 @@
 """
 @file
 @brief Defines a sphinx extension to output :epkg:`sphinx` doctree.
-
-.. versionadded:: 1.8
 """
 import os
 import textwrap

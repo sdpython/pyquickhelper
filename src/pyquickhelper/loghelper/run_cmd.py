@@ -401,8 +401,7 @@ def run_script(script, *args, **kwargs):
     @param      kwargs      sent to @see fn run_cmd
     @return                 out,err: content of stdout stream and stderr stream
 
-    .. versionchanged:: 1.8
-        Add *kwargs*, allows command line starting with ``-m``.
+    Allows command line starting with ``-m``.
     """
     if not script.startswith('-m') and not os.path.exists(script):
         raise PQHException("file %s not found" % script)

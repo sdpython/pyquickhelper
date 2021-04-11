@@ -6,8 +6,6 @@ See also:
 * `pyduktape <https://github.com/stefano/pyduktape>`_
 * `Python Mini Racer <https://github.com/sqreen/PyMiniRacer>`_
 * `python-requirejs <https://github.com/wq/python-requirejs>`_
-
-.. versionadded:: 1.7
 """
 import os
 from ..loghelper import run_cmd, noLOG

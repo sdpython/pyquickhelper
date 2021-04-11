@@ -2,8 +2,6 @@
 """
 @file
 @brief Implements command line ``python -m pyquickhelper <command> <args>``.
-
-.. versionadded:: 1.8
 """
 import sys
 

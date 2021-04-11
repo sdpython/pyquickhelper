@@ -23,7 +23,8 @@ def clean_documentation_for_cli(doc, cleandoc):
     as it creates an infinite loop of processus if this command
     is part of the documentation of the command line itself.
     """
-    for st in ('.. versionchanged::', '.. versionadded::', '.. cmdref::', '.. cmdreflist::'):
+    for st in ('.. versionchanged::', '.. versionadded::',
+               '.. cmdref::', '.. cmdreflist::'):
         if st in doc:
             doc = doc.split(st)[0]
     if isinstance(cleandoc, (list, tuple)):

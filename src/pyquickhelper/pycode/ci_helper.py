@@ -14,9 +14,6 @@ def is_travis_or_appveyor(env=None):
 
     The function should rely more on environement variables
     ``CI``, ``TRAVIS``, ``APPVEYOR``, ``AZURE_HTTP_USER_AGENT``.
-
-    .. versionadded:: 1.8
-        Parameter *env* was added.
     """
     import sys
     if "travis" in sys.executable:
