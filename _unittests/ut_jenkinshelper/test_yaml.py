@@ -370,6 +370,11 @@ class TestYaml(unittest.TestCase):
             if [ $? -ne 0 ]; then exit $?; fi
             $PYINT -m pip freeze
             if [ $? -ne 0 ]; then exit $?; fi
+
+            echo BEFORE_SCRIPT
+            export PATH=ROOT/pyquickhelper/$NAME_JENKINS/_venv/bin:$PATH
+            $PYINT setup.py write_version
+            if [ $? -ne 0 ]; then exit $?; fi
             export JOB_NAME=UT
 
             echo SCRIPT

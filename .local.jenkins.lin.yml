@@ -23,6 +23,10 @@ install:
   - $PYINT -m pip uninstall -y pyquickhelper
   - $PYINT -m pip freeze
 
+# Runs before the main script.
+before_script:
+  - $PYINT setup.py write_version
+
 # The script to run.
 # Each row becomes a Jenkins job. pyquickhelper will generate nb(python) * nb(script) jobs to run on Jenkins.
 # Steps before_script and after_script are run for every script.
