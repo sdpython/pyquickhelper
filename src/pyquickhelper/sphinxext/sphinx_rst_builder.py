@@ -1113,6 +1113,24 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
 
 
+class _BodyPlaceholder:
+    def __init__(self, builder):
+        self.lines = []
+        self.logger = logging.getLogger("RstBuilder")
+
+    def append(self, element):
+        if isinstance(element, str):
+            el = element.replace("\n", " ")
+            if len(el) > 50:
+                el = el[:50] + "..."
+            self.logger.warning(
+                "[rst] body.append was called with string %r." % el)
+        else:
+            self.logger.warning(
+                "[rst] body.append was called with type %r." % type(element))
+        self.lines.append(element)
+
+
 class RstBuilder(Builder):
     """
     Defines a :epkg:`RST` builder.
@@ -1129,6 +1147,9 @@ class RstBuilder(Builder):
         """
         Builder.__init__(self, *args, **kwargs)
         self.logger = logging.getLogger("RstBuilder")
+        # Should not be populated, it may be due to a function
+        # implemented for HTML but used for RST.
+        self.body = _BodyPlaceholder(self)
 
     def init(self):
         """
