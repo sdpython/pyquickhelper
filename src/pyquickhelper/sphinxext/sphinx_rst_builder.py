@@ -1082,6 +1082,12 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_inheritance_diagram(self, node):
         self.end_state(wrap=False, end=['\n'])
 
+    def visit_todo_node(self, node):
+        self.visit_admonition(node)
+
+    def depart_todo_node(self, node):
+        self.depart_admonition(node)
+
     def unknown_visit(self, node):
         classname = node.__class__.__name__
         if classname in {'JupyterKernelNode', 'JupyterCellNode',

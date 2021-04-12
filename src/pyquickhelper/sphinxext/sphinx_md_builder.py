@@ -970,6 +970,12 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_inheritance_diagram(self, node):
         pass
 
+    def visit_todo_node(self, node):
+        self.visit_admonition(node)
+
+    def depart_todo_node(self, node):
+        self.depart_admonition(node)
+
     def unknown_visit(self, node):
         raise NotImplementedError(
             "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
