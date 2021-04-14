@@ -44,7 +44,8 @@ def apply_template(text, context, engine="mako"):
             raise CustomTemplateException(
                 "Some parameters are missing or mispelled.\n" + text) from ee
         return res
-    elif engine == "jinja2":
+
+    if engine == "jinja2":
         from jinja2 import Template
         from jinja2.exceptions import TemplateSyntaxError, UndefinedError
         try:
@@ -58,9 +59,10 @@ def apply_template(text, context, engine="mako"):
             res = template.render(**context)
         except UndefinedError as ee:
             raise CustomTemplateException(
-                "Some parameters are missing or mispelled\n{}"
-                "".format(pformat(context))) from ee
+                "Some parameters are missing or mispelled\n{}\n"
+                "---- from text ---\n{}"
+                "".format(pformat(context), text)) from ee
         return res
-    else:
-        raise ValueError(  # pragma: no cover
-            "engine should be 'mako' or 'jinja2', not '{0}'".format(engine))
+
+    raise ValueError(  # pragma: no cover
+        "Engine should be 'mako' or 'jinja2', not '{0}'.".format(engine))
