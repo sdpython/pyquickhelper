@@ -1089,7 +1089,11 @@ def build_history_from_setup(dest, owner, module, existing_history=None,
     # delayed import
     from ..loghelper.history_helper import build_history, compile_history
     if owner is None:
-        raise ValueError("owner must be specified")
+        raise ValueError(  # pragma: no cover
+            "owner must be specified.")
+    if "/" in owner:
+        raise ValueError(  # pragma: no cover
+            "owner %r cannot contain '/'." % owner)
     if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG

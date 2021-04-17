@@ -10,12 +10,16 @@ class GitHubApiException(Exception):
     Exception raised when a call to github rest api failed.
     """
 
-    def __init__(self, response, url):
+    def __init__(self, response, url, **kwargs):
         """
         Merges everything into a string.
         """
-        Exception.__init__(self, "response={0}\nurl={1}\ntext={2}\nstatus={3}".format(
-            response, url, response.text, response.status_code))
+        msg = ['%s=%r' % (k, v) for k, v in sorted(kwargs.items())]
+        if msg:
+            msg = "\n" + "\n".join(msg)
+        Exception.__init__(self,
+            "response={0}\nurl={1}\ntext={2}\nstatus={3}{4}".format(
+                response, url, response.text, response.status_code, msg))
 
 
 def call_github_api(owner, repo, ask, auth=None, headers=None):
@@ -51,5 +55,6 @@ def call_github_api(owner, repo, ask, auth=None, headers=None):
         owner, repo, ask.strip('/'))
     response = requests.get(url, auth=auth, headers=headers)
     if response.status_code != 200:
-        raise GitHubApiException(response, url)
+        raise GitHubApiException(response, url, owner=owner, repo=repo,
+                                 ask=ask, auth=auth)
     return response.json()

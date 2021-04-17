@@ -37,7 +37,7 @@ class _SetupCommand(Command):
         )
 
         durl = self.distribution.metadata.download_url
-        reg = re.compile("github[.]com/(.+)/")
+        reg = re.compile("github[.]com/(.+?)/")
         owner = reg.findall(durl)
         if owner:
             parameters['github_owner'] = owner[0]
