@@ -159,6 +159,31 @@ def create_app():
     return app
 
 
+def _get_password(password, env="PYQUICKHELPER_FASTAPI_PWD"):
+    if password is None:
+        password = os.environ.get(env, None)
+    if password is None:
+        raise RuntimeError(
+            "password must be specified or environement variable "
+            "'PYQUICKHELPER_FASTAPI_PWD'.")
+    return password
+
+
+def _post_request(client, url, data, suffix, timeout=None):
+    if client is None:
+        import requests
+        resp = requests.post("%s/%s" % (url.strip('/'), suffix), data=data,
+                             timeout=timeout)
+    else:
+        resp = client.post("/%s/" % suffix, json=data)
+    if resp.status_code != 200:
+        del data['content']
+        del data['password']
+        raise RuntimeError(
+            "Post request failed due to %r\ndata=%r." % (resp, data))
+    return resp
+
+
 def fast_api_submit(df, client=None, url=None, name=None, team=None,
                     project=None, version=None, password=None):
     """
@@ -174,29 +199,13 @@ def fast_api_submit(df, client=None, url=None, name=None, team=None,
     :param password: password for the submission
     :return: response
     """
+    password = _get_password(password)
     st = io.StringIO()
     df.to_csv(st, index=False, encoding="utf-8")
-    if password is None:
-        password = os.environ.get("PYQUICKHELPER_FASTAPI_PWD", None)
-    if password is None:
-        raise RuntimeError(
-            "password must be specified or environement variable "
-            "'PYQUICKHELPER_FASTAPI_PWD'.")
     data = dict(team=team, project=project, version=version,
                 password=password, content=st.getvalue(),
                 name=name, format="df")
-    if client is None:
-        import requests
-        resp = requests.post("%s/submit/" % url, data=data)
-    else:
-        resp = client.post("/submit/", json=data)
-
-    if resp.status_code != 200:
-        del data['content']
-        del data['password']
-        raise RuntimeError(
-            "Submission failed due to %r\ndata=%r." % (resp, data))
-    return resp
+    return _post_request(client, url, data, "submit")
 
 
 def fast_api_query(client=None, url=None, name=None, team=None,
@@ -214,25 +223,10 @@ def fast_api_query(client=None, url=None, name=None, team=None,
     :param password: password for the submission
     :return: response
     """
-    if password is None:
-        password = os.environ.get("PYQUICKHELPER_FASTAPI_PWD", None)
-    if password is None:
-        raise RuntimeError(
-            "password must be specified or environement variable "
-            "'PYQUICKHELPER_FASTAPI_PWD'.")
+    password = _get_password(password)
     data = dict(team=team, project=project, version=version,
                 password=password, name=name)
-    if client is None:
-        import requests
-        resp = requests.post("%s/query/" % url, data=data)
-    else:
-        resp = client.post("/query/", json=data)
-
-    if resp.status_code != 200:
-        del data['content']
-        del data['password']
-        raise RuntimeError(
-            "Submission failed due to %r\ndata=%r." % (resp, data))
+    resp = _post_request(client, url, data, "query")
     if as_df:
         import pandas
         return pandas.DataFrame(resp.json())
@@ -257,25 +251,10 @@ def fast_api_content(client=None, url=None, name=None, team=None,
     :param password: password for the submission
     :return: list of dictionary, content is a dataframe
     """
-    if password is None:
-        password = os.environ.get("PYQUICKHELPER_FASTAPI_PWD", None)
-    if password is None:
-        raise RuntimeError(
-            "password must be specified or environement variable "
-            "'PYQUICKHELPER_FASTAPI_PWD'.")
+    password = _get_password(password)
     data = dict(team=team, project=project, version=version,
                 password=password, name=name, limit=limit)
-    if client is None:
-        import requests
-        resp = requests.post("%s/content/" % url, data=data)
-    else:
-        resp = client.post("/content/", json=data)
-
-    if resp.status_code != 200:
-        del data['content']
-        del data['password']
-        raise RuntimeError(
-            "Submission failed due to %r\ndata=%r." % (resp, data))
+    resp = _post_request(client, url, data, "content")
     res = resp.json()
     if as_df:
         import pandas
