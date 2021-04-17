@@ -129,10 +129,10 @@ class TestfileStoreRest(ExtTestCase):
 
         res = fast_api_query(client, team="AA", name="BB", project="CCC",
                              password="BBB")
-        exp = [{'id': 1, 'name': 'BB', 'format': '',
+        exp = [{'id': 1, 'name': 'BB',
                 'metadata': {'client': ['testclient', 50000]}, 'team': 'AA',
                 'project': 'CCC', 'version': 1, 'format': 'df'},
-               {'id': 2, 'name': 'BB', 'format': '',
+               {'id': 2, 'name': 'BB',
                 'metadata': {'client': ['testclient', 50000]}, 'team': 'AA',
                 'project': 'CCC', 'version': 2, 'format': 'df'}]
         for r in res:
