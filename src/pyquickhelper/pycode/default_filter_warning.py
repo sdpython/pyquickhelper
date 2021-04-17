@@ -55,6 +55,10 @@ def default_filter_warning(w):  # pragma: no cover
     elif isinstance(w.message, DeprecationWarning):
         if w.filename in ('', None):
             return False
+        if "`np.str`" in str(w):
+            return False
+        if "`np.bool`" in str(w):
+            return False
         if "RemovedInSphinx40Warning" in str(w):
             return False
         if w.filename.endswith("kernelspec.py"):
