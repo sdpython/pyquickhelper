@@ -17,6 +17,11 @@ class SqlLite3FileStore:
 
     :param path: location of the database.
     """
+    @staticmethod
+    def v2s(value, s="'"):
+        if isinstance(value, str):
+            return "%s%s%s" % (s, value, s)
+        return str(value)
 
     def __init__(self, path="_file_store_.db3"):
         self.path_ = path
@@ -47,7 +52,7 @@ class SqlLite3FileStore:
                 '''CREATE TABLE files
                    (id INTEGER PRIMARY KEY, date TEXT, name TEXT,
                     format TEXT, metadata TEXT, team TEXT,
-                    project TEXT, version TEXT, content BLOB)''')
+                    project TEXT, version INT, content BLOB)''')
             commit = True
 
         if (('data',) in res and not self._check_same_column(
@@ -106,10 +111,13 @@ class SqlLite3FileStore:
             if n is None:
                 continue
             fields.append(k)
-            values.append(n.replace("\\", "\\\\").replace("'", "''"))
+            if isinstance(n, str):
+                values.append(n.replace("\\", "\\\\").replace("'", "''"))
+            else:
+                values.append(n)
         sqlite_insert_blob_query = """
             INSERT INTO files (%s) VALUES (%s)""" % (
-            ",".join(fields), ",".join("'%s'" % v for v in values))
+            ",".join(fields), ",".join(map(SqlLite3FileStore.v2s, values)))
         cur = self.con_.cursor()
         cur.execute(sqlite_insert_blob_query)
         self.con_.commit()
@@ -184,7 +192,7 @@ class SqlLite3FileStore:
         for k, v in record.items():
             if v is None:
                 continue
-            cond.append('%s="%s"' % (k, v))
+            cond.append('%s=%s' % (k, SqlLite3FileStore.v2s(v, '"')))
         fields = ["id", "name", "format", "date", "metadata",
                   "team", "project", "version", "content"]
         for it in self._enumerate(cond, fields):
@@ -211,7 +219,7 @@ class SqlLite3FileStore:
         for k, v in record.items():
             if v is None:
                 continue
-            cond.append('%s="%s"' % (k, v))
+            cond.append('%s=%s' % (k, SqlLite3FileStore.v2s(v, '"')))
         fields = ["id", "name", "format", "date", "metadata",
                   "team", "project", "version"]
         for it in self._enumerate(cond, fields):
@@ -245,7 +253,7 @@ class SqlLite3FileStore:
                 else:
                     cond.append('data.%s="%s"' % (k, v))
             else:
-                cond.append('%s="%s"' % (k, v))
+                cond.append('%s=%s' % (k, SqlLite3FileStore.v2s(v, '"')))
 
         cur = self.con_.cursor()
         if join:
