@@ -14,3 +14,4 @@ API Summary
     loghelper
     pycode
     texthelper
+    server

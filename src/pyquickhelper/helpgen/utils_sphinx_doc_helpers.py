@@ -1,9 +1,7 @@
 """
 @file
-@brief various variables and classes used to produce a Sphinx documentation
-
+@brief Various variables and classes used to produce a Sphinx documentation.
 """
-
 import inspect
 import os
 import copy
@@ -732,7 +730,6 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     except SystemError as e:  # pragma: no cover
         log_function("[warning] -- unable to import module (2) ", filename,
                      ",", fi, " in path ", sdir, " Error: ", str(e))
-        import traceback
         stack = traceback.format_exc()
         log_function("      executable", sys.executable)
         log_function("      version", sys.version_info)
@@ -752,7 +749,6 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         else:
             log_function("[warning] -- unable to import module (4) ", filename,
                          ",", fi, " in path ", sdir, " Error: ", str(e))
-            import traceback
             stack = traceback.format_exc()
             log_function("      executable", sys.executable)
             log_function("      version", sys.version_info)
