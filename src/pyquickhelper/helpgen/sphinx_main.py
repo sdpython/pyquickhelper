@@ -594,21 +594,24 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     datetime_rows = [("prepare", datetime.now())]
     try:
         dest_doc = os.path.join(root, "_doc", "sphinxdoc", "source")
-        fLOG("[generate_help_sphinx] root='{0}'".format(root))
-        fLOG("[generate_help_sphinx] dest_doc='{0}'".format(dest_doc))
+        fLOG("[generate_help_sphinx] module_name='{}'".format(module_name))
+        fLOG("[generate_help_sphinx] project_var_name='{}'".format(project_var_name))
+        fLOG("[generate_help_sphinx] root='{}' root_package='{}'"
+             "".format(root, root_package))
+        fLOG("[generate_help_sphinx] dest_doc='{}'".format(dest_doc))
         subfolders = []
         if root_package.endswith("src"):
             subfolders.append(("src/" + module_name, module_name))
         else:
             subfolders.append((module_name, module_name))
         fLOG("[generate_help_sphinx] subfolders={0}".format(subfolders))
-        prepare_file_for_sphinx_help_generation({}, root, dest_doc, subfolders=subfolders, silent=True,
-                                                rootrep=("_doc.sphinxdoc.source.%s." % (
-                                                    module_name,), ""),
-                                                optional_dirs=optional_dirs, mapped_function=mapped_function,
-                                                replace_relative_import=False, module_name=module_name,
-                                                copy_add_ext=copy_add_ext, use_sys=use_sys, fexclude=fexclude,
-                                                auto_rst_generation=auto_rst_generation, fLOG=fLOG)
+        prepare_file_for_sphinx_help_generation(
+            {}, root, dest_doc, subfolders=subfolders, silent=True,
+            rootrep=("_doc.sphinxdoc.source.%s." % (module_name,), ""),
+            optional_dirs=optional_dirs, mapped_function=mapped_function,
+            replace_relative_import=False, module_name=module_name,
+            copy_add_ext=copy_add_ext, use_sys=use_sys, fexclude=fexclude,
+            auto_rst_generation=auto_rst_generation, fLOG=fLOG)
 
     except ImportErrorHelpGen as e:  # pragma: no cover
         fLOG(
