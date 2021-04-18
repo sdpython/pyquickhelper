@@ -4,7 +4,7 @@ Setup commands used by package
 `pyquickhelper <https://github.com/sdpython/pyquickhelper>`_.
 """
 
-__version__ = "0.2"
+__version__ = "0.2.1"
 __author__ = "Xavier Dupré"
 __github__ = "https://github.com/sdpython/pyquickhelper"
 __url__ = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html"

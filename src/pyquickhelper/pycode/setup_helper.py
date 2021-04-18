@@ -78,14 +78,20 @@ def process_standard_options_for_setup(
     @param      argv                        = *sys.argv*
     @param      file_or_folder              file ``setup.py`` or folder which contains it
     @param      project_var_name            display name of the module
-    @param      module_name                 module name, None if equal to *project_var_name* (``import <module_name>``)
-    @param      unittest_modules            modules added for the unit tests, see @see fn py3to2_convert_tree
+    @param      module_name                 module name, None if equal to *project_var_name*
+                                            (``import <module_name>``)
+    @param      unittest_modules            modules added for the unit tests,
+                                            see @see fn py3to2_convert_tree
     @param      pattern_copy                see @see fn py3to2_convert_tree
-    @param      requirements                dependencies, fetched with a local pipy server from ``http://localhost:port/``
+    @param      requirements                dependencies, fetched with a local pipy server from
+                                            ``http://localhost:port/``
     @param      port                        port for the local pipy server
-    @param      blog_list                   list of blog to listen for this module (usually stored in ``module.__blog__``)
-    @param      default_engine_paths        define the default location for python engine, should be dictionary *{ engine: path }*, see below.
-    @param      extra_ext                   extra file extension to process (add a page for each of them, ex ``["doc"]``)
+    @param      blog_list                   list of blog to listen for this module
+                                            (usually stored in ``module.__blog__``)
+    @param      default_engine_paths        define the default location for python engine,
+                                            should be dictionary *{ engine: path }*, see below.
+    @param      extra_ext                   extra file extension to process (add a page for each of them,
+                                            ex ``["doc"]``)
     @param      add_htmlhelp                run HTML Help too (only on Windows)
     @param      setup_params                parameters send to @see fn call_setup_hook
     @param      coverage_options            see @see fn main_wrapper_tests
@@ -105,13 +111,15 @@ def process_standard_options_for_setup(
                                             if None --> ``["html", "pdf"]``
     @param      additional_ut_path          additional paths to add when running unit tests
     @param      skip_function               function to skip unit tests, see @ee fn main_wrapper_tests
-    @param      covtoken                    token used when publishing coverage report to `codecov <https://codecov.io/>`_,
+    @param      covtoken                    token used when publishing coverage report to
+                                            `codecov <https://codecov.io/>`_,
                                             more in @see fn main_wrapper_tests
     @param      fLOG                        logging function
     @param      hook_print                  enable, disable print when calling *_setup_hook*
     @param      stdout                      redirect stdout for unit test if not None
     @param      stderr                      redirect stderr for unit test  if not None
-    @param      use_run_cmd                 to run the sphinx documentation with @see fn run_cmd and not ``os.system``
+    @param      use_run_cmd                 to run the sphinx documentation with @see fn run_cmd and
+                                            not ``os.system``
     @param      filter_warning              see @see fn main_wrapper_tests
     @param      file_filter_pep8            function to filter out files for which checking pep8
                                             (see @see fn remove_extra_spaces_folder)
@@ -160,6 +168,10 @@ def process_standard_options_for_setup(
     Option ``-e`` and ``-g`` were added to
     filter file by regular expressions (in with *e*, out with *g*).
     """
+    if module_name is not None and (
+            len(module_name) == 0 or module_name[0] == '_'):
+        raise RuntimeError(
+            "module cannot be empty or start with '_': %r." % module_name)
     if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
@@ -379,8 +391,7 @@ def process_standard_options_for_setup(
                 skip_function=skip_function,
                 addition_ut_path=additional_ut_path, fLOG=fLOG)
         standard_help_for_setup(
-            argv,
-            file_or_folder, project_var_name,
+            argv, file_or_folder, project_var_name,
             module_name=module_name, extra_ext=extra_ext,
             add_htmlhelp=add_htmlhelp, copy_add_ext=copy_add_ext,
             nbformats=nbformats, layout=layout,
@@ -685,20 +696,21 @@ def clean_notebooks_for_numbers(file_or_folder):
     return mod
 
 
-def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=None, extra_ext=None,
-                            add_htmlhelp=False, copy_add_ext=None,
+def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=None,
+                            extra_ext=None, add_htmlhelp=False, copy_add_ext=None,
                             nbformats=("ipynb", "html", "python",
                                        "rst", "slides", "pdf"),
                             layout=None, use_run_cmd=False, direct_call=False,
                             fexclude=None, fLOG=None):
     """
-    Standard function which generates help assuming they follow the same design
-    as *pyquickhelper*.
+    Standard function which generates help assuming they follow
+    the same design as *pyquickhelper*.
 
     @param      argv                it should be ``sys.argv``
     @param      file_or_folder      file ``setup.py`` or folder which contains it
     @param      project_var_name    display name of the module
-    @param      module_name         module name, None if equal to *project_var_name* (``import <module_name>``)
+    @param      module_name         module name, None if equal to *project_var_name*
+                                    (``import <module_name>``)
     @param      extra_ext           extra file extension to process (ex ``["doc"]``)
     @param      add_htmlhelp        run HTML Help too (only on Windows)
     @param      copy_add_ext        additional extension of files to copy

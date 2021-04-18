@@ -11,7 +11,7 @@ package_dir = {k: os.path.join('.', k.replace(".", "/")) for k in packages}
 
 
 def read_version():
-    version_str = '0.2'
+    version_str = '0.2.1'
     TOP_DIR = os.path.abspath(os.path.dirname(__file__))
     with (open(os.path.join(
             TOP_DIR, 'pyquicksetup', '__init__.py'), "r")) as f:

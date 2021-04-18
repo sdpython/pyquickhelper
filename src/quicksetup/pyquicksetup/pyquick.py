@@ -23,7 +23,15 @@ from distutils.core import Command
 class _SetupCommand(Command):
 
     def get_parameters(self):
-        module_name = self.distribution.packages[0]
+        module_name = None
+        for name in self.distribution.packages:
+            if len(name) > 0 and name[0] != '_':
+                module_name = name
+                break
+        if module_name is None:
+            raise RuntimeError(
+                "Cannot guess module name from\n{}".format(
+                    "\n".join(map(str, self.distribution.packages))))
         location = os.path.normpath(os.path.join(os.path.abspath(
             self.distribution.package_dir[module_name]), '..'))
         if os.path.split(location)[-1] == 'src':
@@ -316,4 +324,13 @@ class SetupCommandVersion(_SetupCommand):
         from pyquickhelper.pycode import process_standard_options_for_setup
         parameters = self.get_parameters()
         parameters['argv'] = ['write_version']
+        print("project_var_name=%r" % parameters['project_var_name'])
+        print("file_or_folder=%r" % parameters['file_or_folder'])
+        print("module_name=%r" % parameters['module_name'])
+        if 'github_owner' in parameters:
+            print("github_owner=%r" % parameters['github_owner'])
         process_standard_options_for_setup(**parameters)
+        if os.path.exists("version.txt"):
+            with open("version.txt", "r") as f:
+                content = f.read().strip(" \r\n")
+            print("version=%s" % content)
