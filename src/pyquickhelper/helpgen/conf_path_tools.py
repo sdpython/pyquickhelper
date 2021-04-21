@@ -36,8 +36,8 @@ def find_graphviz_dot(exc=True):
     :raises FileNotFoundError: if graphviz not found
     """
     if sys.platform.startswith("win"):  # pragma: no cover
-        version = list(range(34, 50))
-        version.append("44.1")
+        version = list(range(34, 60))
+        version.extend(["{}.1".format(v) for v in version])
         for v in version:
             graphviz_dot = (
                 "C:\\Program Files (x86)\\Graphviz2.{0}\\bin\\dot.exe"
