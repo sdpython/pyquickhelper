@@ -129,7 +129,8 @@ def _private_process_one_file(
     ext = os.path.splitext(fullname)[-1]
 
     if ext in {".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o",
-               ".so", ".exe", ".enc", ".txt", ".gif", ".csv", '.pyx'}:
+               ".so", ".exe", ".enc", ".txt", ".gif", ".csv", '.pyx',
+               '*.mp3', '*.mp4'}:
         if ext in (".pyd", ".so"):
             # If the file is being executed, the copy might keep the properties of
             # the original (only Windows).
