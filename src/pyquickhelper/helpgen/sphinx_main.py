@@ -233,7 +233,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     script which outputs RST documntation adds it to the current documentation.
     The function automatically adds custom role and custom directive ``sharenet``.
     The function directly calls
-    `sphinx <http://www.sphinx-doc.org/en/stable/>`_,
+    `sphinx <https://www.sphinx-doc.org/en/master/>`_,
     `nbconvert <https://nbconvert.readthedocs.io/en/latest/>`_.
     When there are too many notebooks, the notebook index is difficult to read.
     It does not require to get script location.

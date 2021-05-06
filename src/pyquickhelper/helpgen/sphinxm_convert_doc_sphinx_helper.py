@@ -865,7 +865,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
 class _CustomBuildEnvironment(BuildEnvironment):
     """
     Overrides some functionalities of
-    `BuildEnvironment <http://www.sphinx-doc.org/en/stable/extdev/envapi.html>`_.
+    `BuildEnvironment <https://www.sphinx-doc.org/en/master/extdev/envapi.html>`_.
     """
 
     def __init__(self, app):

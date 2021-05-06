@@ -57,7 +57,7 @@ def do_main(source, dest, password, encrypt,  # pylint: disable=W0621
     Encrypts or decrypts a folder, see @see cl EncryptedBackup.
     The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+    `Fernet <https://cryptography.io/en/latest/fernet/>`_.
 
     @param      source      source of files to encrypt or decrypt
     @param      dest        destination
@@ -114,7 +114,7 @@ def encrypt(fLOG=print, args=None):
     Encrypts using class @see cl EncryptedBackup.
     The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+    `Fernet <https://cryptography.io/en/latest/fernet/>`_.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``
@@ -146,7 +146,7 @@ def decrypt(fLOG=print, args=None):
     Decrypts using class @see cl EncryptedBackup.
     The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+    `Fernet <https://cryptography.io/en/latest/fernet/>`_.
 
     @param      fLOG        logging function
     @param      args        to overwrite ``sys.args``

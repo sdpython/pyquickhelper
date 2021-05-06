@@ -24,6 +24,7 @@ from .pyquick import (
     SetupCommandUnitTestGUI,
     SetupCommandUnitTestLONG,
     SetupCommandUnitTestSKIP,
+    SetupCommandValidateUrls,
     SetupCommandVersion)
 from .helper import _clean_readme
 
@@ -44,6 +45,7 @@ def default_cmdclass():
             'unittests_GUI': SetupCommandUnitTestGUI,
             'unittests_LONG': SetupCommandUnitTestLONG,
             'unittests_SKIP': SetupCommandUnitTestSKIP,
+            'validate_urls': SetupCommandValidateUrls,
             'write_version': SetupCommandVersion}
 
 

@@ -133,10 +133,8 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     replace full paths by relative path.
 
     Parameters *coverage_options*, *coverage_exclude_lines*, *additional_ut_path*:
-    see class `Coverage <http://coverage.readthedocs.org/en/
-    coverage-4.0b1/api_coverage.html?highlight=coverage#coverage.Coverage.__init__>`_
-    and `Configuration files <http://coverage.readthedocs.org/
-    en/coverage-4.0b1/config.html>`_
+    see class `Coverage <https://coverage.readthedocs.io/en/coverage-5.5/api_coverage.html>`_
+    and `Configuration files <https://coverage.readthedocs.io/en/coverage-4.0b1/config.html>`_
     to specify those options. If both values are left to None, this function will
     compute the code coverage for all files in this module. The function
     now exports the coverage options which were used.

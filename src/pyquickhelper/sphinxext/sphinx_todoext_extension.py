@@ -41,7 +41,7 @@ class TodoExt(BaseAdmonition):
 
     * *title:* a title for the todo (mandatory)
     * *tag:* a tag to have several categories of todo (mandatory)
-    * *issue:* the issue requires `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_
+    * *issue:* the issue requires `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_
       to be defined and must contain key ``'issue'`` (optional)
     * *cost:* a cost if the todo were to be fixed (optional)
     * *priority:* to prioritize items (optional)
@@ -500,7 +500,7 @@ def setup(app):
     app.add_config_value('todoext_link_only', False, 'html')
 
     # The following variable is shared with extension
-    # `todo <http://www.sphinx-doc.org/en/stable/ext/todo.html>`_.
+    # `todo <https://www.sphinx-doc.org/en/master/usage/extensions/todo.html>`_.
     try_add_config_value(app, 'extlinks', {}, 'env')
 
     app.add_node(todoextlist,

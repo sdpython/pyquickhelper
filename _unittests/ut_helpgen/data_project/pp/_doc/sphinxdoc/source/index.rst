@@ -45,7 +45,7 @@ python3_module_template
         :alt: size
 
 **Links:** `github <https://github.com/sdpython/python3_module_template/>`_,
-`documentation <http://www.xavierdupre.fr/app/python3_module_template/helpsphinx2/index.html>`_,
+`documentation <http://www.xavierdupre.fr/app/python3_module_template/helpsphinx/index.html>`_,
 `travis <https://travis-ci.org/sdpython/python3_module_template>`_,
 :ref:`l-README`,
 :ref:`blog <ap-main-0>`,

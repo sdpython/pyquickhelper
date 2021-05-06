@@ -30,12 +30,12 @@
 
     **latex formulas**
 
-    The page `Math support in Sphinx <http://sphinx-doc.org/ext/math.html?highlight=math#module-sphinx.ext.mathbase>`_
+    The page `Math support in Sphinx <https://www.sphinx-doc.org/en/master/usage/extensions/math.html>`_
     explains how to set up math environment (latex or mathjax).
     But if you add matplotlib to convert equations into images
     (`matplotlib.sphinxext.mathmpl <http://matplotlib.org/sampledoc/extensions.html#using-math>`_),
     the sphinx extension
-    `sphinx.ext.pngmath is disabled <http://sphinx-doc.org/ext/math.html#module-sphinx.ext.pngmath>`_.
+    `sphinx.ext.pngmath is disabled <https://www.sphinx-doc.org/en/master/#module-sphinx.ext.pngmath>`_.
     Matplotlib extension has some limitations. ``\text`` does not work.
 
     **formulas in docstring**

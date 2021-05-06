@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Overwrites `toctree <http://www.sphinx-doc.org/en/stable/markup/toctree.html#directive-toctree>`_
+@brief Overwrites `toctree <https://www.sphinx-doc.org/en/master/markup/toctree.html#directive-toctree>`_
 directive to get catch exceptions when a document is processed inline.
 """
 from docutils.parsers.rst import directives
@@ -22,7 +22,7 @@ from ..texthelper import compare_module_version
 class CustomTocTree(TocTree):
     """
     Overwrites `toctree
-    <http://www.sphinx-doc.org/en/stable/markup/toctree.html#directive-toctree>`_.
+    <https://www.sphinx-doc.org/en/master/markup/toctree.html#directive-toctree>`_.
     The code is located at
     `sphinx/directives/other.py
     <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/directives/other.py#L38>`_.

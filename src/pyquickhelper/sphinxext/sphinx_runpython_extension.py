@@ -2,7 +2,8 @@
 """
 @file
 @brief Defines runpython directives.
-See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial.html>`_
+See `Tutorial: Writing a simple extension
+<https://www.sphinx-doc.org/en/master/development/tutorials/helloworld.html>`_
 """
 import sys
 import os
@@ -328,7 +329,8 @@ class RunPythonDirective(Directive):
     * ``:showout`` if *:rst:* is set up, this flag adds the raw rst output to check what is happening
     * ``:sin:<text_for_in>`` which text to display before the code (by default *In*)
     * ``:sout:<text_for_in>`` which text to display before the output (by default *Out*)
-    * ``:sphinx:`` by default, function `nested_parse_with_titles <http://sphinx-doc.org/extdev/markupapi.html?highlight=nested_parse>`_ is
+    * ``:sphinx:`` by default, function `nested_parse_with_titles
+      <https://www.sphinx-doc.org/en/master/extdev/markupapi.html?highlight=nested_parse#parsing-directive-content-as-rest>`_ is
       used to parse the output of the script, if this option is set to false,
       `public_doctree <http://code.nabla.net/doc/docutils/api/docutils/core/docutils.core.publish_doctree.html>`_.
     * ``:store:`` stores the local context in :epkg:`sphinx` application to restore it later
@@ -365,7 +367,8 @@ class RunPythonDirective(Directive):
     If the directive produces RST text to be included later in the documentation,
     it is able to interpret
     `docutils directives <http://docutils.sourceforge.net/docs/ref/rst/directives.html>`_
-    and `Sphinx directives <http://sphinx-doc.org/rest.html>`_
+    and `Sphinx directives
+    <https://www.sphinx-doc.org/en/master/usage/restructuredtext/directives.html>`_
     with function `nested_parse_with_titles <http://sphinx-doc.org/extdev/
     markupapi.html?highlight=nested_parse>`_. However, if this text contains
     titles, it is better to use option ``:sphinx: false``.

@@ -119,7 +119,7 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
 
 
 def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
-                            fullname=False, recursive=True):
+                            fullname=False, recursive=True, verbose=False):
     """
     Same as @see fn explore_folder but iterates on files
     included in a folder and its subfolders.
@@ -130,6 +130,7 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
     :param neg_pattern: negative pattern to exclude files
     :param fullname: if True, include the subfolder while checking the regex
     :param recursive: look into subfolders
+    :param verbose: use :epkg:`tqdm` to display a progress bar
     :return: iterator on files
     """
     if pattern is not None:
@@ -143,27 +144,40 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
 
     iter = os.walk if recursive else listdir_aswalk
 
+    def itera(folder):
+        for r, _, f in iter(folder):
+            for a in f:
+                yield r, f, a
+
+    if verbose:
+        from tqdm import tqdm
+        loop = tqdm(itera(folder))
+    else:
+        loop = itera(folder)
+
     rep = {}
-    for r, _, f in iter(folder):
-        for a in f:
-            temp = os.path.join(r, a)
-            if pattern is not None:
-                if fullname:
-                    if not pattern.search(temp):
-                        continue
-                else:
-                    if not pattern.search(a):
-                        continue
-            if neg_pattern is not None:
-                if fullname:
-                    if neg_pattern.search(temp):
-                        continue
-                else:
-                    if neg_pattern.search(a):
-                        continue
-            yield temp
-            r = os.path.split(temp)[0]
-            rep[r] = None
+    for r, f, a in loop:
+        if verbose:
+            loop.set_description(r)
+        temp = os.path.join(r, a)
+        if pattern is not None:
+            if fullname:
+                if not pattern.search(temp):
+                    continue
+            else:
+                if not pattern.search(a):
+                    continue
+        if neg_pattern is not None:
+            if fullname:
+                if neg_pattern.search(temp):
+                    continue
+            else:
+                if neg_pattern.search(a):
+                    print("---", temp)
+                    continue
+        yield temp
+        r = os.path.split(temp)[0]
+        rep[r] = None
 
 
 def explore_folder_iterfile_repo(folder, log=fLOG):

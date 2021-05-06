@@ -3,7 +3,7 @@
 @file
 @brief Defines a sphinx extension to output the documentation in :epkg:`Markdown`
 or *MD*. It is inspired from `restbuilder
-<https://bitbucket.org/birkenfeld/sphinx-contrib/src/6f417e74a22dadb9e0370696f219e63f1b196344/restbuilder/?at=default>`_.
+<https://github.com/sphinx-contrib/legacy>`_.
 I replicate its license here:
 
 ::

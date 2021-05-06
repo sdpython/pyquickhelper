@@ -6,7 +6,7 @@
     :categories: sphinx
 
     The following repository
-    `birkenfeld/sphinx-contrib/ <https://bitbucket.org/birkenfeld/sphinx-contrib/src/284d5b04263c07857bbc3cf743136f9cfba0f170?at=default>`_
+    `birkenfeld/sphinx-contrib/ <https://github.com/sphinx-contrib/legacy>`_
     contains many useful extensions
     to improve the rendering of
     `Sphinx <http://sphinx-doc.org/>`_ documentation:

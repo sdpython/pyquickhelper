@@ -117,7 +117,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      destination         set a destination (requires for some extension)
     @param      destination_path    set a destination path (requires for some extension)
     @param      options             :epkg:`Sphinx` options see
-                                    `Render math as images <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+                                    `Render math as images <https://www.sphinx-doc.org/en/master/ext/math.html#module-sphinx.ext.imgmath>`_,
                                     a subset of options is used, see @see fn default_sphinx_options.
                                     By default, the theme (option *html_theme*) will ``'basic'``.
     @return                         HTML format
@@ -125,7 +125,8 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     *directives* is None or a list of 2 or 5-uple:
 
     * a directive name (mandatory)
-    * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_,
+    * a directive class: see `Sphinx Directive
+      <https://www.sphinx-doc.org/en/master/development/tutorials/helloworld.html>`_,
       see also @see cl RunPythonDirective as an example (mandatory)
     * a docutils node: see @see cl runpython_node as an example
     * two functions: see @see fn visit_runpython_node, @see fn depart_runpython_node as an example
@@ -477,7 +478,7 @@ def docstring2html(function_or_string, format="html", fLOG=noLOG, writer="html",
     @param      filter_nodes            transform the doctree before writing the results
                                         (layout must be 'sphinx')
     @param      options                 Sphinx options see `Render math as images
-                                        <http://www.sphinx-doc.org/en/stable/ext/math.html#module-sphinx.ext.imgmath>`_,
+                                        <https://www.sphinx-doc.org/en/master/ext/math.html#module-sphinx.ext.imgmath>`_,
                                         a subset of options is used, see @see fn default_sphinx_options.
                                         By default, the theme (option *html_theme*) will ``'basic'``.
     @return                             (str) :epkg:`HTML` format or (IPython.core.display.HTML)

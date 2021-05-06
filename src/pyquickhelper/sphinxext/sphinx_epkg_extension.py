@@ -37,7 +37,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
 
     ::
 
-        `to_html <http://pandas.pydata.org/pandas-docs/stable/generated/pandas.DataFrame.to_html.html>`_
+        `to_html <https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.to_html.html>`_
 
     By:
 
