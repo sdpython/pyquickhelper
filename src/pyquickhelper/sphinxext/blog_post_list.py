@@ -36,16 +36,16 @@ class BlogPostList:
         for s in sorted(sub):
             full = os.path.join(folder, s)
             if os.path.isdir(full):
-                fLOG("[BlogPostList]    reading folder", full)
+                fLOG("[BlogPostList]    reading folder %r" % full)
                 posts = os.listdir(full)
                 for post in sorted(posts):
                     if os.path.splitext(post)[-1] in [".rst"]:
                         fpost = os.path.join(full, post)
-                        fLOG("    reading post", fpost)
+                        fLOG("    reading post %r" % post)
                         obj = BlogPost(fpost, encoding=encoding,
                                        extensions=extensions)
                         self._blogposts.append((obj.date, obj))
-        fLOG("[BlogPostList]    end reading post")
+                fLOG("[BlogPostList]    end reading folder %r" % full)
         self._blogposts.sort(reverse=True)
         self._blogposts = [_[1] for _ in self._blogposts]
         self._encoding = encoding

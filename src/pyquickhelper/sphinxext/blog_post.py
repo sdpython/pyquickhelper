@@ -7,6 +7,7 @@
 import os
 import sys
 from io import StringIO
+from contextlib import redirect_stdout, redirect_stderr
 from docutils import io as docio
 from docutils.core import publish_programmatically
 
@@ -49,6 +50,9 @@ class BlogPost:
         * pub: Publisher
 
         Parameter *raise_exception* catches the standard error.
+        Option `:process:` of command `.. runpython::` should be
+        used within a blog post to avoid having the same process use
+        sphinx at the same time.
         """
         if os.path.exists(filename):
             with open(filename, "r", encoding=encoding) as f:
@@ -90,11 +94,19 @@ class BlogPost:
         config = env.config
 
         if 'blog_background' not in config:
-            raise AttributeError("Unable to find 'blog_background' in config:\n{0}".format(
-                "\n".join(sorted(config.values))))
+            raise AttributeError(
+                "Unable to find 'blog_background' in config:\n{0}".format(
+                    "\n".join(sorted(config.values))))
         if 'blog_background_page' not in config:
-            raise AttributeError("Unable to find 'blog_background_page' in config:\n{0}".format(
-                "\n".join(sorted(config.values))))
+            raise AttributeError(
+                "Unable to find 'blog_background_page' in config:\n{0}".format(
+                    "\n".join(sorted(config.values))))
+        if 'epkg_dictionary' in config:
+            if len(config.epkg_dictionary) > 0:
+                overrides['epkg_dictionary'] = config.epkg_dictionary
+            else:
+                from ..helpgen.default_conf import get_epkg_dictionary
+                overrides['epkg_dictionary'] = get_epkg_dictionary()
 
         env.temp_data["docname"] = "stringblog"
         overrides["env"] = env
@@ -103,24 +115,39 @@ class BlogPost:
         config.add('initial_header_level', 2, False, int)
         config.add('input_encoding', encoding, False, str)
 
-        errst = sys.stderr
+        keepout = StringIO()
         keeperr = StringIO()
-        sys.stderr = keeperr
-
-        _, pub = publish_programmatically(source_class=docio.StringInput, source=content,
-                                          source_path=None, destination_class=docio.StringOutput, destination=None,
-                                          destination_path=None, reader=None, reader_name='standalone', parser=None,
-                                          parser_name='restructuredtext', writer=None, writer_name='null', settings=None,
-                                          settings_spec=None, settings_overrides=overrides, config_section=None,
-                                          enable_exit_status=None)
-
-        sys.stderr = errst
+        with redirect_stdout(keepout):
+            with redirect_stderr(keeperr):
+                _, pub = publish_programmatically(
+                    source_class=docio.StringInput, source=content,
+                    source_path=None, destination_class=docio.StringOutput, destination=None,
+                    destination_path=None, reader=None, reader_name='standalone', parser=None,
+                    parser_name='restructuredtext', writer=None, writer_name='null', settings=None,
+                    settings_spec=None, settings_overrides=overrides, config_section=None,
+                    enable_exit_status=None)
 
         all_err = keeperr.getvalue()
         if len(all_err) > 0:
-            if raise_exception:
-                raise BlogPostParseError("unable to parse a blogpost:\n[sphinxerror]-F\n{0}\nFILE\n{1}\nCONTENT\n{2}".format(
-                    all_err, self._filename, content))
+            lines = all_err.strip(' \n\r').split('\n')
+            lines = [_ for _ in lines
+                     if ("in epkg_dictionary" not in _ and
+                         "to be local relative or absolute" not in _)]
+            std = keepout.getvalue().strip('\n\r\t ')
+            if len(lines) > 0 and raise_exception:
+                raise BlogPostParseError(
+                    "Unable to parse a blogpost:\n[sphinxerror]-F\n{0}"
+                    "\nFILE\n{1}\nCONTENT\n{2}\n--OUT--\n{3}".format(
+                        all_err, self._filename, content, keepout.getvalue()))
+            elif len(lines) > 0:
+                print(all_err)
+                if len(std) > 3:
+                    print(std)
+            else:
+                for _ in all_err.strip(' \n\r').split('\n'):
+                    print("    ", _)
+                if len(std) > 3:
+                    print(std)
             # we assume we just need the content, raising a warnings
             # might make some process fail later
             # warnings.warn("Raw rst was caught but unable to fully parse

@@ -222,7 +222,7 @@ class ImageDirective(Directive):
             return False
         if '://' in uri:
             return True
-        raise ValueError('Image URI `{}` have to be local relative or '
+        raise ValueError('Image URI `{}` has to be local relative or '
                          'absolute path to image, or remote address.'
                          .format(uri))
 
