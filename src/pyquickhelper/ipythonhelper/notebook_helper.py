@@ -465,7 +465,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
         Remove execution number from the notebook
         to avoid commiting changes only about those numbers
 
-    `notebook 5.1.0 <http://jupyter-notebook.readthedocs.io/en/stable/changelog.html#release-5-1-0>`_
+    `notebook 5.1.0 <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html>`_
     introduced changes which are incompatible with
     leaving the cell executing number empty.
     """

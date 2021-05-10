@@ -307,6 +307,38 @@ class SetupCommandUnitTestSKIP(_SetupCommand):
         process_standard_options_for_setup(**parameters)
 
 
+class SetupCommandValidateUrls(_SetupCommand):
+    description = "Validate Urls in the documentation."
+
+    user_options = [
+        ('folder=', 'f', 'folder to look into'),
+        ('verbose=', 'v', 'verbose'),
+    ]
+
+    def initialize_options(self):
+        self.folder = "."
+        self.verbose = False
+
+    def finalize_options(self):
+        pass
+
+    def run(self):
+        from pyquickhelper.pycode.doc_helper import validate_urls_in_folder
+        parameters = self.get_parameters()
+        parameters['argv'] = ['unittests']
+        if self.folder is None:
+            folder = '.'
+        else:
+            folder = self.folder
+        if self.verbose is None:
+            verbose = False
+        else:
+            verbose = True
+        for issue in validate_urls_in_folder(folder=folder, verbose=verbose):
+            print("ERROR url=%r in %r error=%r" %
+                  (issue[1], issue[0], issue[2]))
+
+
 class SetupCommandVersion(_SetupCommand):
     description = (
         "Retrieves the commit number from git and writes it "

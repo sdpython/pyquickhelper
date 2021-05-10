@@ -155,9 +155,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                                     :epkg:`PEP8` is not verified, see also
                                     `Error Codes <http://pep8.readthedocs.org/en/latest/intro.html#error-codes>`_
     @param      pylint_ignore       ignore :epkg:`pylint` issues, see
-                                    `pylint error codes <http://pylint-messages.wikidot.com/all-codes>`_
-    @param      complexity          see `check_file <http://pycodestyle.readthedocs.io/en/latest/api.html
-                                    ?highlight=styleguide#pycodestyle.StyleGuide.check_files>`_
+                                    :epkg:`pylint error codes`
+    @param      complexity          see `check_file <https://pycodestyle.pycqa.org/en/latest/api.html>`_
     @param      stop_after          stop after *stop_after* issues
     @param      skip                skip a warning if a substring in this list is found
     @param      neg_pattern         skip files verifying this regular expressions

@@ -12,7 +12,7 @@
     There is a discussion about it on
     `scikit-learn/9189 <https://github.com/scikit-learn/scikit-learn/issues/9189>`_
     and the package is now included in the
-    `sources <https://github.com/scikit-learn/scikit-learn/tree/master/doc/sphinxext/sphinx_gallery>`_.
+    `sources <https://scikit-learn.org/stable/auto_examples/index.html>`_.
     It is not really bothering for a small package like this.
     But still, it is extra work.
     I realize open source holds on some kind of magic

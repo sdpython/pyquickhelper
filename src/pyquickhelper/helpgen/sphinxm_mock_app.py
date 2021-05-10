@@ -275,7 +275,8 @@ class MockSphinxApp:
         *directives* is None or a list of 2 or 5-uple:
 
         * a directive name (mandatory)
-        * a directive class: see `Sphinx Directive <http://sphinx-doc.org/extdev/tutorial.html>`_,
+        * a directive class: see `Sphinx Directive
+          <https://www.sphinx-doc.org/en/master/development/tutorials/helloworld.html>`_,
           see also @see cl RunPythonDirective as an example (mandatory)
         * a docutils node: see @see cl runpython_node as an example
         * two functions: see @see fn visit_runpython_node,

@@ -2,8 +2,10 @@
 """
 @file
 @brief Defines blogpost directives.
-See `Tutorial: Writing a simple extension <http://sphinx-doc.org/extdev/tutorial.html>`_,
-`Creating reStructuredText Directives <http://docutils.readthedocs.org/en/sphinx-docs/howto/rst-directives.html>`_
+See `Tutorial: Writing a simple extension
+<https://www.sphinx-doc.org/en/master/development/tutorials/helloworld.html>`_,
+`Creating reStructuredText Directives
+<https://docutils.sourceforge.io/docs/howto/rst-directives.html>`_
 """
 import os
 import sphinx

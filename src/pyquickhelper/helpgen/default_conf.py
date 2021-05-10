@@ -73,7 +73,7 @@ def get_epkg_dictionary():
         'azure pipelines': 'https://azure.microsoft.com/en-us/services/devops/pipelines/',
         'Azure Pipelines': 'https://azure.microsoft.com/en-us/services/devops/pipelines/',
         'bokeh': 'https://bokeh.pydata.org/en/latest/',
-        'builderapi': 'http://www.sphinx-doc.org/en/stable/extdev/builderapi.html',
+        'builderapi': 'https://www.sphinx-doc.org/en/master/extdev/builderapi.html',
         'bz2': 'https://en.wikipedia.org/wiki/Bzip2',
         'cairosvg': 'https://github.com/Kozea/CairoSVG',
         'chrome': 'https://www.google.com/chrome/',
@@ -108,7 +108,7 @@ def get_epkg_dictionary():
         'Graphviz': 'http://www.graphviz.org/',
         'html': 'https://en.wikipedia.org/wiki/HTML',
         'HTML': 'https://en.wikipedia.org/wiki/HTML',
-        'imgmath': 'http://www.sphinx-doc.org/en/master/usage/extensions/math.html#module-sphinx.ext.imgmath',
+        'imgmath': 'https://www.sphinx-doc.org/en/master/usage/extensions/math.html#module-sphinx.ext.imgmath',
         'img2pdf': 'https://gitlab.mister-muffin.de/josch/img2pdf',
         'Inkscape': 'https://inkscape.org/',
         'InkScape': 'https://inkscape.org/',
@@ -202,18 +202,18 @@ def get_epkg_dictionary():
                    ('https://docs.scipy.org/doc/scipy/reference/generated/scipy.{0}.html', 1),
                    ('https://docs.scipy.org/doc/scipy/reference/generated/scipy.{0}.{1}.html', 2)),
         'SFTP': 'https://en.wikipedia.org/wiki/SSH_File_Transfer_Protocol',
-        'sphinx': 'http://www.sphinx-doc.org/en/stable/',
-        'Sphinx': 'http://www.sphinx-doc.org/en/stable/',
-        'sphinx.ext.autodoc': 'http://www.sphinx-doc.org/en/stable/ext/autodoc.html#module-sphinx.ext.autodoc',
+        'sphinx': 'https://www.sphinx-doc.org/en/master/',
+        'Sphinx': 'https://www.sphinx-doc.org/en/master/',
+        'sphinx.ext.autodoc': 'https://www.sphinx-doc.org/en/master/ext/autodoc.html#module-sphinx.ext.autodoc',
         'sphinx.ext.intersphinx': 'https://www.sphinx-doc.org/en/master/usage/extensions/intersphinx.html',
         'sphinx-gallery': 'https://sphinx-gallery.readthedocs.io/en/latest/',
-        'Sphinx application': 'http://www.sphinx-doc.org/en/stable/_modules/sphinx/application.html',
+        'Sphinx application': 'https://www.sphinx-doc.org/en/master/_modules/sphinx/application.html',
         'svg': 'https://fr.wikipedia.org/wiki/Scalable_Vector_Graphics',
         'SVG': 'https://fr.wikipedia.org/wiki/Scalable_Vector_Graphics',
         'SVN': 'https://subversion.apache.org/',
         'svn': 'https://subversion.apache.org/',
         'tar.gz': 'https://en.wikipedia.org/wiki/Tar_(computing)',
-        'toctree': 'http://www.sphinx-doc.org/en/stable/markup/toctree.html',
+        'toctree': 'https://www.sphinx-doc.org/en/master/markup/toctree.html',
         'TexnicCenter': 'http://www.texniccenter.org/',
         'tinycss2': 'http://pythonhosted.org/tinycss2/',
         'tkinter': 'https://docs.python.org/3/library/tkinter.html',
@@ -270,8 +270,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                                         sphinx-bootstrap-theme/README.html>`_
     @param      description_latex       description latex
     @param      use_mathjax             set up the documentation to use mathjax,
-                                        see `sphinx.ext.mathjax <http://sphinx-doc.org/ext/math.html
-                                        ?highlight=math#module-sphinx.ext.mathjax>`_,
+                                        see `sphinx.ext.mathjax
+                                        <https://www.sphinx-doc.org/en/master/usage/extensions/math.html>`_,
                                         default option is True
     @param      use_lunrsearch          suggest autocompletion in sphinx,
                                         see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/
@@ -279,7 +279,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
     @param      sharepost               add share button to share blog post on usual networks
     @param      custom_style            custom style sheet
-    @param      extlinks                parameter `extlinks <http://www.sphinx-doc.org/en/stable/ext/extlinks.html#confval-extlinks>`_,
+    @param      extlinks                parameter `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
                                         example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
     @param      github_user             git(hub) user
     @param      github_repo             git(hub) project
@@ -614,7 +614,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # texinfo_show_urls = 'footnote'
 
     # it modifies the set of things to display inside the sidebar
-    # see http://www.sphinx-doc.org/en/stable/config.html#confval-html_sidebars
+    # see https://www.sphinx-doc.org/en/master/config.html#confval-html_sidebars
     html_sidebars = {
         '[!blog]**': ['searchbox.html', 'moduletoc.html', 'relations.html', 'sourcelink.html', ],
         'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', 'sourcelink.html', ],
@@ -903,7 +903,8 @@ def get_first_line(filename):
 def _skip(app, what, name, obj, skip, options):
     """
     To skip some functions,
-    see `Skipping members <http://sphinx-doc.org/ext/autodoc.html#event-autodoc-skip-member>`_.
+    see `Skipping members
+    <https://www.sphinx-doc.org/en/master/usage/extensions/autodoc.html>`_.
     """
     if name.startswith("_") and name not in \
             ["__qualname__",

@@ -17,7 +17,7 @@ def try_add_config_value(app, name, default, rebuild, type_s=()):
     @return                 True if added, False if already present.
 
     Rebuilds can be (source: `Sphinx.add_config_value
-    <http://www.sphinx-doc.org/en/stable/extdev/appapi.html#sphinx.application.Sphinx.add_config_value>`_):
+    <https://www.sphinx-doc.org/en/master/extdev/appapi.html#sphinx.application.Sphinx.add_config_value>`_):
 
     * 'env' if a change in the setting only takes effect when a document
       is parsed - this means that the whole environment must be rebuilt.

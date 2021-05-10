@@ -20,7 +20,7 @@ Simple extensions
 -----------------
 
 :epkg:`Sphinx` implements many
-`markups <http://www.sphinx-doc.org/en/stable/markup/index.html#sphinxmarkup>`_.
+`markups <https://www.sphinx-doc.org/en/master/markup/index.html#sphinxmarkup>`_.
 This module adds a couple of them. Many cheat sheets
 (see `cheat sheet 1 <https://thomas-cokelaer.info/tutorials/sphinx/rest_syntax.html>`_,
 `cheat sheet 2 <http://docs.sphinxdocs.com/en/latest/cheatsheet.html>`_,
@@ -584,7 +584,7 @@ does and a little bit more:
 
 This design is described by an empty module:
 
-* `documentation <http://www.xavierdupre.fr/app/python3_module_template/helpsphinx2/index.html>`_
+* `documentation <http://www.xavierdupre.fr/app/python3_module_template/helpsphinx/index.html>`_
 * `github/python3_module_template <https://github.com/sdpython/python3_module_template/>`_
 
 Blog Post

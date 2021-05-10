@@ -5,7 +5,7 @@
     :date: 2017-05-21
     :categories: documentation
 
-    `Sphinx <http://www.sphinx-doc.org/en/stable/>`_
+    `Sphinx <https://www.sphinx-doc.org/en/master/>`_
     has released a new version 1.6.1. Other packages
     updated their code but some issues remain.
     I had to modify the code of the file

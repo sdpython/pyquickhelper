@@ -138,7 +138,7 @@ def encrypt_stream(key, filename, out_filename=None, chunksize=2 ** 18, algo="AE
     Encrypts a file using AES (CBC mode) with the given key.
     The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+    `Fernet <https://cryptography.io/en/latest/fernet/>`_.
 
     @param      key             The encryption key - a string that must be
                                 either 16, 24 or 32 bytes long. Longer keys
@@ -181,7 +181,7 @@ def decrypt_stream(key, filename, out_filename=None, chunksize=3 * 2 ** 13, algo
     Decrypts a file using AES (CBC mode) with the given key.
     The function relies on module :epkg:`pycrypto`, :epkg:`cryptography`,
     algoritm `AES <https://fr.wikipedia.org/wiki/Advanced_Encryption_Standard>`_,
-    `Fernet <http://cryptography.readthedocs.org/en/latest/fernet/>`_.
+    `Fernet <https://cryptography.io/en/latest/fernet/>`_.
 
     @param      key             The encryption key - a string that must be
                                 either 16, 24 or 32 bytes long. Longer keys
