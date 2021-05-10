@@ -3,9 +3,7 @@
 @file
 @brief Helpers to process blog post included in the documentation.
 """
-
 import os
-import sys
 from io import StringIO
 from contextlib import redirect_stdout, redirect_stderr
 from docutils import io as docio
@@ -139,7 +137,7 @@ class BlogPost:
                     "Unable to parse a blogpost:\n[sphinxerror]-F\n{0}"
                     "\nFILE\n{1}\nCONTENT\n{2}\n--OUT--\n{3}".format(
                         all_err, self._filename, content, keepout.getvalue()))
-            elif len(lines) > 0:
+            if len(lines) > 0:
                 print(all_err)
                 if len(std) > 3:
                     print(std)
