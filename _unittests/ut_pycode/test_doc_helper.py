@@ -36,7 +36,7 @@ class TestDocHelper(ExtTestCase):
     def test_find_link(self):
         res = find_link(TestDocHelper.text)
         self.assertEqual(len(res), len(TestDocHelper.exp))
-        for i in range(len(res)):
+        for i in range(len(res)):  # pylint: disable=C0200
             self.assertEqual(TestDocHelper.exp[i], res[i])
 
     def test_validate_url(self):

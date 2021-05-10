@@ -68,7 +68,7 @@ class TestBuildersMissing(ExtTestCase):
         document = dummy()
 
         for cl in cls:
-            inst = cl(builder, document)
+            inst = cl(document, builder)
             inst._footnote = 'nofootnote'
             inst.rst_image_dest = ''
             if hasattr(inst, 'visit_table'):
