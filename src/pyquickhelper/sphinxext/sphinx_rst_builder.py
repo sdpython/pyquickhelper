@@ -65,7 +65,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     """
     sectionchars = '*=-~"+`'
 
-    def __init__(self, builder, document):
+    def __init__(self, document, builder):
         if not hasattr(builder, "config"):
             raise TypeError("Builder has no config: {}".format(type(builder)))
         TextTranslator.__init__(self, document, builder)
@@ -1254,7 +1254,7 @@ class RstWriter(writers.Writer):
         self.builder = builder
 
     def translate(self):
-        visitor = self.builder.create_translator(self.builder, self.document)
+        visitor = self.builder.create_translator(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.body
 

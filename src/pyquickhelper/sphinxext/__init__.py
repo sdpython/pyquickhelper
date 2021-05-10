@@ -158,12 +158,4 @@ def get_default_standard_extensions(use_mathjax=False):
         'matplotlib.sphinxext.plot_directive',
     ]
 
-    try:
-        import sphinxcontrib.jsdemo
-        assert sphinxcontrib.jsdemo is not None
-        extensions.append('sphinxcontrib.jsdemo')
-    except ImportError:  # pragma: no cover
-        # No module sphinxcontrib.jsdemo.
-        pass
-
     return extensions

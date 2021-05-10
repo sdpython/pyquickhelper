@@ -20,7 +20,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
     Defines a translator for doctree
     """
 
-    def __init__(self, builder, document):
+    def __init__(self, document, builder):
         if not hasattr(builder, 'config'):
             raise TypeError(  # pragma: no cover
                 "Unexpected type for builder {0}".format(type(builder)))
@@ -262,7 +262,7 @@ class DocTreeWriter(writers.Writer):
         self.builder = builder
 
     def translate(self):
-        visitor = self.builder.create_translator(self.builder, self.document)
+        visitor = self.builder.create_translator(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.body
 

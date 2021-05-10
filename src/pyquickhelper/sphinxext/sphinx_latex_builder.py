@@ -35,7 +35,7 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
     and modifies a few functions.
     """
 
-    def __init__(self, builder, document):
+    def __init__(self, document, builder):
         if not hasattr(builder, 'config'):
             raise TypeError(
                 "Unexpected type for builder {0}".format(type(builder)))
@@ -183,7 +183,7 @@ class EnhancedLaTeXWriter(LaTeXWriter):
         LaTeXWriter.__init__(self, builder)
 
     def translate(self):
-        visitor = self.builder.create_translator(self.builder, self.document)
+        visitor = self.builder.create_translator(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.astext()
 
@@ -259,8 +259,8 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
                 docname, toctree_only,
                 appendices=((docclass != 'howto') and self.config.latex_appendices or []))
             doctree['tocdepth'] = tocdepth
-            self.apply_transforms(doctree)
             self.post_process_images(doctree)
+            
             self.logger.info(__("writing... "), nonl=1)
             doctree.settings = docsettings
             doctree.settings.author = author
