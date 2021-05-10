@@ -136,7 +136,7 @@ setup(
             'pysftp',
             "requests",
             "semantic_version",
-            "sphinx>=2.1",
+            "sphinx>=3.0,<4.0",
             "sphinx-gallery",
             "sphinxcontrib-imagesvg",
             "traitlets>=5.0",
