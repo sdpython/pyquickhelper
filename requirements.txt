@@ -46,7 +46,7 @@ PyYAML
 scipy
 semantic_version
 setuptools
-Sphinx>=3.0,<4.0
+Sphinx>=3.0
 sphinx-gallery
 sphinxcontrib-imagesvg
 sphinxcontrib-jsdemo
