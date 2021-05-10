@@ -128,4 +128,5 @@ class TestConvertDocHelper(ExtTestCase):
 
 
 if __name__ == "__main__":
+    TestConvertDocHelper().test_rst2html()
     unittest.main()

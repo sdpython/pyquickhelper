@@ -26,9 +26,11 @@ from sphinx.util.logging import prefixed_warnings
 from sphinx.project import Project
 from sphinx.errors import ApplicationError
 from sphinx.util.logging import getLogger
-from ..sphinxext.sphinx_doctree_builder import DocTreeBuilder, DocTreeWriter, DocTreeTranslator
+from ..sphinxext.sphinx_doctree_builder import (
+    DocTreeBuilder, DocTreeWriter, DocTreeTranslator)
 from ..sphinxext.sphinx_md_builder import MdBuilder, MdWriter, MdTranslator
-from ..sphinxext.sphinx_latex_builder import EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator
+from ..sphinxext.sphinx_latex_builder import (
+    EnhancedLaTeXBuilder, EnhancedLaTeXWriter, EnhancedLaTeXTranslator)
 from ..sphinxext.sphinx_rst_builder import RstBuilder, RstWriter, RstTranslator
 from ._single_file_html_builder import CustomSingleFileHTMLBuilder
 
@@ -1208,7 +1210,7 @@ class _CustomSphinx(Sphinx):
 
         # create the project
         self.project = Project(self.srcdir, self.config.source_suffix)
-        # create the builder
+        # create the builder, initializes _MemoryBuilder
         self.builder = self.create_builder(buildername)
         # set up the build environment
         self._init_env(freshenv)
@@ -1221,9 +1223,17 @@ class _CustomSphinx(Sphinx):
 
         # addition
         self._extended_init_()
+        
+        # verification
+        self._check_init_()
+    
+    def _check_init_(self):
+        pass
 
     def _init_env(self, freshenv):
-        if freshenv:
+        ENV_PICKLE_FILENAME = 'environment.pickle'
+        filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
+        if freshenv or not os.path.exists(filename):
             self.env = _CustomBuildEnvironment(self)
             self.env.setup(self)
             if self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND":
