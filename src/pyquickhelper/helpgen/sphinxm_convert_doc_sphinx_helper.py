@@ -173,8 +173,8 @@ class HTMLTranslatorWithCustomDirectives(_AdditionalVisitDepart, HTMLTranslator)
     See @see cl HTMLWriterWithCustomDirectives.
     """
 
-    def __init__(self, builder, *args, **kwds):
-        HTMLTranslator.__init__(self, builder, *args, **kwds)
+    def __init__(self, document, builder, *args, **kwds):
+        HTMLTranslator.__init__(self, document, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'html')
         nodes_list = getattr(builder, '_function_node', None)
         if nodes_list is not None:
@@ -203,11 +203,11 @@ class RSTTranslatorWithCustomDirectives(_AdditionalVisitDepart, RstTranslator):
     See @see cl HTMLWriterWithCustomDirectives.
     """
 
-    def __init__(self, builder, *args, **kwds):
+    def __init__(self, document, builder, *args, **kwds):
         """
         constructor
         """
-        RstTranslator.__init__(self, builder, *args, **kwds)
+        RstTranslator.__init__(self, document, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'rst')
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
@@ -220,11 +220,11 @@ class MDTranslatorWithCustomDirectives(_AdditionalVisitDepart, MdTranslator):
     See @see cl HTMLWriterWithCustomDirectives.
     """
 
-    def __init__(self, builder, *args, **kwds):
+    def __init__(self, document, builder, *args, **kwds):
         """
         constructor
         """
-        MdTranslator.__init__(self, builder, *args, **kwds)
+        MdTranslator.__init__(self, document, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'md')
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
@@ -237,11 +237,11 @@ class DocTreeTranslatorWithCustomDirectives(DocTreeTranslator):
     See @see cl HTMLWriterWithCustomDirectives.
     """
 
-    def __init__(self, builder, *args, **kwds):
+    def __init__(self, document, builder, *args, **kwds):
         """
         constructor
         """
-        DocTreeTranslator.__init__(self, builder, *args, **kwds)
+        DocTreeTranslator.__init__(self, document, builder, *args, **kwds)
         self.base_class = DocTreeTranslator
 
 
@@ -321,9 +321,6 @@ class _WriterWithCustomDirectives:
 
         Normally not overridden or extended in subclasses.
         """
-        # trans = self.builder.create_translator(self.builder, document)
-        # if not isinstance(trans, HTMLTranslatorWithCustomDirectives):
-        #     raise TypeError("The translator is not of a known type but '{0}'".format(type(trans)))
         self.base_class.write(self, document, destination)
 
 
@@ -349,7 +346,7 @@ class HTMLWriterWithCustomDirectives(_WriterWithCustomDirectives, HTMLWriter):
 
     def translate(self):
         self.visitor = visitor = self.translator_class(
-            self.builder, self.document)
+            self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.astext()
         for attr in ('head_prefix', 'stylesheet', 'head', 'body_prefix',
@@ -376,7 +373,7 @@ class RSTWriterWithCustomDirectives(_WriterWithCustomDirectives, RstWriter):
             self, RstWriter, RSTTranslatorWithCustomDirectives, app)
 
     def translate(self):
-        visitor = self.translator_class(self.builder, self.document)
+        visitor = self.translator_class(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
@@ -396,7 +393,7 @@ class MDWriterWithCustomDirectives(_WriterWithCustomDirectives, MdWriter):
             self, MdWriter, MDTranslatorWithCustomDirectives, app)
 
     def translate(self):
-        visitor = self.translator_class(self.builder, self.document)
+        visitor = self.translator_class(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
@@ -416,7 +413,7 @@ class DocTreeWriterWithCustomDirectives(_WriterWithCustomDirectives, DocTreeWrit
             self, DocTreeWriter, DocTreeTranslatorWithCustomDirectives, app)
 
     def translate(self):
-        visitor = self.translator_class(self.builder, self.document)
+        visitor = self.translator_class(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
@@ -443,10 +440,10 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
             raise TypeError(  # pragma: no cover
                 "Builder has no config: {}".format(type(self.builder)))
         # The instruction
-        # visitor = self.builder.create_translator(self.builder, self.document)
+        # visitor = self.builder.create_translator(self.document, self.builder)
         # automatically adds methods visit_ and depart_ for translator
         # based on the list of registered extensions. Might be worth using it.
-        visitor = self.translator_class(self.builder, self.document)
+        visitor = self.translator_class(self.document, self.builder)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
