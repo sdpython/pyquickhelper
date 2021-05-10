@@ -260,7 +260,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
                 appendices=((docclass != 'howto') and self.config.latex_appendices or []))
             doctree['tocdepth'] = tocdepth
             self.post_process_images(doctree)
-            
+
             self.logger.info(__("writing... "), nonl=1)
             doctree.settings = docsettings
             doctree.settings.author = author

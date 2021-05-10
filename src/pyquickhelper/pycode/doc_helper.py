@@ -14,7 +14,7 @@ def find_link(text):
     :param text: text
     :return: all urls
     """
-    url = "https?://[-a-zA-Z0-9@:%._\+~#=]+?[-a-zA-Z0-9@:%._\+~#=/&?\\n ]*?"
+    url = "https?://[-a-zA-Z0-9@:%._\\+~#=]+?[-a-zA-Z0-9@:%._\\+~#=/&?\\n ]*?"
     reg = [re.compile("[<](%s)[>]" % url),
            re.compile("[.]{2} image:: (%s)\\n" % url),
            re.compile("[.]{2} download:: (%s)\\n" % url)]

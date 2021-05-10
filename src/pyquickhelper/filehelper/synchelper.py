@@ -156,7 +156,7 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
         loop = itera(folder)
 
     rep = {}
-    for r, f, a in loop:
+    for r, _, a in loop:
         if verbose:
             loop.set_description(r)
         temp = os.path.join(r, a)

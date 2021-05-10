@@ -1220,10 +1220,10 @@ class _CustomSphinx(Sphinx):
 
         # addition
         self._extended_init_()
-        
+
         # verification
         self._check_init_()
-    
+
     def _check_init_(self):
         pass
 
