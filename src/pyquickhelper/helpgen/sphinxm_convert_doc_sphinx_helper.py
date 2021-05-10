@@ -250,7 +250,7 @@ class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXT
     See @see cl LatexWriterWithCustomDirectives.
     """
 
-    def __init__(self, builder, document, *args, **kwds):
+    def __init__(self, document, builder, *args, **kwds):
         """
         constructor
         """
@@ -260,7 +260,7 @@ class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXT
             raise TypeError(  # pragma: no cover
                 "Builder has no config: {} - {}".format(type(builder), type(document)))
         EnhancedLaTeXTranslator.__init__(
-            self, builder, document, *args, **kwds)
+            self, document, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'md')
         for name, f1, f2 in builder._function_node:
             setattr(self.__class__, "visit_" + name, f1)
