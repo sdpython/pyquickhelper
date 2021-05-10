@@ -12,7 +12,6 @@
     `Sphinx <http://sphinx-doc.org/>`_ documentation:
 
     * `imagesvg <https://pypi.python.org/pypi/sphinxcontrib-imagesvg/>`_: to include svg figures
-    * `jsdemo <https://pypi.python.org/pypi/sphinxcontrib-imagesvg/>`_: to demo javascript and HTML
 
     .. demo::
 

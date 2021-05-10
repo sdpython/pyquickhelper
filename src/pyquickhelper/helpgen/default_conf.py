@@ -569,14 +569,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         # matplotlib is not installed.
         pass
 
-    try:
-        import sphinxcontrib.jsdemo
-        assert sphinxcontrib.jsdemo is not None
-        extensions.append('sphinxcontrib.jsdemo')
-    except ImportError:  # pragma: no cover
-        # No module sphinxcontrib.jsdemo.
-        pass
-
     if use_lunrsearch:  # pragma: no cover
         extensions.append('sphinxcontrib.lunrsearch')
 
