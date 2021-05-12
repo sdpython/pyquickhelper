@@ -74,6 +74,26 @@ class GDotDirective(Directive):
         digraph foo {
             "bar" -> "baz";
         }
+
+    The output can be produced by a script.
+
+        .. gdot::
+            :script:
+
+            print('''
+                digraph foo {
+                    "bar" -> "baz";
+                }
+            ''')
+
+    .. gdot::
+        :script:
+
+        print('''
+            digraph foo {
+                "bar" -> "baz";
+            }
+        ''')
     """
     node_class = gdot_node
     has_content = True
