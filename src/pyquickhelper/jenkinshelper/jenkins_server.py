@@ -712,7 +712,7 @@ class JenkinsExt(jenkins.Jenkins):
             return scheduler
 
     def create_job_template(self, name, git_repo, credentials="", upstreams=None, script=None,
-                            location=None, keep=30, scheduler=None, py27=False, description=None,
+                            location=None, keep=10, scheduler=None, py27=False, description=None,
                             default_engine_paths=None, success_only=False, update=False,
                             timeout=_timeout_default, additional_requirements=None,
                             return_job=False, adjust_scheduler=True, clean_repo=True, **kwargs):
@@ -725,7 +725,7 @@ class JenkinsExt(jenkins.Jenkins):
         @param      upstreams                   the build must run after... (even if failures),
                                                 must be None in that case
         @param      script                      script to execute or list of scripts
-        @param      keep                        number of buils to keep
+        @param      keep                        number of builds to keep
         @param      location                    location of the build
         @param      scheduler                   add a schedule time (upstreams must be None in that case)
         @param      py27                        python 2.7 (True) or Python 3 (False)
