@@ -991,7 +991,7 @@ def custom_setup(app, author):
         app.add_js_file("require.js")
     except AttributeError:  # pragma: no cover
         # Sphinx < 1.8
-        app.add_javascript("require.js")
+        app.add_javascript("require.js")  # pylint: disable=E1101
 
     # style for notebooks
     try:
@@ -999,7 +999,7 @@ def custom_setup(app, author):
         app.add_css_file(style_figure_notebook[0])
     except AttributeError:  # pragma: no cover
         # Sphinx < 1.8
-        app.add_stylesheet(style_figure_notebook[0])
+        app.add_stylesheet(style_figure_notebook[0])  # pylint: disable=E1101
     return app
 
 
