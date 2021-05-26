@@ -248,7 +248,8 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
         except SystemExit as e:  # pragma: no cover
             if fLOG:
                 fLOG("Unable to parse argument due to '{0}':".format(e))
-                fLOG("    ", " ".join(args))
+                if args:
+                    fLOG("    ", " ".join(args))
                 fLOG("")
                 fLOG(parser.format_usage())
             args = None
