@@ -4,8 +4,8 @@ python3_module_template
 
 .. only:: html
 
-    .. image:: https://travis-ci.org/sdpython/python3_module_template.svg?branch=master
-        :target: https://travis-ci.org/sdpython/python3_module_template
+    .. image:: https://travis-ci.com/sdpython/python3_module_template.svg?branch=master
+        :target: https://travis-ci.com/sdpython/python3_module_template
         :alt: Build status
 
     .. image:: https://ci.appveyor.com/api/projects/status/8yv4brsckay4374a?svg=true
@@ -46,7 +46,7 @@ python3_module_template
 
 **Links:** `github <https://github.com/sdpython/python3_module_template/>`_,
 `documentation <http://www.xavierdupre.fr/app/python3_module_template/helpsphinx/index.html>`_,
-`travis <https://travis-ci.org/sdpython/python3_module_template>`_,
+`travis <https://travis-ci.com/sdpython/python3_module_template>`_,
 :ref:`l-README`,
 :ref:`blog <ap-main-0>`,
 :ref:`l-issues-todolist`,

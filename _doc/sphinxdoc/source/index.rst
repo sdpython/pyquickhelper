@@ -2,8 +2,8 @@
 pyquickhelper: various automations in python
 ============================================
 
-.. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
-    :target: https://travis-ci.org/sdpython/pyquickhelper
+.. image:: https://travis-ci.com/sdpython/pyquickhelper.svg?branch=master
+    :target: https://travis-ci.com/sdpython/pyquickhelper
     :alt: Build Status Linux
 
 .. image:: https://ci.appveyor.com/api/projects/status/t2g9olcgqgdvqq3l?svg=true
@@ -62,7 +62,7 @@ pyquickhelper: various automations in python
 `github <https://github.com/sdpython/pyquickhelper>`_,
 `documentation <http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/index.html>`_,
 `wheel <http://www.xavierdupre.fr/site2013/index_code.html#pyquickhelper>`_,
-`travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
+`travis <https://travis-ci.com/sdpython/pyquickhelper>`_,
 :ref:`l-README`,
 :ref:`blog <ap-main-0>`
 

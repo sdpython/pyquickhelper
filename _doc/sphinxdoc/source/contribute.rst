@@ -432,7 +432,7 @@ That requires latex and :epkg:`pandoc`.
 Continuous Integration
 ======================
 
-The module is tested with `Travis <https://travis-ci.org/sdpython/pyquickhelper>`_,
+The module is tested with `Travis <https://travis-ci.com/sdpython/pyquickhelper>`_,
 `AppVeyor <https://www.appveyor.com/>`_ and local testing with
 :epkg:`Jenkins` for a exhaustive list of unit tests,
 the documentation, the setup. Everything is fully tested on Windows

@@ -7,8 +7,8 @@
 pyquickhelper: automation of many things
 ========================================
 
-.. image:: https://travis-ci.org/sdpython/pyquickhelper.svg?branch=master
-    :target: https://travis-ci.org/sdpython/pyquickhelper
+.. image:: https://travis-ci.com/sdpython/pyquickhelper.svg?branch=master
+    :target: https://travis-ci.com/sdpython/pyquickhelper
     :alt: Build status
 
 .. image:: https://ci.appveyor.com/api/projects/status/t2g9olcgqgdvqq3l?svg=true

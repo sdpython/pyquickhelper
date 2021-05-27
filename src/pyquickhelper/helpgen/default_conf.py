@@ -219,7 +219,7 @@ def get_epkg_dictionary():
         'tkinter': 'https://docs.python.org/3/library/tkinter.html',
         'tornado': 'http://www.tornadoweb.org/en/stable/',
         'TortoiseSVN': 'http://tortoisesvn.net/',
-        'travis': 'https://travis-ci.org/',
+        'travis': 'https://travis-ci.com/',
         'uvicorn': 'https://www.uvicorn.org/',
         'vis.js': 'https://visjs.org/',
         'viz.js': 'https://github.com/mdaines/viz.js/',
