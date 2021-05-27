@@ -607,7 +607,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # see https://www.sphinx-doc.org/en/master/config.html#confval-html_sidebars
     html_sidebars = {
         '[!blog]**': ['searchbox.html', 'moduletoc.html',
-                     'relations.html', 'sourcelink.html', ],
+                      'relations.html', 'sourcelink.html', ],
         'blog/**': ['searchbox.html', 'blogtoc.html',
                     'localtoc.html', 'sourcelink.html', ],
     }
