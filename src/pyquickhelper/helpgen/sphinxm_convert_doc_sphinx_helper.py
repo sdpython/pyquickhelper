@@ -1534,21 +1534,11 @@ class _CustomSphinx(Sphinx):
 
     def add_js_file(self, filename, priority=500, **kwargs):
         self._added_objects.append(('js', filename))
-        try:
-            # Sphinx >= 1.8
-            Sphinx.add_js_file(self, filename, priority=priority, **kwargs)
-        except AttributeError:  # pragma: no cover
-            # Sphinx < 1.8
-            Sphinx.add_javascript(self, filename, **kwargs)
+        Sphinx.add_js_file(self, filename, priority=priority, **kwargs)
 
     def add_css_file(self, filename, priority=500, **kwargs):
         self._added_objects.append(('css', filename))
-        try:
-            # Sphinx >= 1.8
-            Sphinx.add_css_file(self, filename, priority=priority, **kwargs)
-        except AttributeError:  # pragma: no cover
-            # Sphinx < 1.8
-            Sphinx.add_stylesheet(self, filename, **kwargs)
+        Sphinx.add_css_file(self, filename, priority=priority, **kwargs)
 
     def add_latex_package(self, packagename, options=None, after_hyperref=False):
         self._added_objects.append(('latex', packagename))
