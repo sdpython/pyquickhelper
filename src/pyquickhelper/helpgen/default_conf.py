@@ -453,8 +453,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         'pointsize': '10pt',
         'preamble': preamble,
         'docclass': 'book',
-        'title': title,
-    }
+        'title': title}
 
     # pyquickhelper automation
     auto_rst_generation = True
@@ -499,8 +498,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 'repo': "sdpython/pyquickhelper/master?filepath=_doc"
                 # 'repo': "{0}/{1}/master?filepath=_doc%2Fnotebooks".format(
                 #    github_user, module_name)
-            },
-        }
+            }}
     else:
         jupyter_sphinx_thebelab_config = {'requestKernel': True}
 
@@ -548,16 +546,16 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         except ValueError as e:  # pragma: no cover
             raise ValueError("Issue with sphinx-gallery.\n{0}".format(e))
 
-    extensions.extend(['sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
-                       'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
-                       'sphinx.ext.inheritance_diagram', 'sphinx.ext.intersphinx',
-                       'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
-                       'sphinx.ext.todo',
-                       'sphinxcontrib.imagesvg', 'jupyter_sphinx.execute',
-                       'pyquickhelper.sphinxext.sphinx_rst_builder',
-                       'pyquickhelper.sphinxext.sphinx_md_builder',
-                       'pyquickhelper.sphinxext.sphinx_latex_builder',
-                       ])
+    extensions.extend([
+        'sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
+        'sphinx.ext.extlinks', 'sphinx.ext.graphviz', 'sphinx.ext.ifconfig',
+        'sphinx.ext.inheritance_diagram', 'sphinx.ext.intersphinx',
+        'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
+        'sphinx.ext.todo',
+        'sphinxcontrib.imagesvg', 'jupyter_sphinx.execute',
+        'pyquickhelper.sphinxext.sphinx_rst_builder',
+        'pyquickhelper.sphinxext.sphinx_md_builder',
+        'pyquickhelper.sphinxext.sphinx_latex_builder'])
 
     try:
         import matplotlib.sphinxext
@@ -608,8 +606,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # it modifies the set of things to display inside the sidebar
     # see https://www.sphinx-doc.org/en/master/config.html#confval-html_sidebars
     html_sidebars = {
-        '[!blog]**': ['searchbox.html', 'moduletoc.html', 'relations.html', 'sourcelink.html', ],
-        'blog/**': ['searchbox.html', 'blogtoc.html', 'localtoc.html', 'sourcelink.html', ],
+        '[!blog]**': ['searchbox.html', 'moduletoc.html',
+                     'relations.html', 'sourcelink.html', ],
+        'blog/**': ['searchbox.html', 'blogtoc.html',
+                    'localtoc.html', 'sourcelink.html', ],
     }
 
     # tpl_role
@@ -732,8 +732,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             sys.version_info), None),
         'scikit-learn': ('https://scikit-learn.org/stable/', None),
         'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),
-        'sklearn': ('https://scikit-learn.org/stable/', None),
-    }
+        'sklearn': ('https://scikit-learn.org/stable/', None)}
 
     # information about code
     def linkcode_resolve_function(domain, info):
@@ -858,12 +857,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
     def this_setup(app):
         if custom_style is not None:
-            try:
-                # Sphinx >= 1.8
-                app.add_css_file(custom_style)
-            except AttributeError:  # pragma: no cover
-                # Sphinx < 1.8
-                app.add_stylesheet(custom_style)
+            app.add_css_file(custom_style)
         return custom_setup(app, author)
 
     ext_locals["setup"] = this_setup
@@ -986,20 +980,10 @@ def custom_setup(app, author):
 
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]
-    try:
-        # Sphinx >= 1.8
-        app.add_js_file("require.js")
-    except AttributeError:  # pragma: no cover
-        # Sphinx < 1.8
-        app.add_javascript("require.js")  # pylint: disable=E1101
+    app.add_js_file("require.js")
 
     # style for notebooks
-    try:
-        # Sphinx >= 1.8
-        app.add_css_file(style_figure_notebook[0])
-    except AttributeError:  # pragma: no cover
-        # Sphinx < 1.8
-        app.add_stylesheet(style_figure_notebook[0])  # pylint: disable=E1101
+    app.add_css_file(style_figure_notebook[0])
     return app
 
 
