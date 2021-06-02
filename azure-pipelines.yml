@@ -94,31 +94,30 @@ jobs:
   - script: brew install --cask mactex
     continueOnError: true
     displayName: 'Install latex'
-  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint
+  - bash: conda create --yes --quiet --name pyenv -c defaults -c conda-forge python=$PYTHON_VERSION tox sphinx jupyter Cython numpy mkl scipy scikit-learn pandas coverage pylint pip
     displayName: Create Anaconda environment.
   - bash: source activate pyenv
-  - script: pip install pyquicksetup
+  - script: python -m install pyquicksetup
     displayName: 'Install pyquicksetup'
-  - script: pip install -r requirements.txt
-    displayName: 'Install Requirements'
-  - script: pip install wheel setuptools
+  - script: python -m pip install wheel setuptools
     displayName: 'Install wheel, setuptools'
+  - script: python -m install -r requirements.txt
+    displayName: 'Install Requirements'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
   - script: |
           export PYTHONPATH=src
-          python -c "import pyquickhelper"
+          python -c "import pyquickhelper;print(pyquickhelper.__file__)"
     displayName: 'check 1'
   - script: |
-          export PYTHONPATH=src/quicksetup
-          python -c "import pyquicksetup"
+          python -c "import pyquicksetup;print(pyquicksetup.__file__)"
     displayName: 'check 2'
   - script: |
           export PYTHONPATH=src:src/quicksetup
           python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
   - script: |
-          export PYTHONPATH=src;src/quicksetup
+          export PYTHONPATH=src
           python -u setup.py bdist_wheel
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
