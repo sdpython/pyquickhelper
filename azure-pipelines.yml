@@ -99,10 +99,6 @@ jobs:
   - bash: source activate pyenv
   - script: pip install -r requirements.txt
     displayName: 'Install Requirements'
-  - script: python -m pip install tkinterquickhelper --no-deps
-    displayName: 'Install tkinterquickhelper'    
-  - script: pip uninstall -y pyquickhelper
-    displayName: 'uninstall pyquickhelper'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
   - script: |
