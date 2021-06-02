@@ -104,12 +104,11 @@ jobs:
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
   - script: |
-          export PYTHONPATH=src
-          python -m pip install pyquicksetup
+          export PYTHONPATH=src;src/quicksetup
           python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
   - script: |
-          export PYTHONPATH=src
+          export PYTHONPATH=src;src/quicksetup
           python -u setup.py bdist_wheel
     displayName: 'Build Package'
   - task: PublishPipelineArtifact@0
