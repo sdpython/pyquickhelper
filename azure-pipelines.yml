@@ -105,6 +105,7 @@ jobs:
     displayName: 'PYTHONPATH=src'
   - script: |
           export PYTHONPATH=src
+          python -m pip install pyquicksetup
           python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
   - script: |
