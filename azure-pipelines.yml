@@ -104,7 +104,15 @@ jobs:
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
   - script: |
-          export PYTHONPATH=src;src/quicksetup
+          export PYTHONPATH=src
+          python -c "import pyquickhelper"
+    displayName: 'check 1'
+  - script: |
+          export PYTHONPATH=src/quicksetup
+          python -c "import pyquicksetup"
+    displayName: 'check 2'
+  - script: |
+          export PYTHONPATH=src:src/quicksetup
           python -u setup.py unittests -d 5
     displayName: 'Runs Unit Tests'
   - script: |
