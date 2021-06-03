@@ -49,7 +49,7 @@ class TestDocHelper(ExtTestCase):
         issues = []
         for issue in validate_urls_in_folder(this):
             issues.append(issue)
-        self.assertEqual(len(issues), 2)
+        self.assertIn(len(issues), (2, 3))
 
 
 if __name__ == "__main__":
