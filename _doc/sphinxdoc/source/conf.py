@@ -28,4 +28,3 @@ blog_root = "http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/"
 nbneg_pattern = ".*[\\\\/]temp_.*"
 
 html_css_files = ['my-styles.css', 'gallery-dataframe.css']
-

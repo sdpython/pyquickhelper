@@ -5,8 +5,18 @@
 History
 =======
 
-current - 2021-04-11 - 0.00Mb
+current - 2021-06-04 - 0.00Mb
 =============================
+
+* `342`: Fixes azure-pipelines.yml pipeline (2021-06-03)
+* `341`: Only log args if they are iterable (2021-06-02)
+* `340`: pyq-sync cli breaks when args is not iterable (2021-06-02)
+* `339`: Enables support for Sphinx 4.0 (2021-05-10)
+* `338`: Adds a command in the setup to check url in the code or documentation (2021-05-10)
+* `337`: Adds function to easily store and retrieve dataframe through a REST API (2021-04-17)
+
+1.10.3585 - 2021-04-11 - 2.18Mb
+===============================
 
 * `336`: Refactors setup.py, moves setup command to pyquicksetup (2021-04-10)
 * `335`: Adds class to store files with sqlite3, access with FastAPI (2021-04-06)
@@ -170,22 +180,10 @@ current - 2021-04-11 - 0.00Mb
 * `254`: Implements gdot to skip graphviz and render dot file with viz.js (2019-06-18)
 * `253`: fix links in exreflist (2019-06-15)
 * `252`: expose parameter fxeclude to avoid including them in the documentation (2019-06-15)
-
-1.9.3141 - 2019-06-03 - 2.04Mb
-==============================
-
 * `251`: Switch to Sphinx 2.1, remove specific code for older versions (2019-06-03)
 * `250`: fix errors introduced by installing sphinx 2.1 (2019-06-03)
-
-1.9.3135 - 2019-05-27 - 2.04Mb
-==============================
-
 * `238`: add simple function to profile and command line, implements a graph as well (2019-05-27)
 * `248`: add option numpy_precision in runpython (2019-05-05)
-
-1.9.3118 - 2019-04-26 - 2.04Mb
-==============================
-
 * `247`: Use of command in setup.py (2019-04-25)
 * `246`: Supports projects without src folder (2019-04-25)
 * `245`: make test pass for sphinx 2.0.0 (2019-03-30)
