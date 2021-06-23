@@ -421,7 +421,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                         else:
                             ext = os.path.splitext(localpath)[-1].lower()
                             if ext in [
-                                    ".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java"]:
+                                    ".py", ".c", ".cpp", ".hpp", ".h", ".r", ".sql", ".java", ".cc"]:
                                 self.send_headers(".html")
                                 self.feed(
                                     DocumentationHandler.html_code_renderer(localpath, content))

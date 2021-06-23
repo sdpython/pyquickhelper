@@ -291,7 +291,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
 
     def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
                'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass',
-               'csv', 'tpl', 'jpg', 'jpeg']
+               'csv', 'tpl', 'jpg', 'jpeg', 'hpp', 'cc']
     deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]

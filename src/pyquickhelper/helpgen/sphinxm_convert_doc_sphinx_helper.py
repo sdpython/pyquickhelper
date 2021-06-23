@@ -932,6 +932,8 @@ class _CustomSphinx(Sphinx):
         ::
 
             {'cpp': sphinx.domains.cpp.CPPDomain,
+             'hpp': sphinx.domains.cpp.CPPDomain,
+             'h': sphinx.domains.cpp.CPPDomain,
              'js': sphinx.domains.javascript.JavaScriptDomain,
              'std': sphinx.domains.std.StandardDomain,
              'py': sphinx.domains.python.PythonDomain,

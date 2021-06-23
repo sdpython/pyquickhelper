@@ -413,7 +413,8 @@ def _get_file_url(url, path):
     if len(spl) >= 2:
         ext = spl[len(spl) - 1].lower()
         if 2 <= len(ext) <= 3 and ext in [
-                "png", "jpeg", "jpg", "zip", "txt", "gif", "py", "cpp", "gz", "pdf", "tif", "py", "html", "h"]:
+                "png", "jpeg", "jpg", "zip", "txt", "gif", "py", "cpp",
+                "gz", "pdf", "tif", "py", "html", "h", "hpp", "cc"]:
             spl = path.split("-")
             spl = spl[:len(spl) - 1]
             path = "-".join(spl) + "." + ext
