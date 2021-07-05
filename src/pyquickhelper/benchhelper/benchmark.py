@@ -233,7 +233,7 @@ class BenchMark:
             self._fLOG(*args, **kwargs)
         if hasattr(self, "_progressbars") and self._progressbars and len(self._progressbars) > 0:
             br = self._progressbars[-1]
-            br.set_description(fLOGFormat(
+            br.set_description(fLOGFormat(  # pylint: disable=C0207
                 "\n", *args, **kwargs).strip("\n").split("\n")[0])
             br.refresh()
 

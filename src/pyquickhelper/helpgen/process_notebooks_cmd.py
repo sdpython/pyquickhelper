@@ -14,10 +14,10 @@ except AttributeError as e:
 def run_nbconvert(argv):
     try:
         nbconvert_main(argv=argv)
-    except Exception as e:
+    except Exception as ee:
         warnings.warn(
             "[run_nbconvert-ERROR] Unable to to convert a notebook with "
-            "args=%r due to %r." % (argv, e), RuntimeWarning)
+            "args=%r due to %r." % (argv, ee), RuntimeWarning)
 
 
 def main():

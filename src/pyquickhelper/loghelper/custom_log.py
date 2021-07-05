@@ -107,13 +107,13 @@ class CustomLog:
                     raise Exception(
                         "Unable to convert s into string: type(s)=%r" % type(s)) from e
 
-            message = str(dt).split(
-                ".")[0] + " " + " ".join([_str_process(s) for s in args]) + "\n"
+            message = (str(dt).split(".", maxsplit=1)[0] + " " +
+                       " ".join([_str_process(s) for s in args]) + "\n")
 
             self._handle.write(message)
             st = "                    "
         else:
-            st = typstr(dt).split(".")[0] + " "  # pragma: no cover
+            st = typstr(dt).split(".", maxsplit=1)[0] + " "  # pragma: no cover
 
         for k, v in kwargs.items():
             message = st + \

@@ -279,11 +279,11 @@ def fLOGFormat(sep, *args, **kwargs):
                 raise Exception(  # pragma: no cover
                     "unable to convert s into string: type(s)=" + str(type(s))) from e
 
-        message = str(dt).split(
-            ".")[0] + " " + " ".join([_str_process(s) for s in args]) + sep
+        message = (str(dt).split(".", maxsplit=1)[0] + " " +
+                   " ".join([_str_process(s) for s in args]) + sep)
         st = "                    "
     else:
-        message = typstr(dt).split(".")[0] + " "
+        message = typstr(dt).split(".", maxsplit=1)[0] + " "
         st = "                    "
 
     messages = [message]

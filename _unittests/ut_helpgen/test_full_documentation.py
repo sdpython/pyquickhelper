@@ -6,11 +6,10 @@ import os
 import sys
 import unittest
 import shutil
-
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.filehelper.synchelper import synchronize_folder
-import pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc
+import pyquickhelper.helpgen.utils_sphinx_doc as utils_sphinx_doc  # pylint: disable=R0402
 
 
 class TestSphinxDocFull (ExtTestCase):

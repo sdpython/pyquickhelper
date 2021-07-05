@@ -327,7 +327,7 @@ def process_standard_options_for_setup(
         return True
 
     elif 'history' in argv:  # pragma: no cover
-        dest = ' '.join(argv).split('history')[-1].strip()
+        dest = ' '.join(argv).split('history')[-1].strip()  # pylint: disable=C0207
         if not dest:
             dest = os.path.join(folder, 'HISTORY.rst')
         if existing_history is None:

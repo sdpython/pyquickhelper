@@ -71,7 +71,7 @@ class ExtTestCase(unittest.TestCase):
                 disp = ""
             raise AssertionError("x is not empty{0}".format(disp))
 
-    def assertGreater(self, x, y, strict=False):  # pylint: disable=W0221
+    def assertGreater(self, x, y, strict=False):  # pylint: disable=W0221,W0237
         """
         Checks that ``x >= y``.
         """
@@ -455,7 +455,7 @@ class ExtTestCase(unittest.TestCase):
         with open(filename, mode, encoding=encoding) as f:
             return f.write(content)
 
-    def assertIn(self, sub, ensemble, msg=None):  # pylint: disable=W0221
+    def assertIn(self, sub, ensemble, msg=None):  # pylint: disable=W0221,W0237
         """
         Checks that substring *sub* is in *text*.
 

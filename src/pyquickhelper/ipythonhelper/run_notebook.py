@@ -413,10 +413,10 @@ def execute_notebook_list_finalize_ut(res, dump=None, fLOG=noLOG):
             # Module filelock does not work in this case.
             # locket (https://github.com/mwilliamson/locket.py) was not tried.
             try:
-                df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+                df.to_csv(dump, sep="\t", encoding="utf-8", index=False)  # pylint: disable=E1101
             except PermissionError:  # pragma: no cover
                 time.sleep(7)
-                df.to_csv(dump, sep="\t", encoding="utf-8", index=False)
+                df.to_csv(dump, sep="\t", encoding="utf-8", index=False)  # pylint: disable=E1101
 
 
 def notebook_coverage(module_or_path, dump=None, too_old=30):

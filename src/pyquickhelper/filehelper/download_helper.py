@@ -226,9 +226,10 @@ def get_urls_content_timeout(urls, timeout=10, folder=None, encoding=None,
         df = None
     if df is not None:
         all_obs = [dict(url=df.loc[i, 'url'],
-                        size=df.loc[i, 'size'],
-                        date=df.loc[i, 'date'],
-                        dest=df.loc[i, 'dest']) for i in range(df.shape[0])]
+                        size=df.loc[i, 'size'],  # pylint: disable=E1101
+                        date=df.loc[i, 'date'],  # pylint: disable=E1101
+                        dest=df.loc[i, 'dest'])  # pylint: disable=E1101
+                   for i in range(df.shape[0])]
         done = set(d['dest'] for d in all_obs)
     else:
         all_obs = []

@@ -143,7 +143,7 @@ class TestYaml(unittest.TestCase):
         vers = "%d%d" % sys.version_info[:2]
         context["Python%s" % vers] = "C:/Python%s_x64" % vers
         if platform.startswith("win"):
-            for k in context:
+            for k in context:  # pylint: disable=C0206
                 if context[k] is not None:
                     context[k] = context[k].replace("/", "\\")
         obj, name = load_yaml(yml, context=context, platform=platform)

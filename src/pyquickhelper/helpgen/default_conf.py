@@ -960,7 +960,7 @@ def custom_setup(app, author):
 
     for ext in exts:
         meta = ext(app)
-        name = ext.__name__.split('.')[-1].replace("setup_", "")
+        name = ext.__name__.rsplit('.', maxsplit=1)[-1].replace("setup_", "")
         if name == "image":
             name = "pyquickhelper.sphinxext.sphinximages.sphinxtrib.images"
         else:
