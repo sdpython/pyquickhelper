@@ -131,7 +131,7 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                                  os.path.abspath(finalfolder))
                             try:
                                 os.makedirs(finalfolder)
-                            except FileNotFoundError as e:
+                            except FileNotFoundError as e:  # pragma: no cover
                                 mes = "Unexpected error\ninfo.filename={0}\ntos={1}\nfinalfolder={2}\nlen(nfinalfolder)={3}".format(
                                     info.filename, tos, finalfolder, len(finalfolder))
                                 raise FileNotFoundError(mes) from e
@@ -160,9 +160,9 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                             files.append(tos)
                             fLOG("[unzip_files]    unzipped ",
                                  info.filename, " to ", tos)
-                    elif not tos.endswith("/"):
+                    elif not tos.endswith("/"):  # pragma: no cover
                         files.append(tos)
-                elif not info.filename.endswith("/"):
+                elif not info.filename.endswith("/"):  # pragma: no cover
                     files.append(tos)
     return files
 
@@ -276,7 +276,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
         if not os.path.exists(exe):
             raise FileNotFoundError("unable to find: {0}".format(exe))
     elif sys.platform.startswith("darwin"):
-        exe = "7za"
+        exe = "7za"  # pragma: no cover
     else:
         exe = "7z"
 
@@ -322,12 +322,13 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
     See :ref:`Why module pylzma does not work? <faq-pylzma-ref>`.
     """
     if cmd_line:
-        if not isinstance(zipf, str  # unicode
-                          ):
-            raise TypeError("Cannot use command line unless zipf is a file.")
+        if not isinstance(zipf, str):
+            raise TypeError(  # pragma: no cover
+                "Cannot use command line unless zipf is a file.")
         if remove_space:
-            warnings.warn(
-                '[un7zip_files] remove_space and cmd_line are incompatible options.', UserWarning)
+            warnings.warn(  # pragma: no cover
+                '[un7zip_files] remove_space and cmd_line are incompatible options.',
+                UserWarning)
         if fvalid:
             warnings.warn(
                 'fvalid and cmd_line are incompatible options.', UserWarning)
@@ -339,7 +340,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
             if where_to is None:
                 where_to = os.path.abspath(".")
         elif sys.platform.startswith("darwin"):
-            exe = "7za"
+            exe = "7za"  # pragma: no cover
         else:
             exe = "7z"
 
@@ -378,8 +379,8 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                 tos = os.path.join(where_to, clean)
                 if not os.path.exists(tos):
                     if fvalid and not fvalid(info.filename, tos):
-                        fLOG("[un7zip_files]    skipping", info.filename)
-                        continue
+                        fLOG("[un7zip_files]    skipping", info.filename)  # pragma: no cover
+                        continue  # pragma: no cover
                     try:
                         data = info.read()
                     except NotImplementedError as e:  # pragma: no cover
@@ -404,7 +405,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                                  os.path.abspath(finalfolder))
                             try:
                                 os.makedirs(finalfolder)
-                            except FileNotFoundError as e:
+                            except FileNotFoundError as e:  # pragma: no cover
                                 mes = "Unexpected error\ninfo.filename={0}\ntos={1}\nfinalfolder={2}\nlen(nfinalfolder)={3}".format(
                                     info.filename, tos, finalfolder, len(finalfolder))
                                 raise FileNotFoundError(mes) from e
@@ -412,7 +413,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                             try:
                                 with open(tos, "wb") as u:
                                     u.write(data)
-                            except FileNotFoundError as e:
+                            except FileNotFoundError as e:  # pragma: no cover
                                 # probably an issue in the path name
                                 # the next lines are just here to distinguish
                                 # between the two cases
@@ -433,9 +434,9 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                             files.append(tos)
                             fLOG("[un7zip_files]    unzipped ",
                                  info.filename, " to ", tos)
-                    elif not tos.endswith("/"):
+                    elif not tos.endswith("/"):  # pragma: no cover
                         files.append(tos)
-                elif not info.filename.endswith("/"):
+                elif not info.filename.endswith("/"):  # pragma: no cover
                     files.append(tos)
         return files
 
@@ -477,7 +478,7 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
         cmd = '"{0}" x "{1}"'.format(exe, zipf)
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, change_path=where_to)
         if len(err) > 0:
-            raise FileException(
+            raise FileException(  # pragma: no cover
                 "Unable to unrar file '{0}'\n--CMD--\n{3}\n--OUT--\n{1}\n--ERR--\n{2}".format(zipf, out, err, cmd))
 
         return explore_folder(where_to)[1]

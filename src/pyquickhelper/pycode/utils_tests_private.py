@@ -206,8 +206,8 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                 cp = compile(code, "", "exec")
                 try:
                     exec(cp, globals(), loc)
-                except Exception as e:
-                    raise Exception(  # pragma: no cover
+                except Exception as e:  # pragma: no cover
+                    raise Exception(
                         "Unable to execute code '{0}'".format(code)) from e
                 t = loc["t"]
                 testsuite.addTest(t)
@@ -317,7 +317,8 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     fLOG("[main_run_test] path_test %r" % path_test)
     li = get_test_file("test*", folder=path_test, fLOG=fLOG, root=path_test)
     if len(li) == 0:
-        raise FileNotFoundError("No test files in %r." % path_test)
+        raise FileNotFoundError(  # pragma: no cover
+            "No test files in %r." % path_test)
     est = [get_estimation_time(el) for el in li]
     co = [(e, short_name(el), el) for e, el in zip(est, li)]
     co.sort()
@@ -444,7 +445,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             cmd = sys.executable.replace("w.exe", ".exe") + " " + li[i]
             out, err = run_cmd(cmd, wait=True)
             if len(err) > 0:
-                sys.stderr.write(err)
+                sys.stderr.write(err)  # pragma: no cover
         else:
             with warnings.catch_warnings(record=True) as w:
                 warnings.simplefilter("always")
@@ -466,7 +467,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
         memout.write(add)
 
-        if not r.wasSuccessful():
+        if not r.wasSuccessful():  # pragma: no cover
             err = out.split("===========")
             err = err[-1]
             memout.write("\n")
@@ -529,7 +530,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 lines = [
                     _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
                 val = "\n".join(lines)
-            if len(val) > 0 and is_valid_error(val):
+            if len(val) > 0 and is_valid_error(val):  # pragma: no cover
                 fullstderr.write("\n*-----" + lis[i] + "\n")
                 if len(list_warn) > 0:
                     fullstderr.write("[main_run_test] +WARN:\n")
@@ -557,7 +558,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     sys.stdout = memo_stdout
     val = fullstderr.getvalue()
 
-    if len(val) > 0:
+    if len(val) > 0:  # pragma: no cover
         fLOG("[main_run_test] -- STDERR (from unittests) on STDOUT")
         fLOG(val)
         fLOG("[main_run_test] -- end STDERR on STDOUT")

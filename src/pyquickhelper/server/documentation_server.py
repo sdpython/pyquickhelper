@@ -110,14 +110,14 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         self.serve_content(parsed_path, "GET")
 
-    def do_POST(self):
+    def do_POST(self):  # pragma: no cover
         """
         What to do is case of POST request.
         """
         parsed_path = urlparse.urlparse(self.path)
         self.serve_content(parsed_path)
 
-    def do_redirect(self, path="/index.html"):
+    def do_redirect(self, path="/index.html"):  # pragma: no cover
         """
         Redirection when url is just the website.
 
@@ -213,7 +213,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 content = f.read()
                 DocumentationHandler.update_cache(tlocalpath, content)
                 return content
-        else:
+        else:  # pragma: no cover
             if not os.path.exists(
                     tlocalpath) and "_static/bootswatch" in tlocalpath:
                 access = tlocalpath.replace("bootswatch", "bootstrap")
@@ -245,7 +245,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
         att = DocumentationHandler.cache_attributes[key]
         delta = datetime.datetime.now() - att["date"]
-        if delta > DocumentationHandler.cache_refresh:
+        if delta > DocumentationHandler.cache_refresh:  # pragma: no cover
             del DocumentationHandler.cache[key]
             del DocumentationHandler.cache_attributes[key]
             return None
@@ -274,7 +274,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         DocumentationHandler.cache[key] = content
 
     @staticmethod
-    def _print_cache(n=20):
+    def _print_cache(n=20):  # pragma: no cover
         """
         Displays the most requested files.
         """
@@ -286,7 +286,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             print("cache: {0} - {1}".format(*doc))
 
     @staticmethod
-    def execute(localpath):
+    def execute(localpath):  # pragma: no cover
         """
         Locally executes a python script.
 
@@ -352,7 +352,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      cpath        ParseResult
         @param      method      GET or POST
         """
-        if cpath.path == "" or cpath.path == "/":
+        if cpath.path == "" or cpath.path == "/":  # pragma: no cover
             params = parse_qs(cpath.query)
             self.serve_main_page()
         else:
@@ -368,28 +368,28 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             link = "/".join(spl[1:])
             value = DocumentationHandler.mappings.get(project, None)
 
-            if value is None:
+            if value is None:  # pragma: no cover
                 self.LOG("can't serve", cpath)
                 self.LOG("with params", params)
                 self.send_response(404)
                 #raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
 
-            elif value == "shut://":
+            elif value == "shut://":  # pragma: no cover
                 self.LOG("call shutdown")
                 self.shutdown()
 
-            elif value == "http://":
+            elif value == "http://":  # pragma: no cover
                 self.send_response(200)
                 self.send_headers("debug.html")
                 url = cpath.path.replace("/%s/" % project, "")
                 try:
                     content = get_url_content(url)
-                except Exception as e:  # pragma: no cover
+                except Exception as e:
                     content = "<html><body>ERROR (2): %s</body></html>" % e
                 self.feed(content, False, params={})
 
             else:
-                if ".." in link:
+                if ".." in link:  # pragma: no cover
                     # we avoid that case to prevent users from digging others paths
                     # than the mapped ones, just in that the browser does not
                     # remove them
@@ -413,7 +413,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
 
                     if ftype != 'execute' or not execute:
                         content = self.get_file_content(fullpath, ftype, spath)
-                        if content is None:
+                        if content is None:  # pragma: no cover
                             self.LOG("** w,unable to get file for key:", spath)
                             self.send_error(404)
                             self.feed(
@@ -433,7 +433,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                             else:
                                 self.send_headers(localpath)
                                 self.feed(content)
-                    else:
+                    else:  # pragma: no cover
                         self.LOG("execute file ", localpath)
                         out, err = DocumentationHandler.execute(localpath)
                         if len(err) > 0:
@@ -459,7 +459,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         return content
 
     @staticmethod
-    def html_code_renderer(localpath, content):
+    def html_code_renderer(localpath, content):  # pragma: no cover
         """
         Produces a html code for code.
 
@@ -473,7 +473,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         res.append(DocumentationHandler.html_footer)
         return "\n".join(res)
 
-    def serve_content_web(self, path, method, params):
+    def serve_content_web(self, path, method, params):  # pragma: no cover
         """
         Functions to overload (executed after serve_content).
 
@@ -571,10 +571,11 @@ def run_doc_server(server, mappings, thread=False, port=8079):
         DocumentationHandler.add_mapping(k, v)
 
     if server is None:
-        server = HTTPServer(('localhost', port), DocumentationHandler)
+        server = HTTPServer(  # pragma: no cover
+            ('localhost', port), DocumentationHandler)
     elif isinstance(server, str):
         server = HTTPServer((server, port), DocumentationHandler)
-    elif not isinstance(server, HTTPServer):
+    elif not isinstance(server, HTTPServer):  # pragma: no cover
         raise TypeError(  # pragma: no cover
             "unexpected type for server: " + str(type(server)))
 

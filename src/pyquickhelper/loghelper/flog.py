@@ -57,14 +57,14 @@ def init(path=None, filename=None, create=True, path_add=None):
         path = flog_static.store_log_values["__log_path"]
 
     if path == "###":
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             path = "d:\\temp" if os.path.exists("d:\\temp") else "c:\\temp"
             path = os.path.join(path, "log_pyquickhelper")
         else:
             path = "/tmp"
             path = os.path.join(path, "log_pyquickhelper")
 
-    if len(path_add) > 0:
+    if len(path_add) > 0:  # pragma: no cover
         if not isinstance(path_add, list):
             path_add = [path_add]
         temp = []
@@ -86,9 +86,9 @@ def init(path=None, filename=None, create=True, path_add=None):
     if create:
         if not os.path.exists(flog_static.store_log_values["__log_path"]):
             os.makedirs(flog_static.store_log_values["__log_path"])
-    else:
+    else:  # pragma: no cover
         if not os.path.exists(flog_static.store_log_values["__log_path"]):
-            raise PQHException(  # pragma: no cover
+            raise PQHException(
                 "unable to find path " + flog_static.store_log_values["__log_path"])
 
 
@@ -520,7 +520,7 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
             _zip7_path = r"c:\Program Files\7-Zip"
             zip7 = not flatten and os.path.exists(_zip7_path)
             if zip7:
-                fLOG("[loghelper.flog] using ", _zip7_path)
+                fLOG("[loghelper.flog] using ", _zip7_path)  # pragma: no cover
             wait = []
             for info in file.infolist():
                 # equivalent to is_dir (Python 3.6+)
@@ -577,7 +577,7 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
             while not ch:
                 ch = True
                 for a in wait:
-                    if not os.path.exists(a):
+                    if not os.path.exists(a):  # pragma: no cover
                         ch = False
                         break
                 time.sleep(0.5)
@@ -697,8 +697,8 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
             else:
                 fLOG("[loghelper.flog] downloading ", url)
 
-            if len(
-                    url) > 4 and url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]:
+            if (len(url) > 4 and
+                    url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]):
                 fLOG("[loghelper.flog] creating text file '{0}'".format(dest))
                 formatopen = "w"
             else:
@@ -706,7 +706,7 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
                     "[loghelper.flog] creating binary file '{0}'".format(dest))
                 formatopen = "wb"
 
-            if os.path.exists(nyet):
+            if os.path.exists(nyet):  # pragma: no cover
                 size = os.stat(dest).st_size
                 fLOG("[loghelper.flog] resume downloading (stop at",
                      size, ") from '{0}'".format(url))
@@ -902,18 +902,16 @@ def get_default_value_type(ty, none=True):
     """
     if ty is None and none:
         return None
-    elif (ty == str
-          ):
+    if ty == str:
         return ""
-    elif ty == int:
+    if ty == int:
         return 0
-    elif ty == decimal.Decimal:
+    if ty == decimal.Decimal:
         return decimal.Decimal(0)
-    elif ty == float:
+    if ty == float:
         return 0.0
-    else:
-        raise PQHException(  # pragma: no cover
-            "type expected in " + str(guess_type_value_type()))
+    raise PQHException(  # pragma: no cover
+        "type expected in " + str(guess_type_value_type()))
 
 
 def guess_type_list(args, tolerance=0.01, none=True):

@@ -367,7 +367,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                             if cmp is not None:
                                 lines[memopos] = "{0}\n    :linenos:\n".format(
                                     ".. code-block:: python")
-                        except Exception:
+                        except Exception:  # pragma: no cover
                             pass
 
                 memopos = None
@@ -464,7 +464,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                     break
         if "blob/master/build" in path or "build/notebooks" in path:
             # raise RuntimeError(  # pragma: no cover
-            warnings.warn(
+            warnings.warn(  # pragma: no cover
                 "Unexpected substring found in %r in folder %r\n"
                 "--TRIED--\n%r" % (path, folder, "\n".join(map(str, tried))))
         links.append(
@@ -628,11 +628,11 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
     @param      fLOG                    logging function
     """
     if (len(file) > 5000 or not os.path.exists(file)) and "<html" in file:
-        text = file
-        save = False
+        text = file  # pragma: no cover
+        save = False  # pragma: no cover
     else:
         if not os.path.exists(file):
-            raise FileNotFoundError(file)
+            raise FileNotFoundError(file)  # pragma: no cover
         if fLOG:
             fLOG("[post_process_slides_output] clean %r" % file)
         # fold, name = os.path.split(file)
@@ -651,8 +651,8 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
     lines = text.split("\n")
     for i, line in enumerate(lines):
         if '<script src="reveal.js/lib/js/head.min.js"></script>' in line:
-            lines[
-                i] = '<script src="reveal.js/js/jquery.min.js"></script>\n' + lines[i]
+            lines[i] = (
+                '<script src="reveal.js/js/jquery.min.js"></script>\n' + lines[i])
         if '<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>' in line:
             lines[i] = ""
         if '<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/' in line:
@@ -846,7 +846,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
             "\\usepackage{svg}\\usepackage{hyperref}",
             "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     else:
-        raise HelpGenException(
+        raise HelpGenException(  # pragma: no cover
             "unable to add new instructions usepackage in file {0}".format(info))
 
     # SVG does not work unless it is converted (nbconvert should handle that
@@ -868,7 +868,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
 
     # end
     if custom_latex_processing is not None:
-        st = custom_latex_processing(st)
+        st = custom_latex_processing(st)  # pragma: no cover
 
     if remove_unicode:
         encoding = 'ascii'
