@@ -26,7 +26,8 @@ def get_interpreter_path():
     Returns the interpreter path.
     """
     if sys.platform.startswith("win"):
-        return sys.executable.replace("pythonw.exe", "python.exe")
+        return sys.executable.replace(  # pragma: no cover
+            "pythonw.exe", "python.exe")
     else:
         return sys.executable
 
@@ -77,7 +78,7 @@ def decode_outerr(outerr, encoding, encerror, msg):
         encoding = "ascii"
     typstr = str
     if not isinstance(outerr, bytes):
-        raise TypeError(
+        raise TypeError(  # pragma: no cover
             "only able to decode bytes, not " + typstr(type(outerr)))
     try:
         out = outerr.decode(encoding, errors=encerror)
@@ -87,11 +88,12 @@ def decode_outerr(outerr, encoding, encerror, msg):
             out = outerr.decode(
                 "utf8" if encoding != "utf8" else "latin-1", errors=encerror)
             return out
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             out = outerr.decode(encoding, errors='ignore')
             raise Exception("issue with cmd (" + encoding + "):" +
                             typstr(msg) + "\n" + typstr(exu) + "\n-----\n" + out) from e
-    raise Exception("complete issue with cmd:" + typstr(msg))
+    raise Exception(  # pragma: no cover
+        "complete issue with cmd:" + typstr(msg))
 
 
 def skip_run_cmd(cmd, sin="", shell=True, wait=False, log_error=True,
@@ -159,7 +161,8 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
         prefix_log = ""
     if fLOG is not None:
         if isinstance(cmd, (list, tuple)):
-            fLOG(prefix_log + "[run_cmd] execute", " ".join(cmd))
+            fLOG(  # pragma: no cover
+                prefix_log + "[run_cmd] execute", " ".join(cmd))
         else:
             fLOG(prefix_log + "[run_cmd] execute", cmd)
 
@@ -181,9 +184,10 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                                      stdout=subprocess.PIPE if wait else None,
                                      stderr=subprocess.PIPE if wait else None)
         except SystemExit as e:
-            if change_path is not None:
+            if change_path is not None:  # pragma: no cover
                 os.chdir(current)
-            raise RunCmdException("SystemExit raised (1)") from e
+            raise RunCmdException(  # pragma: no cover
+                "SystemExit raised (1)") from e
 
     else:
         pproc = subprocess.Popen(cmdl,
@@ -221,7 +225,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                 try:
                     stdoutdata, stderrdata = pproc.communicate(
                         input=input, timeout=timeout)
-                except SystemExit as e:
+                except SystemExit as e:  # pragma: no cover
                     if change_path is not None:
                         os.chdir(current)
                     raise RunCmdException("SystemExit raised (2)") from e
@@ -235,7 +239,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             # communicate is False: use of threads
             if sin is not None and len(sin) > 0:
                 if change_path is not None:
-                    os.chdir(current)
+                    os.chdir(current)  # pragma: no cover
                 raise Exception(
                     "communicate should be True to send something on stdin")
             stdout, stderr = pproc.stdout, pproc.stderr
@@ -279,15 +283,17 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
                 delta = time.perf_counter() - last_update
                 if tell_if_no_output is not None and delta >= tell_if_no_output:
-                    fLOG(prefix_log + "[run_cmd] No update in {0} seconds for cmd: {1}".format(
-                        "%5.1f" % (last_update - begin), cmd))
-                    last_update = time.perf_counter()
+                    fLOG(  # pragma: no cover
+                        prefix_log + "[run_cmd] No update in {0} seconds for cmd: {1}".format(
+                            "%5.1f" % (last_update - begin), cmd))
+                    last_update = time.perf_counter()  # pragma: no cover
                 full_delta = time.perf_counter() - begin
                 if timeout is not None and full_delta > timeout:
-                    runloop = False
-                    fLOG(prefix_log + "[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
+                    runloop = False  # pragma: no cover
+                    fLOG(  # pragma: no cover
+                        prefix_log + "[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
                         "%5.1f" % full_delta, cmd))
-                    break
+                    break  # pragma: no cover
 
             if runloop:
                 # Waiting for async readers to finish...
@@ -298,7 +304,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                 returnCode = pproc.wait()
                 err_read = True
 
-                if returnCode != 0:
+                if returnCode != 0:  # pragma: no cover
                     if change_path is not None:
                         os.chdir(current)
                     try:
@@ -316,7 +322,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
                 if not skip_waiting:
                     pproc.wait()
-            else:
+            else:  # pragma: no cover
                 out.append("[run_cmd] killing process.")
                 fLOG(
                     prefix_log + "[run_cmd] killing process because stop_running_if returned True.")
@@ -327,11 +333,11 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
 
             out = "\n".join(out)
             if skip_out_err:
-                err = "Process killed."
+                err = "Process killed."  # pragma: no cover
             else:
                 if err_read:
                     err = "\n".join(err)
-                else:
+                else:  # pragma: no cover
                     temp = err = stderr.read()
                     try:
                         err = decode_outerr(temp, encoding, encerror, cmd)
@@ -351,13 +357,14 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                 for eline in err.split("\n"):
                     fLOG(prefix_log + eline)
             else:
-                fLOG(prefix_log + "[run_cmd] stderr (log)\n%s" % err)
+                fLOG(  # pragma: no cover
+                    prefix_log + "[run_cmd] stderr (log)\n%s" % err)
 
         if change_path is not None:
             os.chdir(current)
 
         pproc.__exit__(None, None, None)
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             if err is not None:
                 err = err.strip("\n\r\t ")
             return out.replace("\r\n", "\n"), err.replace("\r\n", "\n")
@@ -368,7 +375,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
     else:
 
         if change_path is not None:
-            os.chdir(current)
+            os.chdir(current)  # pragma: no cover
 
         return pproc, None
 
@@ -384,7 +391,7 @@ def parse_exception_message(exc):
     mes = str(exc)
     reg = re.compile(".*#---OUT---#(.*)#---ERR---#(.*)", re.DOTALL)
     find = reg.search(mes.replace("\r", ""))
-    if find:
+    if find:  # pragma: no cover
         gr = find.groups()
         out, err = gr[0], gr[1]
         return out.strip("\n "), err.strip("\n ")
@@ -431,7 +438,7 @@ class _AsyncLineReader(threading.Thread):
             try:
                 for _ in map(self.outputQueue.put, iter(self.fd.readline, b'')):
                     pass
-            except SystemExit as e:
+            except SystemExit as e:  # pragma: no cover
                 self.outputQueue.put(str(e))
                 raise RunCmdException("SystemExit raised (3)") from e
         else:
