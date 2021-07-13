@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2021-06-04 - 0.00Mb
+current - 2021-07-13 - 0.00Mb
 =============================
+
+* `343`: Update for Sphinx 4.1.0 (2021-07-12)
+
+1.10.3616 - 2021-06-04 - 2.19Mb
+===============================
 
 * `342`: Fixes azure-pipelines.yml pipeline (2021-06-03)
 * `341`: Only log args if they are iterable (2021-06-02)
@@ -167,16 +172,8 @@ current - 2021-06-04 - 0.00Mb
 * `262`: Issue with jupyter_sphinx 0.2.0 (sphinx extension) (2019-07-17)
 * `261`: add option :store_in_file: to runpython extension (to be able to use inspect.getsource) (2019-07-09)
 * `260`: Allow the use of pyinstrument when profiling a function (2019-07-05)
-
-1.9.3162 - 2019-06-29 - 2.04Mb
-==============================
-
 * `259`: implement capture in ExtTestCase to capture stdout, stderr (2019-06-28)
 * `258`: force positional arguments in create_cli_parser (2019-06-27)
-
-1.9.3154 - 2019-06-18 - 2.04Mb
-==============================
-
 * `254`: Implements gdot to skip graphviz and render dot file with viz.js (2019-06-18)
 * `253`: fix links in exreflist (2019-06-15)
 * `252`: expose parameter fxeclude to avoid including them in the documentation (2019-06-15)
