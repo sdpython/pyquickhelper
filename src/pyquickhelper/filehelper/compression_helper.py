@@ -379,7 +379,8 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                 tos = os.path.join(where_to, clean)
                 if not os.path.exists(tos):
                     if fvalid and not fvalid(info.filename, tos):
-                        fLOG("[un7zip_files]    skipping", info.filename)  # pragma: no cover
+                        fLOG("[un7zip_files]    skipping",  # pragma: no cover
+                             info.filename)
                         continue  # pragma: no cover
                     try:
                         data = info.read()

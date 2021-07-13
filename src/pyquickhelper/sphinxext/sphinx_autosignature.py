@@ -199,7 +199,8 @@ class AutoSignatureDirective(Directive):
             else:
                 pimp = import_path(
                     obj, err_msg="object name: '{0}'".format(object_name))
-                anchor = '{0}.{1}'.format(pimp, object_name.rsplit('.', maxsplit=1)[-1])
+                anchor = '{0}.{1}'.format(
+                    pimp, object_name.rsplit('.', maxsplit=1)[-1])
         elif opt_path == 'full':
             anchor = object_name
         elif opt_path == 'name':

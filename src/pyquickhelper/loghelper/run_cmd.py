@@ -292,7 +292,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     runloop = False  # pragma: no cover
                     fLOG(  # pragma: no cover
                         prefix_log + "[run_cmd] Timeout after {0} seconds for cmd: {1}".format(
-                        "%5.1f" % full_delta, cmd))
+                            "%5.1f" % full_delta, cmd))
                     break  # pragma: no cover
 
             if runloop:
