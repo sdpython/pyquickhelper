@@ -51,6 +51,7 @@ sphinx-gallery
 sphinxcontrib-imagesvg
 sphinx_rtd_theme
 tabulate
+thebe
 tqdm
 traitlets>=5.0
 unify
