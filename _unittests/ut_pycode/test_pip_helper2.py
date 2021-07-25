@@ -23,13 +23,12 @@ class TestPipHelper2(ExtTestCase):
         info = get_package_info("pandas")
         # if "license" not in info:
         #    raise Exception(str(info))
-        if "version" not in info:
+        if "version" not in str(info):
             raise Exception(str(info))
 
-        if sys.version_info[0] >= 3:
-            info = get_package_info("sphinx")
-            if "version" not in info:
-                raise Exception(str(info))
+        info = get_package_info("sphinx")
+        if "version" not in str(info):
+            raise Exception(str(info))
 
     def test_pip_show_all(self):
         fLOG(
@@ -40,7 +39,6 @@ class TestPipHelper2(ExtTestCase):
         info = get_package_info(start=0, end=2)
         df = pandas.DataFrame(info)
         self.assertNotEmpty(info)
-        self.assertIsInstance(info[0], dict)
 
         if __name__ == "__mahin__":
             info = get_package_info()
