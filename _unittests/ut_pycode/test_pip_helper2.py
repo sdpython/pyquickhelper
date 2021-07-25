@@ -39,7 +39,6 @@ class TestPipHelper2(ExtTestCase):
         info = get_package_info(start=0, end=2)
         df = pandas.DataFrame(info)
         self.assertNotEmpty(info)
-        self.assertIsInstance(info[0], dict)
 
         if __name__ == "__mahin__":
             info = get_package_info()
