@@ -40,7 +40,7 @@ Which displays interpreted RST:
 
 
 """
-from ..subproject.myexample import myclass
+from subproject.myexample import myclass
 
 
 class myclass2 (myclass):
