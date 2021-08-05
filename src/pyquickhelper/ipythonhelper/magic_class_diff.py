@@ -4,11 +4,12 @@
 @brief Magic command to handle files
 """
 from IPython.core.magic import magics_class, line_magic
-from IPython.core.display import display_html
+from IPython.core.display import display_html, HTML
 
 from .magic_class import MagicClassWithHelpers
 from .magic_parser import MagicCommandParser
 from ..filehelper import create_visual_diff_through_html_files
+from ..texthelper.text_diff import html_diffs
 
 
 @magics_class
@@ -82,6 +83,42 @@ class MagicDiff(MagicClassWithHelpers):
                 inline_view=args.inline)
             display_html(html)
             return js
+        return None
+
+    @staticmethod
+    def strdiff_parser():
+        """
+        Defines the way to parse the magic command ``%strdiff``.
+        """
+        parser = MagicCommandParser(prog="strdiff",
+                                    description='show the differences between two strings')
+        parser.add_argument('s1', type=str, help='first file or text or url')
+        parser.add_argument('s2', type=str, help='second file or text or url')
+        return parser
+
+    @line_magic
+    def strdiff(self, line):
+        """
+        .. nbref::
+            :title: %strdiff
+            :tag: nb
+
+            It displays differences between two strings assuming they contains
+            multiple lines. The magic command is equivalent to::
+
+                from IPython.core.display import display_html
+                from pyquickhelper.texthelper.text_diff import html_diffs
+                html = html_diffs(<s1>, <s2>)
+                display_html(html)
+
+        """
+        parser = self.get_parser(MagicDiff.strdiff_parser, "strdiff")
+        args = self.get_args(line, parser)
+
+        if args is not None:
+            html = html_diffs(args.s1, args.s2)
+            HTML(html)
+            return html
         return None
 
     @line_magic
