@@ -1,5 +1,5 @@
 """
-@brief      test log(time=1s)
+@brief      test log(time=2s)
 """
 import unittest
 import warnings
@@ -26,6 +26,15 @@ class TestMagicDiff(ExtTestCase):
             {"f1": "STRING1\nSTRING2", "f2": "STRING1\nSTRING3"})
         cmd = "f1 f2"
         res = mg.strdiff(cmd)
+        self.assertIsInstance(res, HTML)
+
+    def test_codediff(self):
+        from IPython.core.display import HTML
+        mg = MagicDiff()
+        mg.add_context(
+            {"f1": "STRING1\nSTRING2", "f2": "STRING1\nSTRING3"})
+        cmd = "f1 f2"
+        res = mg.codediff(cmd)
         self.assertIsInstance(res, HTML)
 
 

@@ -69,7 +69,8 @@ def edit_distance_string(s1, s2):
     return d, list(reversed(equals))
 
 
-def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5):
+def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
+                       verbose=False):
     """
     Computes an edit distance between lines of a text.
 
@@ -78,6 +79,7 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5):
     :param strategy: strategy to match lines (see below)
     :param threshold: two lines can match if the edit distance is not too big,
         a low threshold means no match
+    :param verbose: if True, show progress with tqdm
     :return: distance, list of tuples of aligned lines, distance and
         alignment for each aligned lines, and finally an array
         with aligned line number for both texts
@@ -85,15 +87,18 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5):
     Strategies:
     * `'full'`: computes all edit distances between all lines
     """
+    if strategy != 'full':
+        raise NotImplementedError(  # pragma: no cover
+            "No other strategy than 'full' was implemented.")
     cached_distances = {}
 
     def cost_insert(row):
         return len(row) * 0.49
 
-    def cost_cmp(i, j, row1, row2):
+    def cost_cmp(i, j, row1, row2, bypass=True):
         c1 = cost_insert(row1)
         c2 = cost_insert(row2)
-        if min(c1, c2) < threshold * max(c1, c2):
+        if bypass and min(c1, c2) < threshold * max(c1, c2):
             if len(row1) < len(row2):
                 return cost_insert(row2[len(row1):])
             return cost_insert(row1[len(row2):])
@@ -124,7 +129,12 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5):
         pred[0, j] = 2
     pred[0, 0] = -1
 
-    for i in range(1, n1):
+    if verbose:
+        from tqdm import tqdm
+        loop = tqdm(range(1, n1))
+    else:
+        loop = range(1, n1)
+    for i in loop:
         for j in range(1, n2):
             c = dist[i, j]
 
@@ -137,14 +147,21 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5):
             if d < c:
                 c = d
                 p = 2
-            d = dist[i - 1, j - 1] + cost_cmp(i, j, rows1[i - 1], rows2[j - 1])
+            if c < dist[i - 1, j - 1]:
+                dist[i, j] = c
+                pred[i, j] = p
+                continue
+            d = dist[i - 1, j - 1] + \
+                cost_cmp(i - 1, j - 1, rows1[i - 1], rows2[j - 1])
             if d < c:
                 c = d
                 p = 3
             if p == 0:
                 raise RuntimeError(
                     "Unexpected value for p=%d at position=%r, c=%d, "
-                    "dist[i, j]=%d." % (p, (i, j), c, dist[i, j]))
+                    "dist[i, j]=%d, dist=\n%r." % (
+                        p, (i, j), c, dist[i, j],
+                        dist[i - 1:i + 1, j - 1: j + 1]))
 
             dist[i, j] = c
             pred[i, j] = p
@@ -157,7 +174,10 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5):
     p = pred[i, j]
     while p != -1:
         if p == 3:
-            cd = cached_distances[i, j]
+            if (i - 1, j - 1) not in cached_distances:
+                cost_cmp(i - 1, j - 1, rows1[i - 1],
+                         rows2[j - 1], bypass=False)
+            cd = cached_distances[i - 1, j - 1]
             lines1[i - 1] = j - 1
             lines2[j - 1] = i - 1
             equals.append((i - 1, j - 1) + cd)
@@ -212,17 +232,18 @@ def diff2html(rows1, rows2, equals, aligned):
 
     tr = '<tr style="1px solid black;">'
     tr_ = '</tr>'
-    tda = '<td style="background-color:#E59866;">'
-    tda_ = '</td>'
-    tdb = '<td style="background-color:#ABEBC6;">'
-    tdb_ = '</td>'
-    tdc = '<td style="background-color:#E5E7E9;">'
-    tdc_ = '</td>'
+    tda = '<td style="background-color:#E59866;"><code>'
+    tda_ = '</code></td>'
+    tdb = '<td style="background-color:#ABEBC6;"><code>'
+    tdb_ = '</code></td>'
+    tdc = '<td style="background-color:#E5E7E9;"><code>'
+    tdc_ = '</code></td>'
     spana = '<span style="color:#BA4A00;">'
     spanb = '<span style="color:#196F3D;">'
     span_ = "</span>"
     rows = []
-    rows.append('<table style="1px solid black; font-family:courier;">')
+    rows.append(
+        '<table style="white-space: pre; 1px solid black; font-family:courier; text-align:left !important;">')
     for a, b in aligned:
         row = [tr]
         if a is None:
@@ -230,13 +251,13 @@ def diff2html(rows1, rows2, equals, aligned):
         elif b is None:
             row.extend([tda, str(a), tda_])
         else:
-            row.extend(["<td>", str(a), "</td>"])
+            row.extend(["<td><code>", str(a), "</code></td>"])
         if b is None:
             row.append("<td></td>")
         elif a is None:
             row.extend([tdb, str(b), tdb_])
         else:
-            row.extend(["<td>", str(b), "</td>"])
+            row.extend(["<td><code>", str(b), "</code></td>"])
         if a is None:
             row.extend([tdb, rows2[b], tdb_])
         elif b is None:
@@ -244,7 +265,7 @@ def diff2html(rows1, rows2, equals, aligned):
         else:
             al = char_aligned[a, b]
             if al[0] == 0:
-                row.extend(["<td>", rows1[a], "</td>"])
+                row.extend(["<td><code>", rows1[a], "</code></td>"])
             else:
                 # Not equal
                 s1 = rows1[a]
@@ -257,7 +278,8 @@ def diff2html(rows1, rows2, equals, aligned):
                     if s1[i] == s2[j]:
                         l1[i] = s1[i]
                         l2[j] = s2[j]
-                row.extend([tdc, "".join(l1), "<br />", "".join(l2), tdc_])
+                row.extend(
+                    [tdc, "".join(l1), "</code><br /><code>", "".join(l2), tdc_])
         row.append(tr_)
         rows.append("".join(row))
     rows.append("</table>")

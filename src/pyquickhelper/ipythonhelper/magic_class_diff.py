@@ -10,6 +10,7 @@ from .magic_class import MagicClassWithHelpers
 from .magic_parser import MagicCommandParser
 from ..filehelper import create_visual_diff_through_html_files
 from ..texthelper.text_diff import html_diffs
+from ..texthelper.edit_text_diff import edit_distance_text, diff2html
 
 
 @magics_class
@@ -24,15 +25,17 @@ class MagicDiff(MagicClassWithHelpers):
         """
         Defines the way to parse the magic command ``%textdiff``.
         """
-        parser = MagicCommandParser(prog="textdiff",
-                                    description='show the differences between two files, two text')
+        parser = MagicCommandParser(
+            prog="textdiff",
+            description='show the differences between two files, two text')
         parser.add_argument('f1', type=str, help='first file or text or url')
         parser.add_argument('f2', type=str, help='second file or text or url')
         parser.add_argument(
             '-c',
             '--context',
             default="",
-            help='context view, empty to see everything, > 0 to see only a couple of lines around the changes')
+            help='context view, empty to see everything, > 0 to see '
+                 'only a couple of lines around the changes')
         parser.add_argument(
             '-i',
             '--inline',
@@ -128,6 +131,55 @@ class MagicDiff(MagicClassWithHelpers):
         but should be easier to remember
         """
         return self.textdiff(line)
+
+    @staticmethod
+    def codediff_parser():
+        """
+        Defines the way to parse the magic command ``%codediff``.
+        """
+        parser = MagicCommandParser(prog="codediff",
+                                    description='show the differences between two strings')
+        parser.add_argument('c1', type=str, help='first file or text or url')
+        parser.add_argument('c2', type=str, help='second file or text or url')
+        parser.add_argument(
+            '--threshold', type=float, default=0.5,
+            help='two lines can match if the edit '
+                 'distance is not too big, a low threshold means no match')
+        parser.add_argument(
+            '--verbose', type=bool, default=False,
+            help='display progress if True')
+        return parser
+
+    @line_magic
+    def codediff(self, line):
+        """
+        .. nbref::
+            :title: %codediff
+            :tag: nb
+
+            It displays differences between two strings assuming they contains
+            multiple lines. The magic command is equivalent to::
+
+                from IPython.core.display import display_html
+                from pyquickhelper.texthelper.edit_text_diff (
+                    import edit_distance_text, diff2html)
+                _, aligned, final = edit_distance_text(
+                    args.c1, args.c2, threshold=args.threshold,
+                    verbose=args.verbose)
+                ht = diff2html(args.c1, args.c2, aligned, final)
+                display_html(ht)
+
+        """
+        parser = self.get_parser(MagicDiff.codediff_parser, "codediff")
+        args = self.get_args(line, parser)
+
+        if args is not None:
+            _, aligned, final = edit_distance_text(
+                args.c1, args.c2, threshold=args.threshold,
+                verbose=args.verbose)
+            ht = diff2html(args.c1, args.c2, aligned, final)
+            return HTML(ht)
+        return None
 
 
 def register_file_magics(ip=None):  # pragma: no cover
