@@ -117,8 +117,7 @@ class MagicDiff(MagicClassWithHelpers):
 
         if args is not None:
             html = html_diffs(args.s1, args.s2)
-            HTML(html)
-            return html
+            return HTML(html)
         return None
 
     @line_magic
