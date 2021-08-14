@@ -24,12 +24,12 @@ class TestProfiling(ExtTestCase):
 
         rootrem = os.path.normpath(os.path.abspath(
             os.path.join(os.path.dirname(rootfile), '..')))
-        ps, res = profile(simple, rootrem=rootrem)
+        ps, res = profile(simple, rootrem=rootrem)  # pylint: disable=W0632
         res = res.replace('\\', '/')
         self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
         self.assertNotEmpty(ps)
 
-        ps, res = profile(simple)
+        ps, res = profile(simple)  # pylint: disable=W0632
         res = res.replace('\\', '/')
         self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
         self.assertNotEmpty(ps)
@@ -46,7 +46,7 @@ class TestProfiling(ExtTestCase):
 
         rootrem = os.path.normpath(os.path.abspath(
             os.path.join(os.path.dirname(rootfile), '..')))
-        ps, df = profile(simple, rootrem=rootrem, as_df=True)
+        ps, df = profile(simple, rootrem=rootrem, as_df=True)  # pylint: disable=W0632
         self.assertIsInstance(df, pandas.DataFrame)
         self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple2')
 
@@ -58,15 +58,15 @@ class TestProfiling(ExtTestCase):
                 df2rst(df)
             return df2rst(df)
 
-        ps, res = profile(simple, pyinst_format='text')
+        ps, res = profile(simple, pyinst_format='text')  # pylint: disable=W0632
         self.assertIn('.py', res)
-        ps, res = profile(simple, pyinst_format='textu')
+        ps, res = profile(simple, pyinst_format='textu')  # pylint: disable=W0632
         self.assertIn('Recorded', res)
-        ps, res = profile(simple, pyinst_format='html')
+        ps, res = profile(simple, pyinst_format='html')  # pylint: disable=W0632
         self.assertIn("</script>", res)
         self.assertRaise(lambda: profile(
             simple, pyinst_format='htmlgg'), ValueError)
-        ps, res = profile(simple, pyinst_format='json')
+        ps, res = profile(simple, pyinst_format='json')  # pylint: disable=W0632
         self.assertIn('"start_time"', res)
 
 

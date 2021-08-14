@@ -7,4 +7,6 @@ exclude_paths:
   - "bin"
   - ".circleci"
   - "*.css"
+  - "*.scss"
   - "*.js"
+  - "**/data/*"

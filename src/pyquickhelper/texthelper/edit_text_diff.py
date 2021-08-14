@@ -235,7 +235,7 @@ def edit_distance_text(rows1, rows2, strategy="full",
     return d, list(reversed(equals)), aligned
 
 
-def diff2html(rows1, rows2, equals, aligned):
+def diff2html(rows1, rows2, equals, aligned, two_columns=False):
     """
     Produces a HTML report with differences between *rows1*
     and *rows2*.
@@ -244,6 +244,7 @@ def diff2html(rows1, rows2, equals, aligned):
     :param rows2: second set of rows
     :param equals: third output of @see fn edit_distance_text
     :param aligned: fourth output of @see fn edit_distance_text
+    :param two_columns: displays the differences on two columns
     :return: HTML text
     """
     if isinstance(rows1, str):
@@ -257,11 +258,11 @@ def diff2html(rows1, rows2, equals, aligned):
 
     tr = '<tr style="1px solid black;">'
     tr_ = '</tr>'
-    tda = '<td style="background-color:#E59866;"><code>'
+    tda = '<td style="background-color:#E59866;"><code style="background-color:#E59866;">'
     tda_ = '</code></td>'
-    tdb = '<td style="background-color:#ABEBC6;"><code>'
+    tdb = '<td style="background-color:#ABEBC6;"><code style="background-color:#ABEBC6;">'
     tdb_ = '</code></td>'
-    tdc = '<td style="background-color:#E5E7E9;"><code>'
+    tdc = '<td style="background-color:#E5E7E9;"><code style="background-color:#E5E7E9;">'
     tdc_ = '</code></td>'
     spana = '<span style="color:#BA4A00;">'
     spanb = '<span style="color:#196F3D;">'
@@ -271,26 +272,61 @@ def diff2html(rows1, rows2, equals, aligned):
         '<table style="white-space: pre; 1px solid black; font-family:courier; text-align:left !important;">')
     for a, b in aligned:
         row = [tr]
+
         if a is None:
             row.append("<td></td>")
         elif b is None:
             row.extend([tda, str(a), tda_])
         else:
-            row.extend(["<td><code>", str(a), "</code></td>"])
+            al = char_aligned[a, b]
+            if al[0] == 0:
+                row.extend([
+                    '<td style="background-color:#FFFFFF;">'
+                    '<code style="background-color:#FFFFFF;">',
+                    str(a), "</code></td>"])
+            else:
+                row.extend(["<td><code>", str(a), "</code></td>"])
+
         if b is None:
             row.append("<td></td>")
         elif a is None:
             row.extend([tdb, str(b), tdb_])
         else:
-            row.extend(["<td><code>", str(b), "</code></td>"])
+            al = char_aligned[a, b]
+            if al[0] == 0:
+                row.extend([
+                    '<td style="background-color:#FFFFFF;">'
+                    '<code style="background-color:#FFFFFF;">',
+                    str(b), '</code></td>'])
+            else:
+                row.extend(["<td><code>", str(b), "</code></td>"])
+
         if a is None:
-            row.extend([tdb, rows2[b], tdb_])
+            if two_columns:
+                row.extend(["<td></td>", tdb, rows2[b], tdb_])
+            else:
+                row.extend([tdb, rows2[b], tdb_])
         elif b is None:
-            row.extend([tda, rows1[a], tda_])
+            if two_columns:
+                row.extend([tda, rows1[a], tda_, "<td></td>"])
+            else:
+                row.extend([tda, rows1[a], tda_])
         else:
             al = char_aligned[a, b]
             if al[0] == 0:
-                row.extend(["<td><code>", rows1[a], "</code></td>"])
+                if two_columns:
+                    row.extend([
+                        '<td style="background-color:#FFFFFF;">'
+                        '<code style="background-color:#FFFFFF;">',
+                        rows1[a], '</code></td>',
+                        '<td style="background-color:#FFFFFF;">'
+                        '<code style="background-color:#FFFFFF;">',
+                        rows2[b], '</code></td>'])
+                else:
+                    row.extend([
+                        '<td style="background-color:#FFFFFF;">'
+                        '<code style="background-color:#FFFFFF;">',
+                        rows1[a], '</code></td>'])
             else:
                 # Not equal
                 s1 = rows1[a]
@@ -303,8 +339,15 @@ def diff2html(rows1, rows2, equals, aligned):
                     if s1[i] == s2[j]:
                         l1[i] = s1[i]
                         l2[j] = s2[j]
-                row.extend(
-                    [tdc, "".join(l1), "</code><br /><code>", "".join(l2), tdc_])
+                if two_columns:
+                    row.extend(
+                        [tdc, "".join(l1), "</code>", tdc_,
+                         tdc, "<code>", "".join(l2), tdc_])
+                else:
+                    row.extend(
+                        [tdc, "".join(l1), "</code><br /><code>",
+                         "".join(l2), tdc_])
+
         row.append(tr_)
         rows.append("".join(row))
     rows.append("</table>")

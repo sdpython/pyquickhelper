@@ -46,14 +46,14 @@ class TestTextDiff(ExtTestCase):
     def test_edit_distance_text(self):
         s1 = "AA\nBB\nCC\nDD"
         s2 = "AA\nCC\nDD"
-        d, aligned, final = edit_distance_text(s1, s2)
+        d, aligned, final = edit_distance_text(s1, s2)  # pylint: disable=W0632
         self.assertEqual(len(aligned), 3)
         self.assertEqual(aligned, [(0, 0, 0.0, [(0, 0), (1, 1)]),
                                    (2, 1, 0.0, [(0, 0), (1, 1)]),
                                    (3, 2, 0.0, [(0, 0), (1, 1)])])
         self.assertEqual(final, [(0, 0), (1, None), (2, 1), (3, 2)])
         self.assertEqual(d, 3.)
-        d, aligned, final = edit_distance_text(s2, s1)
+        d, aligned, final = edit_distance_text(s2, s1)  # pylint: disable=W0632
         self.assertEqual(len(aligned), 3)
         self.assertEqual(aligned, [(0, 0, 0.0, [(0, 0), (1, 1)]),
                                    (1, 2, 0.0, [(0, 0), (1, 1)]),
@@ -64,16 +64,31 @@ class TestTextDiff(ExtTestCase):
     def test_edit_distance_html(self):
         s1 = "AA\nBB\nCC\nZZZZZA\nDD"
         s2 = "AA\nCC\nDD\nZZZZZB\nEE"
-        _, aligned, final = edit_distance_text(s1, s2)
+        _, aligned, final = edit_distance_text(s1, s2)  # pylint: disable=W0632
         ht = diff2html(s1, s2, aligned, final)
         self.assertIn('<tr style="1px solid black;">', ht)
         self.assertIn('<td style="background-color:#ABEBC6;">', ht)
         self.assertIn('<td style="background-color:#E5E7E9;">', ht)
+        self.assertNotIn(
+            'AA</code></td><td style="background-color:#FFFFFF;">'
+            '<code style="background-color:#FFFFFF;">AA</code>', ht)
+
+    def test_edit_distance_html2(self):
+        s1 = "AA\nBB\nCC\nZZZZZA\nDD"
+        s2 = "AA\nCC\nDD\nZZZZZB\nEE"
+        _, aligned, final = edit_distance_text(s1, s2)  # pylint: disable=W0632
+        ht = diff2html(s1, s2, aligned, final, two_columns=True)
+        self.assertIn('<tr style="1px solid black;">', ht)
+        self.assertIn('<td style="background-color:#ABEBC6;">', ht)
+        self.assertIn('<td style="background-color:#E5E7E9;">', ht)
+        self.assertIn(
+            'AA</code></td><td style="background-color:#FFFFFF;">'
+            '<code style="background-color:#FFFFFF;">AA', ht)
 
     def test_edit_distance_text_empty(self):
         s1 = "AA\nBB\nCC\nDD"
         s2 = ""
-        d, aligned, final = edit_distance_text(s1, s2)
+        d, aligned, final = edit_distance_text(s1, s2)  # pylint: disable=W0632
         self.assertEqual(len(aligned), 0)
         self.assertEqual(aligned, [])
         self.assertEqual(
@@ -83,7 +98,7 @@ class TestTextDiff(ExtTestCase):
     def test_edit_distance_text_empty2(self):
         s1 = ""
         s2 = "AA\nCC\nDD"
-        d, aligned, final = edit_distance_text(s1, s2)
+        d, aligned, final = edit_distance_text(s1, s2)  # pylint: disable=W0632
         self.assertEqual(len(aligned), 0)
         self.assertEqual(aligned, [])
         self.assertEqual(final, [(0, None), (None, 0), (None, 1), (None, 2)])
@@ -214,7 +229,7 @@ class TestTextDiff(ExtTestCase):
     def test_edit_distance_text_space(self):
         s1 = "AA\n\nCC"
         s2 = "AA\n\nCC"
-        d, aligned, final = edit_distance_text(s1, s2)
+        d, aligned, final = edit_distance_text(s1, s2)  # pylint: disable=W0632
         self.assertEqual(d, 0)
         self.assertEqual(len(aligned), 3)
         self.assertEqual(aligned, [(0, 0, 0.0, [(0, 0), (1, 1)]),

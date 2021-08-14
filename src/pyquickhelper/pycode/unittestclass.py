@@ -544,7 +544,7 @@ class ExtTestCase(unittest.TestCase):
     def abs_path_join(self, filename, *args):
         """
         Returns an absolute and normalized path from this location.
-    
+
         :param filename: filename, the folder which contains it
             is used as the base
         :param args: list of subpaths to the previous path
@@ -552,6 +552,7 @@ class ExtTestCase(unittest.TestCase):
         """
         dirname = os.path.join(os.path.dirname(filename), *args)
         return os.path.normpath(os.path.abspath(dirname))
+
 
 def skipif_appveyor(msg):
     """

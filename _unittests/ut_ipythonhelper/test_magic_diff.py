@@ -37,6 +37,15 @@ class TestMagicDiff(ExtTestCase):
         res = mg.codediff(cmd)
         self.assertIsInstance(res, HTML)
 
+    def test_codediff_two(self):
+        from IPython.core.display import HTML
+        mg = MagicDiff()
+        mg.add_context(
+            {"f1": "STRING1\nSTRING2", "f2": "STRING1\nSTRING3"})
+        cmd = "f1 f2 --two 1"
+        res = mg.codediff(cmd)
+        self.assertIsInstance(res, HTML)
+
 
 if __name__ == "__main__":
     unittest.main()

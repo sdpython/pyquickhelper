@@ -148,6 +148,9 @@ class MagicDiff(MagicClassWithHelpers):
         parser.add_argument(
             '--verbose', type=bool, default=False,
             help='display progress if True')
+        parser.add_argument(
+            '--two', type=bool, default=False,
+            help='display on two columns')
         return parser
 
     @line_magic
@@ -177,7 +180,8 @@ class MagicDiff(MagicClassWithHelpers):
             _, aligned, final = edit_distance_text(
                 args.c1, args.c2, threshold=args.threshold,
                 verbose=args.verbose)
-            ht = diff2html(args.c1, args.c2, aligned, final)
+            ht = diff2html(args.c1, args.c2, aligned,
+                           final, two_columns=args.two)
             return HTML(ht)
         return None
 
