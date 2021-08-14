@@ -47,7 +47,7 @@ def _process_pstats(ps, clean_text):
 
 
 def profile(fct, sort='cumulative', rootrem=None, as_df=False,
-            pyinst_format=None, **kwargs):
+            pyinst_format=None, return_results=False, **kwargs):
     """
     Profiles the execution of a function.
 
@@ -60,6 +60,8 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
                                 the function uses this module or raises an exception if not
                                 installed, the options are *text*, *textu* (text with colors),
                                 *json*, *html*
+    @param      return_results  if True, return results as well
+                                (in the first position)
     @param      kwargs          additional parameters used to create the profiler
     @return                     raw results, statistics text dump (or dataframe is *as_df* is True)
 
@@ -79,11 +81,14 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
         for la in ax.get_xticklabels():
             la.set_horizontalalignment('right');
         plt.show()
+
+    .. versionchanged:: 1.11
+        Parameter *return_results* was added.
     """
     if pyinst_format is None:
         pr = cProfile.Profile(**kwargs)
         pr.enable()
-        fct()
+        fct_res = fct()
         pr.disable()
         s = StringIO()
         ps = pstats.Stats(pr, stream=s).sort_stats(sort)
@@ -131,32 +136,46 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
             df['namefct'] = df.apply(lambda row: better_name(row), axis=1)
             df = df.groupby(['namefct', 'file'], as_index=False).sum().sort_values(
                 'cum_tall', ascending=False).reset_index(drop=True)
+            if return_results:
+                return fct_res, ps, df
             return ps, df
         else:
             res = clean_text(res)
+            if return_results:
+                return fct_res, ps, res
             return ps, res
-    elif as_df:
+    if as_df:
         raise ValueError(  # pragma: no cover
             "as_df is not a compatible option with pyinst_format")
-    else:
-        try:
-            from pyinstrument import Profiler
-        except ImportError as e:  # pragma: no cover
-            raise ImportError("pyinstrument is not installed.") from e
 
-        profiler = Profiler(**kwargs)
-        profiler.start()
-        fct()
-        profiler.stop()
+    try:
+        from pyinstrument import Profiler
+    except ImportError as e:  # pragma: no cover
+        raise ImportError("pyinstrument is not installed.") from e
 
-        if pyinst_format == "text":
-            return profiler, profiler.output_text(unicode=False, color=False)
-        elif pyinst_format == "textu":
-            return profiler, profiler.output_text(unicode=True, color=True)
-        elif pyinst_format == "json":
-            from pyinstrument.renderers import JSONRenderer
-            return profiler, profiler.output(JSONRenderer())
-        elif pyinst_format == "html":
-            return profiler, profiler.output_html()
-        else:
-            raise ValueError("Unknown format '{}'.".format(pyinst_format))
+    profiler = Profiler(**kwargs)
+    profiler.start()
+    fct_res = fct()
+    profiler.stop()
+
+    if pyinst_format == "text":
+        if return_results:
+            return fct_res, profiler, profiler.output_text(
+                unicode=False, color=False)
+        return profiler, profiler.output_text(unicode=False, color=False)
+    if pyinst_format == "textu":
+        if return_results:
+            return fct_res, profiler, profiler.output_text(
+                unicode=True, color=True)
+        return profiler, profiler.output_text(unicode=True, color=True)
+    if pyinst_format == "json":
+        from pyinstrument.renderers import JSONRenderer
+        if return_results:
+            return fct_res, profiler, profiler.output(
+                JSONRenderer())
+        return profiler, profiler.output(JSONRenderer())
+    if pyinst_format == "html":
+        if return_results:
+            return fct_res, profiler, profiler.output_html()
+        return profiler, profiler.output_html()
+    raise ValueError("Unknown format '{}'.".format(pyinst_format))

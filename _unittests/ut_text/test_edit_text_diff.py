@@ -201,7 +201,12 @@ class TestTextDiff(ExtTestCase):
                     p = pred[i, j]
                 return d, list(reversed(equals))
             ''')
-        d, aligned, final = edit_distance_text(f1, f2, verbose=False)
+        res = self.profile(lambda: edit_distance_text(
+            f1, f2, verbose=False), return_results=True,
+            rootrem=self.abs_path_join(__file__, '..', '..', '..'))
+        d, aligned, final = res[0]
+        if __name__ == '__main__':
+            print(res[-1])
         self.assertGreater(d, 0)
         self.assertGreater(len(aligned), 10)
         self.assertIn((1, 1), final)
