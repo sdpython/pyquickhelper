@@ -48,26 +48,25 @@ class TestTextDiff(ExtTestCase):
         s2 = "AA\nCC\nDD"
         d, aligned, final = edit_distance_text(s1, s2)
         self.assertEqual(len(aligned), 3)
-        self.assertEqual(d, 0.98)
         self.assertEqual(aligned, [(0, 0, 0.0, [(0, 0), (1, 1)]),
                                    (2, 1, 0.0, [(0, 0), (1, 1)]),
                                    (3, 2, 0.0, [(0, 0), (1, 1)])])
         self.assertEqual(final, [(0, 0), (1, None), (2, 1), (3, 2)])
+        self.assertEqual(d, 3.)
         d, aligned, final = edit_distance_text(s2, s1)
         self.assertEqual(len(aligned), 3)
-        self.assertEqual(d, 0.98)
         self.assertEqual(aligned, [(0, 0, 0.0, [(0, 0), (1, 1)]),
                                    (1, 2, 0.0, [(0, 0), (1, 1)]),
                                    (2, 3, 0.0, [(0, 0), (1, 1)])])
         self.assertEqual(final, [(0, 0), (None, 1), (1, 2), (2, 3)])
+        self.assertEqual(d, 3.)
 
     def test_edit_distance_html(self):
         s1 = "AA\nBB\nCC\nZZZZZA\nDD"
         s2 = "AA\nCC\nDD\nZZZZZB\nEE"
         _, aligned, final = edit_distance_text(s1, s2)
         ht = diff2html(s1, s2, aligned, final)
-        self.assertIn(
-            '<tr style="1px solid black;"><td>2</td><td>1</td><td>CC</td></tr>', ht)
+        self.assertIn('<tr style="1px solid black;">', ht)
         self.assertIn('<td style="background-color:#ABEBC6;">', ht)
         self.assertIn('<td style="background-color:#E5E7E9;">', ht)
 
@@ -76,19 +75,19 @@ class TestTextDiff(ExtTestCase):
         s2 = ""
         d, aligned, final = edit_distance_text(s1, s2)
         self.assertEqual(len(aligned), 0)
-        self.assertEqual(d, 0.98)
         self.assertEqual(aligned, [])
         self.assertEqual(
             final, [(0, None), (1, None), (2, None), (3, None), (None, 0)])
+        self.assertEqual(d, 13)
 
     def test_edit_distance_text_empty2(self):
         s1 = ""
         s2 = "AA\nCC\nDD"
         d, aligned, final = edit_distance_text(s1, s2)
         self.assertEqual(len(aligned), 0)
-        self.assertEqual(d, 0.98)
         self.assertEqual(aligned, [])
         self.assertEqual(final, [(0, None), (None, 0), (None, 1), (None, 2)])
+        self.assertEqual(d, 10.)
 
     def test_edit_distance_text_big(self):
         f1 = dedent('''
@@ -207,7 +206,42 @@ class TestTextDiff(ExtTestCase):
         self.assertGreater(len(aligned), 10)
         self.assertIn((1, 1), final)
 
+    def test_edit_distance_text_space(self):
+        s1 = "AA\n\nCC"
+        s2 = "AA\n\nCC"
+        d, aligned, final = edit_distance_text(s1, s2)
+        self.assertEqual(d, 0)
+        self.assertEqual(len(aligned), 3)
+        self.assertEqual(aligned, [(0, 0, 0.0, [(0, 0), (1, 1)]),
+                                   (1, 1, 0.0, []),
+                                   (2, 2, 0.0, [(0, 0), (1, 1)])])
+        self.assertEqual(final, [(0, 0), (1, 1), (2, 2)])
+
+    def test_edit_distance_no_align(self):
+        s1 = "AA\nBB\nCC\nreturn d\nDD"
+        s2 = "AA\nBB\nCC\nfor i in j\nDD"
+        d, aligned, final, mats = edit_distance_text(
+            s1, s2, return_matrices=True)
+        dd = edit_distance_string("return d", "for i in j")
+        self.assertEqual(len(final), 6)
+        self.assertEqual(len(mats), 2)
+        self.assertEqual(len(aligned), 4)
+        self.assertGreater(d, 0)
+        self.assertGreater(dd[0], 0)
+
+    def test_edit_distance_no_align2(self):
+        s1 = "AA\nBB\nCC\nreturn d\nDD"
+        s2 = "AA\nBB\nCC\nfor i in jjjjjjjjj\nDD"
+        d, aligned, final, mats = edit_distance_text(
+            s1, s2, return_matrices=True)
+        dd = edit_distance_string("return d", "for i in jjjjjjjjj")
+        self.assertEqual(len(final), 6)
+        self.assertEqual(len(mats), 2)
+        self.assertEqual(len(aligned), 4)
+        self.assertGreater(d, 0)
+        self.assertGreater(dd[0], 0)
+
 
 if __name__ == "__main__":
-    # TestTextDiff().test_edit_distance_text_big()
+    # TestTextDiff().test_edit_distance_no_align()
     unittest.main()

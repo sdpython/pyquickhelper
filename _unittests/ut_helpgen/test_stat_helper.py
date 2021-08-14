@@ -1,23 +1,14 @@
 """
 @brief      test log(time=2s)
 """
-
-import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.helpgen.stat_helper import enumerate_notebooks_link
 
 
 class TestHelpGenStatHelper(unittest.TestCase):
 
     def test_enumerate_notebooks_link(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         nb_folder = os.path.join(this, "..", "..", "_doc", "notebooks")
         self.assertTrue(os.path.exists(nb_folder))
@@ -39,7 +30,7 @@ class TestHelpGenStatHelper(unittest.TestCase):
                 counts["title"] += 1
             nbfound.add(rl[1])
         self.assertTrue(counts.get("ref", 0) > 0)
-        self.assertIn(counts.get(None, 0), (0, 10))
+        self.assertIn(counts.get(None, 0), (0, 11))
         self.assertTrue(counts["title"] > 0)
         self.assertTrue(len(nbfound) > 8)
         # self.assertTrue(counts.get("refn", 0) > 0)

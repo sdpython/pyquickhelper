@@ -6,7 +6,7 @@
 import numpy
 
 
-def edit_distance_string(s1, s2):
+def edit_distance_string(s1, s2, cmp_cost=1.):
     """
     Computes the edit distance between strings *s1* and *s2*.
 
@@ -38,7 +38,7 @@ def edit_distance_string(s1, s2):
             if dist[i, j - 1] + 1 < c:
                 c = dist[i, j - 1] + 1
                 p = 2
-            d = 0 if s1[i - 1] == s2[j - 1] else 1
+            d = 0 if s1[i - 1] == s2[j - 1] else cmp_cost
             if dist[i - 1, j - 1] + d < c:
                 c = dist[i - 1, j - 1] + d
                 p = 3
@@ -69,44 +69,65 @@ def edit_distance_string(s1, s2):
     return d, list(reversed(equals))
 
 
-def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
-                       verbose=False):
+def edit_distance_text(rows1, rows2, strategy="full",
+                       verbose=False, return_matrices=False,
+                       **thresholds):
     """
     Computes an edit distance between lines of a text.
 
     :param rows1: first set of rows
     :param rows2: second set of rows
     :param strategy: strategy to match lines (see below)
-    :param threshold: two lines can match if the edit distance is not too big,
-        a low threshold means no match
     :param verbose: if True, show progress with tqdm
+    :param return_matrices: return distances and predecessor
+        matrices as well
+    :param thresholds: see below
     :return: distance, list of tuples of aligned lines, distance and
         alignment for each aligned lines, and finally an array
         with aligned line number for both texts
 
     Strategies:
     * `'full'`: computes all edit distances between all lines
+
+    Thresholds:
+    * `'threshold'`: two lines can match if the edit distance is not too big,
+        a low threshold means no match (default is 0.5)
+    * `'insert_len'`: variable cost of insertion (default is 1.)
+    * `'insert_cst'`: fixed cost of insertion (default is 1.)
+    * `'weight_cmp'`: weight for comparison cost (default is 2.)
+    * '`cmp_cost'`: cost of a bad comparison, default is `2 * insert_len`
     """
     if strategy != 'full':
         raise NotImplementedError(  # pragma: no cover
             "No other strategy than 'full' was implemented.")
     cached_distances = {}
 
+    insert_len = thresholds.get('insert_len', 1.)
+    insert_cst = thresholds.get('insert_cst', 1.)
+    threshold = thresholds.get('threshold', 0.5)
+    weight_cmp = thresholds.get('weight_cmp', 2.)
+    cmp_cost = thresholds.get('cmp_cost', 2. * insert_len)
+
     def cost_insert(row):
-        return len(row) * 0.49
+        s = row.strip("\t ")
+        return (len(s) + insert_cst) * insert_len
 
     def cost_cmp(i, j, row1, row2, bypass=True):
-        c1 = cost_insert(row1)
-        c2 = cost_insert(row2)
-        if bypass and min(c1, c2) < threshold * max(c1, c2):
+        s1 = row1.strip('\t ')
+        s2 = row2.strip('\t ')
+        c1 = cost_insert(s1)
+        c2 = cost_insert(s2)
+        if (bypass and len(s1) > 9 and len(s2) > 9 and
+                min(c1, c2) < threshold * max(c1, c2)):
             if len(row1) < len(row2):
-                return cost_insert(row2[len(row1):])
-            return cost_insert(row1[len(row2):])
+                return cost_insert(row2[len(row1):]), []
+            return cost_insert(row1[len(row2):]), []
         if (i, j) in cached_distances:
-            return cached_distances[i, j][0]
-        ed, equals = edit_distance_string(row1, row2)
+            return cached_distances[i, j]
+        ed, equals = edit_distance_string(row1, row2, cmp_cost=cmp_cost)
+        ed *= weight_cmp
         cached_distances[i, j] = ed, equals
-        return ed
+        return ed, equals
 
     if isinstance(rows1, str):
         rows1 = rows1.split("\n")
@@ -117,15 +138,15 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
     n2 = len(rows2) + 1
     t1 = sum(map(len, rows1)) + 1
     t2 = sum(map(len, rows2)) + 1
-    dist = numpy.full((n1, n2), t1 * t2, dtype=numpy.float64)
+    dist = numpy.full((n1, n2), t1 * t2 + t1 + t2 + 10, dtype=numpy.float64)
     pred = numpy.full(dist.shape, 0, dtype=numpy.int32)
 
     dist[0, 0] = 0
     for i in range(1, n1):
-        dist[i, 0] = cost_insert(rows1[i - 1])
+        dist[i, 0] = cost_insert(rows1[i - 1]) + dist[i - 1, 0]
         pred[i, 0] = 1
     for j in range(1, n2):
-        dist[0, j] = cost_insert(rows2[j - 1])
+        dist[0, j] = cost_insert(rows2[j - 1]) + dist[0, j - 1]
         pred[0, j] = 2
     pred[0, 0] = -1
 
@@ -151,12 +172,15 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
                 dist[i, j] = c
                 pred[i, j] = p
                 continue
-            d = dist[i - 1, j - 1] + \
-                cost_cmp(i - 1, j - 1, rows1[i - 1], rows2[j - 1])
+            d = (dist[i - 1, j - 1] +
+                 cost_cmp(i - 1, j - 1, rows1[i - 1], rows2[j - 1])[0])
             if d < c:
                 c = d
                 p = 3
             if p == 0:
+                print(i, j)
+                print(dist)
+                print(pred)
                 raise RuntimeError(
                     "Unexpected value for p=%d at position=%r, c=%d, "
                     "dist[i, j]=%d, dist=\n%r." % (
@@ -166,6 +190,7 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
             dist[i, j] = c
             pred[i, j] = p
 
+    cached_distances.clear()
     d = dist[n1 - 1, n2 - 1]
     equals = []
     i, j = n1 - 1, n2 - 1
@@ -174,10 +199,8 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
     p = pred[i, j]
     while p != -1:
         if p == 3:
-            if (i - 1, j - 1) not in cached_distances:
-                cost_cmp(i - 1, j - 1, rows1[i - 1],
-                         rows2[j - 1], bypass=False)
-            cd = cached_distances[i - 1, j - 1]
+            cd = cost_cmp(i - 1, j - 1, rows1[i - 1],
+                          rows2[j - 1], bypass=False)
             lines1[i - 1] = j - 1
             lines2[j - 1] = i - 1
             equals.append((i - 1, j - 1) + cd)
@@ -207,6 +230,8 @@ def edit_distance_text(rows1, rows2, strategy="full", threshold=0.5,
         while lb not in lines2 and lb < len(rows2):
             aligned.append((None, lb))
             lb += 1
+    if return_matrices:
+        return d, list(reversed(equals)), aligned, (dist, pred)
     return d, list(reversed(equals)), aligned
 
 
