@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2021-07-13 - 0.00Mb
+current - 2021-08-15 - 0.00Mb
 =============================
 
+* `345`: Improves file comparison, add magic command codediff (2021-08-15)
+* `344`: Update myexample2.py due a failure in astroid (astroid.exceptions.TooManyLevelsError) (2021-07-25)
 * `343`: Update for Sphinx 4.1.0 (2021-07-12)
 
 1.10.3616 - 2021-06-04 - 2.19Mb
@@ -159,16 +161,8 @@ current - 2021-07-13 - 0.00Mb
 
 * `267`: Skips a given list of issues when producing the history (2019-08-26)
 * `266`: add option to local_jenkins to specify a different jenkins server (2019-08-25)
-
-1.9.3186 - 2019-08-02 - 2.05Mb
-==============================
-
 * `264`: Implements function unittest_require_at_least to skip a unit test requiring a more recent version of a package (2019-08-02)
 * `263`: Skip type cells of type 'vnd.plotly.v1+json' when extracting snippets of a notebook (2019-07-30)
-
-1.9.3179 - 2019-07-17 - 2.05Mb
-==============================
-
 * `262`: Issue with jupyter_sphinx 0.2.0 (sphinx extension) (2019-07-17)
 * `261`: add option :store_in_file: to runpython extension (to be able to use inspect.getsource) (2019-07-09)
 * `260`: Allow the use of pyinstrument when profiling a function (2019-07-05)
