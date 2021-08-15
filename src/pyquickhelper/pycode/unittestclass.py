@@ -418,7 +418,8 @@ class ExtTestCase(unittest.TestCase):
         from ..loghelper import fLOG as _flog  # pragma: no cover
         _flog(*args, **kwargs)  # pragma: no cover
 
-    def profile(self, fct, sort='cumulative', rootrem=None,
+    @staticmethod
+    def profile(fct, sort='cumulative', rootrem=None,
                 return_results=False):
         """
         Profiles the execution of a function with function
@@ -541,7 +542,8 @@ class ExtTestCase(unittest.TestCase):
             logger.addHandler(h)  # pragma: no cover
         return res, logs
 
-    def abs_path_join(self, filename, *args):
+    @staticmethod
+    def abs_path_join(filename, *args):
         """
         Returns an absolute and normalized path from this location.
 
