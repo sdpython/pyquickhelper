@@ -4,6 +4,11 @@
 @brief Improves text comparison.
 """
 import numpy
+try:
+    from cpyquickhelper.algorithms.edit_distance import (
+        edit_distance_string as edit_distance_string_fast)
+except ImportError:
+    edit_distance_string_fast = None
 
 
 def edit_distance_string(s1, s2, cmp_cost=1.):
@@ -13,6 +18,10 @@ def edit_distance_string(s1, s2, cmp_cost=1.):
     :param s1: first string
     :param s2: second string
     :return: dist, list of tuples of aligned characters
+
+    Another version is implemented in module :epkg:`cpyquickhelper`.
+    It uses C++ to make it around 25 times faster than the python
+    implementation.
     """
     n1 = len(s1) + 1
     n2 = len(s2) + 1
@@ -96,6 +105,14 @@ def edit_distance_text(rows1, rows2, strategy="full",
     * `'insert_cst'`: fixed cost of insertion (default is 1.)
     * `'weight_cmp'`: weight for comparison cost (default is 2.)
     * '`cmp_cost'`: cost of a bad comparison, default is `2 * insert_len`
+
+    .. note::
+
+        The full python implementation is quite slow. Function
+        @see fn edit_distance_string is also implemented in module
+        :epkg:`cpyquickhelper`. If this module is installed and recent
+        enough, this function will use this version as it is 25 times
+        faster. The version in :epkg:`cpyquickhelper` is using C++.
     """
     if strategy != 'full':
         raise NotImplementedError(  # pragma: no cover
@@ -107,6 +124,8 @@ def edit_distance_text(rows1, rows2, strategy="full",
     threshold = thresholds.get('threshold', 0.5)
     weight_cmp = thresholds.get('weight_cmp', 2.)
     cmp_cost = thresholds.get('cmp_cost', 2. * insert_len)
+
+    fct_cmp = edit_distance_string_fast or edit_distance_string
 
     def cost_insert(row):
         s = row.strip("\t ")
@@ -124,7 +143,7 @@ def edit_distance_text(rows1, rows2, strategy="full",
             return cost_insert(row1[len(row2):]), []
         if (i, j) in cached_distances:
             return cached_distances[i, j]
-        ed, equals = edit_distance_string(row1, row2, cmp_cost=cmp_cost)
+        ed, equals = fct_cmp(row1, row2, cmp_cost=cmp_cost)
         ed *= weight_cmp
         cached_distances[i, j] = ed, equals
         return ed, equals
