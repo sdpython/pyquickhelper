@@ -850,7 +850,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
 
     # end
 
-    for k in res:
+    for k in res:  # pylint: disable=C0206
         fLOG("[produces_indexes] index name '{}'".format(k))
         label = correspondances.get(k, k)
         title = titles.get(k, k)

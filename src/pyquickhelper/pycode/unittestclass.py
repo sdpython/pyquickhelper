@@ -418,16 +418,25 @@ class ExtTestCase(unittest.TestCase):
         from ..loghelper import fLOG as _flog  # pragma: no cover
         _flog(*args, **kwargs)  # pragma: no cover
 
-    def profile(self, fct, sort='cumulative', rootrem=None):
+    @staticmethod
+    def profile(fct, sort='cumulative', rootrem=None,
+                return_results=False):
         """
-        Profiles the execution of a function.
+        Profiles the execution of a function with function
+        :func:`profile <pyquickhelper.pycode.profiling.profile>`.
 
-        @param      fct     function to profile
-        @param      sort    see `sort_stats <https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats>`_
-        @param      rootrem root to remove in filenames
-        @return             statistics text dump
+        :param fct: function to profile
+        :param sort: see `sort_stats <
+            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats>`_
+        :param rootrem: root to remove in filenames
+        :param return_results: return the results as well
+        :return: statistics text dump
+
+        .. versionchanged:: 1.11
+            Parameter *return_results* was added.
         """
-        return profile(fct, sort=sort, rootrem=rootrem)
+        return profile(fct, sort=sort, rootrem=rootrem,
+                       return_results=return_results)
 
     def read_file(self, filename, mode='r', encoding="utf-8"):
         """
@@ -532,6 +541,19 @@ class ExtTestCase(unittest.TestCase):
         for h in hs:
             logger.addHandler(h)  # pragma: no cover
         return res, logs
+
+    @staticmethod
+    def abs_path_join(filename, *args):
+        """
+        Returns an absolute and normalized path from this location.
+
+        :param filename: filename, the folder which contains it
+            is used as the base
+        :param args: list of subpaths to the previous path
+        :return: absolute and normalized path
+        """
+        dirname = os.path.join(os.path.dirname(filename), *args)
+        return os.path.normpath(os.path.abspath(dirname))
 
 
 def skipif_appveyor(msg):

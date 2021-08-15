@@ -1,0 +1,12 @@
+---
+engines:
+  pylint:
+    python_version: 3
+exclude_paths:
+  - "_doc"
+  - "bin"
+  - ".circleci"
+  - "*.css"
+  - "*.scss"
+  - "*.js"
+  - "**/data/*"
