@@ -29,10 +29,6 @@ python3_module_template
         :alt: MIT License
         :target: http://opensource.org/licenses/MIT
 
-    .. image:: https://requires.io/github/sdpython/python3_module_template/requirements.svg?branch=master
-         :target: https://requires.io/github/sdpython/python3_module_template/requirements/?branch=master
-         :alt: Requirements Status
-
     .. image:: https://codecov.io/github/sdpython/python3_module_template/coverage.svg?branch=master
         :target: https://codecov.io/github/sdpython/python3_module_template?branch=master
 
