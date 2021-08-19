@@ -3,13 +3,11 @@ sudo: true
 language: python
 matrix:
   include:
-  - python: 3.9.1
-    name: "Py.3.9.1-Sph.2.3"
-    env: sphinxconstraint=">=2.3"
+  - python: 3.9
 install: 
     - pip install -r requirements.txt
     - npm install
-    - pip install sphinx$sphinxconstraint
+    - pip install sphinx
     - pip install tkinterquickhelper --no-deps
     - export PYTHONPATH=src
 script:
