@@ -5,7 +5,7 @@ README
 .. only:: html
 
     .. image:: https://travis-ci.com/sdpython/mlstatpy.svg?branch=master
-        :target: https://travis-ci.com/sdpython/mlstatpy
+        :target: https://app.travis-ci.com/github/sdpython/mlstatpy
         :alt: Build status
 
     .. image:: https://ci.appveyor.com/api/projects/status/5env33qptorgshaq?svg=true

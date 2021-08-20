@@ -5,7 +5,7 @@ README
 ======
 
 .. image:: https://travis-ci.com/sdpython/code_beatrix.svg?branch=master
-    :target: https://travis-ci.com/sdpython/code_beatrix
+    :target: https://app.travis-ci.com/github/sdpython/code_beatrix
     :alt: Build status
 
 .. image:: https://badge.fury.io/py/code_beatrix.svg
