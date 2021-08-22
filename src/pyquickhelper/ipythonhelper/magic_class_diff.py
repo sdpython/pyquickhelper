@@ -177,7 +177,7 @@ class MagicDiff(MagicClassWithHelpers):
         args = self.get_args(line, parser)
 
         if args is not None:
-            _, aligned, final = edit_distance_text(
+            _, aligned, final = edit_distance_text(  # pylint: disable=W0632
                 args.c1, args.c2, threshold=args.threshold,
                 verbose=args.verbose)
             ht = diff2html(args.c1, args.c2, aligned,

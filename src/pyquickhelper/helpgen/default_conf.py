@@ -195,7 +195,6 @@ def get_epkg_dictionary():
         'RST': 'https://en.wikipedia.org/wiki/ReStructuredText',
         'scikit-learn': 'https://scikit-learn.org/',
         'SciTe': 'https://www.scintilla.org/SciTE.html',
-        'scikit-learn': 'https://scikit-learn.org/stable/',
         'sklearn': ('https://scikit-learn.org/stable/',
                     ('https://scikit-learn.org/stable/modules/generated/{0}.html', 1),
                     ('https://scikit-learn.org/stable/modules/generated/{0}.{1}.html', 2)),
@@ -266,7 +265,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      theme_path              theme path (sets ``html_theme_path``)
     @param      ext_locals              context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
     @param      add_extensions          additional extensions
-    @param      bootswatch_theme        for example, ``spacelab``, look at 
+    @param      bootswatch_theme        for example, ``spacelab``, look at
                                         `spacelab <https://bootswatch.com/spacelab/>`_
     @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <https://ryan-roemer.github.io/
                                         sphinx-bootstrap-theme/README.html>`_

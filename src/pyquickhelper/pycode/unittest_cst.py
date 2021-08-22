@@ -5,6 +5,7 @@
 import base64
 import json
 import lzma
+import pprint
 
 
 def compress_cst(data, length=70, as_text=False):
@@ -32,7 +33,7 @@ def compress_cst(data, length=70, as_text=False):
     pos = 0
     while pos < len(data64):
         if pos + length < len(data64):
-            bufs.append(data64[pos:pos+length])
+            bufs.append(data64[pos:pos + length])
             pos += length
         else:
             bufs.append(data64[pos:])
