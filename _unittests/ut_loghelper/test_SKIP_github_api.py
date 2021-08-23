@@ -24,10 +24,13 @@ class TestGitHub(unittest.TestCase):
         pr = call_github_api("scikit-learn", "scikit-learn", "pulls")
         self.assertIsInstance(pr, list)
         self.assertTrue(len(pr) > 0)
-        stats = call_github_api(
-            "scikit-learn", "scikit-learn", "stats/commit_activity")
-        self.assertIsInstance(stats, list)
-        self.assertTrue(len(stats) >= 0)
+        try:
+            stats = call_github_api(
+                "scikit-learn", "scikit-learn", "stats/commit_activity")
+            self.assertIsInstance(stats, list)
+            self.assertTrue(len(stats) >= 0)
+        except GitHubApiException as e:
+            self.assertIn("[202]", str(e))
         try:
             call_github_api("scikit-learn", "scikit-learn", "traffic/views")
             self.assertTrue(False)
