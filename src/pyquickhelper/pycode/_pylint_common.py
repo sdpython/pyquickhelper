@@ -82,7 +82,7 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'W0201', 'E0702', 'W1503', 'C0102', 'W0223',
                               'W0611', 'R1705', 'W0631', 'W0102', 'R0205',
                               'W0107', 'C0415', 'W1202', 'W0707', 'R1725',
-                              'R1732'),
+                              'R1732', 'W1514', 'C0208'),
                skip=["skip_' imported but unused",
                      "skip__' imported but unused",
                      "skip___' imported but unused",
