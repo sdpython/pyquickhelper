@@ -507,7 +507,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                                 nbrem = v.split("-")[-1]
                                 try:
                                     nbrem = int(nbrem)
-                                except ValueError as e:  # pragma: no cover
+                                except ValueError:  # pragma: no cover
                                     raise ValueError(
                                         "Unable to interpret '{0}'".format(v))
                             else:

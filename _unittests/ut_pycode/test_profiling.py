@@ -46,7 +46,8 @@ class TestProfiling(ExtTestCase):
 
         rootrem = os.path.normpath(os.path.abspath(
             os.path.join(os.path.dirname(rootfile), '..')))
-        ps, df = profile(simple, rootrem=rootrem, as_df=True)  # pylint: disable=W0632
+        ps, df = profile(simple, rootrem=rootrem,
+                         as_df=True)  # pylint: disable=W0632
         self.assertIsInstance(df, pandas.DataFrame)
         self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple2')
         self.assertNotEmpty(ps)
@@ -59,18 +60,22 @@ class TestProfiling(ExtTestCase):
                 df2rst(df)
             return df2rst(df)
 
-        ps, res = profile(simple, pyinst_format='text')  # pylint: disable=W0632
+        ps, res = profile(
+            simple, pyinst_format='text')  # pylint: disable=W0632
         self.assertIn('.py', res)
         self.assertNotEmpty(ps)
-        ps, res = profile(simple, pyinst_format='textu')  # pylint: disable=W0632
+        ps, res = profile(
+            simple, pyinst_format='textu')  # pylint: disable=W0632
         self.assertIn('Recorded', res)
         self.assertNotEmpty(ps)
-        ps, res = profile(simple, pyinst_format='html')  # pylint: disable=W0632
+        ps, res = profile(
+            simple, pyinst_format='html')  # pylint: disable=W0632
         self.assertIn("</script>", res)
         self.assertNotEmpty(ps)
         self.assertRaise(lambda: profile(
             simple, pyinst_format='htmlgg'), ValueError)
-        ps, res = profile(simple, pyinst_format='json')  # pylint: disable=W0632
+        ps, res = profile(
+            simple, pyinst_format='json')  # pylint: disable=W0632
         self.assertIn('"start_time"', res)
         self.assertNotEmpty(ps)
 

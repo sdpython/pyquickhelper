@@ -10,7 +10,7 @@ import pprint
 
 def compress_cst(data, length=70, as_text=False):
     """
-    Transform a huge constant into a sequence of compressed binary strings.
+    Transforms a huge constant into a sequence of compressed binary strings.
 
     :param data: data
     :param length: line length
@@ -45,7 +45,7 @@ def compress_cst(data, length=70, as_text=False):
 
 def decompress_cst(data):
     """
-    Transform a huge constant produced by function @see fn compress_cst
+    Transforms a huge constant produced by function @see fn compress_cst
     into the original value.
 
     :param data: data
