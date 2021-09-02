@@ -26,7 +26,8 @@ class FolderTransferFTPException(Exception):
 
 _text_extensions = {".ipynb", ".html", ".py", ".cpp", ".h", ".hpp", ".c",
                     ".cs", ".txt", ".csv", ".xml", ".css", ".js", ".r", ".doc",
-                    ".ind", ".buildinfo", ".rst", ".aux", ".out", ".log", ".cc"}
+                    ".ind", ".buildinfo", ".rst", ".aux", ".out", ".log", ".cc",
+                    '.tmpl'}
 
 
 def content_as_binary(filename):

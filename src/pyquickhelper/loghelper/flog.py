@@ -698,7 +698,7 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
                 fLOG("[loghelper.flog] downloading ", url)
 
             if (len(url) > 4 and
-                    url[-4].lower() in [".txt", ".csv", ".tsv", ".log"]):
+                    url[-4].lower() in [".txt", ".csv", ".tsv", ".log", '.tmpl']):
                 fLOG("[loghelper.flog] creating text file '{0}'".format(dest))
                 formatopen = "w"
             else:

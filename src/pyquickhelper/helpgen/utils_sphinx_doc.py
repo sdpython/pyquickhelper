@@ -130,7 +130,7 @@ def _private_process_one_file(
 
     if ext in {".jpeg", ".jpg", ".pyd", ".png", ".dat", ".dll", ".o",
                ".so", ".exe", ".enc", ".txt", ".gif", ".csv", '.pyx',
-               '*.mp3', '*.mp4'}:
+               '*.mp3', '*.mp4', '.tmpl'}:
         if ext in (".pyd", ".so"):
             # If the file is being executed, the copy might keep the properties of
             # the original (only Windows).
@@ -291,7 +291,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
 
     def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
                'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass',
-               'csv', 'tpl', 'jpg', 'jpeg', 'hpp', 'cc']
+               'csv', 'tpl', 'jpg', 'jpeg', 'hpp', 'cc', 'tmpl']
     deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
     if copy_add_ext is not None:
         res = ["(.+[.]%s$)" % e for e in copy_add_ext]
