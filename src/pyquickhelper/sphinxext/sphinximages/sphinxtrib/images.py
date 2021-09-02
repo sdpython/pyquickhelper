@@ -64,8 +64,8 @@ def directive_boolean(value):
     elif value.lower().strip() in ['no', '0', 0, 'false', 'none']:
         return False
     else:
-        raise ValueError(u"Please use on of: yes, true, no, false. "
-                         u"Do not use `{}` as boolean.".format(value))
+        raise ValueError("Please use on of: yes, true, no, false. "
+                         "Do not use `{}` as boolean.".format(value))
 
 
 def get_image_extension(uri):
