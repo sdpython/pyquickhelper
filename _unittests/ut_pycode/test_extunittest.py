@@ -228,7 +228,8 @@ class TestExtTestCase(ExtTestCase):
 
         rootrem = os.path.normpath(os.path.abspath(
             os.path.join(os.path.dirname(rootfile), '..')))
-        ps, res = self.profile(simple, rootrem=rootrem)  # pylint: disable=W0632
+        ps, res = self.profile(
+            simple, rootrem=rootrem)  # pylint: disable=W0632
         res = res.replace('\\', '/')
         self.assertIn('pyquickhelper/pandashelper/tblformat.py', res)
         self.assertNotEmpty(ps)

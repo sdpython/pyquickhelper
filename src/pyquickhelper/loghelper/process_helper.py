@@ -39,12 +39,12 @@ def reap_children(timeout=3, subset=None, fLOG=fLOG):
     if alive:
         # send SIGKILL
         for p in alive:
-            fLOG("process {} survived SIGTERM; trying SIGKILL" % p)
+            fLOG("process {} survived SIGTERM; trying SIGKILL".format(p))
             p.kill()
         _, alive = psutil.wait_procs(
             alive, timeout=timeout, callback=on_terminate)
         if alive:
             # give up
             for p in alive:
-                fLOG("process {} survived SIGKILL; giving up" % p)
+                fLOG("process {} survived SIGKILL; giving up".format(p))
     return killed
