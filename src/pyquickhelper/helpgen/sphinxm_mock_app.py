@@ -237,7 +237,7 @@ class MockSphinxApp:
 
             try:
                 self.app.add_source_parser(ext, parser)
-            except TypeError as e:
+            except TypeError:
                 # Sphinx==3.0.0
                 self.app.add_source_parser(parser)
             except ExtensionError as e:

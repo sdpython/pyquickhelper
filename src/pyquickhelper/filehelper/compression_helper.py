@@ -388,7 +388,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                         # You should use command line.
                         if file_zipf is None:
                             raise TypeError(
-                                "Cannot switch to command line unless zipf is a file.")
+                                "Cannot switch to command line unless zipf is a file.") from e
                         warnings.warn(
                             "[un7zip_files] '{0}' --> Unavailable format. Use command line.".format(zipf), UserWarning)
                         return un7zip_files(file_zipf, where_to=where_to, fLOG=fLOG, fvalid=fvalid,
