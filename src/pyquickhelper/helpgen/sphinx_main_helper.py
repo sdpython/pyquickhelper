@@ -486,7 +486,8 @@ def format_history(src, dest, format="basic"):
                             tag = 'issue'
                         spl = nline.split(':')
                         nb, doc = spl[0], ':'.join(spl[1:])
-                        res = "* :{0}:`{1}`: {2}".format(tag, nb.strip("#"), doc.strip(' '))
+                        res = "* :{0}:`{1}`: {2}".format(
+                            tag, nb.strip("#"), doc.strip(' '))
                         if new_lines[-1].startswith("==="):
                             new_lines.append("")
                         new_lines.append(res)
