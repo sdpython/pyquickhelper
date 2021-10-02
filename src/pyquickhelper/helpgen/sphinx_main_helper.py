@@ -445,7 +445,6 @@ def format_history(src, dest, format="basic"):
 
     new_lines = []
     if format == "release":
-
         tag = None
         for i in range(0, len(lines)):
             line = lines[i].rstrip("\r\t\n ")
@@ -487,12 +486,18 @@ def format_history(src, dest, format="basic"):
                         if line.startswith(".. _"):
                             new_lines.append("")
     elif format == "basic":
-        reg = re.compile("(.*?)`([0-9]+)`:(.*?)[(]([-0-9]{10})[)]")
+        reg = re.compile("(.*?)((`([0-9]+)`:)|([#]([0-9]+):))(.*?)[(]([-0-9]{10})[)]")
         for line in lines:
             match = reg.search(line)
             if match:
                 gr = match.groups()
-                new_line = "{0}:issue:`{1}`:{2}({3})".format(*gr)
+                issue = gr[2]
+                if issue is None or len(issue) == 0:
+                    issue = gr[5]
+                desc = gr[6].strip()
+                date = gr[7].strip()
+                new_line = "{0}:issue:`{1}`: {2} ({3})".format(
+                    gr[0], issue, desc, date)
                 new_lines.append(new_line)
             else:
                 new_lines.append(line.strip("\n\r"))

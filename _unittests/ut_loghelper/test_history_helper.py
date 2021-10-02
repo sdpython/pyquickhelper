@@ -102,7 +102,7 @@ class TestHistoryHelper(ExtTestCase):
         self.assertGreater(nb, 1)
 
         output = compile_history(history)
-        self.assertIn('* `139`:', output)
+        self.assertIn('* #139:', output)
         nb = 0
         for h in history:
             rel = h['release']

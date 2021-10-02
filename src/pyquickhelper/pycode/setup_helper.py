@@ -339,9 +339,10 @@ def process_standard_options_for_setup(
         if existing_history is not None:
             print('[history] existing ', existing_history)
         print('[history] ', dest)
-        build_history_from_setup(dest, owner=github_owner, module=project_var_name,
-                                 existing_history=existing_history,
-                                 skip_issues=skip_issues, fLOG=fLOG)
+        build_history_from_setup(
+            dest, owner=github_owner, module=project_var_name,
+            existing_history=existing_history,
+            skip_issues=skip_issues, fLOG=fLOG)
         return True
 
     elif "write_version" in argv:
