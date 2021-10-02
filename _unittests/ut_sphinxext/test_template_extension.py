@@ -16,6 +16,16 @@ from pyquickhelper.sphinxext import python_link_doc
 
 class TestTemplateExtension(unittest.TestCase):
 
+    def test_python_link_doc(self):
+        link = python_link_doc("os")
+        self.assertEqual(
+            link,
+            "`os <https://docs.python.org/3/library/os.html>`_")
+        link = python_link_doc("os", "getcwd")
+        self.assertEqual(
+            link,
+            "`os.getcwd <https://docs.python.org/3/library/os.html#os.getcwd>`_")
+
     def test_tpl_inline(self):
         fLOG(
             __file__,

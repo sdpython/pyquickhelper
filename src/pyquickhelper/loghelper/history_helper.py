@@ -291,7 +291,7 @@ def extract_issue_from_history(filename_or_stream):
 
         * `133`: add a collapsible container, adapt it for runpython (2018-04-22)
 
-    or 
+    or
 
         * #133: add a collapsible container, adapt it for runpython (2018-04-22)
 

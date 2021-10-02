@@ -92,7 +92,7 @@ class MagicCrypt(MagicClassWithHelpers):
 
             return encrypt_stream(key=password, filename=source, out_filename=dest,
                                   chunksize=os.stat(source).st_size * 2 + 1)
-        return None
+        return None  # pragma: no cover
 
     @line_magic
     def decrypt_file(self, line):
@@ -128,7 +128,7 @@ class MagicCrypt(MagicClassWithHelpers):
 
             return decrypt_stream(key=password, filename=source, out_filename=dest,
                                   chunksize=os.stat(source).st_size * 2 + 1)
-        return None
+        return None  # pragma: no cover
 
 
 def register_file_magics(ip=None):  # pragma: no cover

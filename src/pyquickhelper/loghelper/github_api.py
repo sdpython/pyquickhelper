@@ -20,7 +20,7 @@ class GitHubApiException(Exception):
         Exception.__init__(
             self,
             "response={0}\nurl='{1}'\ntext='{2}'\nstatus={3}{4}".format(
-            response, url, response.text, response.status_code, msg))
+                response, url, response.text, response.status_code, msg))
 
 
 def call_github_api(owner, repo, ask, auth=None, headers=None):

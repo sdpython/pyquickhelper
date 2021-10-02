@@ -39,7 +39,7 @@ def compress_cst(data, length=70, as_text=False):
             bufs.append(data64[pos:])
             pos = len(data64)
     if as_text:
-        return pprint.pformat(bufs)
+        return pprint.pformat(bufs)  # pragma: no cover
     return bufs
 
 

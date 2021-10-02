@@ -67,9 +67,9 @@ class MagicCompress(MagicClassWithHelpers):
                 return zip_files(dest, files)
             if format == "gzip":
                 return gzip_files(dest, files)
-            if format == "7z":
+            if format == "7z":  # pragma: no cover
                 return zip7_files(dest, files)
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Unexpected format: '{0}' from file '{1}'?".format(
                     format, dest))
         return None

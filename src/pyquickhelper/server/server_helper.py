@@ -22,7 +22,7 @@ def get_jenkins_mappings(root, loc="dist"):
     if not isinstance(root, list):
         roots = [root]
     else:
-        roots = root
+        roots = root  # pragma: no cover
 
     maps = {}
     for ro in roots:

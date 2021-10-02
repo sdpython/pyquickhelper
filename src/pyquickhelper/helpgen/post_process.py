@@ -104,7 +104,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
                                 for k, v in sorted(nblinks.items()))
                 extension = "You should add this link into the documentation " \
                             "configuration file in variable 'nblinks'."
-                raise HelpGenException(
+                raise HelpGenException(  # pragma: no cover
                     "A reference was not found: '{0}' - '{1}' "
                     "format={2}, nblinks=\n{3}\n{4}".format(
                         anc, url, format, mes, extension))
@@ -360,7 +360,8 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                     code = "".join(
                         (_[4:] if _.startswith("    ") else _) for _ in lines[memopos + 1:pos])
                     if len(code) == 0:
-                        fLOG("[post_process_rst_output] EMPTY-SECTION in ", file)
+                        fLOG(  # pragma: no cover
+                            "[post_process_rst_output] EMPTY-SECTION in ", file)
                     else:
                         try:
                             cmp = compile(code, "", "exec")

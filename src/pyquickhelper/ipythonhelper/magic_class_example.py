@@ -88,7 +88,7 @@ class MagicClassExample(MagicClassWithHelpers):
             if nop or format == "html":
                 return docstring2html(obj, format=format)
             print(docstring2html(obj, format=format))
-        return None
+        return None  # pragma: no cover
 
 
 def register_file_magics(ip=None):  # pragma: no cover

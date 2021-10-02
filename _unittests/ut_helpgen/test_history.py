@@ -33,7 +33,7 @@ class TestPaths(unittest.TestCase):
                 **Bugfix**
 
                 * `46`: update to Sphinx 1.6
-                * `54`: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_
+                * #54: fix searchbox for `sphinx_rtd_theme <https://github.com/rtfd/sphinx_rtd_theme>`_
 
                 **Features**
 
@@ -68,7 +68,7 @@ class TestPaths(unittest.TestCase):
                 * :release:`1.4.2 <2016-09-18>`
                 """.replace("                ", "")
 
-        self.assertEqual(content.strip(" \r\n\t"), expect.strip(" \r\n\t"))
+        self.assertEqual(expect.strip(" \r\n\t"), content.strip(" \r\n\t"))
 
     def test_format_history_basic(self):
         fLOG(
@@ -175,4 +175,5 @@ class TestPaths(unittest.TestCase):
 
 
 if __name__ == "__main__":
+    TestPaths().test_format_history_release()
     unittest.main()

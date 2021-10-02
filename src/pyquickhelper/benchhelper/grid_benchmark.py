@@ -177,7 +177,7 @@ class GridBenchMark(BenchMark):
 
             appe["_btry"] = metrics["_btry"]
             if "_i" in metrics:
-                del metrics["_i"]
+                del metrics["_i"]  # pragma: no cover
             results.append((metrics, appe))
 
         return results

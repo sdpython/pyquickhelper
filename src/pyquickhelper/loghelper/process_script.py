@@ -50,7 +50,7 @@ def execute_script(code, folder=None, filename="_temp_custom_run_script_.py", ch
             raise RuntimeError("data cannot be empty.\\n{}".format(pprint.pformat(loc)))
         """)
     else:
-        checkc = ""
+        checkc = ""  # pragma: no cover
     addition = addition.replace("__CHECK__", checkc)
     new_code = "\n".join([code, "", addition])
     if folder is None:
@@ -92,7 +92,7 @@ def execute_script(code, folder=None, filename="_temp_custom_run_script_.py", ch
                 line for line in lines if "Warning" not in line and line and line[0] != ' ']
             errs2 = "\n".join(lines).strip("\r\n ")
             if errs2:
-                return {'ERROR': errs}
+                return {'ERROR': errs}  # pragma: no cover
         with open(data, "rb") as f:
             loc = pickle.load(f)
         return loc
@@ -122,7 +122,7 @@ def execute_script_get_local_variables(script, folder=None,
         with Pool(1, None, None, None) as p:
             res = p.map(execute_script, [content])
         if len(res) != 1:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Something went wrong with content\n{}".format(content))
         return res[0]
     return execute_script(content, folder, filename, check=check)
@@ -140,7 +140,8 @@ def dictionary_as_class(dico):
         def __init__(self, dico):
             for k, v in dico.items():
                 if not isinstance(k, str):
-                    raise TypeError("Key '{}' must be a string.".format(k))
+                    raise TypeError(  # pragma: no cover
+                        "Key '{}' must be a string.".format(k))
                 setattr(self, k, v)
 
         def __str__(self):

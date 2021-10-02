@@ -7,7 +7,7 @@ import sys
 try:
     import urllib.request as urllib_request
     from urllib.error import HTTPError
-except ImportError:
+except ImportError:  # pragma: no cover
     import urllib2 as urllib_request
     from urllib2 import HTTPError
 
@@ -32,20 +32,20 @@ def get_url_content(url, use_mozilla=False):
             req = urllib_request.Request(
                 url, headers={'User-agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)' if sys.platform.startswith("win") else 'Mozilla/5.0'})
             u = urllib_request.urlopen(req)
-        except HTTPError as e:
+        except HTTPError as e:  # pragma: no cover
             raise CannotDownloadException(
                 "Unable to download from url '{0}'".format(url)) from e
         text = u.read()
         u.close()
         text = text.decode("utf8")
         return text
-    else:
-        try:
-            u = urllib_request.urlopen(url)
-        except HTTPError as e:
-            raise CannotDownloadException(
-                "Unable to download from url '{0}'".format(url)) from e
-        text = u.read()
-        u.close()
-        text = text.decode("utf8")
-        return text
+
+    try:
+        u = urllib_request.urlopen(url)
+    except HTTPError as e:  # pragma: no cover
+        raise CannotDownloadException(
+            "Unable to download from url '{0}'".format(url)) from e
+    text = u.read()
+    u.close()
+    text = text.decode("utf8")
+    return text

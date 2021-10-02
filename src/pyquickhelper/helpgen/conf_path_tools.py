@@ -20,7 +20,7 @@ def find_in_PATH(prog):
     for p in path.split(sep):
         f = os.path.join(p, prog)
         if os.path.exists(f):
-            return p
+            return p  # pragma: no cover
     return None
 
 
@@ -143,7 +143,7 @@ def custom_ensuredir(path):
         # 0 for Jython/Win32
         EEXIST = getattr(errno, 'EEXIST', 0)
         if err.errno not in [0, EEXIST]:
-            raise
+            raise  # pragma: no cover
 
 
 def find_dvipng_path(exc=True):

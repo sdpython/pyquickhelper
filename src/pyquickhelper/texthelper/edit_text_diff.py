@@ -52,7 +52,7 @@ def edit_distance_string(s1, s2, cmp_cost=1.):
                 c = dist[i - 1, j - 1] + d
                 p = 3
             if p == 0:
-                raise RuntimeError(
+                raise RuntimeError(  # pragma: no cover
                     "Unexpected value for p=%d at position=%r." % (p, (i, j)))
 
             dist[i, j] = c
@@ -72,7 +72,7 @@ def edit_distance_string(s1, s2, cmp_cost=1.):
         elif p == 1:
             i -= 1
         else:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Unexpected value for p=%d at position=%r." % (p, (i, j)))
         p = pred[i, j]
     return d, list(reversed(equals))
@@ -170,8 +170,8 @@ def edit_distance_text(rows1, rows2, strategy="full",
     pred[0, 0] = -1
 
     if verbose:
-        from tqdm import tqdm
-        loop = tqdm(range(1, n1))
+        from tqdm import tqdm  # pragma: no cover
+        loop = tqdm(range(1, n1))  # pragma: no cover
     else:
         loop = range(1, n1)
     for i in loop:
@@ -197,10 +197,7 @@ def edit_distance_text(rows1, rows2, strategy="full",
                 c = d
                 p = 3
             if p == 0:
-                print(i, j)
-                print(dist)
-                print(pred)
-                raise RuntimeError(
+                raise RuntimeError(  # pragma: no cover
                     "Unexpected value for p=%d at position=%r, c=%d, "
                     "dist[i, j]=%d, dist=\n%r." % (
                         p, (i, j), c, dist[i, j],
@@ -230,7 +227,7 @@ def edit_distance_text(rows1, rows2, strategy="full",
         elif p == 1:
             i -= 1
         else:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Unexpected value for p=%d at position=%r." % (p, (i, j)))
         p = pred[i, j]
 
@@ -354,7 +351,7 @@ def diff2html(rows1, rows2, equals, aligned, two_columns=False):
                 l2 = [spanb + _ + span_ for _ in s2]
                 for i, j in al[1]:
                     if i is None or j is None:
-                        continue
+                        continue  # pragma: no cover
                     if s1[i] == s2[j]:
                         l1[i] = s1[i]
                         l2[j] = s2[j]

@@ -86,7 +86,7 @@ class MagicDiff(MagicClassWithHelpers):
                 inline_view=args.inline)
             display_html(html)
             return js
-        return None
+        return None  # pragma: no cover
 
     @staticmethod
     def strdiff_parser():
@@ -121,7 +121,7 @@ class MagicDiff(MagicClassWithHelpers):
         if args is not None:
             html = html_diffs(args.s1, args.s2)
             return HTML(html)
-        return None
+        return None  # pragma: no cover
 
     @line_magic
     def difftext(self, line):
@@ -183,7 +183,7 @@ class MagicDiff(MagicClassWithHelpers):
             ht = diff2html(args.c1, args.c2, aligned,
                            final, two_columns=args.two)
             return HTML(ht)
-        return None
+        return None  # pragma: no cover
 
 
 def register_file_magics(ip=None):  # pragma: no cover

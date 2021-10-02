@@ -43,12 +43,12 @@ def get_env_state_info(self):
     elif hasattr(self.state.document.settings, "env"):
         env = self.state.document.settings.env
     else:
-        env = None
+        env = None  # pragma: no cover
 
     reporter = self.state.document.reporter
     try:
         docname, lineno = reporter.get_source_and_line(self.lineno)
-    except AttributeError:
+    except AttributeError:  # pragma: no cover
         docname = lineno = None
 
     if docname is not None:

@@ -10,5 +10,6 @@ def find_custom_latex_processing(name):
     Determines the corresponding post processing function
     associated to name.
     """
-    raise ValueError(
-        "Unable to find any post processing function associated to '{0}'".format(name))
+    raise ValueError(  # pragma: no cover
+        "Unable to find any post processing function associated "
+        "to '{0}'".format(name))

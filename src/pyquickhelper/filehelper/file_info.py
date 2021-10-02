@@ -19,7 +19,8 @@ def convert_st_date_to_datetime(t):
     if isinstance(t, str):
         if "." in t:
             return datetime.datetime.strptime(t, "%Y-%m-%d %H:%M:%S.%f")
-        return datetime.datetime.strptime(t, "%Y-%m-%d %H:%M:%S")
+        return datetime.datetime.strptime(  # pragma: no cover
+            t, "%Y-%m-%d %H:%M:%S")
     return datetime.datetime.fromtimestamp(t)
 
 

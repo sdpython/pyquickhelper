@@ -296,7 +296,7 @@ def create_visual_diff_through_html_files(file1, file2, encoding="utf8", page=No
     if page is not None:
         with open(page, "w", encoding="utf8") as f:
             f.write(diff)
-    if browser:
+    if browser:  # pragma: no cover
         if page is None:
             raise AttributeError("browser is True, page must be True")
         import webbrowser
