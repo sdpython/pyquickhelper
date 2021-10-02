@@ -29,7 +29,7 @@ def getstate(obj, recursive=True, type_stop=None, type_stack=None, done=None):
     if numpy.isscalar(obj):
         return obj
     if isinstance(obj, type_stop):
-        return obj
+        return obj  # pragma: no cover
 
     if type_stack is None:
         type_stack = [type(obj)]
@@ -67,11 +67,11 @@ def getstate(obj, recursive=True, type_stop=None, type_stack=None, done=None):
     except AttributeError as e:
         try:
             state = obj.__dict__.copy()
-        except AttributeError as e:
+        except AttributeError as e:  # pragma: no cover
             raise NotImplementedError(
                 "Unable to retrieve state of object %r, type_stack=%r."
                 "" % (type(obj), ", ".join(map(str, type_stack)))) from e
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise NotImplementedError(
                 "Unable to retrieve state of object %r, type_stack=%r."
                 "" % (type(obj), ", ".join(map(str, type_stack)))) from e
@@ -81,6 +81,6 @@ def getstate(obj, recursive=True, type_stop=None, type_stack=None, done=None):
             "" % (type(obj), ", ".join(map(str, type_stack)))) from e
 
     if not recursive:
-        return state
+        return state  # pragma: no cover
     return getstate(state, recursive=True, type_stop=type_stop,
                     type_stack=type_stack, done=done)

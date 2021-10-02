@@ -26,7 +26,7 @@ def validate_file_for_help(filename, fexclude=lambda f: False):
     @return                     boolean
     """
     if fexclude is not None and fexclude(filename):
-        return False
+        return False  # pragma: no cover
 
     if filename.endswith(".pyd") or filename.endswith(".so"):
         return True

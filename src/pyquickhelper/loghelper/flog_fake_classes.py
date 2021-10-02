@@ -84,7 +84,7 @@ class LogFileStream:
         creates a logger
         """
         if filename is None:
-            filename = "temp_log.txt"
+            filename = "temp_log.txt"  # pragma: no cover
         self.pqlogger = logging.getLogger('logger.pyquickhelper')
         self.pqlogger.setLevel(logging.INFO)
         handler = logging.handlers.RotatingFileHandler(filename)

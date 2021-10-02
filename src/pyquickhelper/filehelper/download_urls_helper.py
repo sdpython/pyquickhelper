@@ -51,7 +51,8 @@ def download_urls_in_folder_content(folder, pattern=".+[.]((py)|(ipynb))", neg_p
         if len(fall) == 0:
             continue
         if fLOG is not None:
-            fLOG("[download_urls_in_folder_content] explore '{}'".format(obj))
+            fLOG(  # pragma: no cover
+                "[download_urls_in_folder_content] explore '{}'".format(obj))
         urls = [f[0] for f in fall]
         r = get_urls_content_timeout(urls, folder=folder_dest, timeout=timeout,
                                      raise_exception=raise_exception, chunk=chunk,

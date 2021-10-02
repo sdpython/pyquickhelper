@@ -79,7 +79,7 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
             dest = os.path.join(temp, name_)
             dest_dir = os.path.dirname(dest)
             if not os.path.exists(dest_dir):
-                os.mkdir(dest_dir)
+                os.mkdir(dest_dir)  # pragma: no cover
             src_file = os.path.join(doc, name_)
             fLOG("[a_test_notebook_runner] copy '{0}' to '{1}'.".format(
                 src_file, dest_dir))
@@ -102,7 +102,7 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
         base = [jyquickhelper, pyquickhelper, thismodule]
 
     if modules:
-        base.extend(modules)
+        base.extend(modules)  # pragma: no cover
     add_path = pyq_get_additional_paths(base)
     if filter_name:
         keepnote = [_ for _ in keepnote if filter_name(_)]

@@ -130,10 +130,10 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
                 return [prb], [msg]
 
     if len(networks) == 0:
-        msg = inliner.reporter.error(
+        msg = inliner.reporter.error(  # pragma: no cover
             "no specified network from {0}".format(rawtext), line=lineno)
-        prb = inliner.problematic(rawtext, rawtext, msg)
-        return [prb], [msg]
+        prb = inliner.problematic(rawtext, rawtext, msg)  # pragma: no cover
+        return [prb], [msg]  # pragma: no cover
 
     # ref = inliner.document.settings.rfc_base_url + inliner.rfc_url % rfcnum
     # set_classes(options)
@@ -223,7 +223,7 @@ def depart_sharenet_node(self, node):
 
     It does only html for the time being.
     """
-    pass
+    pass  # pragma: no cover
 
 
 def visit_sharenet_node_rst(self, node):

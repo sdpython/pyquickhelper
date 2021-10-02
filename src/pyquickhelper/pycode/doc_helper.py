@@ -36,7 +36,7 @@ def validate_urls(urls):
             with urlopen(u, timeout=10) as f:
                 content = f.read(10)
             if len(content) != 10:
-                issue.append((u, "Cannot download"))
+                issue.append((u, "Cannot download"))  # pragma: no cover
         except Exception as e:
             issue.append((u, e))
     return issue

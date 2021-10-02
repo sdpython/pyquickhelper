@@ -101,7 +101,8 @@ class ExtTestCase(unittest.TestCase):
         Checks that *name* does not exist.
         """
         if os.path.exists(name):
-            raise FileNotFoundError("Able to find '{0}'.".format(name))
+            raise FileNotFoundError(  # pragma: no cover
+                "Able to find '{0}'.".format(name))
 
     def assertEqualDataFrame(self, d1, d2, **kwargs):
         """
@@ -719,7 +720,7 @@ def assert_almost_equal_detailed(expected, value, **kwargs):
         assert_almost_equal(expected, value, **kwargs)
     except AssertionError as e:
         if expected.shape[0] != value.shape[0]:
-            raise e
+            raise e  # pragma: no cover
         rows = ['INNER EXCEPTION:', str(e), '------', 'ROWS BY ROWS']
         for i, (r1, r2) in enumerate(zip(expected, value)):
             try:
@@ -729,5 +730,5 @@ def assert_almost_equal_detailed(expected, value, **kwargs):
                 rows.append("ISSUE WITH ROW {}/{}:0 {}".format(
                     i, expected.shape[0], str(e)))
                 if len(rows) > 10:
-                    break
+                    break  # pragma: no cover
         raise AssertionError("\n".join(rows))

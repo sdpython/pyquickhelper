@@ -105,7 +105,7 @@ def sphinx_rst(input="", writer="html", keep_warnings=False,
          os.path.exists(input)):
         content = read_content_ufs(input)
     else:
-        content = input
+        content = input  # pragma: no cover
     if directives:
         raise NotImplementedError(
             "Cannot specify directives yet.")  # pragma: no cover

@@ -55,8 +55,11 @@ class NbRef(BlocRef):
             env = self.state.document.settings.env if hasattr(
                 self.state.document.settings, "env") else None
             docname = None if env is None else env.docname
-            raise KeyError("unable to find 'title' in node {0}\n  File \"{1}\", line {2}\nkeys: {3}".format(
-                str(self.__class__), docname, lineno, list(self.options.keys())))
+            raise KeyError(  # pragma: no cover
+                "Unable to find 'title' in node {0}\n  File \"{1}\", "
+                "line {2}\nkeys: {3}".format(
+                    str(self.__class__), docname, lineno,
+                    list(self.options.keys())))
         title = self.options['title']
         if "tag" not in self.options:
             self.options["tag"] = "nb"

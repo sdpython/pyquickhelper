@@ -17,9 +17,10 @@ class GitHubApiException(Exception):
         msg = ['%s=%r' % (k, v) for k, v in sorted(kwargs.items())]
         if msg:
             msg = "\n" + "\n".join(msg)
-        Exception.__init__(self,
-                           "response={0}\nurl={1}\ntext={2}\nstatus={3}{4}".format(
-                               response, url, response.text, response.status_code, msg))
+        Exception.__init__(
+            self,
+            "response={0}\nurl='{1}'\ntext='{2}'\nstatus={3}{4}".format(
+                response, url, response.text, response.status_code, msg))
 
 
 def call_github_api(owner, repo, ask, auth=None, headers=None):
@@ -53,6 +54,10 @@ def call_github_api(owner, repo, ask, auth=None, headers=None):
     """
     url = 'https://api.github.com/repos/{0}/{1}/{2}'.format(
         owner, repo, ask.strip('/'))
+    if '...' in url:
+        raise ValueError(
+            "Unexpected url=%r, owner=%r, auth=%r, repo=%r." % (
+                url, owner, auth, repo))
     response = requests.get(url, auth=auth, headers=headers)
     if response.status_code != 200:
         raise GitHubApiException(response, url, owner=owner, repo=repo,

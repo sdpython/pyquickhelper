@@ -52,7 +52,7 @@ def init(path=None, filename=None, create=True, path_add=None):
     This function is also called when LogPath is specified while calling function fLOG.
     """
     if path_add is None:
-        path_add = []
+        path_add = []  # pragma: no cover
     if path is None:
         path = flog_static.store_log_values["__log_path"]
 
@@ -94,9 +94,9 @@ def init(path=None, filename=None, create=True, path_add=None):
 
 def GetSepLine():
     """
-    return always ``\\n``
+    Always returns ``\\n``
     """
-    return "\n"  # previous value: flog_static.store_log_values ["__log_file_sep"]
+    return "\n"  # pragma: no cover
 
 
 def GetPath():
@@ -221,7 +221,7 @@ def fLOG(*args, **kwargs):
         if outstream is not None:
             outstream.write(s + '\n')
         else:
-            print(s)
+            print(s)  # pragma: no cover
 
     if "OutputPrint" in kwargs:
         Print(kwargs["OutputPrint"])
@@ -787,7 +787,7 @@ def get_prefix():
 
 def removedirs(folder, silent=False, use_command_line=False):
     """
-    remove all files and folder in folder
+    Removes all files and folders in *folder*.
 
     @param      folder              folder
     @param      silent              silent mode or not
@@ -808,52 +808,53 @@ def removedirs(folder, silent=False, use_command_line=False):
         if len(err) > 0:  # pragma: no cover
             raise Exception("Unable to remove '{0}'\n{1}".format(folder, err))
         return out
-    else:
-        file, rep = [], []
-        for r, d, f in os.walk(folder):
-            for a in d:
-                rep.append(os.path.join(r, a))
-            for a in f:
-                file.append(os.path.join(r, a))
-        impos = []
-        file.sort()
-        rep.sort(reverse=True)
-        for f in file:
-            try:
-                if os.path.exists(f):
-                    os.remove(f)
-            except Exception as e:  # pragma: no cover
-                typstr = str
-                fLOG(
-                    "Unable to remove file '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
-                if silent:
-                    impos.append(f)
-                else:
-                    raise
-        for f in rep:
-            try:
-                if os.path.exists(f):
-                    os.removedirs(f)
-            except Exception as e:  # pragma: no cover
-                typstr = str
-                fLOG(
-                    "Unable to remove folder '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
-                if silent:
-                    impos.append(f)
-                else:
-                    raise
 
-        if os.path.exists(folder):
-            try:
-                os.rmdir(folder)
-            except Exception as e:  # pragma: no cover
-                impos.append(folder)
-        return impos
+    file, rep = [], []
+    for r, d, f in os.walk(folder):
+        for a in d:
+            rep.append(os.path.join(r, a))
+        for a in f:
+            file.append(os.path.join(r, a))
+    impos = []
+    file.sort()
+    rep.sort(reverse=True)
+    for f in file:
+        try:
+            if os.path.exists(f):
+                os.remove(f)
+        except Exception as e:  # pragma: no cover
+            typstr = str
+            fLOG(
+                "Unable to remove file '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
+            if silent:
+                impos.append(f)
+            else:
+                raise
+    for f in rep:
+        try:
+            if os.path.exists(f):
+                os.removedirs(f)
+        except Exception as e:  # pragma: no cover
+            typstr = str
+            fLOG(
+                "Unable to remove folder '{0}' --- {1}".format(f, typstr(e).replace("\n", " ")))
+            if silent:
+                impos.append(f)
+            else:
+                raise
+
+    if os.path.exists(folder):
+        try:
+            os.rmdir(folder)
+        except Exception as e:  # pragma: no cover
+            impos.append(folder)
+    return impos
 
 
 def guess_type_value(x, none=None):
     """
-    guess the type of a value
+    Guessees the type of a value.
+
     @param      x           type
     @param      none        if True and all values are empty, return None
     @return                 type
@@ -864,25 +865,22 @@ def guess_type_value(x, none=None):
         int(x)
         if x[0] == '0' and len(x) > 1:
             return str
-        else:
-            return int if len(x) < 9 else str
+        return int if len(x) < 9 else str
     except ValueError:
         try:
             x = float(x)
-            return float
+            return float  # pragma: no cover
         except ValueError:
             if none:
                 if x is None:
-                    return None
+                    return None  # pragma: no cover
                 try:
                     if len(x) > 0:
-                        return str
-                    else:
-                        return None
+                        return str  # pragma: no cover
+                    return None
                 except Exception:  # pragma: no cover
                     return None
-            else:
-                return str
+            return str
 
 
 def guess_type_value_type(none=True):

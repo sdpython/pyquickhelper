@@ -168,7 +168,7 @@ History
 {{ release['release'] }} - {{ release['date'].strftime("%Y-%m-%d") }} - {{ '%1.2fMb' % (release['size'] * 2**(-20)) }}
 {{ '=' * (len(release['release']) + 22) }}
 {% for issue in release['issues'] %}
-* `{{issue['number']}}`: {{issue['title']}} ({{issue['date'].strftime("%Y-%m-%d")}}){% endfor %}
+* #{{issue['number']}}: {{issue['title']}} ({{issue['date'].strftime("%Y-%m-%d")}}){% endfor %}
 {% endfor %}
 """
 
@@ -291,19 +291,25 @@ def extract_issue_from_history(filename_or_stream):
 
         * `133`: add a collapsible container, adapt it for runpython (2018-04-22)
 
+    or
+
+        * #133: add a collapsible container, adapt it for runpython (2018-04-22)
+
     @param      filename        stream or filename
     @return                     ancient history, dictionary *{issue: (date, description)}*
     """
     with open_stream_file(filename_or_stream, mode='r', encoding='utf-8') as f:
         lines = f.readlines()
-    reg = re.compile('`([0-9]+)`:(.*?)[(]([-0-9]{10})')
+    reg = re.compile('((`([0-9]+)`:)|([#]([0-9]+):))(.*?)[(]([-0-9]{10})')
     res = {}
     for line in lines:
         match = reg.search(line)
         if match:
             gr = match.groups()
-            issue = gr[0]
-            desc = gr[1].strip()
-            date = datetime.strptime(gr[2], '%Y-%m-%d')
+            issue = gr[2]
+            if issue is None or len(issue) == 0:
+                issue = gr[4]
+            desc = gr[5].strip()
+            date = datetime.strptime(gr[6], '%Y-%m-%d')
             res[int(issue)] = (date, desc)
     return res

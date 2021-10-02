@@ -464,4 +464,4 @@ def call_gui_function(dfct, fLOG=print, utest=False):
         win = main_loop_functions(dfct, title="{0} command line".format(modname),
                                   mainloop=not utest)
         return win
-    return None
+    return None  # pragma: no cover

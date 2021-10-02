@@ -49,7 +49,6 @@ class TransferAPIFile(TransferAPI):
         if os.path.exists(src):
             with open(src, "rb") as f:
                 return f.read()
-        elif exc:
-            raise FileNotFoundError(path)
-        else:
-            return None
+        if exc:
+            raise FileNotFoundError(path)  # pragma: no cover
+        return None

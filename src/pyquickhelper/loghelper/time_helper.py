@@ -79,7 +79,8 @@ def repeat_script_execution(script, every_second=1, stop_after_second=5,
                                     *stop_after_second* is not None
     """
     if not os.path.exists(script):
-        raise FileNotFoundError("Unable to find '{}'.".format(script))
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find '{}'.".format(script))
 
     iter = [0]
 
@@ -90,7 +91,7 @@ def repeat_script_execution(script, every_second=1, stop_after_second=5,
                 f.write('[repeat_script_execution] iter={}\n'.format(iter[0]))
                 f.write(out)
         if err and errfile:
-            with open(errfile, "a", encoding="utf-8") as f:
+            with open(errfile, "a", encoding="utf-8") as f:  # pragma: no cover
                 f.write('[repeat_script_execution] iter={}\n'.format(iter[0]))
                 f.write(err)
         iter[0] += 1

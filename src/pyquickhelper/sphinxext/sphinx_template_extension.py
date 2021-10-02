@@ -93,7 +93,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     spl = text.split(",")
     template_name = spl[0]
     if len(spl) == 1:
-        context = ""
+        context = ""  # pragma: no cover
     else:
         context = ",".join(spl[1:])
 
@@ -133,11 +133,11 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
                        language=inliner.language)
     processed, messages = inliner.parse(res, lineno, memo, node)
     if len(messages) > 0:
-        msg = inliner.reporter.error(
+        msg = inliner.reporter.error(  # pragma: no cover
             "unable to interpret '{0}', messages={1}".format(
                 text, ", ".join(str(_) for _ in messages)), line=lineno)
-        prb = inliner.problematic(rawtext, rawtext, msg)
-        return [prb], [msg]
+        prb = inliner.problematic(rawtext, rawtext, msg)  # pragma: no cover
+        return [prb], [msg]  # pragma: no cover
 
     node += processed
     return [node], []

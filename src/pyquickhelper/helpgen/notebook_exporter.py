@@ -40,7 +40,7 @@ def process_raw_html(source, extra_args=None):
             :local:
     """
     if source is None:
-        return source
+        return source  # pragma: no cover
     if 'var update_menu = function() {' in source:
         return "\n\n.. contents::\n    :local:\n\n"
     return "\n\n.. raw:: html\n\n" + indent(source, prefix='    ')

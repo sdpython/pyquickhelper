@@ -79,7 +79,7 @@ class TransferAPI:
         @param      path        path to remove location
         @return                 boolean
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def retrieve(self, path, exc=True):
         """
@@ -89,7 +89,7 @@ class TransferAPI:
         @param      exc         keep exception
         @return                 data
         """
-        raise NotImplementedError()
+        raise NotImplementedError()  # pragma: no cover
 
     def retrieve_mapping(self, decrypt):
         """
@@ -101,8 +101,7 @@ class TransferAPI:
         m = self.retrieve("__mapping__", exc=False)
         if m is None:
             return {}
-        else:
-            return TransferAPI.bytes2mapping(m)
+        return TransferAPI.bytes2mapping(m)
 
     def transfer_mapping(self, mapping, encrypt, filename=None):
         """

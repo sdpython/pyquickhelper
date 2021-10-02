@@ -47,7 +47,7 @@ def get_exporter(format, add_writer=False):
         exp = LatexExporter
     else:
         form = "slides, pdf, latex, markdown, html, rst, python, notebook, template"
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "unexpected format: {0}, it should be in:\n{1}".format(format, form))
 
     if add_writer:
@@ -172,7 +172,8 @@ def nb2rst(nb_file, outfile, exc=True, post_process=True):
 
     name, ext = os.path.splitext(outfile)
     if ext != '.rst':
-        raise ValueError("'{0}' should have extension '.rst'".format(outfile))
+        raise ValueError(  # pragma: no cover
+            "'{0}' should have extension '.rst'".format(outfile))
     writer.build_directory = os.path.dirname(outfile)
     writer.write(source, meta, notebook_name=name)
 

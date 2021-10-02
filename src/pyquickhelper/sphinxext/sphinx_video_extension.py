@@ -63,7 +63,7 @@ class VideoDirective(Directive):
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
         else:
-            docname = ''
+            docname = ''  # pragma: no cover
 
         source = self.state.document.current_source
         filename = self.arguments[0]
@@ -141,9 +141,8 @@ def visit_video_node(self, node):
 
 def _clean_value(val):
     if isinstance(val, tuple):
-        return val[0]
-    else:
-        return val
+        return val[0]  # pragma: no cover
+    return val
 
 
 def depart_video_node_html(self, node):

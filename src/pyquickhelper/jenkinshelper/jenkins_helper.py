@@ -153,9 +153,9 @@ def setup_jenkins_server_yml(js, github="sdpython", modules=None,
     The platform is stored in *srv*.
     """
     if modules is None:
-        modules = default_jenkins_jobs(js.platform)
+        modules = default_jenkins_jobs(js.platform)  # pragma: no cover
     if delete_first:
-        js.delete_all_jobs()
+        js.delete_all_jobs()  # pragma: no cover
     r = js.setup_jenkins_server(
         github=github, modules=modules, overwrite=overwrite,
         location=location, prefix=prefix, disable_schedule=disable_schedule,
