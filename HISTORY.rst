@@ -8,6 +8,7 @@ History
 current - 2021-10-02 - 0.00Mb
 =============================
 
+* #348: Improves history rendering in markdown (2021-10-02)
 * #347: Adds pseudo recursive getstate (2021-09-02)
 * #346: Adds functions to shorten big constant in unit tests (2021-08-18)
 
