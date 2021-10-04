@@ -455,7 +455,10 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     rows.append("export KEEPPATH=$PATH")
                     rows.append(
                         "export PATH={0}:$PATH".format(venv_interpreter))
-                pat = '"{0}" -m virtualenv {1} --system-site-packages'
+                pat = '"{0}" -m virtualenv {1}'
+                system_site_packages = value.get('system_site_packages', True)
+                if system_site_packages:
+                    pat += " --system-site-packages"
                 rows.append(pat.format(interpreter, p))
                 if iswin:
                     rows.append("set PATH=%KEEPPATH%")
