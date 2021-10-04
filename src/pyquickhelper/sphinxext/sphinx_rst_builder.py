@@ -1097,8 +1097,9 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
                          }:
             # due to jupyter_sphinx
             return
-        raise NotImplementedError(
-            "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
+        logger = logging.getLogger("RstBuilder")
+        logger.warning("[rst] unknown visit node: '{0}' - '{1}'".format(
+                node.__class__.__name__, node))
 
     def unknown_departure(self, node):
         classname = node.__class__.__name__
@@ -1109,8 +1110,9 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
                          }:
             # due to jupyter_sphinx
             return
-        raise NotImplementedError(
-            "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
+        logger = logging.getLogger("RstBuilder")
+        logger.warning("[rst] unknown depart node: '{0}' - '{1}'".format(
+                node.__class__.__name__, node))
 
 
 class _BodyPlaceholder:
