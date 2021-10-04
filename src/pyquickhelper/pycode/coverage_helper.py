@@ -301,7 +301,7 @@ def coverage_combine(data_files, output_path, source, process=None):
     cov.save()
     report = True
 
-    from coverage.misc import NoSource, CoverageException
+    from coverage.exceptions import NoSource, CoverageException
     try:
         cov.html_report(directory=output_path,
                         ignore_errors=True)
