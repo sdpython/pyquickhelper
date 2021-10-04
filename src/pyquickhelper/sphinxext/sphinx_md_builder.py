@@ -977,8 +977,9 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.depart_admonition(node)
 
     def unknown_visit(self, node):
-        raise NotImplementedError(
-            "Unknown node: '{0}' - '{1}'".format(node.__class__.__name__, node))
+        logger = logging.getLogger("MdBuilder")
+        logger.warning("[md] unknown visit node: '{0}' - '{1}'".format(
+                node.__class__.__name__, node))
 
 
 class MdBuilder(Builder):
