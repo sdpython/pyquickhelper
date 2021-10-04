@@ -302,10 +302,15 @@ def coverage_combine(data_files, output_path, source, process=None):
     report = True
 
     try:
-        from coverage.exceptions import NoSource, CoverageException
+        from coverage.exceptions import CoverageException
     except ImportError:
         # older version of coverage
-        from coverage.misc import NoSource, CoverageException
+        from coverage.misc import CoverageException
+    try:
+        from coverage.exceptions import NoSource
+    except ImportError:
+        # older version of coverage
+        from coverage.misc import NoSource
     try:
         cov.html_report(directory=output_path,
                         ignore_errors=True)
