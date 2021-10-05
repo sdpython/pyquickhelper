@@ -428,11 +428,14 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
 
         elif key == "virtualenv":
             if isinstance(value, list):
-                if len(value) != 1:
+                if len(value) > 2:
                     raise ValueError(  # pragma: no cover
-                        "Expecting one value for the path of the virtual environment"
+                        "Expecting one or two values for the path of the virtual environment"
                         ":\n{0}".format(value))
-                value = value[0]
+                d = value[0].copy()
+                for i in range(1, len(value)):
+                    d.update(value[i])
+                value = d
             p = value["path"] if isinstance(value, dict) else value
             rows.append("")
             rows.append(echo + " CREATE VIRTUAL ENVIRONMENT in %s" % p)
@@ -456,7 +459,10 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     rows.append(
                         "export PATH={0}:$PATH".format(venv_interpreter))
                 pat = '"{0}" -m virtualenv {1}'
-                system_site_packages = value.get('system_site_packages', True)
+                if isinstance(value, dict):
+                    system_site_packages = value.get('system_site_packages', True)
+                else:
+                    system_site_packages = True
                 if system_site_packages:
                     pat += " --system-site-packages"
                 rows.append(pat.format(interpreter, p))
