@@ -979,7 +979,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def unknown_visit(self, node):
         logger = logging.getLogger("MdBuilder")
         logger.warning("[md] unknown visit node: '{0}' - '{1}'".format(
-                node.__class__.__name__, node))
+            node.__class__.__name__, node))
 
 
 class MdBuilder(Builder):

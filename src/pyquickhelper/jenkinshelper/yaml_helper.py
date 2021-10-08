@@ -460,7 +460,8 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                         "export PATH={0}:$PATH".format(venv_interpreter))
                 pat = '"{0}" -m virtualenv {1}'
                 if isinstance(value, dict):
-                    system_site_packages = value.get('system_site_packages', True)
+                    system_site_packages = value.get(
+                        'system_site_packages', True)
                 else:
                     system_site_packages = True
                 if system_site_packages:

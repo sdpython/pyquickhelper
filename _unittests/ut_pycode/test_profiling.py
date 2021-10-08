@@ -6,11 +6,10 @@ import os
 import unittest
 import warnings
 import pandas
-
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.pandashelper import df2rst
 from pyquickhelper import __file__ as rootfile
-from pyquickhelper.pycode.profiling import profile
+from pyquickhelper.pycode.profiling import profile, profile2df
 
 
 class TestProfiling(ExtTestCase):
@@ -51,6 +50,11 @@ class TestProfiling(ExtTestCase):
         self.assertIsInstance(df, pandas.DataFrame)
         self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple2')
         self.assertNotEmpty(ps)
+        df = profile2df(ps, False)
+        self.assertIsInstance(df, list)
+        self.assertIsInstance(df[0], dict)
+        df = profile2df(ps, True)
+        self.assertIsInstance(df, pandas.DataFrame)
 
     def test_profile_pyinst(self):
         def simple():
