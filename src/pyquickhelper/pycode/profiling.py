@@ -46,24 +46,57 @@ def _process_pstats(ps, clean_text):
     return rows
 
 
+def profile2df(ps, as_df=True):
+    """
+    Converts profiling statistics into a Dataframe.
+
+    :param ps: an instance of `pstats
+        <https://docs.python.org/3/library/profile.html#pstats.Stats>`_
+    :param as_df: returns the results as a dataframe (True)
+        or a list of dictionaries (False)
+    :return: a DataFrame
+
+    ::
+
+        import pstats
+        from pyquickhelper.pycode.profiling import profile2df
+
+        ps = pstats.Stats('c:/temp/bench_ortmodule_nn_gpu6')
+        print(ps.strip_dirs().sort_stats(SortKey.TIME).print_stats())
+        df = profile2df(pd)
+        print(df)
+    """
+    rows = _process_pstats(ps, lambda x: x)
+    if not as_df:
+        return rows
+
+    import pandas
+    df = pandas.DataFrame(rows)
+    df = df[['fct', 'file', 'ncalls1', 'ncalls2', 'tin', 'cum_tin',
+             'tall', 'cum_tall']]
+    df = df.groupby(['fct', 'file'], as_index=False).sum().sort_values(
+        'cum_tall', ascending=False).reset_index(drop=True)
+    return df.copy()
+
+
 def profile(fct, sort='cumulative', rootrem=None, as_df=False,
             pyinst_format=None, return_results=False, **kwargs):
     """
     Profiles the execution of a function.
 
-    @param      fct             function to profile
-    @param      sort            see `sort_stats <https://docs.python.org/3/library/
-                                profile.html#pstats.Stats.sort_stats>`_
-    @param      rootrem         root to remove in filenames
-    @param      as_df           return the results as a dataframe and not text
-    @param      pyinst_format   format for :epkg:`pyinstrument`, if not empty,
-                                the function uses this module or raises an exception if not
-                                installed, the options are *text*, *textu* (text with colors),
-                                *json*, *html*
-    @param      return_results  if True, return results as well
-                                (in the first position)
-    @param      kwargs          additional parameters used to create the profiler
-    @return                     raw results, statistics text dump (or dataframe is *as_df* is True)
+    :param fct: function to profile
+    :param sort: see `sort_stats <https://docs.python.org/3/library/
+        profile.html#pstats.Stats.sort_stats>`_
+    :param rootrem: root to remove in filenames
+    :param as_df: return the results as a dataframe and not text
+    :param pyinst_format: format for :epkg:`pyinstrument`, if not empty,
+        the function uses this module or raises an exception if not
+        installed, the options are *text*, *textu* (text with colors),
+        *json*, *html*
+    :param return_results: if True, return results as well
+        (in the first position)
+    :param kwargs: additional parameters used to create the profiler
+    :return: raw results, statistics text dump (or dataframe is *as_df* is True)
 
     .. plot::
 
