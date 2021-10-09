@@ -433,8 +433,10 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                         "(current: '{2}')".format(nbcur, len(res), file))
                                     status.save_dates()
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
-                fLOG("[synchronize_folder] problem: size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (
-                    file, n1._size, n2._size, n1._date, n2._date, op))
+                fLOG(  # pragma: no cover
+                    "[synchronize_folder] problem: size are different for "
+                    "file %s (%d != %d) dates (%s,%s) (op %s)" % (
+                        file, n1._size, n2._size, n1._date, n2._date, op))
                 report["issue"] += 1
                 # n1.copy_to(f2)
                 # raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
@@ -462,8 +464,9 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
     @return                         list of removed files and folders
                                      --> list of tuple ( (name, "file" or "dir") )
     """
-    if top in ["", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\"]:
-        raise Exception("top is a root (c: for example), this is not safe")
+    if top in {"", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\"}:
+        raise Exception(  # pragma: no cover
+            "top is a root (c: for example), this is not safe")
 
     res = []
     first_root = None
@@ -472,7 +475,7 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
             t = os.path.join(root, name)
             try:
                 os.remove(t)
-            except PermissionError as e:
+            except PermissionError as e:  # pragma: no cover
                 if raise_exception:
                     raise PermissionError(
                         "unable to remove file {0}".format(t)) from e
@@ -487,8 +490,8 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
                 if raise_exception:
                     raise OSError(
                         "unable to remove folder {0}".format(t)) from e
-                remove_also_top = False
-                continue
+                remove_also_top = False  # pragma: no cover
+                continue  # pragma: no cover
             res.append((t, "dir"))
         if first_root is None:
             first_root = root

@@ -196,7 +196,7 @@ def process_standard_options_for_setup(
         if "-d" in argv:
             ld = argv.index("-d")
             if ld >= len(argv) - 1:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Option -d should be follow by a duration in seconds.")
             d = float(argv[ld + 1])
         else:
@@ -205,7 +205,7 @@ def process_standard_options_for_setup(
         if "-f" in argv:
             lf = argv.index("-f")
             if lf >= len(argv) - 1:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "Option -d should be follow by a duration in seconds.")
             f = argv[lf + 1]
         else:
@@ -1009,7 +1009,7 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
     default_set = {"blog", "doc"}
     if command is not None:
         if command not in default_set:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "command {0} is not available in {1}".format(command, default_set))
         commands = {command}
     else:

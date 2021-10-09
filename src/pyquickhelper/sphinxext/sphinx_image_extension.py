@@ -77,24 +77,26 @@ class SimpleImageDirective(Directive):
         filename = self.arguments[0]
 
         if '://' in filename:
-            logger = getLogger("simpleimage")
-            logger.warning(
-                "[simpleimage] url detected '{0}' in docname '{1}' - line {2}.".format(filename, docname, self.lineno))
+            logger = getLogger("simpleimage")  # pragma: no cover
+            logger.warning(  # pragma: no cover
+                "[simpleimage] url detected '{0}' in docname '{1}' - line {2}"
+                ".".format(filename, docname, self.lineno))
             is_url = True
         else:
             is_url = False
 
         convert = self.options.get('convert', None)
         if convert:
-            logger = getLogger("simpleimage")
-            logger.warning(
-                "[simpleimage] convert into '{3}' not implemented for '{0}' in docname '{1}' - line {2}.".format(
+            logger = getLogger("simpleimage")  # pragma: no cover
+            logger.warning(  # pragma: no cover
+                "[simpleimage] convert into '{3}' not implemented for '{0}' in "
+                "docname '{1}' - line {2}.".format(
                     filename, docname, self.lineno, convert))
 
         download = self.options.get('download', None)
         if convert:
             logger = getLogger("simpleimage")
-            logger.warning(
+            logger.warning(  # pragma: no cover
                 "[simpleimage] download not implemented for '{0}' in docname '{1}' - line {2}.".format(filename, docname, self.lineno))
 
         if not is_url:
@@ -119,8 +121,8 @@ class SimpleImageDirective(Directive):
                     abspath = img
 
             if abspath is None:
-                logger = getLogger("simpleimage")
-                logger.warning(
+                logger = getLogger("simpleimage")  # pragma: no cover
+                logger.warning(  # pragma: no cover
                     "[simpleimage] Unable to find '{0}' in docname '{1}' - line {2} - srcdir='{3}'.".format(
                         filename, docname, self.lineno, srcdir))
         else:
@@ -159,16 +161,15 @@ def visit_simpleimage_node(self, node):
             os.makedirs(relpath)
         if os.path.dirname(node['abspath']) != relpath:
             shutil.copy(node['abspath'], relpath)
-            logger = getLogger("image")
-            logger.info("[image] copy '{0}' to '{1}'".format(
+            logger = getLogger("image")  # pragma: no cover
+            logger.info("[image] copy '{0}' to '{1}'".format(  # pragma: no cover
                 node['uri'], relpath))
 
 
 def _clean_value(val):
     if isinstance(val, tuple):
         return val[0]
-    else:
-        return val
+    return val
 
 
 def depart_simpleimage_node_html(self, node):
