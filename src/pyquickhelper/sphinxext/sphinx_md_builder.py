@@ -976,6 +976,12 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_todo_node(self, node):
         self.depart_admonition(node)
 
+    def visit_imgsgnode(self, node):
+        pass
+
+    def depart_imgsgnode(self, node):
+        pass
+
     def unknown_visit(self, node):
         logger = logging.getLogger("MdBuilder")
         logger.warning("[md] unknown visit node: '{0}' - '{1}'".format(

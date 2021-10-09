@@ -128,7 +128,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
                 pass
             else:
                 self.builder.logger.warning(
-                    __('[EnhancedLaTeXTranslator] dimension unit %s is invalid. Ignored.'), width_str)
+                    __('[EnhancedLaTeXTranslator] dimension unit '
+                       '%s is invalid. Ignored.'), width_str)
             return None
         except TypeError:
             # Sphinx <= 1.7
@@ -139,7 +140,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
                     pass
                 else:
                     self.builder.logger.warning(
-                        __('[EnhancedLaTeXTranslator] dimension unit %s is invalid. Ignored.'), width_str)
+                        __('[EnhancedLaTeXTranslator] dimension unit '
+                           '%s is invalid. Ignored.'), width_str)
                 return None
 
     def visit_inheritance_diagram(self, node):
@@ -166,9 +168,16 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
 
         return renderer.render(template_name, variables)
 
+    def visit_imgsgnode(self, node):
+        pass
+
+    def depart_imgsgnode(self, node):
+        pass
+
     def unknown_visit(self, node):
-        raise NotImplementedError("Unknown node '{0}' detected in '{1}'".format(
-            node.__class__.__name__, self.__class__.__name__))
+        logger = logging.getLogger("MdBuilder")
+        logger.warning("[latex] unknown visit node: '{0}' - '{1}'".format(
+            node.__class__.__name__, node))
 
 
 class EnhancedLaTeXWriter(LaTeXWriter):

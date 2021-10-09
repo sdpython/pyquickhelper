@@ -5,7 +5,8 @@
 import unittest
 import os
 import pandas
-from pyquickhelper.pycode import ExtTestCase, get_temp_folder
+from pyquickhelper.pycode import (
+    ExtTestCase, get_temp_folder, skipif_appveyor, skipif_azure)
 from pyquickhelper.server.filestore_fastapi import (
     create_fast_api_app, fast_api_submit, fast_api_query,
     fast_api_content, _get_password, _post_request)
@@ -28,6 +29,8 @@ class TestfileStoreRest(ExtTestCase):
                                   timeout=1.),
             ConnectionError)
 
+    @skipif_appveyor("There is no current event loop in thread")
+    @skipif_azure("There is no current event loop in thread")
     def test_file_store(self):
         temp = get_temp_folder(__file__, "temp_file_storage_rest")
         name = os.path.join(temp, "filestore.db3")
@@ -107,6 +110,8 @@ class TestfileStoreRest(ExtTestCase):
         self.assertEqual(len(js), 1)
         self.assertEqual(js[0]['value'], 0.67)
 
+    @skipif_appveyor("There is no current event loop in thread")
+    @skipif_azure("There is no current event loop in thread")
     def test_file_store_df(self):
         temp = get_temp_folder(__file__, "temp_file_storage_rest_df")
         name = os.path.join(temp, "filestore.db3")

@@ -1088,6 +1088,12 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def depart_todo_node(self, node):
         self.depart_admonition(node)
 
+    def visit_imgsgnode(self, node):
+        self.add_text('.. imgsgnode(visit).')
+
+    def depart_imgsgnode(self, node):
+        self.add_text('.. imgsgnode(depart).')
+
     def unknown_visit(self, node):
         classname = node.__class__.__name__
         if classname in {'JupyterKernelNode', 'JupyterCellNode',

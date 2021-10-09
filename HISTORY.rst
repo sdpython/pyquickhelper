@@ -5,9 +5,12 @@
 History
 =======
 
-current - 2021-10-02 - 0.00Mb
+current - 2021-10-09 - 0.00Mb
 =============================
 
+* #351: Add function profile2df (2021-10-08)
+* #350: Replaces an exception with an logged message (2021-10-04)
+* #349: Update yaml_helper.py to remove option system-site-packages if needed (2021-10-04)
 * #348: Improves history rendering in markdown (2021-10-02)
 * #347: Adds pseudo recursive getstate (2021-09-02)
 * #346: Adds functions to shorten big constant in unit tests (2021-08-18)
