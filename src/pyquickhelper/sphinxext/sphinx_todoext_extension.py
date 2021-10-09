@@ -122,15 +122,18 @@ class TodoExt(BaseAdmonition):
                 extlinks = sett.extlinks
             elif env is not None and hasattr(env.config, "extlinks"):
                 extlinks = env.config.extlinks
-            else:
+            else:  # pragma: no cover
                 available = "\n".join(sorted(sett.__dict__.keys()))
                 available2 = "\n".join(
                     sorted(env.config.__dict__.keys())) if env is not None else "-"
-                mes = "extlinks (wih a key 'issue') is not defined in the documentation settings, available in sett\n{0}\nCONFIG\n{1}"
-                raise ValueError(mes.format(available, available2))
+                mes = ("extlinks (wih a key 'issue') is not defined in the "
+                       "documentation settings, available in sett\n{0}\nCONFIG\n{1}")
+                raise ValueError(  # pragma: no cover
+                    mes.format(available, available2))
 
             if "issue" not in extlinks:
-                raise KeyError("key 'issue' is not present in extlinks")
+                raise KeyError(  # pragma: no cover
+                    "key 'issue' is not present in extlinks")
             url, label = extlinks["issue"]
             url = url % str(issue)
             lab = label.format(issue)
@@ -142,7 +145,7 @@ class TodoExt(BaseAdmonition):
 
         # cost
         cost = self.options.get('cost', "").strip()
-        if cost:
+        if cost:  # pragma: no cover
             try:
                 fcost = float(cost)
             except ValueError:
@@ -248,7 +251,7 @@ def process_todoexts(app, doctree):
             targetnode = node.parent[node.parent.index(node) - 1]
             if not isinstance(targetnode, nodes.target):
                 raise IndexError
-        except IndexError:
+        except IndexError:  # pragma: no cover
             targetnode = None
         newnode = node.deepcopy()
         todotag = newnode['todotag']
@@ -272,8 +275,7 @@ def process_todoexts(app, doctree):
             'tododate': newnode['tododate'],
             'todorelease': newnode['todorelease'],
             'todohidden': newnode['todohidden'],
-            'todoext_copy': todoext_copy,
-        })
+            'todoext_copy': todoext_copy})
 
 
 class TodoExtList(Directive):
@@ -294,8 +296,7 @@ class TodoExtList(Directive):
     final_argument_whitespace = False
     option_spec = {
         'tag': directives.unchanged,
-        'sort': directives.unchanged,
-    }
+        'sort': directives.unchanged}
 
     def run(self):
         """
@@ -313,7 +314,7 @@ class TodoExtList(Directive):
             n["todotag"] = tag
             n["todosort"] = tsort
             return [targetnode, n]
-        else:
+        else:  # pragma: no cover
             n = todoextlist('')
             n["todotag"] = tag
             n["todosort"] = tsort
@@ -394,10 +395,10 @@ def process_todoext_nodes(app, doctree, fromdocname):
                     fromdocname, todoext_info['docname'])
                 try:
                     newnode['refuri'] += '#' + todoext_info['target']['refid']
-                except Exception as e:
+                except Exception as e:  # pragma: no cover
                     raise KeyError("refid in not present in '{0}'".format(
                         todoext_info['target'])) from e
-            except NoUri:
+            except NoUri:  # pragma: no cover
                 # ignore if no URI can be determined, e.g. for LaTeX output
                 pass
             newnode.append(innernode)
@@ -423,7 +424,7 @@ def process_todoext_nodes(app, doctree, fromdocname):
             content.append(todoext_entry)
             content.append(para)
 
-        if fcost > 0:
+        if fcost > 0:  # pragma: no cover
             cost = nodes.paragraph()
             lab = "{0} items, cost: {1}".format(nbtodo, fcost)
             cost += nodes.Text(lab)

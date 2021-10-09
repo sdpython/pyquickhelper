@@ -170,7 +170,7 @@ class NotebookRunner(object):
                     # It appears to happen only on Darwin (Mac OS) and an
                     # easy (but clumsy) way to mitigate it is to sleep
                     # for a second.
-                    sleep(1)
+                    sleep(1)  # pragma: no cover
 
             if working_dir:
                 os.chdir(cwd)
@@ -366,8 +366,9 @@ class NotebookRunner(object):
             traceback_text = '\n'.join(tr)
             self.fLOG("[nberror]\n", traceback_text)
             if self.detailed_log:
-                self.detailed_log('[run_cell] ERROR=\n    {0}'.format(
-                    "\n    ".join(traceback_text.split("\n"))))
+                self.detailed_log(  # pragma: no cover
+                    '[run_cell] ERROR=\n    {0}'.format(
+                        "\n    ".join(traceback_text.split("\n"))))
         else:
             traceback_text = ''
             self.fLOG('-- cell returned')
@@ -487,7 +488,7 @@ class NotebookRunner(object):
             sreply = "\n".join(sreply)
             return sreply
 
-        if status == 'error':
+        if status == 'error':  # pragma: no cover
             sreply = reply2string(reply)
             if len(code) < 5:
                 scode = [code]
@@ -546,7 +547,7 @@ class NotebookRunner(object):
         '''
         Iterates over the notebook cells.
         '''
-        if hasattr(self.nb, "worksheets"):
+        if hasattr(self.nb, "worksheets"):  # pragma: no cover
             for ws in self.nb.worksheets:
                 for cell in ws.cells:
                     yield cell
@@ -567,7 +568,7 @@ class NotebookRunner(object):
 
         @return     cell container
         """
-        if hasattr(self.nb, "worksheets"):
+        if hasattr(self.nb, "worksheets"):  # pragma: no cover
             last = None
             for ws in self.nb.worksheets:
                 last = ws
@@ -828,7 +829,7 @@ class NotebookRunner(object):
                             # rough estimation
                             try:
                                 nbl += len(v.split("{"))
-                            except AttributeError:
+                            except AttributeError:  # pragma: no cover
                                 nbl += len(v) // 5 + 1
                         elif k == "image/svg+xml":
                             nbl += len(v) // 5
@@ -982,10 +983,10 @@ class NotebookRunner(object):
             except Empty as er:
                 raise RuntimeError(  # pragma: no cover
                     "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
-            except NotebookError as e:
+            except NotebookError as e:  # pragma: no cover
                 if not skip_exceptions:
                     raise
-                raise RuntimeError(  # pragma: no cover
+                raise RuntimeError(
                     "Issue when executing:\n{0}".format(codei)) from e
             if progress_callback:
                 progress_callback(i)

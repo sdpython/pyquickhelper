@@ -50,7 +50,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
     else:
         res = []
         dirname = set()
-        if strict:
+        if strict:  # pragma: no cover
             for f in explore_folder_iterfile(folder):
                 if include_folder:
                     d = os.path.dirname(f)
@@ -63,7 +63,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                             res.append(d)
                 try:
                     mode = os.stat(f).st_mode
-                except FileNotFoundError:
+                except FileNotFoundError:  # pragma: no cover
                     # It appends for some weird path.
                     warnings.warn(
                         "[change_file_status] unable to find '{0}'".format(f), UserWarning)
@@ -148,7 +148,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
     """
     def check_size(cont):
         if min_size is not None and len(cont) < min_size:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "File '{}' is smaller than {}.".format(
                     file_url_stream, min_size))
 
@@ -173,7 +173,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
                 check_size(content)
                 return (content, "ub") if add_source else content
             if encoding is None:
-                raise ValueError(
+                raise ValueError(  # pragma: no cover
                     "cannot return bytes if encoding is None for url: " + file_url_stream)
             content = read_url(file_url_stream, encoding=encoding)
             check_size(content)
@@ -181,12 +181,12 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
         # the string should the content itself
         if isinstance(file_url_stream, str):
             if asbytes:
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "file_url_stream is str when expected bytes")
             return (file_url_stream, "s") if add_source else file_url_stream
         if asbytes:
             return (file_url_stream, "b") if add_source else file_url_stream
-        raise TypeError(
+        raise TypeError(  # pragma: no cover
             "file_url_stream is bytes when expected str")
 
     if isinstance(file_url_stream, bytes):
@@ -209,6 +209,6 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
         content = v.decode(encoding=encoding)
         check_size(content)
         return (content, "SB") if add_source else content
-    raise TypeError(
+    raise TypeError(  # pragma: no cover
         "unexpected type for file_url_stream: {0}\n{1}".format(
             type(file_url_stream), file_url_stream))

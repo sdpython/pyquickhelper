@@ -57,11 +57,12 @@ def update_notebook_link(text, format, nblinks, fLOG):
         if url.startswith("find://"):
             if format == 'python':
                 url = url[7:]
-            else:
+            else:  # pragma: no cover
                 snb = "\n".join("'{0}': '{1}'".format(k, v)
                                 for k, v in sorted(nblinks.items()))
-                extension = "You shoud add links into variable 'nblinks' " \
-                            "into documentation configuration file."
+                extension = (
+                    "You shoud add links into variable 'nblinks' "
+                    "into documentation configuration file.")
                 extension += "\nnblinks={0}".format(nblinks)
                 raise HelpGenException(
                     "Unable to find a replacement for '{0}' format='{1}' in \n{2}\n{3}".format(
@@ -152,7 +153,7 @@ def _notebook_replacements(nbtext, notebook_replacements, fLOG=None):
             fLOG(
                 "[_notebook_replacements] replace '{0}' -> '{1}'".format(k, v))
             nbtext = nbtext.replace(k, v)
-    if '"nbformat": 4,' in nbtext:
+    if '"nbformat": 4,' in nbtext:  # pragma: no cover
         rep = ['"nbformat_minor": 0', '"nbformat_minor": 1',
                '"nbformat_minor": 2']
         for r in rep:
@@ -317,7 +318,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     # Probably not the best way to fix that.
     # For some reason, nbconvert adds None as the first row.
     if lines[0] == 'None\n':
-        lines[0] = '\n'
+        lines[0] = '\n'  # pragma: no cover
 
     if any(line == 'None\n' for line in lines):
         raise HelpGenException(  # pragma: no cover
@@ -401,7 +402,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             sep = "" if lines[pos2].endswith("\n") else "\n"
             lines[pos2] = "{0}{2}{1}".format(lines[pos], lines[pos2], sep)
             for p in range(pos2 + 1, pos):
-                if lines[p] == "\n":
+                if lines[p] == "\n":  # pragma: no cover
                     lines[p] = ""
             break
 
@@ -604,7 +605,7 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
     text = "\n".join(new_lines)
     for k, v in repl.items():
         if k in text:
-            if fLOG:
+            if fLOG:  # pragma: no cover
                 fLOG("[post_process_html_output] js: replace %r -> %r" % (k, v))
             text = text.replace(k, v)
 
@@ -767,7 +768,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
                 "\n", " ").replace("\r", "").replace("\t", " ")
             sub2 = sub[-10:]
             records.append((info, p1, p2, sub, sub2, ""))
-        if len(records) > 0:
+        if len(records) > 0:  # pragma: no cover
             messages = [str(i) + ":" + ("unexpected \\$ in a latex file:\n    {0}\n" +
                                         "at position: {1},{2}\n    substring: {3}\n    " +
                                         "around: {4}\n    temp=[{5}]").format(*rec)

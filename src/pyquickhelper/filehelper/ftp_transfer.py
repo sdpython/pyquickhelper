@@ -106,14 +106,15 @@ class TransferFTP:
                 cls = FTP
                 self.is_sftp = False
             else:
-                raise RuntimeError("No implementation for '{}'.".format(ftps))
+                raise RuntimeError(  # pragma: no cover
+                    "No implementation for '{}'.".format(ftps))
             if not self.is_sftp:
                 self._ftp = cls(site, login, password)
             self._logins = [(datetime.datetime.now(), site)]
         else:
             # mocking
             if ftps != 'FTP':
-                raise NotImplementedError(
+                raise NotImplementedError(  # pragma: no cover
                     "Option ftps is not implemented for mocking.")
             self._logins = []
             self._ftp = FTP(site)
@@ -132,7 +133,7 @@ class TransferFTP:
         """
         return self._atts["site"]
 
-    def _private_login(self):
+    def _private_login(self):  # pragma: no cover
         """
         logs in
         """
@@ -192,7 +193,7 @@ class TransferFTP:
             self.LOG("    ** run ", str(command), str(args))
             return t
 
-    def print_list(self):
+    def print_list(self):  # pragma: no cover
         """
         Returns the list of files in the current directory
         the function sends everything to the logging function.
@@ -205,7 +206,7 @@ class TransferFTP:
         raise NotImplementedError(
             "Not implemented for ftps='{}'.".format(self._ftps_))
 
-    def mkd(self, path):
+    def mkd(self, path):  # pragma: no cover
         """
         Creates a directory.
 
@@ -352,21 +353,24 @@ class TransferFTP:
             done.append(p)
 
         if nb_logins != len(self._logins):
-            raise CannotCompleteWithoutNewLoginException(
+            raise CannotCompleteWithoutNewLoginException(  # pragma: no cover
                 "Cannot reach folder '{0}' without new login".format(to))
 
         bs = blocksize if blocksize else TransferFTP.blockSize
         if not self.is_sftp:
-            def runc(name, f, bs, callback): return self.run_command(
-                self._ftp.storbinary, 'STOR ' + name, f, bs, callback)
+            def runc(name, f, bs, callback):
+                return self.run_command(
+                    self._ftp.storbinary, 'STOR ' + name, f, bs, callback)
         else:
-            def runc(name, f, bs, callback): return self.run_command(
-                self._ftp.putfo, remotepath=name, flo=f, file_size=bs, callback=None)
+            def runc(name, f, bs, callback):
+                return self.run_command(
+                    self._ftp.putfo, remotepath=name, flo=f, file_size=bs,
+                    callback=None)
         if exc is None:
             try:
                 if isinstance(file, str):
                     if not os.path.exists(file):
-                        raise FileNotFoundError(file)
+                        raise FileNotFoundError(file)  # pragma: no cover
                     with open(file, "rb") as f:
                         r = runc(name, f, bs, callback)
                 elif isinstance(file, BytesIO):
@@ -376,10 +380,10 @@ class TransferFTP:
                     r = runc(name, st, bs, callback)
                 else:
                     r = runc(name, file, bs, callback)
-            except Exception as ee:
+            except Exception as ee:  # pragma: no cover
                 exc = ee
 
-        if nb_logins != len(self._logins):
+        if nb_logins != len(self._logins):  # pragma: no cover
             try:
                 self.cwd(cpwd)
                 done = []
@@ -391,7 +395,7 @@ class TransferFTP:
         nbtry = 0
         nbth = len(done) * 2 + 1
         while len(done) > 0:
-            if nb_logins != len(self._logins):
+            if nb_logins != len(self._logins):  # pragma: no cover
                 try:
                     self.cwd(cpwd)
                     break
@@ -413,9 +417,8 @@ class TransferFTP:
                             len(done), nbtry, exc, nb_logins, len(self._logins))) from e
 
         if exc is not None:
-            raise exc
-        else:
-            return r
+            raise exc  # pragma: no cover
+        return r
 
     def retrieve(self, fold, name, file=None, debug=False):
         """
@@ -469,7 +472,7 @@ class TransferFTP:
                 file.write(block)
             try:
                 r = runc(name, callback, TransferFTP.blockSize, file)
-            except error_perm as e:
+            except error_perm as e:  # pragma: no cover
                 raise_exc = e
                 r = False
         else:
@@ -479,7 +482,7 @@ class TransferFTP:
                 b.write(block)
             try:
                 runc(name, callback, TransferFTP.blockSize, b)
-            except error_perm as e:
+            except error_perm as e:  # pragma: no cover
                 raise_exc = e
 
             r = b.getvalue()

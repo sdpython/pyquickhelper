@@ -823,7 +823,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
 
     for k in types:
         if k in res:
-            raise HelpGenException(
+            raise HelpGenException(  # pragma: no cover
                 "you should not index anything related to classes, functions or method (conflict: %s)" % k)
         values = []
         for t, o in indexes.items():
@@ -922,7 +922,7 @@ def filecontent_to_rst(filename, content):
             summary = "\n".join(spl[begin:end]).replace(
                 "@brief", "").strip("\n\t\r ")
         else:
-            summary = "no documentation"
+            summary = "no documentation"  # pragma: no cover
 
         # looking for C++/java/C# comments
         spl = content.split("\n")
@@ -935,7 +935,7 @@ def filecontent_to_rst(filename, content):
                 end = i
 
         content = "\n".join(rows)
-        if begin is not None and end is not None:
+        if begin is not None and end is not None:  # pragma: no cover
             filerows = private_migrating_doxygen_doc(
                 spl[begin + 1:end - 1], 1, filename)
             rstr = "\n".join(filerows)
@@ -1057,7 +1057,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             raise RuntimeError(
                 "Subfolder %r cannot start with '_'." % src)
         if os.path.split(dst)[-1][0] == '_':
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Destination %r cannot start with '_'." % dst)
 
         if os.path.isfile(src):

@@ -60,7 +60,7 @@ class MockSphinxApp:
         self.builder = writer.builder
         self._new_extensions = new_extensions
         if id(self.app) != id(self.writer.app):
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Different application in the writer is not allowed.")
 
     @property
@@ -201,7 +201,7 @@ class MockSphinxApp:
         try:
             # Sphinx >= 1.8
             self.app.add_js_file(jsfile)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             # Sphinx < 1.8
             self.app.add_javascript(jsfile)
 
@@ -212,7 +212,7 @@ class MockSphinxApp:
         try:
             # Sphinx >= 1.8
             self.app.add_css_file(css)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             # Sphinx < 1.8
             self.app.add_stylesheet(css)
 
@@ -237,10 +237,10 @@ class MockSphinxApp:
 
             try:
                 self.app.add_source_parser(ext, parser)
-            except TypeError:
+            except TypeError:  # pragma: no cover
                 # Sphinx==3.0.0
                 self.app.add_source_parser(parser)
-            except ExtensionError as e:
+            except ExtensionError as e:  # pragma: no cover
                 if exc:
                     raise
                 logger = logging.getLogger("MockSphinxApp")
@@ -349,8 +349,9 @@ class MockSphinxApp:
                                     buildername=writer, confoverrides=confoverrides,
                                     new_extensions=new_extensions)
                 if not hasattr(writer[1], "_writer_class"):
-                    raise AttributeError(
-                        "Class '{0}' does not have any attribute '_writer_class'.".format(writer[1]))
+                    raise AttributeError(  # pragma: no cover
+                        "Class '{0}' does not have any attribute '_writer_class'."
+                        "".format(writer[1]))
                 writer = writer[1]._writer_class(  # pylint: disable=E1101
                     builder=app.builder, app=app)  # pylint: disable=E1101
                 mockapp = MockSphinxApp(writer, app, confoverrides=confoverrides,

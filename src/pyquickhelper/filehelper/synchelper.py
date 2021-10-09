@@ -115,7 +115,8 @@ def explore_folder(folder, pattern=None, neg_pattern=None, fullname=False,
         if sub_pattern:
             keys = [sub_pattern.sub(sub_replace, _) for _ in keys]
         return keys
-    raise ValueError("return_only must be either None, 'f' or 'd'.")
+    raise ValueError(  # pragma: no cover
+        "return_only must be either None, 'f' or 'd'.")
 
 
 def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
@@ -150,15 +151,15 @@ def explore_folder_iterfile(folder, pattern=None, neg_pattern=None,
                 yield r, f, a
 
     if verbose:
-        from tqdm import tqdm
-        loop = tqdm(itera(folder))
+        from tqdm import tqdm  # pragma: no cover
+        loop = tqdm(itera(folder))  # pragma: no cover
     else:
         loop = itera(folder)
 
     rep = {}
     for r, _, a in loop:
         if verbose:
-            loop.set_description(r)
+            loop.set_description(r)  # pragma: no cover
         temp = os.path.join(r, a)
         if pattern is not None:
             if fullname:
@@ -376,9 +377,10 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                             modif += 1
                             report[op] += 1
                             if modif % 50 == 0:
-                                fLOG(
-                                    "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
-                                status.save_dates()
+                                fLOG(  # pragma: no cover
+                                    "[synchronize_folder] Processed {0}/{1} (current: '{2}')"
+                                    "".format(nbcur, len(res), file))
+                                status.save_dates()  # pragma: no cover
                     else:
                         pass
 
@@ -398,7 +400,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                             if ft is not None:
                                 action.append((">-", None, ft))
                                 if not avoid_copy:
-                                    fLOG(
+                                    fLOG(  # pragma: no cover
                                         "[synchronize_folder] - remove ", filerem)
                                     os.remove(filerem)
                                 if status is not None:
@@ -407,12 +409,14 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                     modif += 1
                                     report[op] += 1
                                     if modif % 50 == 0:
-                                        fLOG(
-                                            "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                                        fLOG(  # pragma: no cover
+                                            "[synchronize_folder] Processed {0}/{1} "
+                                            "(current: '{2}')".format(nbcur, len(res), file))
                                         status.save_dates()
                             else:
-                                fLOG(
-                                    "[synchronize_folder] - skip (probably already removed) ", filerem)
+                                fLOG(  # pragma: no cover
+                                    "[synchronize_folder] - skip (probably already removed) "
+                                    "", filerem)
                     else:
                         if not n2.isdir() and not no_deletion:
                             if not avoid_copy:
@@ -424,8 +428,9 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                                 modif += 1
                                 report[">-"] += 1
                                 if modif % 50 == 0:
-                                    fLOG(
-                                        "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                                    fLOG(  # pragma: no cover
+                                        "[synchronize_folder] Processed {0}/{1} "
+                                        "(current: '{2}')".format(nbcur, len(res), file))
                                     status.save_dates()
             elif n2 is not None and n1._size != n2._size and not n1.isdir():
                 fLOG("[synchronize_folder] problem: size are different for file %s (%d != %d) dates (%s,%s) (op %s)" % (

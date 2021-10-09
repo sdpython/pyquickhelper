@@ -60,7 +60,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
     last = src.get_last_commit_hash(proj)
     cmd = ["--token={0}".format(token), "--file={0}".format(report),
            "--commit={0}".format(last), "--root={0} -X gcov".format(proj)]
-    if token is not None:
+    if token is not None:  # pragma: no cover
         import codecov
         new_out = StringIO()
         new_err = StringIO()
@@ -76,7 +76,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
     return cmd
 
 
-def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):
+def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):  # pragma: no cover
     """
     Finds all coverage reports in one subfolder.
 

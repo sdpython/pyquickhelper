@@ -34,7 +34,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
     """
     global _first_execution
 
-    def location():
+    def location():  # pragma: no cover
         site = os.path.normpath(os.path.dirname(
             os.path.join(os.path.abspath(ctypes.__file__))))
         rev = os.path.join(site, "..", "..")
@@ -56,7 +56,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
                     "unable to find: {0},\nsubfolders: {1}".format(site, mes))
         return os.path.normpath(site)
 
-    def look_for(where, prefix):
+    def look_for(where, prefix):  # pragma: no cover
         lst = sorted(os.listdir(where), reverse=True)
         lp = len(prefix)
         for _ in lst:
@@ -65,7 +65,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         raise FileNotFoundError("Unable to find any folder starting with {0} in {1}\nLIST:\n{2}".format(
             prefix, where, ", ".join(lst)))
 
-    if sys.platform.startswith("win"):
+    if sys.platform.startswith("win"):  # pragma: no cover
         if "matplotlib" in sys.modules:
             if _first_execution:
                 warnings.warn(
@@ -120,14 +120,14 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
             fLOG("[fix_tkinter_issues_virtualenv] Call mpl.use('Agg')")
         if "matplotlib" in sys.modules:
             if _first_execution:
-                warnings.warn(
+                warnings.warn(  # pragma: no cover
                     "Cannot fix matplotlib display because it was already imported.", UserWarning)
                 if exc:
-                    raise Exception(
+                    raise Exception(  # pragma: no cover
                         "Cannot fix matplotlib display because it was already imported.")
             import matplotlib as mpl
             mpl.use('Agg')
-        else:
+        else:  # pragma: no cover
             import matplotlib as mpl
             mpl.use('Agg')
 

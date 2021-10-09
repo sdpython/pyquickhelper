@@ -155,7 +155,7 @@ def noLOG(*args, **kwargs):
     """
     if len(args) > 0:
         return args[0]
-    return None
+    return None  # pragma: no cover
 
 
 def fLOG(*args, **kwargs):
@@ -336,7 +336,7 @@ def get_relative_path(folder, file, exists=True, absolute=True):
     j = i
     while i < len(sd):
         i += 1
-        res.append("..")
+        res.append("..")  # pragma: no cover
     res.extend(sf[j:])
     return os.path.join(*res)
 
@@ -637,27 +637,33 @@ def _first_more_recent(f1, path):
     da = re.compile("Last[-]Modified: (.+) GMT").search(s)
     if da is None:
         return True
+    else:  # pragma: no cover
+        da = da.groups()[0]
+        gr = re.compile(
+            "[\\w, ]* ([ \\d]{2}) ([\\w]{3}) ([\\d]{4}) "
+            "([\\d]{2}):([\\d]{2}):([\\d]{2})").search(da)
+        if gr is None:
+            return True
+        gr = gr.groups()
+        dau = datetime.datetime(
+            int(gr[2]),
+            flog_static.store_log_values["month_date"][gr[1].lower()],
+            int(gr[0]), int(gr[3]), int(gr[4]), int(gr[5]))
 
-    da = da.groups()[0]
-    gr = re.compile(
-        "[\\w, ]* ([ \\d]{2}) ([\\w]{3}) ([\\d]{4}) ([\\d]{2}):([\\d]{2}):([\\d]{2})").search(da)
-    if gr is None:
-        return True
-    gr = gr.groups()
-    dau = datetime.datetime(int(gr[2]), flog_static.store_log_values["month_date"][gr[1].lower()], int(gr[0]),
-                            int(gr[3]), int(gr[4]), int(gr[5]))
+        p = time.ctime(os.path.getmtime(path))
+        gr = re.compile(
+            "[\\w, ]* ([\\w]{3}) ([ \\d]{2}) ([\\d]{2}):([\\d]{2}):"
+            "([\\d]{2}) ([\\d]{4})").search(p)
+        if gr is None:
+            return True
+        gr = gr.groups()
+        da = datetime.datetime(
+            int(gr[5]),
+            flog_static.store_log_values["month_date"][gr[0].lower()],
+            int(gr[1]), int(gr[2]), int(gr[3]), int(gr[4]))
 
-    p = time.ctime(os.path.getmtime(path))
-    gr = re.compile(
-        "[\\w, ]* ([\\w]{3}) ([ \\d]{2}) ([\\d]{2}):([\\d]{2}):([\\d]{2}) ([\\d]{4})").search(p)
-    if gr is None:
-        return True
-    gr = gr.groups()
-    da = datetime.datetime(int(gr[5]), flog_static.store_log_values["month_date"][gr[0].lower()], int(gr[1]),
-                           int(gr[2]), int(gr[3]), int(gr[4]))
-
-    file = da
-    return dau > file
+        file = da
+        return dau > file
 
 
 def _check_url_file(url, path_download, outfile, fLOG=noLOG):
@@ -677,7 +683,7 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
         nyet = dest + ".notyet"
 
         if os.path.exists(dest) and not os.path.exists(nyet):
-            try:
+            try:  # pragma: no cover
                 fLOG("[loghelper.flog] trying to connect", url)
                 f1 = urllib_request.urlopen(url)
                 down = _first_more_recent(f1, dest)
@@ -693,14 +699,16 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
 
         if down:
             if newdate:
-                fLOG("[loghelper.flog] downloading (updated) ", url)
+                fLOG(  # pragma: no cover
+                    "[loghelper.flog] downloading (updated) ", url)
             else:
                 fLOG("[loghelper.flog] downloading ", url)
 
             if (len(url) > 4 and
                     url[-4].lower() in [".txt", ".csv", ".tsv", ".log", '.tmpl']):
-                fLOG("[loghelper.flog] creating text file '{0}'".format(dest))
-                formatopen = "w"
+                fLOG(  # pragma: no cover
+                    "[loghelper.flog] creating text file '{0}'".format(dest))
+                formatopen = "w"  # pragma: no cover
             else:
                 fLOG(
                     "[loghelper.flog] creating binary file '{0}'".format(dest))
