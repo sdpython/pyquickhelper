@@ -5,11 +5,14 @@ import sys
 import os
 import unittest
 import warnings
+import time
+from pstats import SortKey
 import pandas
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.pandashelper import df2rst
 from pyquickhelper import __file__ as rootfile
-from pyquickhelper.pycode.profiling import profile, profile2df
+from pyquickhelper.pycode.profiling import (
+    profile, profile2df, profile2graph, ProfileNode)
 
 
 class TestProfiling(ExtTestCase):
@@ -48,13 +51,45 @@ class TestProfiling(ExtTestCase):
         ps, df = profile(simple, rootrem=rootrem,
                          as_df=True)  # pylint: disable=W0632
         self.assertIsInstance(df, pandas.DataFrame)
-        self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple2')
+        self.assertEqual(df.loc[0, 'namefct'].split('-')[-1], 'simple')
         self.assertNotEmpty(ps)
         df = profile2df(ps, False)
         self.assertIsInstance(df, list)
         self.assertIsInstance(df[0], dict)
         df = profile2df(ps, True)
         self.assertIsInstance(df, pandas.DataFrame)
+
+    def test_profile_df_verbose(self):
+        calls = [0]
+
+        def f0(t):
+            calls[0] += 1
+            time.sleep(t)
+
+        def f1(t):
+            calls[0] += 1
+            time.sleep(t)
+
+        def f2():
+            calls[0] += 1
+            f1(0.1)
+            f1(0.01)
+
+        def f3():
+            calls[0] += 1
+            f0(0.2)
+            f1(0.5)
+
+        def f4():
+            calls[0] += 1
+            f2()
+            f3()
+
+        ps = profile(f4)[0]  # pylint: disable=W0632
+        df = self.capture(lambda: profile2df(ps, verbose=True))[0]
+        dfi = df.set_index('fct')
+        self.assertEqual(dfi.loc['f4', 'ncalls1'], 1)
+        self.assertEqual(dfi.loc['f4', 'ncalls2'], 1)
 
     def test_profile_pyinst(self):
         def simple():
@@ -82,6 +117,51 @@ class TestProfiling(ExtTestCase):
             simple, pyinst_format='json')  # pylint: disable=W0632
         self.assertIn('"start_time"', res)
         self.assertNotEmpty(ps)
+
+    def test_profile_graph(self):
+        calls = [0]
+
+        def f0(t):
+            calls[0] += 1
+            time.sleep(t)
+
+        def f1(t):
+            calls[0] += 1
+            time.sleep(t)
+
+        def f2():
+            calls[0] += 1
+            f1(0.1)
+            f1(0.01)
+
+        def f3():
+            calls[0] += 1
+            f0(0.2)
+            f1(0.5)
+
+        def f4():
+            calls[0] += 1
+            f2()
+            f3()
+
+        ps = profile(f4)[0]  # pylint: disable=W0632
+        profile2df(ps, verbose=False, clean_text=lambda x: x.split('/')[-1])
+        root, nodes = profile2graph(ps, clean_text=lambda x: x.split('/')[-1])
+        self.assertEqual(len(nodes), 6)
+        self.assertIsInstance(nodes, dict)
+        self.assertIsInstance(root, ProfileNode)
+        self.assertIn("(", str(root))
+        dicts = root.as_dict()
+        self.assertEqual(10, len(dicts))
+        text = root.to_text()
+        self.assertIn("1   1", text)
+        self.assertIn('        f1', text)
+        text = root.to_text(fct_width=20)
+        self.assertIn('...', text)
+        root.to_text(sort_key=SortKey.CUMULATIVE)
+        root.to_text(sort_key=SortKey.TIME)
+        self.assertRaise(lambda: root.to_text(sort_key=SortKey.NAME),
+                         NotImplementedError)
 
 
 if __name__ == "__main__":

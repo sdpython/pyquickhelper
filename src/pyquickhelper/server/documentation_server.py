@@ -352,7 +352,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      cpath        ParseResult
         @param      method      GET or POST
         """
-        if cpath.path == "" or cpath.path == "/":  # pragma: no cover
+        if cpath.path in ("", "/"):  # pragma: no cover
             params = parse_qs(cpath.query)
             self.serve_main_page()
         else:

@@ -30,7 +30,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                               'W0143', 'W0107', 'C0415', 'W1202',
                               'W0707', 'R1725', 'R1732', 'W1514',
                               'C0123', 'C0208', 'W1514', 'R1735',
-                              'R1734', 'C0209'),
+                              'R1734', 'C0209', 'W0602'),
                skip=["windows_scripts.py",
                      "Redefining built-in 'format'",
                      "bokeh_plot.py",

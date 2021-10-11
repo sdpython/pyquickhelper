@@ -427,8 +427,7 @@ class ExtTestCase(unittest.TestCase):
         :func:`profile <pyquickhelper.pycode.profiling.profile>`.
 
         :param fct: function to profile
-        :param sort: see `sort_stats <
-            https://docs.python.org/3/library/profile.html#pstats.Stats.sort_stats>`_
+        :param sort: see :meth:`pstats.Stats.sort_stats`
         :param rootrem: root to remove in filenames
         :param return_results: return the results as well
         :return: statistics text dump
