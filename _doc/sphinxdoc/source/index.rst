@@ -7,7 +7,7 @@ pyquickhelper: various automations in python
     :alt: Build Status Linux
 
 .. image:: https://ci.appveyor.com/api/projects/status/t2g9olcgqgdvqq3l?svg=true
-    :target: https://app.travis-ci.com/github/sdpython/pyquickhelper/
+    :target: https://ci.appveyor.com/project/sdpython/pyquickhelper
     :alt: Build Status Windows
 
 .. image:: https://circleci.com/gh/sdpython/pyquickhelper/tree/master.svg?style=svg
