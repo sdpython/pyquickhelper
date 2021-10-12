@@ -266,6 +266,9 @@ class ProfileNode:
         :param as_str: converts the json into a string
         :param kwargs: see :func:`json.dumps`
         :return: rows
+
+        See notebook :ref:`profilingrst` to see how to use
+        the json output.
         """
         def sort_key_line(dr):
             if isinstance(dr, tuple):

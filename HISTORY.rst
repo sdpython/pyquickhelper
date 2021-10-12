@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2021-10-09 - 0.00Mb
+current - 2021-10-12 - 0.00Mb
 =============================
 
+* #352: Implements new rendering for a profiling (2021-10-12)
 * #351: Add function profile2df (2021-10-08)
 * #350: Replaces an exception with an logged message (2021-10-04)
 * #349: Update yaml_helper.py to remove option system-site-packages if needed (2021-10-04)

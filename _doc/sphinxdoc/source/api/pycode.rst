@@ -12,6 +12,17 @@ packages
 
 .. autosignature:: pyquickhelper.pycode.pip_helper.get_packages_list
 
+profiling
++++++++++
+
+.. autosignature:: pyquickhelper.pycode.profiling.profile
+
+.. autosignature:: pyquickhelper.pycode.profiling.profile2df
+
+.. autosignature:: pyquickhelper.pycode.profiling.profile2graph
+
+.. autosignature:: pyquickhelper.pycode.profiling.ProfileNode
+
 python2
 +++++++
 
