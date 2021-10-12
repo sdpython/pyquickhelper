@@ -2,12 +2,14 @@
 @file
 @brief Profiling helpers
 """
-import os
+from collections import deque, OrderedDict
 from io import StringIO
+import json
+import math
+import os
+import site
 import cProfile
 from pstats import SortKey, Stats
-import site
-from collections import deque
 
 
 class ProfileNode:
@@ -64,10 +66,27 @@ class ProfileNode:
 
     def get_root(self):
         "Returns the root of the graph."
-        node = self
-        while len(node.called_by) > 0:
-            node = node.called_by[0].get_root()
-        return node
+        done = set()
+
+        def _get_root(node):
+            if len(node.called_by) == 0:
+                return node
+            if len(node.called_by) == 1:
+                return _get_root(node.called_by[0])
+            res = None
+            for ct in node.called_by:
+                k = id(node), id(ct)
+                if k in done:
+                    continue
+                res = ct
+                break
+            if res is None:
+                raise RuntimeError(  # pragma: no cover
+                    "All paths have been explored and no entry point was found.")
+            done.add((id(node), id(res)))
+            return res
+
+        return _get_root(self)
 
     def __repr__(self):
         "usual"
@@ -90,6 +109,38 @@ class ProfileNode:
             done.add(node.key)
             stack.extend(node.calls_to)
 
+    _modules_ = {
+        '~', 'subprocess.py', 'posixpath.py', 'os.py',
+        '<frozen importlib._bootstrap>', 'inspect.py',
+        'version.py', 'typing.py', 'warnings.py', 'errors.py',
+        'numbers.py', 'ast.py', 'threading.py', '_collections_abc.py',
+        'datetime.py', 'abc.py', 'argparse.py', '__future__.py',
+        'functools.py', 'six.py', 'sre_parse.py', 'contextlib.py',
+        ' _globals.py', '_ios.py', 'types.py'}
+
+    @staticmethod
+    def filter_node_(node, info=None):
+        """
+        Filters out node to be displayed by default.
+
+        :param node: node
+        :param info: if the node is called by a function,
+            this dictionary can be used to overwrite the attributes
+            held by the node
+        :return: boolean (True to keep, False to forget)
+        """
+        if node.filename in ProfileNode._modules_:
+            if info is None:
+                if (node.nc1 <= 10 and node.nc2 <= 10 and
+                        node.tall <= 1e-4):
+                    return False
+            else:
+                if (info['nc1'] <= 10 and info['nc2'] <= 10 and
+                        info['tall'] <= 1e-4):
+                    return False
+
+        return True
+
     def as_dict(self, filter_node=None, sort_key=SortKey.LINE):
         """
         Renders the results of a profiling interpreted with
@@ -97,18 +148,25 @@ class ProfileNode:
         a dataframe.
 
         :param filter_node: display only the nodes for which
-            this function returns True
+            this function returns True, if None, the default function
+            removes built-in function with small impact
         :param sort_key: sort sub nodes by...
         :return: rows
         """
         def sort_key_line(dr):
-            return dr[0].line
+            if isinstance(dr, tuple):
+                return dr[0].line
+            return dr.line
 
         def sort_key_tin(dr):
-            return -dr[1][2]
+            if isinstance(dr, tuple):
+                return -dr[1][2]
+            return -dr.tin
 
         def sort_key_tall(dr):
-            return -dr[1][3]
+            if isinstance(dr, tuple):
+                return -dr[1][3]
+            return -dr.tall
 
         if sort_key == SortKey.LINE:
             sortk = sort_key_line
@@ -129,36 +187,42 @@ class ProfileNode:
             for n, nel in sorted(zip(node.calls_to,
                                      node.calls_to_elements),
                                  key=sortk):
-                if filter_node is not None and not filter_node(n):
-                    continue
                 if n.key in roots_keys:
                     text = {'fct': n.func_name, 'where': n.key,
                             'nc1': nel[0], 'nc2': nel[1], 'tin': nel[2],
                             'tall': nel[3], 'indent': indent + 1,
                             'ncalls': len(n.calls_to), 'more': '+',
                             'debug': 'B'}
+                    if (filter_node is not None and
+                            not filter_node(n, info=text)):
+                        continue
                     yield text
                 else:
+                    if filter_node is not None and not filter_node(n):
+                        continue
                     for t in depth_first(n, roots_keys, indent + 1):
                         yield t
 
+        if filter_node is None:
+            filter_node = ProfileNode.filter_node_
         nodes = list(self)
         roots = [node for node in nodes if len(node.called_by) != 1]
         roots_key = {r.key: r for r in roots}
         rows = []
-        for root in roots:
+        for root in sorted(roots, key=sortk):
             if filter_node is not None and not filter_node(root):
                 continue
             rows.extend(depth_first(root, roots_key))
         return rows
 
     def to_text(self, filter_node=None, sort_key=SortKey.LINE,
-                fct_width=50):
+                fct_width=60):
         """
         Prints the profiling to text.
 
         :param filter_node: display only the nodes for which
-            this function returns True
+            this function returns True, if None, the default function
+            removes built-in function with small impact
         :param sort_key: sort sub nodes by...
         :return: rows
         """
@@ -171,10 +235,14 @@ class ProfileNode:
             return text[:h] + "..." + text[-h + 1:]
 
         dicts = self.as_dict(filter_node=filter_node, sort_key=sort_key)
+        max_nc = max(max(_['nc1'] for _ in dicts),
+                     max(_['nc2'] for _ in dicts))
+        dg = int(math.log(max_nc) / math.log(10) + 1.5)
+        line_format = ("{indent}{fct} -- {nc1: %dd} {nc2: %dd} -- {tin:1.5f} {tall:1.5f}"
+                       " -- {name} ({fct2})" % (dg, dg))
         text = []
         for row in dicts:
-            line = ("{indent}{fct} -- {nc1: 3d} {nc2: 3d} -- {tin:1.4f} {tall:1.4f}"
-                    " -- {name} ({fct2})").format(
+            line = line_format.format(
                 indent=" " * (row['indent'] * 4),
                 fct=align_text(row['fct'], fct_width - row['indent'] * 4),
                 nc1=row['nc1'], nc2=row['nc2'], tin=row['tin'],
@@ -182,10 +250,92 @@ class ProfileNode:
                 fct2=row['fct'])
             if row.get('more', '') == '+':
                 line += " +++"
-                if row['fct'] == 'f0':
-                    raise AssertionError("Unexpected %r." % row)
             text.append(line)
         return "\n".join(text)
+
+    def to_json(self, filter_node=None, sort_key=SortKey.LINE, as_str=True,
+                **kwargs):
+        """
+        Renders the results of a profiling interpreted with
+        function @fn profile2graph as :epkg:`JSON`.
+
+        :param filter_node: display only the nodes for which
+            this function returns True, if None, the default function
+            removes built-in function with small impact
+        :param sort_key: sort sub nodes by...
+        :param as_str: converts the json into a string
+        :param kwargs: see :func:`json.dumps`
+        :return: rows
+        """
+        def sort_key_line(dr):
+            if isinstance(dr, tuple):
+                return dr[0].line
+            return dr.line
+
+        def sort_key_tin(dr):
+            if isinstance(dr, tuple):
+                return -dr[1][2]
+            return -dr.tin
+
+        def sort_key_tall(dr):
+            if isinstance(dr, tuple):
+                return -dr[1][3]
+            return -dr.tall
+
+        if sort_key == SortKey.LINE:
+            sortk = sort_key_line
+        elif sort_key == SortKey.CUMULATIVE:
+            sortk = sort_key_tall
+        elif sort_key == SortKey.TIME:
+            sortk = sort_key_tin
+        else:
+            raise NotImplementedError(
+                "Unable to sort subcalls with this key %r." % sort_key)
+
+        def walk(node, roots_keys, indent=0):
+            item = {'details': {
+                'fct': node.func_name, 'where': node.key,
+                'nc1': node.nc1, 'nc2': node.nc2, 'tin': node.tin,
+                'tall': node.tall, 'indent': indent,
+                'ncalls': len(node.calls_to)}}
+
+            child = OrderedDict()
+            for n, nel in sorted(zip(node.calls_to,
+                                     node.calls_to_elements),
+                                 key=sortk):
+                key = "%d-%1.5f:%s" % (nel[0], nel[3], n.func_name)
+                if n.key in roots_keys:
+                    details = {'fct': n.func_name, 'where': n.key,
+                               'nc1': nel[0], 'nc2': nel[1], 'tin': nel[2],
+                               'tall': nel[3], 'indent': indent,
+                               'ncalls': len(node.calls_to)}
+                    if (filter_node is not None and
+                            not filter_node(n, info=details)):
+                        continue
+                    child[key] = {'details': details}
+                else:
+                    if filter_node is not None and not filter_node(n):
+                        continue
+                    child[key] = walk(n, roots_key, indent + 1)
+
+            if len(child) > 0:
+                item['calls'] = child
+            return item
+
+        if filter_node is None:
+            filter_node = ProfileNode.filter_node_
+        nodes = list(self)
+        roots = [node for node in nodes if len(node.called_by) != 1]
+        roots_key = {r.key: r for r in roots}
+        rows = OrderedDict()
+        for root in sorted(roots, key=sortk):
+            if filter_node is not None and not filter_node(root):
+                continue
+            key = "%d-%1.5f:::%s" % (root.nc1, root.tall, root.func_name)
+            rows[key] = walk(root, roots_key)
+        if as_str:
+            return json.dumps({'profile': rows}, **kwargs)
+        return {'profile': rows}
 
 
 def _process_pstats(ps, clean_text=None, verbose=False, fLOG=None):

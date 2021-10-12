@@ -155,7 +155,7 @@ class TestProfiling(ExtTestCase):
         dicts = root.as_dict()
         self.assertEqual(10, len(dicts))
         text = root.to_text()
-        self.assertIn("1   1", text)
+        self.assertIn("1  1", text)
         self.assertIn('        f1', text)
         text = root.to_text(fct_width=20)
         self.assertIn('...', text)
@@ -163,6 +163,56 @@ class TestProfiling(ExtTestCase):
         root.to_text(sort_key=SortKey.TIME)
         self.assertRaise(lambda: root.to_text(sort_key=SortKey.NAME),
                          NotImplementedError)
+        js = root.to_json(indent=2)
+        self.assertIn('"details"', js)
+        js = root.to_json(as_str=False)
+        self.assertIsInstance(js, dict)
+
+    def test_profile_graph_recursive2(self):
+
+        def f0(t):
+            if t < 0.2:
+                time.sleep(t)
+            else:
+                f1(t - 0.1)
+
+        def f1(t):
+            if t < 0.1:
+                time.sleep(t)
+            else:
+                f0(t)
+
+        def f4():
+            f1(0.3)
+
+        ps = profile(f4)[0]  # pylint: disable=W0632
+        profile2df(ps, verbose=False, clean_text=lambda x: x.split('/')[-1])
+        root, nodes = profile2graph(ps, clean_text=lambda x: x.split('/')[-1])
+        self.assertEqual(len(nodes), 4)
+        text = root.to_text()
+        self.assertIn("        f1", text)
+        js = root.to_json(indent=2)
+        self.assertIn('"details"', js)
+
+    def test_profile_graph_recursive1(self):
+
+        def f0(t):
+            if t < 0.1:
+                time.sleep(t)
+            else:
+                f0(t - 0.1)
+
+        def f4():
+            f0(0.15)
+
+        ps = profile(f4)[0]  # pylint: disable=W0632
+        profile2df(ps, verbose=False, clean_text=lambda x: x.split('/')[-1])
+        root, nodes = profile2graph(ps, clean_text=lambda x: x.split('/')[-1])
+        self.assertEqual(len(nodes), 3)
+        text = root.to_text()
+        self.assertIn("    f0", text)
+        js = root.to_json(indent=2)
+        self.assertIn('"details"', js)
 
 
 if __name__ == "__main__":
