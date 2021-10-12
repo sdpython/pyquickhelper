@@ -30,7 +30,7 @@ class TestHelpGenStatHelper(unittest.TestCase):
                 counts["title"] += 1
             nbfound.add(rl[1])
         self.assertTrue(counts.get("ref", 0) > 0)
-        self.assertIn(counts.get(None, 0), (0, 11))
+        self.assertIn(counts.get(None, 0), (0, 12))
         self.assertTrue(counts["title"] > 0)
         self.assertTrue(len(nbfound) > 8)
         # self.assertTrue(counts.get("refn", 0) > 0)

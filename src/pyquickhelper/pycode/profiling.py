@@ -84,7 +84,7 @@ class ProfileNode:
                 raise RuntimeError(  # pragma: no cover
                     "All paths have been explored and no entry point was found.")
             done.add((id(node), id(res)))
-            return res
+            return _get_root(res)
 
         return _get_root(self)
 
@@ -155,8 +155,8 @@ class ProfileNode:
         """
         def sort_key_line(dr):
             if isinstance(dr, tuple):
-                return dr[0].line
-            return dr.line
+                return (dr[0].filename, dr[0].line)
+            return (dr.filename, dr.line)
 
         def sort_key_tin(dr):
             if isinstance(dr, tuple):
@@ -269,8 +269,8 @@ class ProfileNode:
         """
         def sort_key_line(dr):
             if isinstance(dr, tuple):
-                return dr[0].line
-            return dr.line
+                return (dr[0].filename, dr[0].line)
+            return (dr.filename, dr.line)
 
         def sort_key_tin(dr):
             if isinstance(dr, tuple):
@@ -303,7 +303,7 @@ class ProfileNode:
             for n, nel in sorted(zip(node.calls_to,
                                      node.calls_to_elements),
                                  key=sortk):
-                key = "%d-%1.5f:%s" % (nel[0], nel[3], n.func_name)
+                key = (nel[0], "%1.5f:%s" % (nel[3], n.func_name))
                 if n.key in roots_keys:
                     details = {'fct': n.func_name, 'where': n.key,
                                'nc1': nel[0], 'nc2': nel[1], 'tin': nel[2],
@@ -319,6 +319,10 @@ class ProfileNode:
                     child[key] = walk(n, roots_key, indent + 1)
 
             if len(child) > 0:
+                mx = max(_[0] for _ in child)
+                dg = int(math.log(mx) / math.log(10) + 1.5)
+                form = "%-{}d-%s".format(dg)
+                child = OrderedDict((form % k, v) for k, v in child.items())
                 item['calls'] = child
             return item
 
@@ -331,8 +335,12 @@ class ProfileNode:
         for root in sorted(roots, key=sortk):
             if filter_node is not None and not filter_node(root):
                 continue
-            key = "%d-%1.5f:::%s" % (root.nc1, root.tall, root.func_name)
+            key = (root.nc1, "%1.5f:::%s" % (root.tall, root.func_name))
             rows[key] = walk(root, roots_key)
+        mx = max(_[0] for _ in rows)
+        dg = int(math.log(mx) / math.log(10) + 1.5)
+        form = "%-{}d-%s".format(dg)
+        rows = OrderedDict((form % k, v) for k, v in rows.items())
         if as_str:
             return json.dumps({'profile': rows}, **kwargs)
         return {'profile': rows}
@@ -635,6 +643,9 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
             filename=clean_text(k[0].replace("\\", "/")),
             line=k[1], func_name=k[2],
             nc1=v[0], nc2=v[1], tin=v[2], tall=v[3])
+        if node.key in nodes:
+            raise RuntimeError(
+                "Key %r is already present, node=%r." % (node.key, node))
         nodes[node.key] = node
 
     for k, v in ps.stats.items():
@@ -662,4 +673,5 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
     for k, v in nodes.items():
         root = v.get_root()
         break
+
     return root, nodes
