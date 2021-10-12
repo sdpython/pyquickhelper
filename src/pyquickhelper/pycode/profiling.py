@@ -190,7 +190,7 @@ class ProfileNode:
         return "\n".join(text)
 
 
-def _process_pstats(ps, clean_text=None, verbose=False):
+def _process_pstats(ps, clean_text=None, verbose=False, fLOG=None):
     """
     Converts class `Stats <https://docs.python.org/3/library/
     profile.html#pstats.Stats>`_ into something
@@ -199,6 +199,7 @@ def _process_pstats(ps, clean_text=None, verbose=False):
     :param ps: instance of type :func:`pstats.Stats`
     :param clean_text: function to clean function names
     :param verbose: change verbosity
+    :param fLOG: logging function
     :return: list of rows
     """
     if clean_text is None:
@@ -209,8 +210,8 @@ def _process_pstats(ps, clean_text=None, verbose=False):
         for k, v in d.items():
             stin = 0
             stall = 0
-            if verbose:  # pragma: no cover
-                print("[pstats] %s=%r" % (
+            if verbose and fLOG is not None:
+                fLOG("[pstats] %s=%r" % (
                     (clean_text(k[0].replace("\\", "/")), ) + k[1:],
                     v))
             if len(v) < 5:
@@ -241,7 +242,7 @@ def _process_pstats(ps, clean_text=None, verbose=False):
     return rows
 
 
-def profile2df(ps, as_df=True, clean_text=None, verbose=False):
+def profile2df(ps, as_df=True, clean_text=None, verbose=False, fLOG=None):
     """
     Converts profiling statistics into a Dataframe.
 
@@ -251,6 +252,7 @@ def profile2df(ps, as_df=True, clean_text=None, verbose=False):
         or a list of dictionaries (False)
     :param clean_text: function to clean function names
     :param verbose: verbosity
+    :param fLOG: logging function
     :return: a DataFrame
 
     ::
@@ -262,7 +264,7 @@ def profile2df(ps, as_df=True, clean_text=None, verbose=False):
         df = profile2df(pd)
         print(df)
     """
-    rows = _process_pstats(ps, clean_text, verbose=verbose)
+    rows = _process_pstats(ps, clean_text, verbose=verbose, fLOG=fLOG)
     if not as_df:
         return rows
 
@@ -411,7 +413,7 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
     raise ValueError("Unknown format '{}'.".format(pyinst_format))
 
 
-def profile2graph(ps, clean_text=None, verbose=False):
+def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
     """
     Converts profiling statistics into a graphs.
 
@@ -419,6 +421,7 @@ def profile2graph(ps, clean_text=None, verbose=False):
         <https://docs.python.org/3/library/profile.html#pstats.Stats>`_
     :param clean_text: function to clean function names
     :param verbose: verbosity
+    :param fLOG: logging function
     :return: an instance of class @see cl ProfileNode
 
     .. exref::
@@ -471,8 +474,8 @@ def profile2graph(ps, clean_text=None, verbose=False):
 
     nodes = {}
     for k, v in ps.stats.items():
-        if verbose:
-            print("[pstats] %s=%r" % (k, v))
+        if verbose and fLOG is not None:
+            fLOG("[pstats] %s=%r" % (k, v))
         if len(v) < 5:
             continue
         if k[0] == '~' and len(v) == 0:

@@ -86,7 +86,8 @@ class TestProfiling(ExtTestCase):
             f3()
 
         ps = profile(f4)[0]  # pylint: disable=W0632
-        df = self.capture(lambda: profile2df(ps, verbose=True))[0]
+        df = self.capture(
+            lambda: profile2df(ps, verbose=True, fLOG=print))[0]
         dfi = df.set_index('fct')
         self.assertEqual(dfi.loc['f4', 'ncalls1'], 1)
         self.assertEqual(dfi.loc['f4', 'ncalls2'], 1)
