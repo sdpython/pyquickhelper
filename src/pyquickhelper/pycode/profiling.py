@@ -120,8 +120,6 @@ class ProfileNode:
             raise NotImplementedError(
                 "Unable to sort subcalls with this key %r." % sort_key)
 
-        SortKey.CUMULATIVE
-
         def depth_first(node, roots_keys, indent=0):
             text = {'fct': node.func_name, 'where': node.key,
                     'nc1': node.nc1, 'nc2': node.nc2, 'tin': node.tin,
