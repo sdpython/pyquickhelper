@@ -419,16 +419,50 @@ def profile2graph(ps, clean_text=None, verbose=False):
         <https://docs.python.org/3/library/profile.html#pstats.Stats>`_
     :param clean_text: function to clean function names
     :param verbose: verbosity
-    :return: a DataFrame
+    :return: an instance of class @see cl ProfileNode
 
-    ::
+    .. exref::
+        :title: Hierarchical display for a profiling
 
-        import pstats
-        from pyquickhelper.pycode.profiling import profile2graph
+        :epkg:`pyinstrument` has a nice display to show
+        time spent and call stack at the same time. This function
+        tries to replicate that display based on the results produced
+        by module :mod:`cProfile`. Here is an example.
 
-        ps = pstats.Stats('bench_ortmodule_nn_gpu6.prof')
-        gr = profile2graph(pd)
-        print(df)
+        .. runpython::
+            :showcode:
+
+            import time
+            from pyquickhelper.pycode.profiling import profile, profile2graph
+
+
+            def fct0(t):
+                time.sleep(t)
+
+
+            def fct1(t):
+                time.sleep(t)
+
+
+            def fct2():
+                fct1(0.1)
+                fct1(0.01)
+
+
+            def fct3():
+                fct0(0.2)
+                fct1(0.5)
+
+
+            def fct4():
+                fct2()
+                fct3()
+
+
+            ps = profile(fct4)[0]
+            root, nodes = profile2graph(ps, clean_text=lambda x: x.split('/')[-1])
+            text = root.to_text()
+            print(text)
 
     .. versionadded:: 1.11
     """
