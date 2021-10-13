@@ -9,7 +9,17 @@ import math
 import os
 import site
 import cProfile
-from pstats import SortKey, Stats
+from pstats import Stats
+
+try:
+    from pstarts import SortKey
+except ImportError:  # pragma: no cover
+    # Python < 3.7
+
+    class SortKey:
+        LINE = 'line'
+        CUMULATIVE = 'cumulative'
+        TIME = 'time'
 
 
 class ProfileNode:
@@ -53,9 +63,7 @@ class ProfileNode:
 
     @staticmethod
     def _key(filename, line, fct):
-        key = "%s:%d" % (filename, line)
-        if key == "~:0":
-            key += ":%s" % fct
+        key = "%s:%d:%s" % (filename, line, fct)
         return key
 
     @property
@@ -68,11 +76,13 @@ class ProfileNode:
         "Returns the root of the graph."
         done = set()
 
-        def _get_root(node):
+        def _get_root(node, stor=None):
+            if stor is not None:
+                stor.append(node)
             if len(node.called_by) == 0:
                 return node
             if len(node.called_by) == 1:
-                return _get_root(node.called_by[0])
+                return _get_root(node.called_by[0], stor=stor)
             res = None
             for ct in node.called_by:
                 k = id(node), id(ct)
@@ -81,12 +91,20 @@ class ProfileNode:
                 res = ct
                 break
             if res is None:
-                raise RuntimeError(  # pragma: no cover
-                    "All paths have been explored and no entry point was found.")
+                # All paths have been explored and no entry point was found.
+                # Choosing the most consuming function.
+                return None
             done.add((id(node), id(res)))
-            return _get_root(res)
+            return _get_root(res, stor=stor)
 
-        return _get_root(self)
+        root = _get_root(self)
+        if root is None:
+            candidates = []
+            _get_root(self, stor=candidates)
+            tall = [(n.tall, n) for n in candidates]
+            tall.sort()
+            root = tall[-1][-1]
+        return root
 
     def __repr__(self):
         "usual"
@@ -537,7 +555,7 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
             return ps, res
     if as_df:
         raise ValueError(  # pragma: no cover
-            "as_df is not a compatible option with pyinst_format")
+            "as_df is not a compatible option with pyinst_format.")
 
     try:
         from pyinstrument import Profiler
