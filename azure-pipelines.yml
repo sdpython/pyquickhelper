@@ -6,6 +6,8 @@ jobs:
     matrix:
       Python39:
         python.version: '3.9'
+      Python36:
+        python.version: '3.6'
     maxParallel: 3
 
   steps:

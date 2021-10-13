@@ -6,7 +6,11 @@ import os
 import unittest
 import warnings
 import time
-from pstats import SortKey
+try:
+    from pstats import SortKey
+except ImportError:
+    # python < 3.7
+    from pyquickhelper.pycode.profiling import SortKey
 import pandas
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.pandashelper import df2rst
@@ -119,6 +123,8 @@ class TestProfiling(ExtTestCase):
         self.assertIn('"start_time"', res)
         self.assertNotEmpty(ps)
 
+    @unittest.skipIf(sys.version_info[:2] < (3, 7),
+                     reason="not supported")
     def test_profile_graph(self):
         calls = [0]
 
