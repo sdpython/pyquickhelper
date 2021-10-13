@@ -123,6 +123,8 @@ class TestProfiling(ExtTestCase):
         self.assertIn('"start_time"', res)
         self.assertNotEmpty(ps)
 
+    @unittest.skipIf(sys.version_info[:2] < (3, 7),
+                     reason="not supported")
     def test_profile_graph(self):
         calls = [0]
 
