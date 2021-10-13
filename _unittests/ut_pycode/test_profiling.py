@@ -6,7 +6,11 @@ import os
 import unittest
 import warnings
 import time
-from pstats import SortKey
+try:
+    from pstats import SortKey
+except ImportError:
+    # python < 3.7
+    from pyquickhelper.pycode.profiling import SortKey
 import pandas
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.pandashelper import df2rst
