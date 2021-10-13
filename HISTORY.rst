@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2021-10-12 - 0.00Mb
+current - 2021-10-14 - 0.00Mb
 =============================
+
+* #353: Fix import issue with py36, fix a infinite loop in profiling (2021-10-13)
+
+1.10.3651 - 2021-10-12 - 2.12Mb
+===============================
 
 * #352: Implements new rendering for a profiling (2021-10-12)
 * #351: Add function profile2df (2021-10-08)
