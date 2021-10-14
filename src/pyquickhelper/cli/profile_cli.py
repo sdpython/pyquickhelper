@@ -103,7 +103,7 @@ def profile_stat(file_stat, output=None, calls=True, verbose=False,
                 if ext == '.csv':
                     df.to_csv(output, index=False)
                 else:
-                    df.to_excel(output, index=False)
+                    df.to_excel(output, index=False)  # pylint: disable=E1101
                 res = text
             else:
                 raise ValueError(

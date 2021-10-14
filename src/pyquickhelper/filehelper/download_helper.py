@@ -225,7 +225,7 @@ def get_urls_content_timeout(urls, timeout=10, folder=None, encoding=None,
     else:
         df = None
     if df is not None:
-        all_obs = [dict(url=df.loc[i, 'url'],
+        all_obs = [dict(url=df.loc[i, 'url'],  # pylint: disable=E1101
                         size=df.loc[i, 'size'],  # pylint: disable=E1101
                         date=df.loc[i, 'date'],  # pylint: disable=E1101
                         dest=df.loc[i, 'dest'])  # pylint: disable=E1101
