@@ -553,7 +553,8 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
            "__FILENAMENOEXT__": filenoext,
            "__FULLNAMENOEXT__": pythonname,
            "__DOCUMENTATION__": doc.split("\n.. ")[0],
-           "__DOCUMENTATIONLINE__": shortdoc.split(".. todoext::")[0],
+           "__DOCUMENTATIONLINE__": shortdoc.split(
+                ".. todoext::", maxsplit=1)[0],
            "__PLATFORM__": plat,
            "__ADDEDMEMBERS__": text_specials,
            }
