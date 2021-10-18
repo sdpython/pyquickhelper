@@ -14,7 +14,7 @@ def numeric_module_version(vers):
     """
     if isinstance(vers, tuple):
         return vers
-    spl = vers.split(".")
+    spl = str(vers).split(".")
     r = []
     for _ in spl:
         try:
