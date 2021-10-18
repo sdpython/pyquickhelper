@@ -549,15 +549,15 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
     ttitle = "module ``{0}``".format(fullnamenoext)
-    rep = {"__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) + "\n",
-           "__FILENAMENOEXT__": filenoext,
-           "__FULLNAMENOEXT__": pythonname,
-           "__DOCUMENTATION__": doc.split("\n.. ")[0],
-           "__DOCUMENTATIONLINE__": shortdoc.split(
-                ".. todoext::", maxsplit=1)[0],
-           "__PLATFORM__": plat,
-           "__ADDEDMEMBERS__": text_specials,
-           }
+    rep = {
+        "__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) + "\n",
+        "__FILENAMENOEXT__": filenoext,
+        "__FULLNAMENOEXT__": pythonname,
+        "__DOCUMENTATION__": doc.split("\n.. ")[0],
+        "__DOCUMENTATIONLINE__":
+            shortdoc.split(".. todoext::", maxsplit=1)[0],
+        "__PLATFORM__": plat,
+        "__ADDEDMEMBERS__": text_specials}
 
     for k, v in additional.items():
         rep[k] = v
