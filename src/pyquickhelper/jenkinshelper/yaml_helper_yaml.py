@@ -17,5 +17,5 @@ def yaml_load(content):
     @return                 structured data
     """
     if Loader is None:
-        return yaml.load(content)  # pragma: no cover
+        return yaml.load(content)  # pylint: disable=E1120
     return yaml.load(content, Loader=Loader)
