@@ -1171,7 +1171,7 @@ class JenkinsExt(jenkins.Jenkins):
                 url = jobs[1]
                 url_spl = url.split('/')
                 if len(url_spl) > 2:
-                    branch = [-2]
+                    branch = url_spl[-2]
                 else:
                     branch = 'master'
             cre, ds, locs = self._setup_jenkins_server_modules_loop(
