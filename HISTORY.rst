@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2021-10-14 - 0.00Mb
+current - 2021-10-26 - 0.00Mb
 =============================
+
+* #354: Changes to support main branch (2021-10-25)
+
+1.10.3653 - 2021-10-13 - 2.12Mb
+===============================
 
 * #353: Fix import issue with py36, fix a infinite loop in profiling (2021-10-13)
 
@@ -150,10 +155,6 @@ current - 2021-10-14 - 0.00Mb
 * #277: Grammar and spelling fixes. (2019-11-06)
 * #278: Add simple command line to merge multiple images into one PDF (2019-11-04)
 * #276: Add function to make white transparent in an image. (2019-10-28)
-
-1.9.3240 - 2019-10-21 - 2.05Mb
-==============================
-
 * #275: Add six to the module to ignore in _filter_out_warning (2019-10-21)
 * #255: Moves blog generation inside sphinx (2019-10-09)
 * #274: Add parameter min_size to check wrong downloads in function read_content_ufs (2019-09-22)

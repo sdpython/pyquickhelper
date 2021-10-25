@@ -1228,7 +1228,7 @@ class JenkinsExt(jenkins.Jenkins):
         new_dep = []
         created = []
         locations = []
-        
+
         if isinstance(job, tuple):
             if len(job) < 2:
                 raise JenkinsJobException(  # pragma: no cover
