@@ -715,7 +715,8 @@ class JenkinsExt(jenkins.Jenkins):
                             location=None, keep=10, scheduler=None, py27=False, description=None,
                             default_engine_paths=None, success_only=False, update=False,
                             timeout=_timeout_default, additional_requirements=None,
-                            return_job=False, adjust_scheduler=True, clean_repo=True, **kwargs):
+                            return_job=False, adjust_scheduler=True, clean_repo=True,
+                            branch='master', **kwargs):
         """
         Adds a job to the :epkg:`Jenkins` server.
 
@@ -743,6 +744,7 @@ class JenkinsExt(jenkins.Jenkins):
                                                 is already taken
         @param      return_job                  return job instead of submitting the job
         @param      clean_repo                  clean the repository before building (default is yes)
+        @param      branch                      default branch
 
         The job can be modified on Jenkins. To add a time trigger::
 
@@ -756,6 +758,9 @@ class JenkinsExt(jenkins.Jenkins):
         Options *success_only* must be specified.
         Parameter *update* updates a job instead of creating it.
         """
+        if ':' in name:
+            raise ValueError(  # pragma: no cover
+                "Unexpected value name=%r and branch=%r." % (name, branch))
         if 'platform' in kwargs:
             raise NameError(  # pragma: no cover
                 "Parameter 'platform' should be set up in the constructor.")
@@ -853,6 +858,7 @@ class JenkinsExt(jenkins.Jenkins):
             git_repo_xml = JenkinsExt._git_repo \
                 .replace("__GITREPO__", git_repo) \
                 .replace("__WIPE__", wipe) \
+                .replace("__BRANCH__", branch) \
                 .replace("__CRED__", "<credentialsId>%s</credentialsId>" % credentials)
 
         # additional scripts
@@ -1156,9 +1162,18 @@ class JenkinsExt(jenkins.Jenkins):
                         "Empty jobs in the list.")  # pragma: no cover
                 if jobs[0] == "yml" and len(jobs) != 3:
                     raise ValueError(  # pragma: no cover
-                        "If it is a yml jobs, the tuple should contain 3 elements: ('yml', filename, schedule or None or dictionary).\n" +
+                        "If it is a yml jobs, the tuple should contain 3 elements: "
+                        "('yml', filename, schedule or None or dictionary).\n" +
                         "Not: {0}".format(jobs))
 
+            branch = 'master'
+            if isinstance(jobs, tuple) and jobs[0] == 'yml':
+                url = jobs[1]
+                url_spl = url.split('/')
+                if len(url_spl) > 2:
+                    branch = url_spl[-2]
+                else:
+                    branch = 'master'
             cre, ds, locs = self._setup_jenkins_server_modules_loop(
                 jobs=jobs, counts=counts,
                 get_jenkins_script=get_jenkins_script,
@@ -1167,7 +1182,7 @@ class JenkinsExt(jenkins.Jenkins):
                 overwrite=overwrite, prefix=prefix,
                 credentials=credentials, github=github,
                 disable_schedule=disable_schedule, jenkins_server=self,
-                update=update, indexes=indexes, deps=deps)
+                update=update, indexes=indexes, deps=deps, branch=branch)
             created.extend(cre)
             locations.extend(locs)
             deps.extend(ds)
@@ -1175,7 +1190,7 @@ class JenkinsExt(jenkins.Jenkins):
 
     def _setup_jenkins_server_modules_loop(self, jobs, counts, get_jenkins_script, location, adjust_scheduler,
                                            add_environ, yml_engine, overwrite, prefix, credentials, github,
-                                           disable_schedule, jenkins_server, update, indexes, deps):
+                                           disable_schedule, jenkins_server, update, indexes, deps, branch):
         if not isinstance(jobs, list):
             jobs = [jobs]
         indexes["unit"] = 0
@@ -1194,7 +1209,7 @@ class JenkinsExt(jenkins.Jenkins):
                 disable_schedule=disable_schedule,
                 jenkins_server=jenkins_server,
                 update=update, indexes=indexes,
-                deps=deps, i=i)
+                deps=deps, i=i, branch=branch)
             created.extend(cre)
             new_dep.extend(dep)
             locations.extend(loc)
@@ -1205,14 +1220,15 @@ class JenkinsExt(jenkins.Jenkins):
 
     def _setup_jenkins_server_job_iteration(self, job, get_jenkins_script, location, adjust_scheduler,
                                             add_environ, yml_engine, overwrite, prefix, credentials, github,
-                                            disable_schedule, jenkins_server, update, indexes, deps, i, counts):
+                                            disable_schedule, jenkins_server, update, indexes, deps, i,
+                                            counts, branch):
         order = indexes["order"]
         dozen = indexes["dozen"]
         unit = indexes["unit"]
         new_dep = []
         created = []
         locations = []
-
+        
         if isinstance(job, tuple):
             if len(job) < 2:
                 raise JenkinsJobException(  # pragma: no cover
@@ -1399,7 +1415,7 @@ class JenkinsExt(jenkins.Jenkins):
                     success_only=success_only, timeout=timeout, platform=self.platform,
                     adjust_scheduler=adjust_scheduler, overwrite=overwrite,
                     build_location=location, mails=self.mails,
-                    job_options=scheduler_options):
+                    job_options=scheduler_options, branch=branch):
                 if name in done:
                     s = "A name '{0}' was already used for a job, from:\n{1}\nPROCESS:\n{2}"  # pragma: no cover
                     raise ValueError(  # pragma: no cover

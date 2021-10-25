@@ -92,10 +92,14 @@ def default_jenkins_jobs(platform=None, github_owner="sdpython",
         from pyquickhelper.jenkinshelper import default_jenkins_jobs
         print(default_jenkins_jobs())
     """
+    if ':' in module_name:
+        module_name, branch = module_name.split(':')
+    else:
+        branch = 'master'
     platform = get_platform(platform)
     plat = "win" if platform.startswith("win") else "lin"
-    pattern = "https://raw.githubusercontent.com/{1}/%s/master/.local.jenkins.{0}.yml".format(
-        plat, github_owner)
+    pattern = "https://raw.githubusercontent.com/{1}/%s/{2}/.local.jenkins.{0}.yml".format(
+        plat, github_owner, branch)
     yml = []
     if not isinstance(module_name, list):
         module_name = [module_name]
