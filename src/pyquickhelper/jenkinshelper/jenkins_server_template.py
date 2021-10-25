@@ -92,7 +92,7 @@ _git_repo = """
     </userRemoteConfigs>
     <branches>
         <hudson.plugins.git.BranchSpec>
-            <name>*/master</name>
+            <name>*/__BRANCH__</name>
         </hudson.plugins.git.BranchSpec>
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>

@@ -54,7 +54,7 @@ def locate_image_documentation(image_name):
     raise FileNotFoundError(image_name)
 
 
-def NbImage(name, repository=None, force_github=False, width=None):
+def NbImage(name, repository=None, force_github=False, width=None, branch='master'):
     """
     Retrieves a name or a url of the image if it is not found in the local folder
     or a subfolder.
@@ -63,6 +63,7 @@ def NbImage(name, repository=None, force_github=False, width=None):
     @param      force_github    force the system to retrieve the image from GitHub
     @param      repository      repository, see below
     @param      width           to modify the width
+    @param      branch          branch
     @return                     an `Image object <http://ipython.org/ipython-doc/2/api/generated/IPython.core.display.html
                                 #IPython.core.display.Image>`_
 
@@ -117,7 +118,7 @@ def NbImage(name, repository=None, force_github=False, width=None):
             repository = modobj.__github__
         repository = repository.rstrip("/")
 
-    loc = "/".join(["master", "_doc", "notebooks"] + paths[pos + 2:])
+    loc = "/".join([branch, "_doc", "notebooks"] + paths[pos + 2:])
     url = repository + "/" + loc
     url = url.replace("github.com", "raw.githubusercontent.com")
     return Image(url, width=width)

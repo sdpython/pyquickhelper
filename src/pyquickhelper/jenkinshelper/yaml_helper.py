@@ -583,7 +583,7 @@ def infer_project_name(file_or_buffer, source):
         name = None
         while len(spl) > -pos:
             name = spl[pos]
-            if name in {'master'}:
+            if name in {'master', 'main'}:
                 pos -= 1
             elif 'github' in name:
                 break
@@ -605,7 +605,7 @@ def infer_project_name(file_or_buffer, source):
 
 def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platform=None,
                             server=None, git_repo=None, add_environ=True, overwrite=False,
-                            build_location=None, **kwargs):
+                            build_location=None, branch='master', **kwargs):
     """
     Submits or enumerates jobs based on the content of a :epkg:`yml` file.
 
@@ -618,11 +618,13 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
     @param      add_environ         add environment variable before interpreting the job
     @param      overwrite           overwrite the job if it already exists in Jenkins
     @param      build_location      location for the build
+    @param      branch              default branch
     @param      kwargs              see @see me create_job_template
     @return                         enumerator for *(job, name, variables)*
 
     Example of a :epkg:`yml` file
-    `.local.jenkins.win.yml <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
+    `.local.jenkins.win.yml
+    <https://github.com/sdpython/pyquickhelper/blob/master/.local.jenkins.win.yml>`_.
     A subfolder was added to the project location.
     A scheduler can be defined as well by adding ``SCHEDULER:'* * * * *'``.
     """
@@ -712,6 +714,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
                     kwargs["adjuster_scheduler"] = adjuster_scheduler
                 yield server.create_job_template(name, script=conv, git_repo=git_repo,
                                                  update=update_job, location=loc,
-                                                 clean_repo=clean_repo, **kwargs), name, var
+                                                 clean_repo=clean_repo, branch=branch,
+                                                 **kwargs), name, var
         else:
             yield conv, None, var

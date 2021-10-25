@@ -253,7 +253,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          enable_disabled_parts="enable_disabled_documented_pieces_of_code",
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
-                         book=True, link_resolve=None, nblayout='classic', doc_version=None):
+                         book=True, link_resolve=None, nblayout='classic', doc_version=None,
+                         branch='master'):
     """
     Defines variables for :epkg:`Sphinx`.
 
@@ -291,6 +292,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     @param      nblayout                ``'classic'`` or ``'table'``, specifies the layout for
                                         the notebook gallery
     @param      doc_version             if not None, overwrites the current version
+    @param      branch                  default branch (`'master'` by default)
 
     If the parameter *custom_style* is not None, it will call ``app.add_css_file(custom_style)``
     in the setup.
@@ -496,7 +498,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         jupyter_sphinx_thebelab_config = {  # pragma: no cover
             'requestKernel': True,
             'binderOptions': {
-                'repo': "sdpython/pyquickhelper/master?filepath=_doc"
+                'repo': "sdpython/pyquickhelper/%s?filepath=_doc" % branch
                 # 'repo': "{0}/{1}/master?filepath=_doc%2Fnotebooks".format(
                 #    github_user, module_name)
             }}
@@ -819,7 +821,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                 'org': github_user,
                 'repo': github_repo,
                 'binderhub_url': 'https://mybinder.org',
-                'branch': 'master',
+                'branch': branch,
                 'dependencies': os.path.abspath(
                     os.path.join(os.path.dirname(version_file), 'requirements.txt')),
                 'use_jupyter_lab': True,
