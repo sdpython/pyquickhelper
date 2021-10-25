@@ -1169,7 +1169,11 @@ class JenkinsExt(jenkins.Jenkins):
             branch = 'master'
             if isinstance(jobs, tuple) and jobs[0] == 'yml':
                 url = jobs[1]
-                branch = url.split('/')[-2]
+                url_spl = url.split('/')
+                if len(url_spl) > 2:
+                    branch = [-2]
+                else:
+                    branch = 'master'
             cre, ds, locs = self._setup_jenkins_server_modules_loop(
                 jobs=jobs, counts=counts,
                 get_jenkins_script=get_jenkins_script,
