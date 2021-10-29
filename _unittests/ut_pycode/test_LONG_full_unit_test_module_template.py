@@ -142,7 +142,8 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                 except PEP8Exception as e:
                     lines = str(e).split('\n')[1:]
                     lines = [line for line in lines
-                             if "should be placed before" not in line]
+                             if "should be placed before" not in line and
+                             'C0209' not in line]
                     content = "\n".join(lines).strip("\n\r\t ")
                     if len(content) > 0:
                         raise AssertionError(
