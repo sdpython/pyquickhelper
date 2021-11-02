@@ -506,7 +506,8 @@ class ExtTestCase(unittest.TestCase):
         @param      log_sphinx      logging from :epkg:`sphinx`
         @return                     result, logged information
         """
-        from sphinx.util import logging as logging_sphinx
+        if log_sphinx:
+            from sphinx.util import logging as logging_sphinx
 
         class MyStream:
             def __init__(self):
