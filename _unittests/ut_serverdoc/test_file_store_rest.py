@@ -32,6 +32,7 @@ class TestfileStoreRest(ExtTestCase):
 
     @skipif_appveyor("There is no current event loop in thread")
     @skipif_azure("There is no current event loop in thread")
+    @skipif_circleci("There is no current event loop in thread")
     def test_file_store(self):
         temp = get_temp_folder(__file__, "temp_file_storage_rest")
         name = os.path.join(temp, "filestore.db3")
