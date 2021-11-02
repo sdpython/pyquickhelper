@@ -6,7 +6,8 @@ import unittest
 import os
 import pandas
 from pyquickhelper.pycode import (
-    ExtTestCase, get_temp_folder, skipif_appveyor, skipif_azure)
+    ExtTestCase, get_temp_folder, skipif_appveyor,
+    skipif_azure, skipif_circleci)
 from pyquickhelper.server.filestore_fastapi import (
     create_fast_api_app, fast_api_submit, fast_api_query,
     fast_api_content, _get_password, _post_request)
@@ -112,6 +113,7 @@ class TestfileStoreRest(ExtTestCase):
 
     @skipif_appveyor("There is no current event loop in thread")
     @skipif_azure("There is no current event loop in thread")
+    @skipif_circleci("There is no current event loop in thread")
     def test_file_store_df(self):
         temp = get_temp_folder(__file__, "temp_file_storage_rest_df")
         name = os.path.join(temp, "filestore.db3")
