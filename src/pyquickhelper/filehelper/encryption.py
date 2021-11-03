@@ -110,7 +110,10 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
         origsize = None
         chunksize = None
     elif algo == "AES":
-        from Cryptodome.Cipher import AES
+        try:
+            from Cryptodome.Cipher import AES
+        except ImportError:
+            from Crypto.Cipher import AES
         ksize = {16, 32, 64, 128, 256}
         chunksize = chunksize  # pylint: disable=W0127
         if len(key) not in ksize:
