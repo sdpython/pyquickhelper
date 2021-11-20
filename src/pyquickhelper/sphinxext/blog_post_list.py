@@ -375,18 +375,12 @@ class BlogPostList:
         @param      only_html       add item ``.. only:: html`` and indent everything
         @return                     list of produced files
         """
-        return BlogPostList.write_aggregated_post_list(folder=folder,
-                                                       lp=list(
-                                                           _ for _ in self),
-                                                       division=division,
-                                                       prefix="main",
-                                                       encoding=self._encoding,
-                                                       rst_links_up=rst_links_up,
-                                                       rst_links_down=rst_links_down,
-                                                       index_terms=["blog"],
-                                                       language=self.Lang,
-                                                       bold_title=TITLES[self.Lang]["main_title"],
-                                                       only_html=only_html)
+        return BlogPostList.write_aggregated_post_list(
+            folder=folder, lp=list(_ for _ in self), division=division,
+            prefix="main", encoding=self._encoding, rst_links_up=rst_links_up,
+            rst_links_down=rst_links_down, index_terms=["blog"],
+            language=self.Lang, bold_title=TITLES[self.Lang]["main_title"],
+            only_html=only_html)
 
     def write_aggregated_categories(self, folder, division=10, rst_links_up=None,
                                     rst_links_down=None, only_html=True):
@@ -405,16 +399,11 @@ class BlogPostList:
         for cat in cats:
             posts = [_ for _ in self if cat in _.Categories]
             url_cat = BlogPostList.category2url(cat)
-            add = BlogPostList.write_aggregated_post_list(folder=folder,
-                                                          lp=posts,
-                                                          division=division,
-                                                          prefix="cat-" + url_cat,
-                                                          encoding=self._encoding,
-                                                          rst_links_up=rst_links_up,
-                                                          rst_links_down=rst_links_down,
-                                                          index_terms=[cat],
-                                                          bold_title=cat,
-                                                          only_html=only_html)
+            add = BlogPostList.write_aggregated_post_list(
+                folder=folder, lp=posts, division=division, prefix="cat-" + url_cat,
+                encoding=self._encoding, rst_links_up=rst_links_up,
+                rst_links_down=rst_links_down, index_terms=[cat],
+                bold_title=cat, only_html=only_html)
             res.extend(add)
         return res
 
@@ -434,15 +423,11 @@ class BlogPostList:
         res = []
         for m in mo:
             posts = [_ for _ in self if _.Date.startswith(m)]
-            add = BlogPostList.write_aggregated_post_list(folder=folder,
-                                                          lp=posts,
-                                                          division=division,
-                                                          prefix="month-" + m,
-                                                          encoding=self._encoding,
-                                                          rst_links_up=rst_links_up, rst_links_down=rst_links_down,
-                                                          index_terms=[m],
-                                                          bold_title=m,
-                                                          only_html=only_html)
+            add = BlogPostList.write_aggregated_post_list(
+                folder=folder, lp=posts, division=division,
+                prefix="month-" + m, encoding=self._encoding,
+                rst_links_up=rst_links_up, rst_links_down=rst_links_down,
+                index_terms=[m], bold_title=m, only_html=only_html)
             res.extend(add)
         return res
 
