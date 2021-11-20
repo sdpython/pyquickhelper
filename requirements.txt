@@ -23,7 +23,7 @@ keyrings.cryptfile
 Mako
 matplotlib
 mistune
-nbconvert>=6.0.7
+nbconvert>=6.0.7,!=6.3.0
 nbformat
 notebook>=6.0.0
 numpy>=1.19

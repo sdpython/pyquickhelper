@@ -44,6 +44,8 @@ def default_filter_warning(w):  # pragma: no cover
         if "pyquickhelper" in w.filename:
             if "pymyinstall" in str(w.message):
                 return False
+        if "FixedFormatter should only be used together" in str(w):
+            return False
     elif isinstance(w.message, MatplotlibDeprecationWarning):
         if "basemap" in w.filename:
             if "The ishold function was deprecated in version 2.0." in str(w.message):
@@ -52,6 +54,8 @@ def default_filter_warning(w):  # pragma: no cover
         if "pyquickhelper" in w.filename:
             if "Unable to retrieve content from" in str(w):
                 return False
+        if "<zmq.asyncio." in str(w):
+            return False
     elif isinstance(w.message, DeprecationWarning):
         if w.filename in ('', None):
             return False
@@ -59,7 +63,7 @@ def default_filter_warning(w):  # pragma: no cover
             return False
         if "`np.bool`" in str(w):
             return False
-        if "RemovedInSphinx40Warning" in str(w):
+        if "RemovedInSphinx" in str(w):
             return False
         if w.filename.endswith("kernelspec.py"):
             return False
@@ -157,4 +161,6 @@ def default_filter_warning(w):  # pragma: no cover
     elif "MatplotlibDeprecationWarning" in str(type(w.message)):
         if "basemap" in w.filename:
             return False
+    elif "CoverageWarning" in str(w):
+        return False
     return True

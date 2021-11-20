@@ -123,7 +123,7 @@ setup(
             "matplotlib",
             "metakernel",
             "multi_key_dict",
-            "nbconvert>=6.0.2",
+            "nbconvert>=6.0.3,!=6.3.0",
             "notebook>=4.2.0",
             "numpy>=1.16.0",
             "numpydoc",
