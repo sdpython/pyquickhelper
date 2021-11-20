@@ -412,7 +412,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if module_conf is None:
             raise ImportError(  # pragma: no cover
                 "unable to import 'conf.py' which defines the help generation")
-        if 'ERROR' in module_conf:
+        if 'ERROR' in module_conf:  # pragma: no cover
             msg = "\n".join(["paths:"] + conf_paths + [
                 "----------------------- ERROR:",
                 module_conf['ERROR'],
@@ -469,8 +469,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
     notebook_replacements = theconf.__dict__.get("notebook_replacements", None)
     if notebook_replacements is not None and not isinstance(notebook_replacements, dict):
-        raise TypeError("latex_notebook_replacements should be a dictionary not {0}".format(
-            type(notebook_replacements)))
+        raise TypeError(  # pragma: no cover
+            "latex_notebook_replacements should be a dictionary not {0}".format(
+                type(notebook_replacements)))
 
     ####################################
     # modifies the version number in conf.py
@@ -776,7 +777,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
     fLOG("[generate_help_sphinx] running sphinx... from", docpath)
     if not os.path.exists(docpath):
-        raise FileNotFoundError(docpath)
+        raise FileNotFoundError(docpath)  # pragma: no cover
     fLOG("---- JENKINS END DOCUMENTATION ENCODING ----")
 
     os.chdir(docpath)
@@ -945,7 +946,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     return True
                 out = "\n".join(
                     filter(lambda _: keep_line(_), out.split("\n")))
-                raise HelpGenException(
+                raise HelpGenException(  # pragma: no cover
                     "Sphinx raised an exception (direct_call={3})\n--CMD--\n{0}\n--OUT--\n{1}\n[sphinxerror]-3\n{2}".format(
                         cmd, out, err, direct_call))
 
@@ -962,7 +963,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
             fLOG("[generate_help_sphinx] check that index.html exists")
             findex = os.path.join(build, kind, "index.html")
             if not os.path.exists(findex):
-                raise FileNotFoundError(
+                raise FileNotFoundError(  # pragma: no cover
                     "something went wrong, unable to find {0}\n"
                     "--CMD--\n{1}\n--OUT--\n{2}\n--ERR--\n{3}\n"
                     "--LAY--\n{4}\n--INDEX--\n{5}\n-----\nPYTHONPATH={6}"
@@ -1196,7 +1197,7 @@ def _check_sphinx_configuration(conf, fLOG):
         if len(sphinx_gallery_conf["examples_dirs"]) != len(sphinx_gallery_conf["gallery_dirs"]):
             add = "\nexamples_dirs={0}\ngallery_dirs={1}".format(
                 sphinx_gallery_conf["examples_dirs"], sphinx_gallery_conf["gallery_dirs"])
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.' + add)
         if len(sphinx_gallery_conf["examples_dirs"]) > 0:
             fLOG(
@@ -1252,9 +1253,11 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
                 "Unable to import a config file (root_source='{0}').".format(
                     folds), os.path.join(folds, "conf.py")) from ee
         if 'ERROR' in module_conf:
-            raise ImportError("\n" + module_conf['ERROR'] + "\n")
+            raise ImportError(  # pragma: no cover
+                "\n" + module_conf['ERROR'] + "\n")
         if len(module_conf) == 0:
-            raise ImportError("Unable to extract local variable from conf.py.")
+            raise ImportError(  # pragma: no cover
+                "Unable to extract local variable from conf.py.")
 
     if module_conf is None:
         raise ImportError(  # pragma: no cover

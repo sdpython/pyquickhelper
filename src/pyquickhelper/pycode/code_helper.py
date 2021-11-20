@@ -28,9 +28,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                 with open(filename, "r") as f:
                     lines = f.readlines()
                 encoding = None
-            except PermissionError as e:
+            except PermissionError as e:  # pragma: no cover
                 raise PermissionError(filename) from e
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError as e:  # pragma: no cover
                 try:
                     with open(filename, "r", encoding="utf-8") as f:
                         lines = f.readlines()
@@ -44,9 +44,9 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                 with open(filename, "r", encoding="utf-8-sig") as f:
                     lines = f.readlines()
                 encoding = "utf-8"
-            except PermissionError as e:
+            except PermissionError as e:  # pragma: no cover
                 raise PermissionError(filename) from e
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError as e:  # pragma: no cover
                 try:
                     with open(filename, "r") as f:
                         lines = f.readlines()
@@ -65,7 +65,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
             with open(filename, "r", encoding="utf8") as f:
                 try:
                     lines = f.readlines()
-                except UnicodeDecodeError as e:
+                except UnicodeDecodeError as e:  # pragma: no cover
                     raise Exception("unable to read: " + filename) from e
             encoding = "utf8"
         else:
@@ -95,7 +95,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
             "\n".join(lines2), options=autopep8.parse_args(options))
 
         if len(lines) > 0 and (len(lines2) == 0 or len(lines2) < len(lines) // 2):
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "Resulting file is empty for '{3}',\ninitial number of lines "
                 "{0} encoding='{1}' diff={2}".format(
                     len(lines), encoding, diff, filename))
@@ -121,12 +121,12 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
         lines2 = [_ for i, _ in enumerate(lines2) if i not in rem]
         if len(lines) > 0 and len(lines2[-1]) > 0:
             lines2.append("")
-        if len(lines) > 0 and len(lines2) == 0:
+        if len(lines) > 0 and len(lines2) == 0:  # pragma: no cover
             begin = 5 if len(lines) > 5 else len(lines)
             mes = "Resulting file is empty for '{4}',\ninitial number of lines {0} encoding='{1}' len(rem)={2} diff={3}\nBeginning:\n{5}"
             raise ValueError(mes.format(len(lines), encoding, len(
                 rem), diff, filename, "".join(lines[:begin])))
-        if len(lines2) < len(lines) // 2:
+        if len(lines2) < len(lines) // 2:  # pragma: no cover
             lines2_ = [_ for _ in lines2 if _ and _ != "\n"]
             lines_ = [_ for _ in lines if _ and _ != "\n"]
             if len(lines2_) < len(lines_) // 2:
@@ -162,7 +162,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                     f.write("\n".join(lines2))
 
     if not os.path.exists(filename):
-        raise FileNotFoundError(
+        raise FileNotFoundError(  # pragma: no cover
             "issue when applying autopep8 with filename: {0}".format(filename))
     return diff
 

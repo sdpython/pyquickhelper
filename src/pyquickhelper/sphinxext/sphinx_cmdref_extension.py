@@ -67,8 +67,9 @@ class CmdRef(BlocRef):
             env = self.state.document.settings.env if hasattr(
                 self.state.document.settings, "env") else None
             docname = None if env is None else env.docname
-            raise KeyError("unable to find 'title' in node {0}\n  File \"{1}\", line {2}\nkeys: {3}".format(
-                str(self.__class__), docname, lineno, list(self.options.keys())))
+            raise KeyError(  # pragma: no cover
+                "unable to find 'title' in node {0}\n  File \"{1}\", line {2}\nkeys: {3}".format(
+                    str(self.__class__), docname, lineno, list(self.options.keys())))
         title = self.options['title']
         if "tag" not in self.options:
             self.options["tag"] = "cmd"
@@ -129,7 +130,7 @@ class CmdRef(BlocRef):
 
                 # example: pyquickhelper.cli.pyq_sync_cli:pyq_sync
                 spl = name.strip("\r\n\t ").split(":")
-                if len(spl) != 2:
+                if len(spl) != 2:  # pragma: no cover
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
                         "[CmdRef] cmd(*= '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
@@ -174,7 +175,7 @@ class CmdRef(BlocRef):
                     cont += pout
 
                     content = stio.getvalue()
-                    if len(content) == 0:
+                    if len(content) == 0:  # pragma: no cover
                         logger = logging.getLogger("CmdRef")
                         logger.warning(
                             "[CmdRef] empty output for '{0}'".format(fullname))

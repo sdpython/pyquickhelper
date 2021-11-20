@@ -60,7 +60,8 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
     final = os.path.split(name)[-1]
 
     if not final.startswith("temp_") and not final.startswith("temp2_"):
-        raise NameError("the folder '{0}' must begin with temp_".format(name))
+        raise NameError(  # pragma: no cover
+            "the folder '{0}' must begin with temp_".format(name))
 
     local = os.path.join(
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
@@ -79,7 +80,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
         local = os.path.normpath(local)
 
     if name == local:
-        raise NameError(
+        raise NameError(  # pragma: no cover
             "The folder '{0}' must be relative, not absolute".format(name))
 
     if not os.path.exists(local):
@@ -277,7 +278,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     try:
         regneg_filter = None if neg_pattern is None else re.compile(
             neg_pattern)
-    except re.error as e:
+    except re.error as e:  # pragma: no cover
         raise ValueError("Unable to compile '{0}'".format(neg_pattern)) from e
 
     # pycodestyle
@@ -297,9 +298,11 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
             else:
                 ig = ignore
             if file is None:
-                raise TypeError("file cannot be None")
+                raise RuntimeError(  # pragma: no cover
+                    "file cannot be None")
             if len(file) == 0:
-                raise TypeError("file cannot be empty")
+                raise RuntimeError(  # pragma: no cover
+                    "file cannot be empty")
 
             # code style
             files_to_check.append(file)
@@ -308,7 +311,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                     ignore=ig, complexity=complexity, format='pylint',
                     max_line_length=max_line_length)
                 res = style.check_files([file])
-            except TypeError as e:
+            except TypeError as e:  # pragma: no cover
                 ext = "This is often due to an instruction from . import... The imported module has no name."
                 raise TypeError("Issue with pycodesyle for module '{0}' ig={1} complexity={2}\n{3}".format(
                     file, ig, complexity, ext)) from e
@@ -322,18 +325,19 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                 res.print_filename = True
                 lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
                 if len(lines) > stop_after:
-                    raise PEP8Exception(
+                    raise PEP8Exception(  # pragma: no cover
                         "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
     lines = [_ for _ in buf.getvalue().split("\n") if fkeep(_)]
     if len(lines) > 10:
-        raise PEP8Exception(
+        raise PEP8Exception(  # pragma: no cover
             "{0} lines\n{1}".format(len(lines), "\n".join(lines)))
 
     if len(files_to_check) == 0:
         mes = skipped[0] if skipped else "-no skipped file-"
-        raise FileNotFoundError("No file found in '{0}'\n pattern='{1}'\nskipped='{2}'".format(
-                                folder, pattern, mes))
+        raise FileNotFoundError(  # pragma: no cover
+            "No file found in '{0}'\n pattern='{1}'\nskipped='{2}'".format(
+                folder, pattern, mes))
 
     # pylint
     if not run_lint:
@@ -344,7 +348,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     try:
         fLOG('', OutputStream=memout)
         regular_print = False
-    except TypeError:
+    except TypeError:  # pragma: no cover
         regular_print = True
 
     def myprint(s):
@@ -438,7 +442,7 @@ def add_missing_development_version(names, root, hide=False):
     if os.path.isfile(root):
         root = os.path.dirname(root)
     if not os.path.exists(root):
-        raise FileNotFoundError(root)
+        raise FileNotFoundError(root)  # pragma: no cover
 
     spl = os.path.split(root)
     py27 = False
@@ -471,8 +475,9 @@ def add_missing_development_version(names, root, hide=False):
             exc = e
 
         if name not in found:
-            raise FileNotFoundError("Unable to find a subfolder '{0}' in '{1}' (py27={3})\nFOUND:\n{2}\nexc={4}".format(
-                name, newroot, "\n".join(dirs), py27, exc))
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to find a subfolder '{0}' in '{1}' (py27={3})\nFOUND:\n{2}\nexc={4}".format(
+                    name, newroot, "\n".join(dirs), py27, exc))
 
         if py27:
             this = os.path.join(newroot, name, "dist_module27", "src")
@@ -484,8 +489,9 @@ def add_missing_development_version(names, root, hide=False):
                 this = os.path.join(newroot, name)
 
         if not os.path.exists(this):
-            raise FileNotFoundError("unable to find a subfolder '{0}' in '{1}' (*py27={3})\nFOUND:\n{2}".format(
-                this, newroot, "\n".join(dirs), py27))
+            raise FileNotFoundError(  # pragma: no cover
+                "unable to find a subfolder '{0}' in '{1}' (*py27={3})\nFOUND:\n{2}".format(
+                    this, newroot, "\n".join(dirs), py27))
         with sys_path_append(this):
             if hide:
                 with warnings.catch_warnings(record=True):

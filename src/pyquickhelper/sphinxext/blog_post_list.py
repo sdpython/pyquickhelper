@@ -271,10 +271,12 @@ class BlogPostList:
             loc = os.path.abspath(os.path.dirname(__file__))
             img = os.path.join(loc, img)
             if not os.path.exists(img):
-                raise FileNotFoundError("unable to find: " + img)
+                raise FileNotFoundError(  # pragma: no cover
+                    "Unable to find %r." % img)
             return img
         else:
-            raise FileNotFoundError("unable to get image name: " + img)
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to get image name: %r." % img)
 
     def write_aggregated_index(self, folder, hidden_files=None, hidden_files_html=None, only_html=True):
         """

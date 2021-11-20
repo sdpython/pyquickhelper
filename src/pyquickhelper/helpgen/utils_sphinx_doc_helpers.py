@@ -574,7 +574,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             cpxx = ".cpython-%d%d-" % sys.version_info[:2]
             search = li.rfind(cpxx)
             if search == -1:
-                raise ImportErrorHelpGen(
+                raise ImportErrorHelpGen(  # pragma: no cover
                     "Unable to guess extension from '{}'.".format(li))
         ext_rem = li[search:]
     if not ext_rem:
@@ -917,18 +917,16 @@ def make_label_index(title, comment):
     try:
         r = "".join(map(accept, title))
         if len(r) == 0:
-            typstr = str
-            raise HelpGenException(
+            raise HelpGenException(  # pragma: no cover
                 "Unable to interpret this title (empty?): {0} (type: {2})\n"
                 "COMMENT:\n{1}".format(
-                    typstr(title), comment, typstr(type(title))))
+                    str(title), comment, str(type(title))))
         return r
     except TypeError as e:  # pragma: no cover
-        typstr = str
         raise HelpGenException(
             "Unable to interpret this title: {0} (type: {2})\nCOMMENT:"
             "\n{1}".format(
-                typstr(title), comment, typstr(type(title)))) from e
+                str(title), comment, str(type(title)))) from e
 
 
 def process_look_for_tag(tag, title, files):
@@ -983,7 +981,7 @@ def process_look_for_tag(tag, title, files):
             try:
                 with open(file.file, "r", encoding="utf8") as f:
                     content = f.read()
-            except Exception:
+            except Exception:  # pragma: no cover
                 with open(file.file, "r") as f:
                     content = f.read()
             content = content.replace("\n", repl)
@@ -1031,7 +1029,7 @@ def process_look_for_tag(tag, title, files):
         not_expected = os.environ.get(
             "USERNAME", os.environ.get("USER", "````````````"))
         if not_expected != "jenkins" and not_expected in rows[0]:
-            raise HelpGenException(
+            raise HelpGenException(  # pragma: no cover
                 "The title is probably wrong (4): {0}\ntag={1}\ntit={2}\n"
                 "not_expected='{3}'".format(rows[0], tag, tit, not_expected))
 

@@ -39,7 +39,7 @@ class ProfileNode:
 
     def __init__(self, filename, line, func_name, nc1, nc2, tin, tall):
         if "method 'disable' of '_lsprof.Profiler'" in func_name:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Function not allowed in the profiling: %r." % func_name)
         self.filename = filename
         self.line = line
@@ -524,7 +524,7 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
                         elif isinstance(sub, tuple) and len(sub) == 2:
                             res = res.replace(sub[0], sub[1])
                         else:
-                            raise TypeError(
+                            raise TypeError(  # pragma: no cover
                                 "rootrem must contains strings or tuple not {0}"
                                 ".".format(rootrem))
             return res
@@ -665,7 +665,7 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
             line=k[1], func_name=k[2],
             nc1=v[0], nc2=v[1], tin=v[2], tall=v[3])
         if node.key in nodes:
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Key %r is already present, node=%r." % (node.key, node))
         nodes[node.key] = node
 
@@ -682,7 +682,7 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
             name = clean_text(f[0].replace("\\", "/"))
             key = ProfileNode._key(name, f[1], f[2])
             if key not in nodes:
-                raise RuntimeError(
+                raise RuntimeError(  # pragma: no cover
                     "Unable to find key %r into\n%s" % (
                         key, "\n".join(sorted(nodes))))
             if k[0] == '~' and len(v) == 0:

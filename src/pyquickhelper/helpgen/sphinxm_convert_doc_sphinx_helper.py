@@ -522,7 +522,7 @@ class _MemoryBuilder:
         if hasattr(self, "doctree_"):
             tree = self.doctree_
         else:
-            raise AttributeError(
+            raise AttributeError(  # pragma: no cover
                 "Attribute 'doctree_' is not present. Call method finalize().")
         tree = inline_all_toctrees(
             self, set(), master, tree, darkgreen, [master])
@@ -557,9 +557,9 @@ class _MemoryBuilder:
         elif docname in ("genindex", "search"):
             return self.config.master_doc + '-#' + docname
         else:
-            docs = ", ".join(sorted("'{0}'".format(_)
-                                    for _ in self.env.all_docs))
-            raise ValueError(
+            docs = ", ".join(  # pragma: no cover
+                sorted("'{0}'".format(_) for _ in self.env.all_docs))
+            raise ValueError(  # pragma: no cover
                 "docname='{0}' should be in 'self.env.all_docs' which contains:\n{1}".format(docname, docs))
 
     def get_outfilename(self, pagename):
@@ -1183,7 +1183,7 @@ class _CustomSphinx(Sphinx):
         for k in rem:
             del confoverrides[k]
         if len(noallowed) > 0:
-            raise ValueError(
+            raise ValueError(  # pragma: no cover
                 "The following configuration values are declared in any extension.\n--???--\n"
                 "{0}\n--DECLARED--\n{1}".format(
                     "\n".join(sorted(noallowed)),
@@ -1445,7 +1445,7 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('domain-over', domain))
         try:
             Sphinx.override_domain(self, domain)
-        except AttributeError:
+        except AttributeError:  # pragma: no cover
             # Sphinx==3.0.0
             raise AttributeError(
                 "override_domain not available in sphinx==3.0.0")

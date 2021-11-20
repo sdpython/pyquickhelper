@@ -140,7 +140,7 @@ class NotebookRunner(object):
         if extended_args is not None and len(extended_args) > 0:
             for opt in extended_args:
                 if not opt.startswith("--"):
-                    raise SyntaxError(
+                    raise SyntaxError(  # pragma: no cover
                         "every option should start with '--': " + opt)
                 if "=" not in opt:
                     raise SyntaxError(  # pragma: no cover
@@ -629,7 +629,7 @@ class NotebookRunner(object):
             pass
         else:
             if not isinstance(b[0], bytes):
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "bytes expected for images, not {0}-'{1}'\n{2}".format(type(b[0]), b[1], b))
         return b
 
@@ -734,7 +734,7 @@ class NotebookRunner(object):
                             results.append(b)
                     elif k == "image/svg+xml":
                         if not isinstance(v, str):
-                            raise TypeError(
+                            raise TypeError(  # pragma: no cover
                                 "This should be str not '{0}' (=SVG).".format(type(v)))
                         results.append((v, "svg"))
                     elif k == "text/html":
@@ -980,8 +980,8 @@ class NotebookRunner(object):
                 nbrun += 1
                 self.run_cell(i, cell, clean_function=clean_function)
                 nbnerr += 1
-            except Empty as er:
-                raise RuntimeError(  # pragma: no cover
+            except Empty as er:  # pragma: no cover
+                raise RuntimeError(
                     "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
             except NotebookError as e:  # pragma: no cover
                 if not skip_exceptions:

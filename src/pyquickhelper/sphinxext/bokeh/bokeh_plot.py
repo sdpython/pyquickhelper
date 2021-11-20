@@ -147,7 +147,7 @@ class BokehPlotDirective(Directive):
                 if not path.startswith("/"):
                     path = join(env.app.srcdir, path)
                 source = open(path).read()
-            except Exception as e:
+            except Exception as e:  # pragma: no cover
                 raise SphinxError(f"{env.docname}: {e!r}")
 
         js_name = "bokeh-plot-%s-external-%s.js" % (uuid4().hex, docname)
@@ -155,7 +155,7 @@ class BokehPlotDirective(Directive):
         try:
             (script, js, js_path, source) = _process_script(
                 source, path, env, js_name)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise RuntimeError(
                 "Sphinx bokeh-plot exception: \n\n%s\n\n Failed on:\n\n %s" % (e, source))
         env.bokeh_plot_files[js_name] = (
@@ -252,7 +252,7 @@ def _process_script(source, filename, env, js_name, use_relative_paths=False):
     Model._clear_extensions()
 
     # quick and dirty way to inject Google API key
-    if "GOOGLE_API_KEY" in source:
+    if "GOOGLE_API_KEY" in source:  # pragma: no cover
         GOOGLE_API_KEY = getenv('GOOGLE_API_KEY')
         if GOOGLE_API_KEY is None:
             if env.config.bokeh_missing_google_api_key_ok:
@@ -268,7 +268,7 @@ def _process_script(source, filename, env, js_name, use_relative_paths=False):
     d = Document()
     c.modify_document(d)
     if c.error:
-        raise RuntimeError(c.error_detail)
+        raise RuntimeError(c.error_detail)  # pragma: no cover
 
     resources = get_sphinx_resources()
     js_path = join(env.bokeh_plot_auxdir, js_name)

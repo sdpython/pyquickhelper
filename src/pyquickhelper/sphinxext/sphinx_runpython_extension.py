@@ -120,7 +120,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
     if process:
         if context is not None and len(context) != 0:
-            raise RunPythonExecutionError(
+            raise RunPythonExecutionError(  # pragma: no cover
                 "context cannot be used if the script runs in a separate process.")
 
         cmd = sys.executable
@@ -178,7 +178,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         try:
             out, err = run_cmd(cmd, script_arg, wait=True, change_path=chdir)
             return out, err, None
-        except Exception as ee:
+        except Exception as ee:  # pragma: no cover
             if not exception:
                 message = ("--SCRIPT--\n{0}\n--PARAMS--\n{1}\n--COMMENT--\n"
                            "{2}\n--ERR--\n{3}\n--OUT--\n{4}\n--EXC--\n{5}"
@@ -494,7 +494,7 @@ class RunPythonDirective(Directive):
                 prec = int(p['numpy_precision'])
                 content.append("    import numpy")
                 content.append("    numpy.set_printoptions(%d)" % prec)
-            except (ImportError, ValueError):
+            except (ImportError, ValueError):  # pragma: no cover
                 pass
 
         content.append('    ## __WD__ ##')
@@ -643,7 +643,7 @@ class RunPythonDirective(Directive):
             settings_overrides = {}
             try:
                 sett.output_encoding
-            except KeyError:
+            except KeyError:  # pragma: no cover
                 settings_overrides["output_encoding"] = "unicode"
             # try:
             #     sett.doctitle_xform

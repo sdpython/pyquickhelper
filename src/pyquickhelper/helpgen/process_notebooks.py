@@ -160,7 +160,8 @@ def process_notebooks(notebooks, outfold, build, latex_path=None, pandoc_path=No
     if isinstance(nblinks, str):
         nblinks = json.loads(nblinks)
     if build is None:
-        raise ValueError("build cannot be None")
+        raise ValueError(  # pragma: no cover
+            "build cannot be None")
 
     res = _process_notebooks_in(notebooks=notebooks, outfold=outfold, build=build,
                                 latex_path=latex_path, pandoc_path=pandoc_path,
@@ -381,7 +382,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
         # next
         nbout = os.path.split(notebook)[-1]
         if " " in nbout:
-            raise HelpGenException(
+            raise HelpGenException(  # pragma: no cover
                 "spaces are not allowed in notebooks file names: "
                 "{0}".format(notebook))
         nbout = os.path.splitext(nbout)[0]
@@ -441,7 +442,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 os.path.dirname(__file__)), "_nbconvert_config.py")
             if format == "pdf":
                 if not os.path.exists(custom_config):
-                    raise FileNotFoundError(custom_config)
+                    raise FileNotFoundError(  # pragma: no cover
+                        custom_config)
                 # title = os.path.splitext(
                 #     os.path.split(notebook)[-1])[0].replace("_", " ")
                 list_args.extend(['--config', '"%s"' % custom_config])
@@ -450,7 +452,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
             elif format in ("latex", "elatex"):
                 if not os.path.exists(custom_config):
-                    raise FileNotFoundError(custom_config)
+                    raise FileNotFoundError(  # pragma: no cover
+                        custom_config)
                 list_args.extend(['--config', '"%s"' % custom_config])
                 compilation = False
                 format = "latex"
@@ -524,7 +527,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         # sometimes (wrong characters such as " or formulas not
                         # captured as formulas).
                         if err and "usage: process_notebooks_cmd.py" in err:
-                            raise RuntimeError(
+                            raise RuntimeError(  # pragma: no cover
                                 "Unable to convert a notebook\n----\n{}----\n{}\n"
                                 "---ERR---\n{}\n---OUT---\n{}".format(
                                     fnbcexe, list_args, err, out))
@@ -533,7 +536,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     else:
                         err = err.lower()
                         if "critical" in err or "bad config" in err:
-                            raise HelpGenException(
+                            raise HelpGenException(  # pragma: no cover
                                 "CMD:\n{0}\n[nberror]\n{1}".format(list_args, err))
             else:
                 # format ipynb
@@ -557,7 +560,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                     tex = set(_ for _ in thisfiles if os.path.splitext(
                         _)[-1] == ".tex")
                     if len(tex) != 1:
-                        raise FileNotFoundError(
+                        raise FileNotFoundError(  # pragma: no cover
                             "No latex file was generated or more than one (={0}), nb={1}\nthisfile=\n{2}".format(
                                 len(tex), notebook, "\n".join(thisfiles)))
                     tex = list(tex)[0]
@@ -565,7 +568,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         post_process_latex_output_any(
                             tex, custom_latex_processing=None, nblinks=nblinks,
                             remove_unicode=remove_unicode_latex, fLOG=fLOG)
-                    except FileNotFoundError as e:
+                    except FileNotFoundError as e:  # pragma: no cover
                         mes = ("[_process_notebooks_in-ERROR] Unable to to convert into latex"
                                "notebook %r due to %r.") % (tex, e)
                         warnings.warn(mes, RuntimeWarning)
@@ -594,7 +597,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         out += "\n--ERR--\n" + err
                         err = ""
                     if len(err) > 0:
-                        raise HelpGenException(
+                        raise HelpGenException(  # pragma: no cover
                             "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}------".format(c, err, out))
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):  # pragma: no cover
@@ -707,7 +710,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 pass
 
             else:
-                raise HelpGenException("unexpected format " + format)
+                raise HelpGenException(  # pragma: no cover
+                    "unexpected format " + format)
 
             files.extend(thisfiles)
             fLOG("[_process_notebooks_in] ### conversion into '{}' done into '{}'.".format(
@@ -739,7 +743,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         raise e
 
             if not os.path.exists(dest):
-                raise FileNotFoundError(dest)
+                raise FileNotFoundError(dest)  # pragma: no cover
         copy.append((dest, True))
 
     # image
@@ -835,7 +839,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, exc=True,
             github=github, notebook=notebook, nblinks=nblinks, fLOG=fLOG,
             notebook_replacements=notebook_replacements)
         return res
-    raise HelpGenException(
+    raise HelpGenException(  # pragma: no cover
         "Unable to add a link to this extension: %r" % ext)
 
 
@@ -873,7 +877,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
                 custom_snippet))
         try:
             from PIL import Image
-        except ImportError:
+        except ImportError:  # pragma: no cover
             import Image
         image = Image.open(custom_snippet)
     else:
@@ -887,7 +891,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         image = nb.get_thumbnail(use_default=True)
 
     if image is None:
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "The snippet cannot be null, notebook='{0}'.".format(nbfile))
     name = os.path.splitext(os.path.split(nbfile)[-1])[0]
     name += ".thumb"

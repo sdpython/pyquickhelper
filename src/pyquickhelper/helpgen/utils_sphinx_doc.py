@@ -1055,7 +1055,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             src = (input + "/" + sub[0]).replace("//", "/")
             dst = (output + "/" + sub[1]).replace("//", "/")
         if os.path.split(src)[-1][0] == '_':
-            raise RuntimeError(
+            raise RuntimeError(  # pragma: no cover
                 "Subfolder %r cannot start with '_'." % src)
         if os.path.split(dst)[-1][0] == '_':
             raise RuntimeError(  # pragma: no cover
@@ -1777,7 +1777,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 ty = refl.groups()[4]
                 name = refl.groups()[-2]
                 if len(name) == 0:
-                    raise SyntaxError(
+                    raise SyntaxError(  # pragma: no cover
                         "name should be empty: " + typstr(refl.groups()))
                 rep = refl.groups()[0]
                 ty = {"cl": "class", "me": "meth", "at": "attr",
