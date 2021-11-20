@@ -745,7 +745,8 @@ class NotebookRunner(object):
                         if image_from_text:
                             b = self.create_picture_from(v, "latex")
                             results.append(b)
-                    elif k == "application/vnd.jupyter.widget-view+json":
+                    elif k in ("application/vnd.jupyter.widget-view+json",
+                               "application/vnd.jupyter.widget-state+json"):
                         # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
                         if "model_id" not in v:
                             raise KeyError(  # pragma: no cover
