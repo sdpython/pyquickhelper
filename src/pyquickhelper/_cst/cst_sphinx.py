@@ -3,6 +3,7 @@
 @file
 @brief Default values for the Sphinx configuration.
 """
+import sys
 
 
 def latex_preamble():
