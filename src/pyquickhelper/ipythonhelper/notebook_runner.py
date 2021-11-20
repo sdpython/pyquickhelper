@@ -745,8 +745,7 @@ class NotebookRunner(object):
                         if image_from_text:
                             b = self.create_picture_from(v, "latex")
                             results.append(b)
-                    elif k in ("application/vnd.jupyter.widget-view+json",
-                               "application/vnd.jupyter.widget-state+json"):
+                    elif k in "application/vnd.jupyter.widget-view+json":
                         # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
                         if "model_id" not in v:
                             raise KeyError(  # pragma: no cover
@@ -761,9 +760,11 @@ class NotebookRunner(object):
                             raise TypeError(  # pragma: no cover
                                 "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
                         results.append((v, k.split("/")[-1]))
-                    elif k in ("text/vnd.plotly.v1+html", "application/vnd.plotly.v1+json",
+                    elif k in ("text/vnd.plotly.v1+html",
+                               "application/vnd.plotly.v1+json",
                                "application/vnd.bokehjs_exec.v0+json",
-                               "application/vnd.bokehjs_load.v0+json"):
+                               "application/vnd.bokehjs_load.v0+json",
+                               "application/vnd.jupyter.widget-state+json"):
                         results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError(  # pragma: no cover
