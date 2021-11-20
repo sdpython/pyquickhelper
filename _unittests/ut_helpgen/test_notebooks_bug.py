@@ -2,11 +2,9 @@
 @brief      test log(time=65s)
 @author     Xavier Dupre
 """
-import sys
 import os
 import unittest
 import re
-
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.helpgen.sphinx_main import process_notebooks
 from pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
@@ -49,10 +47,73 @@ class TestNoteBooksBug(ExtTestCase):
         fold = os.path.normpath(os.path.join(path, "notebooks"))
         nbs = [os.path.join(fold, _)
                for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["slides", "ipynb", "html",
-                   "python", "rst", "pdf"]
-        if sys.platform.startswith("win"):
-            formats.append("docx")
+        formats = ["ipynb", "python", "rst", "pdf"]
+
+        temp = get_temp_folder(__file__, "temp_nb_bug")
+
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+            return
+
+        res = process_notebooks(nbs, temp, temp, formats=formats)
+        fLOG("*****", len(res))
+        for _ in res:
+            if not os.path.exists(_[0]):
+                raise Exception(_[0])
+
+        check = os.path.join(temp, "td1a_correction_session4.tex")
+        with open(check, "r", encoding="utf8") as f:
+            content = f.read()
+        if "\\section{" not in content:
+            raise Exception(content)
+        checks = [os.path.join(temp, "reveal.js"),
+                  os.path.join(temp, "require.js")]
+        for check in checks:
+            if not os.path.exists(check):
+                raise Exception(check)
+
+    def test_notebook_html(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        path = os.path.abspath(os.path.split(__file__)[0])
+        fold = os.path.normpath(os.path.join(path, "notebooks"))
+        nbs = [os.path.join(fold, _)
+               for _ in os.listdir(fold) if ".ipynb" in _]
+        formats = ["html"]
+
+        temp = get_temp_folder(__file__, "temp_nb_bug")
+
+        if is_travis_or_appveyor() in ('travis', 'appveyor'):
+            return
+
+        res = process_notebooks(nbs, temp, temp, formats=formats)
+        fLOG("*****", len(res))
+        for _ in res:
+            if not os.path.exists(_[0]):
+                raise Exception(_[0])
+
+        check = os.path.join(temp, "td1a_correction_session4.tex")
+        with open(check, "r", encoding="utf8") as f:
+            content = f.read()
+        if "\\section{" not in content:
+            raise Exception(content)
+        checks = [os.path.join(temp, "reveal.js"),
+                  os.path.join(temp, "require.js")]
+        for check in checks:
+            if not os.path.exists(check):
+                raise Exception(check)
+
+    def test_notebook_slides(self):
+        fLOG(
+            __file__,
+            self._testMethodName,
+            OutputPrint=__name__ == "__main__")
+        path = os.path.abspath(os.path.split(__file__)[0])
+        fold = os.path.normpath(os.path.join(path, "notebooks"))
+        nbs = [os.path.join(fold, _)
+               for _ in os.listdir(fold) if ".ipynb" in _]
+        formats = ["slides"]
 
         temp = get_temp_folder(__file__, "temp_nb_bug")
 

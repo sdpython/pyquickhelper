@@ -4,6 +4,7 @@
 """
 import sys
 import warnings
+import traceback
 
 try:
     from nbconvert.nbconvertapp import main as nbconvert_main
@@ -16,8 +17,9 @@ def run_nbconvert(argv):
         nbconvert_main(argv=argv)
     except Exception as ee:
         warnings.warn(
-            "[run_nbconvert-ERROR] Unable to to convert a notebook with "
-            "args=%r due to %r." % (argv, ee), RuntimeWarning)
+            "[run_nbconvert-ERROR] Unable to convert a notebook with "
+            "args=%r due to %r\n--CALL-STACK--\n%s." % (
+                argv, ee, traceback.format_exc()), RuntimeWarning)
 
 
 def main():

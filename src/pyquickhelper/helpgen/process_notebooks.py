@@ -569,7 +569,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             tex, custom_latex_processing=None, nblinks=nblinks,
                             remove_unicode=remove_unicode_latex, fLOG=fLOG)
                     except FileNotFoundError as e:  # pragma: no cover
-                        mes = ("[_process_notebooks_in-ERROR] Unable to to convert into latex"
+                        mes = ("[_process_notebooks_in-ERROR] Unable to convert into latex"
                                "notebook %r due to %r.") % (tex, e)
                         warnings.warn(mes, RuntimeWarning)
                         fLOG(mes)

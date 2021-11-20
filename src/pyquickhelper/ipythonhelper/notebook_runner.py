@@ -745,7 +745,7 @@ class NotebookRunner(object):
                         if image_from_text:
                             b = self.create_picture_from(v, "latex")
                             results.append(b)
-                    elif k in "application/vnd.jupyter.widget-view+json":
+                    elif k == "application/vnd.jupyter.widget-view+json":
                         # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
                         if "model_id" not in v:
                             raise KeyError(  # pragma: no cover
@@ -753,6 +753,14 @@ class NotebookRunner(object):
                         model_id = v["model_id"]
                         self.fLOG(
                             "[application/vnd.jupyter.widget-view+json] not rendered", model_id)
+                    elif k == "application/vnd.jupyter.widget-state+json":
+                        # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
+                        if "model_id" not in v:
+                            raise KeyError(  # pragma: no cover
+                                "model_id is missing from {0}".format(v))
+                        model_id = v["model_id"]
+                        self.fLOG(
+                            "[application/vnd.jupyter.widget-state+json] not rendered", model_id)
                     elif k in {"image/png", "image/jpg", "image/jpeg", "image/gif"}:
                         if not isinstance(v, bytes):
                             v = base64.b64decode(v)
@@ -763,8 +771,7 @@ class NotebookRunner(object):
                     elif k in ("text/vnd.plotly.v1+html",
                                "application/vnd.plotly.v1+json",
                                "application/vnd.bokehjs_exec.v0+json",
-                               "application/vnd.bokehjs_load.v0+json",
-                               "application/vnd.jupyter.widget-state+json"):
+                               "application/vnd.bokehjs_load.v0+json"):
                         results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError(  # pragma: no cover
@@ -842,6 +849,8 @@ class NotebookRunner(object):
                         elif k in {"image/png", "image/jpg", "image/jpeg", "image/gif"}:
                             nbl += len(v) // 50
                         elif k == "application/vnd.jupyter.widget-view+json":
+                            nbl += 5
+                        elif k == "application/vnd.jupyter.widget-state+json":
                             nbl += 5
                         elif k in ("text/vnd.plotly.v1+html",
                                    "application/vnd.plotly.v1+json",
