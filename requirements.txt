@@ -15,7 +15,7 @@ ipython>=7.0.0
 js2py
 jupyter
 jupyter-client
-jupyter_sphinx>=0.2.0
+jupyter-sphinx>=0.2.0
 jyquickhelper>=0.3.128
 keyring
 keyrings.alt

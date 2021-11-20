@@ -111,22 +111,23 @@ def get_default_extensions(load_bokeh=False):
             import matplotlib.pyplot as plt  # pylint: disable=W0611
             switch_backend("Agg")
 
-    default_setups = [setup_toctree,
-                      setup_blog, setup_runpython, setup_sharenet,
-                      setup_todoext, setup_bigger, setup_githublink,
-                      setup_runpython, setup_mathdef, setup_blocref,
-                      setup_faqref, setup_exref, setup_nbref,
-                      setup_docassert, setup_signature, setup_tpl,
-                      setup_cmdref, setup_epkg, setup_rst, setup_md,
-                      setup_latex, setup_doctree,
-                      setup_postcontents, setup_tocdelay, setup_youtube,
-                      # directives from sphinx
-                      setup_graphviz, setup_imgmath, setup_todo,
-                      # the rest of it
-                      setup_autodoc, setup_imagesvg,
-                      setup_plot, setup_image, setup_collapse, setup_gdot,
-                      setup_video, setup_simpleimage, setup_downloadlink,
-                      setup_quote, setup_gitlog]
+    default_setups = [
+        setup_toctree,
+        setup_blog, setup_runpython, setup_sharenet,
+        setup_todoext, setup_bigger, setup_githublink,
+        setup_runpython, setup_mathdef, setup_blocref,
+        setup_faqref, setup_exref, setup_nbref,
+        setup_docassert, setup_signature, setup_tpl,
+        setup_cmdref, setup_epkg, setup_rst, setup_md,
+        setup_latex, setup_doctree,
+        setup_postcontents, setup_tocdelay, setup_youtube,
+        # directives from sphinx
+        setup_graphviz, setup_imgmath, setup_todo,
+        # the rest of it
+        setup_autodoc, setup_imagesvg,
+        setup_plot, setup_image, setup_collapse, setup_gdot,
+        setup_video, setup_simpleimage, setup_downloadlink,
+        setup_quote, setup_gitlog]
 
     if load_bokeh:
         try:

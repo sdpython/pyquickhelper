@@ -8,6 +8,7 @@ from io import StringIO
 from contextlib import redirect_stdout, redirect_stderr
 from docutils import io as docio
 from docutils.core import publish_programmatically
+from .._cst.cst_sphinx import get_epkg_dictionary
 
 
 class BlogPostParseError(Exception):
@@ -25,16 +26,20 @@ class BlogPost:
     Defines a blog post.
     """
 
-    def __init__(self, filename, encoding='utf-8-sig', raise_exception=False, extensions=None):
+    def __init__(self, filename, encoding='utf-8-sig', raise_exception=False,
+                 extensions=None, **kwargs_overrides):
         """
         Creates an instance of a blog post from a file or a string.
 
-        @param      filename            filename or string
-        @param      encoding            encoding
-        @param      raise_exception     to raise an exception when the blog cannot be parsed
-        @param      extensions          list of extension to use to parse the content of the blog,
-                                        if None, it will consider a default list
-                                        (see @see cl BlogPost and @see fn get_default_extensions)
+        :param filename: filename or string
+        :param encoding: encoding
+        :param raise_exception: to raise an exception when the blog cannot
+            be parsed
+        :param extensions: list of extension to use to parse
+            the content of the blog, if None, it will consider
+            a default list (see @see cl BlogPost and
+            @see fn get_default_extensions)
+        :param kwargs_overrides: additional parameters for :epkg:`sphinx`
 
         The constructor creates the following members:
 
@@ -57,8 +62,9 @@ class BlogPost:
                 try:
                     content = f.read()
                 except UnicodeDecodeError as e:
-                    raise Exception(
-                        'unable to read filename (encoding issue):\n  File "{0}", line 1'.format(filename)) from e
+                    raise RuntimeError(
+                        'Unable to read filename (encoding issue):\n  '
+                        'File "{0}", line 1'.format(filename)) from e
             self._filename = filename
         else:
             content = filename
@@ -71,6 +77,8 @@ class BlogPost:
         overrides["blog_background"] = True
         overrides["blog_background_page"] = False
         overrides["sharepost"] = None
+        overrides['epkg_dictionary'] = get_epkg_dictionary()
+        overrides.update(kwargs_overrides)
 
         overrides.update({  # 'warning_stream': StringIO(),
             'out_blogpostlist': [],
@@ -103,7 +111,6 @@ class BlogPost:
             if len(config.epkg_dictionary) > 0:
                 overrides['epkg_dictionary'] = config.epkg_dictionary
             else:
-                from ..helpgen.default_conf import get_epkg_dictionary
                 overrides['epkg_dictionary'] = get_epkg_dictionary()
 
         env.temp_data["docname"] = "stringblog"
