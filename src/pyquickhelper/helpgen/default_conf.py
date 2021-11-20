@@ -725,7 +725,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # mapping
 
     intersphinx_mapping = {
+        'cpyquickhelper': (
+            'http://www.xavierdupre.fr/app/cpyquickhelper/helpsphinx/', None),
         'joblib': ('https://joblib.readthedocs.io/en/latest/', None),
+        'jyquickhelper': (
+            'http://www.xavierdupre.fr/app/jyquickhelper/helpsphinx/', None),
         'matplotlib': ('https://matplotlib.org/', None),
         'numpy': ('https://docs.scipy.org/doc/numpy/', None),
         'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
