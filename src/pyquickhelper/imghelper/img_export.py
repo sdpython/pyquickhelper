@@ -3,6 +3,7 @@
 @brief Tools to convert images.
 """
 import glob
+import os
 
 
 def images2pdf(images, output, fLOG=None):
@@ -52,7 +53,17 @@ def images2pdf(images, output, fLOG=None):
         close = False
         st = output
 
-    convert(all_images, outputstream=st, with_pdfrw=False)
+    for img in all_images:
+        if isinstance(img, str) and not os.path.exists(img):
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to find image %r." % img)
+
+    try:
+        convert(all_images, outputstream=st, with_pdfrw=False)
+    except TypeError as e:
+        raise TypeError(  # pragma: no cover
+            "Unable to process container type %r and type %r." % (
+                type(all_images), type(all_images[0]))) from e
 
     if close:
         st.close()

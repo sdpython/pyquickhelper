@@ -8,6 +8,7 @@ API Summary
     clihelper
     filehelper
     helpgen
+    image
     sphinxext
     jenkins
     jupyter

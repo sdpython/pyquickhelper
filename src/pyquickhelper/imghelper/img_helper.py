@@ -89,3 +89,109 @@ def white_to_transparency(img, out_file=None):
     if out_file is not None:
         obj.save(out_file)
     return obj
+
+
+def _optimization_criterion(target, data, weight_above=10, weight_below=1):
+    sizes = {}
+    for row, width in data:
+        if row not in sizes:
+            sizes[row] = 0
+        sizes[row] += width
+    loss = 0
+    for row, size in sizes.items():
+        if size < target:
+            loss += weight_below * (target - size)
+        else:
+            loss += weight_above * (size - target)
+        if row > 0 and sizes.get(row, 0) == 0:
+            loss += weight_below * target
+    return loss
+
+
+def _optimization_histogram_order(target, data, weight_above=10,
+                                  weight_below=1):
+    if len(data) < 6:
+        # we try all permutation
+        rows = [0 for d in data]
+        best_loss = None
+        best_rows = rows.copy()
+        while rows[0] == 0:
+            loss = _optimization_criterion(
+                target, zip(rows, data),
+                weight_above=weight_above,
+                weight_below=weight_below)
+            if best_loss is None or loss < best_loss:
+                best_loss = loss
+                best_rows = rows.copy()
+            i = len(rows) - 1
+            rows[i] += 1
+            while i > 0 and rows[i] >= len(data):
+                rows[i] = 0
+                i -= 1
+                rows[i] += 1
+        return best_rows
+
+    # generic case
+    data_pos = [0 for i in data]
+    current_row = 0
+    size = data[0]
+    for i in range(1, len(data)):
+        if size + data[i] > target:
+            current_row += 1
+            size = data[i]
+        else:
+            size += data[i]
+        data_pos[i] = current_row
+
+    return data_pos
+
+
+def concat_images(imgs, height=200, width=800,
+                  weight_above=10, weight_below=1,
+                  background=(0, 0, 0), out_file=None):
+    """
+    Concatenates images into an image with several
+    rows of images.
+
+    :param imgs: filename or Images (:epkg:`Pillow`)
+    :param height: height of each row (pixels)
+    :param width: width of each row (pixels)
+    :param weight_above: loss when a line is too long
+    :param weight_below: loss when a line is too short
+    :param background: background color
+    :param out_file: stores the image into this file if not None
+    :return: Image (:epkg:`Pillow`)
+    """
+    from PIL import Image
+    images = []
+    for img in imgs:
+        if isinstance(img, str):
+            images.append(Image.open(img))
+        else:
+            images.append(img)
+
+    # zoom
+    images = [zoom_img(img, factor=height * 1.0 / img.size[1])
+              for img in images]
+
+    # optimization
+    data = [img.size[0] for img in images]
+    pos = _optimization_histogram_order(
+        width, data, weight_above=weight_above, weight_below=weight_below)
+
+    # concat
+    n_rows = max(pos) + 1
+    img_height = n_rows * height
+
+    new_image = Image.new('RGB', (width, img_height), background)
+    w = 0
+    last_row = 0
+    for row, img in zip(pos, images):
+        if row != last_row:
+            w = 0
+        new_image.paste(img, (w, row * height))
+        w += img.size[0]
+        last_row = row
+    if out_file is not None:
+        new_image.save(out_file)
+    return new_image
