@@ -1,12 +1,12 @@
 """
 @file
 @brief Check various settings.
-
 """
-
 import sys
 import os
 import site
+from io import BytesIO
+import urllib.request as urllib_request
 
 
 def getsitepackages():
@@ -35,8 +35,12 @@ def locate_image_documentation(image_name):
     it was taken. The function was entering an infinite loop.
     The function can deal with subfolder and not only the folder which contains the notebook.
     """
+    image_name = os.path.abspath(image_name)
+    if os.path.exists(image_name):
+        return image_name
     folder, filename = os.path.split(image_name)
-    while len(folder) > 0 and (not os.path.exists(folder) or "_doc" not in os.listdir(folder)):
+    while (len(folder) > 0 and
+            (not os.path.exists(folder) or "_doc" not in os.listdir(folder))):
         fold = os.path.split(folder)[0]
         if fold == folder:
             break
@@ -44,7 +48,9 @@ def locate_image_documentation(image_name):
     doc = os.path.join(folder, "_doc")
     if not os.path.exists(doc):
         raise FileNotFoundError(
-            "unable to find a folder called _doc, the function cannot locate an image\n{0}".format(image_name))
+            "Unable to find a folder called _doc, "
+            "the function cannot locate an image %r, doc=%r, folder=%r."
+            "" % (image_name, doc, folder))
     for root, _, files in os.walk(doc):
         for name in files:
             t = os.path.join(root, name)
@@ -54,37 +60,20 @@ def locate_image_documentation(image_name):
     raise FileNotFoundError(image_name)
 
 
-def NbImage(name, repository=None, force_github=False, width=None, branch='master'):
-    """
-    Retrieves a name or a url of the image if it is not found in the local folder
-    or a subfolder.
-
-    @param      name            image name (name.png)
-    @param      force_github    force the system to retrieve the image from GitHub
-    @param      repository      repository, see below
-    @param      width           to modify the width
-    @param      branch          branch
-    @return                     an `Image object <http://ipython.org/ipython-doc/2/api/generated/IPython.core.display.html
-                                #IPython.core.display.Image>`_
-
-    We assume the image is retrieved from a notebook.
-    This function will display an image even though the notebook is not run
-    from the sources. IPython must be installed.
-
-    if *repository* is None, then the function will use the variable ``module.__github__`` to
-    guess the location of the image.
-    The function is able to retrieve an image in a subfolder.
-    Displays a better message if ``__github__`` was not found.
-    """
-    from IPython.core.display import Image
-    local = os.path.abspath(name)
-    if not force_github and os.path.exists(local):
-        return Image(local, width=width)
-
-    local_split = local.replace("\\", "/").split("/")
-    if "notebooks" not in local_split:
-        local = locate_image_documentation(local)
-        return Image(local, width=width)
+def _NbImage_path(name, repository=None, force_github=False, branch='master'):
+    if not isinstance(name, str):
+        return name
+    if os.path.exists(name):
+        return os.path.abspath(name).replace("\\", "/")
+    if not name.startswith('http://') and not name.startswith('https://'):
+        # local file
+        local = name
+        local_split = name.split("/")
+        if "notebooks" not in local_split:
+            local = locate_image_documentation(local)
+            return local
+    else:
+        return name
 
     # otherwise --> github
     paths = local.replace("\\", "/").split("/")
@@ -92,14 +81,16 @@ def NbImage(name, repository=None, force_github=False, width=None, branch='maste
         pos = paths.index("notebooks") - 1
     except IndexError as e:
         # we are looking for the right path
-        mes = "The image is not retrieved from a notebook from a folder `_docs/notebooks`" + \
-              " or you changed the current folder:\n{0}"
-        raise IndexError(mes.format(local)) from e
+        raise IndexError(
+            "The image is not retrieved from a notebook from a folder "
+            "`_docs/notebooks` or you changed the current folder:"
+            "\n{0}".format(local)) from e
     except ValueError as ee:
         # we are looking for the right path
-        mes = "the image is not retrieve from a notebook from a folder ``_docs/notebooks`` " + \
-              "or you changed the current folder:\n{0}"
-        raise IndexError(mes.format(local)) from ee
+        raise IndexError(
+            "The image is not retrieve from a notebook from a folder "
+            "``_docs/notebooks`` or you changed the current folder:"
+            "\n{0}".format(local)) from ee
 
     if repository is None:
         module = paths[pos - 1]
@@ -109,16 +100,92 @@ def NbImage(name, repository=None, force_github=False, width=None, branch='maste
                 repository = "https://github.com/sdpython/ensae_teaching_cs/"
             else:
                 raise ImportError(
-                    "The module {0} was not imported, cannot guess the location of the repository".format(module))
+                    "The module {0} was not imported, cannot guess "
+                    "the location of the repository".format(module))
         else:
             modobj = sys.modules[module]
             if not hasattr(modobj, "__github__"):
                 raise AttributeError(
-                    "The module has no attribute '__github__'. The repository cannot be guessed.")
+                    "The module has no attribute '__github__'. "
+                    "The repository cannot be guessed.")
             repository = modobj.__github__
         repository = repository.rstrip("/")
 
     loc = "/".join([branch, "_doc", "notebooks"] + paths[pos + 2:])
     url = repository + "/" + loc
     url = url.replace("github.com", "raw.githubusercontent.com")
-    return Image(url, width=width)
+    return url
+
+
+def _NbImage(url, width=None):
+    if isinstance(url, str):
+        if url.startswith('http://') or url.startswith('https://'):
+            with urllib_request.urlopen(url) as u:
+                text = u.read()
+            content = BytesIO(text)
+            return NbImage(content)
+    return NbImage(url, width=width)
+
+
+def NbImage(*name, repository=None, force_github=False, width=None,
+            branch='master', row_height=200):
+    """
+    Retrieves a name or a url of the image if it is not found in the local folder
+    or a subfolder.
+
+    :param name: image name (name.png) (or multiple names)
+    :param force_github: force the system to retrieve the image from GitHub
+    :param repository: repository, see below
+    :param width: to modify the width
+    :param branch: branch
+    :param row_height: row height if there are multiple images
+    :return: an `Image object
+        <http://ipython.org/ipython-doc/2/api/generated/IPython.core.display.html
+        #IPython.core.display.Image>`_
+
+    We assume the image is retrieved from a notebook.
+    This function will display an image even though the notebook is not run
+    from the sources. IPython must be installed.
+
+    if *repository* is None, then the function will use the variable
+    ``module.__github__`` to guess the location of the image.
+    The function is able to retrieve an image in a subfolder.
+    Displays a better message if ``__github__`` was not found.
+
+    See notebook :ref:`examplenbimagerst`.
+    """
+    from IPython.core.display import Image
+    if len(name) == 1:
+        url = _NbImage_path(
+            name[0], repository=repository,
+            force_github=force_github, branch=branch)
+        return Image(url, width=width)
+
+    if len(name) == 0:
+        raise ValueError(  # pragma: no cover
+            "No image to display.")
+
+    from ..imghelper.img_helper import concat_images
+    from PIL import Image as pil_image
+    images = []
+    for img in name:
+        url = _NbImage_path(
+            img, repository=repository,
+            force_github=force_github, branch=branch)
+        if url.startswith('http://') or url.startswith('https://'):
+            with urllib_request.urlopen(url) as u:
+                text = u.read()
+            content = BytesIO(text)
+            images.append(pil_image.open(content))
+        else:
+            images.append(pil_image.open(url))
+
+    if width is None:
+        width = max(img.size[0] for img in images) * 2
+        width = max(200, width)
+
+    new_image = concat_images(images, width=width, height=row_height)
+    b = BytesIO()
+    new_image.save(b, format='png')
+    data = b.getvalue()
+    return Image(data, width=width)
