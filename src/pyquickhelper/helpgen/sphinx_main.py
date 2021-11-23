@@ -895,7 +895,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         # direct call
         with python_path_append(root_source):
-            if direct_call:
+            if direct_call:  # pragma: no cover
                 # mostly to debug
                 out = StringIO()
                 err = StringIO()

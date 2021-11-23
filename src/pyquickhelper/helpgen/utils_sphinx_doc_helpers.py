@@ -563,7 +563,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     if li.endswith(".py"):
         cpxx = ".py"
         ext_rem = ".py"
-    elif li.endswith(".pyd"):
+    elif li.endswith(".pyd"):  # pragma: no cover
         cpxx = ".cp%d%d-" % sys.version_info[:2]
         search = li.rfind(cpxx)
         ext_rem = li[search:]
@@ -626,7 +626,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     if additional_sys_path is not None and len(additional_sys_path) > 0:
         # there is an issue here due to the confusion in the paths
         # the paths should be removed just after the import
-        sys.path.extend(additional_sys_path)
+        sys.path.extend(additional_sys_path)  # pragma: no cover
 
     sys.path.insert(0, root)
     try:

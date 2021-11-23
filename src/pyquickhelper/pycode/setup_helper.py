@@ -48,6 +48,85 @@ def available_commands_list(argv):
     return False
 
 
+def process_argv_for_unittest(argv, skip_function):
+    """
+    Interprets command line arguments.
+
+    :param argv: list
+    :param skip_function: skipping function
+    :return: commands
+    """
+    if "-d" in argv:
+        ld = argv.index("-d")
+        if ld >= len(argv) - 1:
+            raise ValueError(  # pragma: no cover
+                "Option -d should be follow by a duration in seconds.")
+        d = float(argv[ld + 1])
+    else:
+        d = None
+
+    if "-f" in argv:
+        lf = argv.index("-f")
+        if lf >= len(argv) - 1:
+            raise ValueError(  # pragma: no cover
+                "Option -f should be follow by a file.")
+        f = argv[lf + 1]
+    else:
+        f = None
+
+    if "-e" in argv:
+        le = argv.index("-e")
+        if le >= len(argv) - 1:
+            raise ValueError(  # pragma: no cover
+                "Option -e should be follow by a regular expression.")
+        pattern = argv[le + 1]
+        if len(pattern) >= 2 and pattern[0] == pattern[-1] == '"':
+            pattern = pattern[1:-1]
+        e = re.compile(pattern)
+    else:
+        e = None
+
+    if "-g" in argv:
+        lg = argv.index("-g")
+        if lg >= len(argv) - 1:
+            raise ValueError(  # pragma: no cover
+                "Option -g should be follow by a regular expression.")
+        pattern = argv[lg + 1]
+        if len(pattern) >= 2 and pattern[0] == pattern[-1] == '"':
+            pattern = pattern[1:-1]
+        g = re.compile(pattern)
+    else:
+        g = None
+
+    if f is None and d is None and e is None and g is None:
+        return skip_function  # pragma: no cover
+
+    def ereg(name):
+        return (e is None) or (e.search(name) is not None)
+
+    def greg(name):
+        return (g is None) or (g.search(name) is None)
+
+    if f is not None:
+        if d is not None:  # pragma: no cover
+            raise NotImplementedError(
+                "Options -f and -d cannot be specified at the same time.")
+
+        def allow(name, code, duration):  # pragma: no cover
+            name = os.path.split(name)[-1]
+            return f not in name and ereg(name) and greg(name)
+        return allow  # pragma: no cover
+    else:
+        # d is not None
+        def skip_allowd(name, code, duration):
+            name = os.path.split(name)[-1]
+            cond = (
+                (duration is None or d is None or duration <= d) and
+                ereg(name) and greg(name))
+            return not cond
+        return skip_allowd
+
+
 def process_standard_options_for_setup(
         argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
         pattern_copy=None,
@@ -170,7 +249,7 @@ def process_standard_options_for_setup(
     """
     if module_name is not None and (
             len(module_name) == 0 or module_name[0] == '_'):
-        raise RuntimeError(
+        raise RuntimeError(  # pragma: no cover
             "module cannot be empty or start with '_': %r." % module_name)
     if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
@@ -191,77 +270,6 @@ def process_standard_options_for_setup(
         return not len(get_available_build_commands() & set(argv))
     fLOG("[process_standard_options_for_setup]", argv)
     fLOG("[process_standard_options_for_setup] python version:", sys.version_info)
-
-    def process_argv_for_unittest(argv):
-        if "-d" in argv:
-            ld = argv.index("-d")
-            if ld >= len(argv) - 1:
-                raise ValueError(  # pragma: no cover
-                    "Option -d should be follow by a duration in seconds.")
-            d = float(argv[ld + 1])
-        else:
-            d = None
-
-        if "-f" in argv:
-            lf = argv.index("-f")
-            if lf >= len(argv) - 1:
-                raise ValueError(  # pragma: no cover
-                    "Option -d should be follow by a duration in seconds.")
-            f = argv[lf + 1]
-        else:
-            f = None
-
-        if "-e" in argv:
-            le = argv.index("-e")
-            if le >= len(argv) - 1:
-                raise ValueError(  # pragma: no cover
-                    "Option -e should be follow by a regular expression.")
-            pattern = argv[le + 1]
-            if len(pattern) >= 2 and pattern[0] == pattern[-1] == '"':
-                pattern = pattern[1:-1]
-            e = re.compile(pattern)
-        else:
-            e = None
-
-        if "-g" in argv:
-            lg = argv.index("-g")
-            if lg >= len(argv) - 1:
-                raise ValueError(  # pragma: no cover
-                    "Option -g should be follow by a regular expression.")
-            pattern = argv[lg + 1]
-            if len(pattern) >= 2 and pattern[0] == pattern[-1] == '"':
-                pattern = pattern[1:-1]
-            g = re.compile(pattern)
-        else:
-            g = None
-
-        if f is None and d is None and e is None and g is None:
-            return skip_function  # pragma: no cover
-
-        def ereg(name):
-            return (e is None) or (e.search(name) is not None)
-
-        def greg(name):
-            return (g is None) or (g.search(name) is None)
-
-        if f is not None:
-            if d is not None:  # pragma: no cover
-                raise NotImplementedError(
-                    "Options -f and -d cannot be specified at the same time.")
-
-            def allow(name, code, duration):  # pragma: no cover
-                name = os.path.split(name)[-1]
-                return f not in name and ereg(name) and greg(name)
-            return allow  # pragma: no cover
-        else:
-            # d is not None
-            def skip_allowd(name, code, duration):
-                name = os.path.split(name)[-1]
-                cond = (
-                    (duration is None or d is None or duration <= d) and
-                    ereg(name) and greg(name))
-                return not cond
-            return skip_allowd
 
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
@@ -304,7 +312,7 @@ def process_standard_options_for_setup(
         print("[clean_space] number of impacted notebooks:", len(rem))
         return True
 
-    if "run_pylint" in argv:
+    if "run_pylint" in argv:  # pragma: no cover
         verbose = '-v' in argv
         pos = argv.index('run_pylint')
         ignores = [_[2:] for _ in argv if _[:2] == '-i']
@@ -345,7 +353,7 @@ def process_standard_options_for_setup(
             skip_issues=skip_issues, fLOG=fLOG)
         return True
 
-    elif "write_version" in argv:
+    elif "write_version" in argv:  # pragma: no cover
         fLOG("---- JENKINS BEGIN WRITE VERSION ----")
         write_version_for_setup(file_or_folder, module_name=module_name)
         fLOG("---- JENKINS BEGIN END VERSION ----")
@@ -421,7 +429,7 @@ def process_standard_options_for_setup(
         return True
 
     elif "unittests" in argv:
-        skip_f = process_argv_for_unittest(argv)
+        skip_f = process_argv_for_unittest(argv, skip_function)
         run_unittests_for_setup(
             file_or_folder, setup_params=setup_params,
             coverage_options=coverage_options,
@@ -434,7 +442,7 @@ def process_standard_options_for_setup(
             coverage_root=coverage_root, fLOG=fLOG)
         return True
 
-    elif "setup_hook" in argv:
+    elif "setup_hook" in argv:  # pragma: no cover
         fLOG("---- JENKINS BEGIN SETUPHOOK ----")
         run_unittests_for_setup(
             file_or_folder, setup_params=setup_params, only_setup_hook=True,

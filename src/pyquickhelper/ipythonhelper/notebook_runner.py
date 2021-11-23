@@ -355,7 +355,7 @@ class NotebookRunner(object):
             status = 'error'
             reason = "no status key in reply['content']"
 
-        if status == 'error':
+        if status == 'error':  # pragma: no cover
             ansi_escape = re.compile(r'\x1b[^m]*m')
             try:
                 tr = [ansi_escape.sub('', _)
@@ -621,7 +621,7 @@ class NotebookRunner(object):
                 "tuple expected of lengh 2, not {0}".format(len(b)))
         if b[1] == "svg":
             if not isinstance(b[0], str):
-                raise TypeError(
+                raise TypeError(  # pragma: no cover
                     "str expected for svg, not {0}".format(type(b[0])))
         elif b[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json",
                       "vnd.bokehjs_load.v0+json", 'vnd.plotly.v1+json'):
@@ -728,7 +728,7 @@ class NotebookRunner(object):
                         if image_from_text:
                             b = self.create_picture_from(v, "js")
                             results.append(b)
-                    elif k == "application/json":
+                    elif k == "application/json":  # pragma: no cover
                         if image_from_text:
                             b = self.create_picture_from(v, "json")
                             results.append(b)
@@ -742,7 +742,7 @@ class NotebookRunner(object):
                             b = self.create_picture_from(v, "html")
                             results.append(b)
                     elif k == "text/latex":
-                        if image_from_text:
+                        if image_from_text:  # pragma: no cover
                             b = self.create_picture_from(v, "latex")
                             results.append(b)
                     elif k == "application/vnd.jupyter.widget-view+json":

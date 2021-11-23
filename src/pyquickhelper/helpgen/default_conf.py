@@ -141,10 +141,10 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     dirconf = os.path.abspath(os.path.dirname(fileconf))
     version_file = os.path.join(dirconf, "..", "..", "..", "version.txt")
     if not os.path.exists(version_file):
-        warnings.warn(
+        warnings.warn(  # pragma: no cover
             "File '{0}' must contain the commit number (or last part of the version).".format(
                 version_file), UserWarning)
-        first_line = "0"
+        first_line = "0"  # pragma: no cover
     else:
         first_line = get_first_line(version_file)
 
@@ -154,14 +154,14 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     # main version
     if doc_version is None:
         mod = sys.modules.get(module_name, None)
-        if mod is None:
+        if mod is None:  # pragma: no cover
             import importlib
             try:
                 mod = importlib.import_module(module_name)
-            except (ImportError, ModuleNotFoundError):  # pragma: no cover
+            except (ImportError, ModuleNotFoundError):
                 mod = None
             if mod is None:
-                raise RuntimeError(  # pragma: no cover
+                raise RuntimeError(
                     "Unknown module version. You should import '{0}' or specify "
                     "'doc_version'.".format(
                         module_name))
@@ -341,11 +341,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         # this extension disables sphinx.ext.imgmath
         pass
 
-    if not use_mathjax:
+    if not use_mathjax:  # pragma: no cover
         imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_dvipng_path()
         imgmath_image_format = 'svg'
 
-    if add_extensions is not None:
+    if add_extensions is not None:  # pragma: no cover
         for a in add_extensions:
             if a not in extensions:
                 extensions.append(a)
@@ -599,7 +599,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         if not k.startswith("_") and k not in {'app', 'ext_locals', 'domains'}:
             ext_locals[k] = v
 
-    if custom_style is not None:
+    if custom_style is not None:  # pragma: no cover
         ex = False
         for st in html_static_path:
             full = os.path.join(dirconf, st, custom_style)
@@ -610,7 +610,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             raise FileNotFoundError("unable to find {0} in\n{1}\nand\n{2}".format(
                 custom_style, dirconf, "\n".join(html_static_path)))
 
-    def this_setup(app):
+    def this_setup(app):  # pragma: no cover
         if custom_style is not None:
             app.add_css_file(custom_style)
         return custom_setup(app, author)

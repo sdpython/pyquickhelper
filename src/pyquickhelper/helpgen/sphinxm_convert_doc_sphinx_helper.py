@@ -1123,7 +1123,7 @@ class _CustomSphinx(Sphinx):
             for extension in new_extensions:
                 if isinstance(extension, str):
                     self.setup_extension(extension)
-                else:
+                else:  # pragma: no cover
                     # We assume it is a module.
                     dirname = os.path.dirname(extension.__file__)
                     sys.path.insert(0, dirname)
@@ -1139,8 +1139,9 @@ class _CustomSphinx(Sphinx):
 
         if isinstance(buildername, tuple):
             if len(buildername) != 2:
-                raise ValueError(
-                    "The builder can be custom but it must be specifed as a 2-uple=(builder_name, builder_class).")
+                raise ValueError(  # pragma: no cover
+                    "The builder can be custom but it must be specifed "
+                    "as a 2-uple=(builder_name, builder_class).")
             self.add_builder(buildername[1])
             buildername = buildername[0]
 
@@ -1248,7 +1249,7 @@ class _CustomSphinx(Sphinx):
             except Exception as err:
                 self.info('failed: %s' % err)
                 self._init_env(freshenv=True)
-        elif self.env is None:
+        elif self.env is None:  # pragma: no cover
             self.env = _CustomBuildEnvironment(self)
             if hasattr(self.env, 'setup'):
                 self.env.setup(self)
@@ -1346,9 +1347,10 @@ class _CustomSphinx(Sphinx):
         self._logger.info(message, nonl=nonl)
 
     def warning(self, message='', nonl=False, name=None, type=None, subtype=None):
-        if "is already registered" not in message:
+        if "is already registered" not in message:  # pragma: no cover
             self._logger.warning(
-                "[_CustomSphinx] {0} -- {1}".format(message, name), nonl=nonl, type=type, subtype=subtype)
+                "[_CustomSphinx] {0} -- {1}".format(message, name),
+                nonl=nonl, type=type, subtype=subtype)
 
     def add_builder(self, builder, override=False):
         self._added_objects.append(('builder', builder))
@@ -1376,7 +1378,7 @@ class _CustomSphinx(Sphinx):
                 warnings.filterwarnings(
                     "ignore", category=DeprecationWarning)
                 self.registry.load_extension(self, extname)
-        except Exception as e:
+        except Exception as e:  # pragma: no cover
             raise ExtensionError(
                 "Unable to setup extension '{0}'".format(extname)) from e
         finally:

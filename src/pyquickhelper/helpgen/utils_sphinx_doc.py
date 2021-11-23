@@ -1682,7 +1682,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                         i - 1].strip().startswith(":") and len(rows[i - 1].strip()) > 0:
                     rows[i] = "\n" + rows[i]
 
-            elif example:
+            elif example:  # pragma: no cover
                 sp = " " * row.index("@example")
                 rep = example.groups()[0]
                 exa = example.groups()[2].replace("[|", "(").replace("|]", ")")

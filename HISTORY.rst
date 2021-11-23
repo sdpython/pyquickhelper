@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2021-10-26 - 0.00Mb
+current - 2021-11-23 - 0.00Mb
 =============================
 
+* #355: Adds function to concatenate images (2021-11-23)
 * #354: Changes to support main branch (2021-10-25)
 
 1.10.3653 - 2021-10-13 - 2.12Mb
@@ -147,10 +148,6 @@ current - 2021-10-26 - 0.00Mb
 * #282: Write a function to run a function every n seconds (2019-11-22)
 * #281: Removes use of specific versions of nbconvert and pylzma. (2019-11-11)
 * #280: Removes conversion from notebook to nbpresent (2019-11-10)
-
-1.9.3248 - 2019-11-06 - 2.05Mb
-==============================
-
 * #279: Add method assertEqualSparseArray (2019-11-06)
 * #277: Grammar and spelling fixes. (2019-11-06)
 * #278: Add simple command line to merge multiple images into one PDF (2019-11-04)

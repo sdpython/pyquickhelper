@@ -67,7 +67,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
 
     if persistent:
-        if sys.platform.startswith("win"):
+        if sys.platform.startswith("win"):  # pragma: no cover
             from ctypes.wintypes import MAX_PATH
             if MAX_PATH <= 300:
                 local = os.path.join(os.path.abspath("\\" + path_name), name)
@@ -89,7 +89,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
             mode = os.stat(local).st_mode
             nmode = mode | stat.S_IWRITE
             if nmode != mode:
-                os.chmod(local, nmode)
+                os.chmod(local, nmode)  # pragma: no cover
     else:
         if (callable(clean) and clean(local)) or (not callable(clean) and clean):
             # delayed import to speed up import time of pycode
@@ -101,12 +101,12 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
             mode = os.stat(local).st_mode
             nmode = mode | stat.S_IWRITE
             if nmode != mode:
-                os.chmod(local, nmode)
+                os.chmod(local, nmode)  # pragma: no cover
 
     return local
 
 
-def _extended_refactoring(filename, line):
+def _extended_refactoring(filename, line):  # pragma: no cover
     """
     Private function which does extra checkings
     when refactoring :epkg:`pyquickhelper`.
@@ -225,8 +225,8 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     import pycodestyle
     from ..filehelper.synchelper import explore_folder_iterfile
     if fLOG is None:
-        from ..loghelper.flog import noLOG
-        fLOG = noLOG
+        from ..loghelper.flog import noLOG  # pragma: no cover
+        fLOG = noLOG  # pragma: no cover
 
     def extended_checkings(fname, content, buf, extended):
         for i, line in enumerate(content):
@@ -260,9 +260,11 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                 if ">`_" in line:
                     return "line too long (link) {0} > {1}".format(len(line), max_line_length)
                 if ":math:`" in line:
-                    return "line too long (:math:) {0} > {1}".format(len(line), max_line_length)
+                    return "line too long (:math:) {0} > {1}".format(  # pragma: no cover
+                        len(line), max_line_length)
                 if "ERROR: " in line:
-                    return "line too long (ERROR:) {0} > {1}".format(len(line), max_line_length)
+                    return "line too long (ERROR:) {0} > {1}".format(  # pragma: no cover
+                        len(line), max_line_length)
             return None
 
         extended.append(("[ECL1]", check_lenght_line))
@@ -353,9 +355,9 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
 
     def myprint(s):
         "local print, chooses the right function"
-        if regular_print:
+        if regular_print:  # pragma: no cover
             memout.write(s + "\n")
-        else:
+        else:  # pragma: no cover
             fLOG(s, OutputStream=memout)
 
     neg_pat = ".*temp[0-9]?_.*,doc_.*"
@@ -363,7 +365,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         neg_pat += ',' + neg_pattern
 
     if run_cmd_filter is not None:
-        verbose = True
+        verbose = True  # pragma: no cover
 
     PyLinterRunV = _get_PyLinterRunV()
     sout = StringIO()
@@ -384,7 +386,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                     opt.append('--disable=' + ','.join(pylint_ignore))
                 if max_line_length:
                     opt.append("--max-line-length=%d" % max_line_length)
-                if verbose:
+                if verbose:  # pragma: no cover
                     for i, name in enumerate(files_to_check):
                         cop = list(opt)
                         cop.append(name)
@@ -470,7 +472,7 @@ def add_missing_development_version(names, root, hide=False):
             else:
                 importlib.import_module(name)
             continue
-        except ImportError as e:
+        except ImportError as e:  # pragma: no cover
             # it requires a path
             exc = e
 
@@ -479,24 +481,24 @@ def add_missing_development_version(names, root, hide=False):
                 "Unable to find a subfolder '{0}' in '{1}' (py27={3})\nFOUND:\n{2}\nexc={4}".format(
                     name, newroot, "\n".join(dirs), py27, exc))
 
-        if py27:
+        if py27:  # pragma: no cover
             this = os.path.join(newroot, name, "dist_module27", "src")
             if not os.path.exists(this):
                 this = os.path.join(newroot, name, "dist_module27")
-        else:
+        else:  # pragma: no cover
             this = os.path.join(newroot, name, "src")
             if not os.path.exists(this):
                 this = os.path.join(newroot, name)
 
-        if not os.path.exists(this):
-            raise FileNotFoundError(  # pragma: no cover
+        if not os.path.exists(this):  # pragma: no cover
+            raise FileNotFoundError(
                 "unable to find a subfolder '{0}' in '{1}' (*py27={3})\nFOUND:\n{2}".format(
                     this, newroot, "\n".join(dirs), py27))
-        with sys_path_append(this):
+        with sys_path_append(this):  # pragma: no cover
             if hide:
                 with warnings.catch_warnings(record=True):
                     importlib.import_module(name)
             else:
                 importlib.import_module(name)
-        paths.append(this)
+        paths.append(this)  # pragma: no cover
     return paths

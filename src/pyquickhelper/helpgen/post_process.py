@@ -193,7 +193,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
             notebook_replacements=notebook_replacements)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
-    else:
+    else:  # pragma: no cover
         build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
         if not os.path.exists(build):
             raise FileNotFoundError(build)
@@ -236,7 +236,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None, n
             notebook_replacements=notebook_replacements)
         with open(file, "w", encoding="utf8") as f:
             f.write(content)
-    else:
+    else:  # pragma: no cover
         build = os.path.join(root, "_doc", "sphinxdoc", "build", "latex")
         if not os.path.exists(build) and exc:
             raise FileNotFoundError(build)
@@ -430,9 +430,9 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     if slides:
         links.append(':downloadlink:`slides <{0}.slides.html>`'.format(noext))
 
-    if github:
+    if github:  # pragma: no cover
         if notebook is None:
-            raise ValueError(  # pragma: no cover
+            raise ValueError(
                 "Cannot add a link on github, notebook is None for "
                 "file='{0}'".format(file))
         docname = notebook
