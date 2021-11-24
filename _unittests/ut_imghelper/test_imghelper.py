@@ -1,13 +1,11 @@
 """
 @brief      test log(time=7s)
-
-skip this test for regular run
 """
-
 import sys
 import os
 import unittest
-
+import itertools
+import numpy
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.imghelper.img_helper import (
@@ -66,6 +64,24 @@ class TestImgHelper(ExtTestCase):
         res = concat_images(images, out_file=dest, width=600)
         self.assertExists(dest)
         self.assertEqual(res.size[0], 600)
+
+    def test_concat_images_3p(self):
+        from PIL import Image
+        temp = get_temp_folder(__file__, "temp_concat_images_3p")
+        data = os.path.join(temp, "..", "data")
+        images = [os.path.join(data, 'mazures%d.jpg' % i)
+                  for i in range(0, 3)]
+        expected = 225052
+        for p, imgs in enumerate(itertools.permutations(images)):
+            dest = os.path.join(temp, "image%d.png" % p)
+            res = concat_images(imgs, out_file=dest, width=1200, height=350)
+            self.assertExists(dest)
+            self.assertEqual(res.size[0], 1200)
+            img = Image.open(dest)
+            arr = numpy.asarray(img).astype(numpy.int64)
+            total = arr.sum(axis=2)
+            black = (total == 0).astype(numpy.int64).sum()
+            self.assertEqual(expected, black)
 
 
 if __name__ == "__main__":

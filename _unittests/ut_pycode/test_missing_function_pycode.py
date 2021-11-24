@@ -33,6 +33,7 @@ class TestMissingFunctionsPycode(ExtTestCase):
             process_standard_options_for_setup_help(['--help', 'clean_space'])
         self.assertIn('clean unnecessary spaces', f.getvalue())
 
+    @unittest.skipIf(sys.platform != 'win32', reason="not available")
     def test_process_standard_options_for_setup(self):
         temp = get_temp_folder(
             __file__, "temp_process_standard_options_for_setup")

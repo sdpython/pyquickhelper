@@ -128,7 +128,7 @@ def _NbImage(url, width=None):
 
 
 def NbImage(*name, repository=None, force_github=False, width=None,
-            branch='master', row_height=200):
+            branch='master', row_height=200, background=(255, 255, 255)):
     """
     Retrieves a name or a url of the image if it is not found in the local folder
     or a subfolder.
@@ -139,6 +139,7 @@ def NbImage(*name, repository=None, force_github=False, width=None,
     :param width: to modify the width
     :param branch: branch
     :param row_height: row height if there are multiple images
+    :param background: background color (only if there multiple images)
     :return: an `Image object
         <http://ipython.org/ipython-doc/2/api/generated/IPython.core.display.html
         #IPython.core.display.Image>`_
@@ -184,7 +185,8 @@ def NbImage(*name, repository=None, force_github=False, width=None,
         width = max(img.size[0] for img in images) * 2
         width = max(200, width)
 
-    new_image = concat_images(images, width=width, height=row_height)
+    new_image = concat_images(images, width=width, height=row_height,
+                              background=background)
     b = BytesIO()
     new_image.save(b, format='png')
     data = b.getvalue()

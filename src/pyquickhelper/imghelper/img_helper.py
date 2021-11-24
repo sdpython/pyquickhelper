@@ -184,14 +184,13 @@ def concat_images(imgs, height=200, width=800,
     img_height = n_rows * height
 
     new_image = Image.new('RGB', (width, img_height), background)
-    w = 0
-    last_row = 0
+    x_row = {}
     for row, img in zip(pos, images):
-        if row != last_row:
-            w = 0
+        if row not in x_row:
+            x_row[row] = 0
+        w = x_row[row]
         new_image.paste(img, (w, row * height))
-        w += img.size[0]
-        last_row = row
+        x_row[row] += img.size[0]
     if out_file is not None:
         new_image.save(out_file)
     return new_image

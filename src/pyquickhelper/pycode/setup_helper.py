@@ -486,7 +486,7 @@ def process_standard_options_for_setup(
             fLOG=fLOG)
         return True
 
-    elif "build_script" in argv:
+    elif "build_script" in argv:  # pragma: no cover
         # delayed import
         from .build_helper import get_extra_script_command, get_script_command, get_build_script
 
@@ -552,7 +552,7 @@ def process_standard_options_for_setup(
 
         return True
 
-    elif "copy27" in argv:
+    elif "copy27" in argv:  # pragma: no cover
         # delayed import
         from .py3to2 import py3to2_convert_tree
         root = os.path.abspath(os.path.dirname(file_or_folder))
