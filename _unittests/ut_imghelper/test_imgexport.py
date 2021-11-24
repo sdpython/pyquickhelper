@@ -19,12 +19,12 @@ class TestImgExport(ExtTestCase):
         dest = os.path.join(temp, "images.pdf")
         res = images2pdf([data, datap], dest)
         self.assertExists(dest)
-        self.assertEqual(len(res), 2)
+        self.assertEqual(len(res), 5)
 
         dest = os.path.join(temp, "images3.pdf")
         res = images2pdf(",".join([data, datap]), dest)
         self.assertExists(dest)
-        self.assertEqual(len(res), 2)
+        self.assertEqual(len(res), 5)
 
 
 if __name__ == "__main__":
