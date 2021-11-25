@@ -51,6 +51,9 @@ def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300):
     if ax is None:
         import matplotlib.pyplot as plt
         ax = plt.gca()
+    elif isinstance(ax, str) and ax == 'new':
+        import matplotlib.pyplot as plt
+        _, ax = plt.subplots(1, 1)
         image = plt.imread(temp_img)
     else:
         import matplotlib.pyplot as plt
