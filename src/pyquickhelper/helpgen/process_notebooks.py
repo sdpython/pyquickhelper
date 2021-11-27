@@ -748,10 +748,10 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
     # image
     for image in os.listdir(build):
-        if image.endswith(".png") or image.endswith(".html") or \
-           image.endswith(".pdf") or image.endswith(".svg") or \
-           image.endswith(".jpg") or image.endswith(".gif") or \
-           image.endswith(".xml") or image.endswith(".jpeg"):
+        if (image.endswith(".png") or image.endswith(".html") or
+                image.endswith(".pdf") or image.endswith(".svg") or
+                image.endswith(".jpg") or image.endswith(".gif") or
+                image.endswith(".xml") or image.endswith(".jpeg")):
             image = os.path.join(build, image)
             dest = os.path.join(outfold, os.path.split(image)[-1])
 

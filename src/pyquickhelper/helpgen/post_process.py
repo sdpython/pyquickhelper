@@ -592,8 +592,10 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
     # js
     if fLOG:
         fLOG("[post_process_html_output] js: replacements")
-    repl = {'https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js':
-            '../_static/embed-amd.js'}
+    repl = {
+        'https://unpkg.com/@jupyter-widgets/html-manager@^0.20.0/dist/embed-amd.js':
+            '../_static/embed-amd.js',
+        '</head>': '<script src="../_static/require.js"></script>\n</head>'}
     lines = text.split('\n')
     new_lines = []
     for line in lines:
@@ -646,6 +648,8 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
     require = "require(" in text
     text = text.replace("reveal.js/dist/reveal.css",
                         "reveal.js/css/reveal.css")
+    text = text.replace("reveal.js/dist/reveal.js",
+                        "reveal.js/js/reveal.js")                        
     text = text.replace("reveal.js/dist/theme/simple.css",
                         "reveal.js/css/theme/simple.css")
     text = text.replace("https://unpkg.com/@jupyter-widgets/html-manager@0.20.0/dist/embed-amd.js",
