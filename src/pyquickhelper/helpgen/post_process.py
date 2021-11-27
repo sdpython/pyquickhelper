@@ -649,7 +649,7 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
     text = text.replace("reveal.js/dist/reveal.css",
                         "reveal.js/css/reveal.css")
     text = text.replace("reveal.js/dist/reveal.js",
-                        "reveal.js/js/reveal.js")                        
+                        "reveal.js/js/reveal.js")
     text = text.replace("reveal.js/dist/theme/simple.css",
                         "reveal.js/css/theme/simple.css")
     text = text.replace("https://unpkg.com/@jupyter-widgets/html-manager@0.20.0/dist/embed-amd.js",
