@@ -538,7 +538,7 @@ class ExtTestCase(unittest.TestCase):
         logger.setLevel(level)
 
         if console:
-            chc = console_handler = StreamHandler()
+            chc = StreamHandler()
             chc.setLevel(level)
             logger.addHandler(chc)
         if not logger.hasHandlers():
