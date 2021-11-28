@@ -495,16 +495,18 @@ class ExtTestCase(unittest.TestCase):
             r = fct()
             return r, list(w)
 
-    def assertLogging(self, fct, logger_name, level=INFO, log_sphinx=False):
+    def assertLogging(self, fct, logger_name, level=INFO, log_sphinx=False,
+                      console=False):
         """
         Returns the logged information in a logger defined
         by its name.
 
-        @param      fct             function to run
-        @param      logger_name     logger name
-        @param      level           level to intercept
-        @param      log_sphinx      logging from :epkg:`sphinx`
-        @return                     result, logged information
+        :param fct: function to run
+        :param logger_name: logger name
+        :param level: level to intercept
+        :param log_sphinx: logging from :epkg:`sphinx`
+        :param console: shows the log on console
+        :return: tuple(result, logged information)
         """
         if log_sphinx:
             from sphinx.util import logging as logging_sphinx
@@ -526,18 +528,29 @@ class ExtTestCase(unittest.TestCase):
                   if log_sphinx else getLogger(logger_name))
 
         hs = list(logger.handlers)
-        for h in logger.handlers:
+        for h in hs:
             logger.removeHandler(h)  # pragma: no cover
 
         log_capture_string = MyStream()
         ch = StreamHandler(log_capture_string)
         ch.setLevel(level)
         logger.addHandler(ch)
+        logger.setLevel(level)
+
+        if console:
+            chc = StreamHandler()
+            chc.setLevel(level)
+            logger.addHandler(chc)
+        if not logger.hasHandlers():
+            raise AssertionError(  # pragma: no cover
+                "Logger %r has no handlers." % logger_name)
 
         res = fct()
 
         logs = log_capture_string.getvalue()
         logger.removeHandler(ch)
+        if console:
+            logger.removeHandler(chc)
 
         for h in hs:
             logger.addHandler(h)  # pragma: no cover
