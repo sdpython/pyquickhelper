@@ -8,8 +8,7 @@ import unittest
 from datetime import datetime
 import warnings
 import sqlite3
-from .code_exceptions import (
-    CoverageException, SetupHookException)
+from .code_exceptions import CoverageException
 from .coverage_helper import (
     publish_coverage_on_codecov, find_coverage_report,
     coverage_combine)
