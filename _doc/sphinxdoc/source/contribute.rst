@@ -128,9 +128,8 @@ You can get them with:
 
     python setup.py unittests --help
 
-The process first calls the function :func:`_setup_hook <pyquickhelper._setup_hook>`.
-It can be used to initialize the module even if it is most of the time unused.
-The process ends the code coverage (with module :epkg:`coverage`)
+The command line runs the unit tests.
+The process ends with the code coverage (with module :epkg:`coverage`)
 and publishes the report in folder `_doc/sphinxdoc/source/coverage`.
 If options ``-e`` and ``-g`` are left empty, files containing `test_LONG_`,
 `test_SKIP_`, `test_GUI_` in their

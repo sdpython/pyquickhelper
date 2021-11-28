@@ -81,7 +81,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
 
             fLOG("unit tests", root)
             for command in ["version", "write_version", "clean_pyd",
-                            "setup_hook", "build_script", "copy27",
+                            "build_script", "copy27",
                             "run_pylint .*((myex)|(example_ext)).*[.]py$ "
                             "-iC0103 -iR0201 -iC0123 -iC0111 -iW0611 -iE0401 -iE0611 -iE0401",
                             "unittests -e .*code_style.*",
@@ -136,7 +136,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                         additional_ut_path=[pyq, (root, True)],
                         skip_function=skip_function,
                         coverage_options={"disable_coverage": True},
-                        hook_print=False, stdout=stdout2, stderr=stderr2,
+                        stdout=stdout2, stderr=stderr2,
                         use_run_cmd=True)
                     goon = True
                 except PEP8Exception as e:

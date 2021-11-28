@@ -222,8 +222,6 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     Parameters *from_repo*, *use_run_cmd* were added.
     Notebook conversion to slides is implemented,
     install :epkg:`reveal.js` if not installed.
-    Calls the function @see fn _setup_hook to initialize
-    the module before generating the documentation.
     Parameter *add_htmlhelp* was added. It runs HtmlHelp on Windows ::
 
         "C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" build\\htmlhelp\\<module>.hhp

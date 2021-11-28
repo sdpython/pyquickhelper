@@ -86,7 +86,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
                         pyq, (root, True)],
                     skip_function=skip_function, coverage_options={
                         "disable_coverage": True},
-                    hook_print=False, stdout=stdout2, stderr=stderr2, use_run_cmd=True)
+                    stdout=stdout2, stderr=stderr2, use_run_cmd=True)
 
                 vout = stdout2.getvalue()
                 stdout.write(vout)

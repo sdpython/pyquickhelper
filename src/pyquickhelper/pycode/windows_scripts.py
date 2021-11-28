@@ -258,23 +258,10 @@ set PYTHONPATH=%PYTHONPATH%;%current%\\src__ADDITIONAL_LOCAL_PATH__;%current%__A
 
 
 #################
-#: setup_hook for Windows
-#################
-
-windows_setup_hook = """
-@echo SCRIPT: windows_setup_hook
-@echo #######################################################_setup_hook
-@echo ~CALL %pythonexe% %current%setup.py setup_hook
-%pythonexe% %current%setup.py setup_hook
-if %errorlevel% neq 0 exit /b %errorlevel%
-@echo #######################################################_END_BASE
-"""
-
-#################
 #: build script for Windows
 #################
 
-windows_any_setup_command = windows_any_setup_command_base + windows_setup_hook + """
+windows_any_setup_command = windows_any_setup_command_base + """
 @echo ~CALL %pythonexe% -u %current%setup.py %3 %4 %5 %6 %7 %8 %9
 rem set PYTHONPATH=additional_path
 %pythonexe% -u %current%setup.py %3 %4 %5 %6 %7 %8 %9
@@ -292,7 +279,7 @@ jenkins_windows_setup = "%jenkinspythonexe% -u %current%setup.py"
 #: build setup script for Windows
 #################
 
-windows_build_setup = windows_any_setup_command_base + windows_setup_hook + """
+windows_build_setup = windows_any_setup_command_base + """
 @echo ~CALL %pythonexe% %current%setup.py sdist %2 --formats=gztar,zip --verbose
 %pythonexe% %current%setup.py sdist %2 --formats=gztar,zip --verbose
 if %errorlevel% neq 0 exit /b %errorlevel%
@@ -306,7 +293,7 @@ if %errorlevel% neq 0 exit /b %errorlevel%
 #################
 #: build script MAIN SCRIPT
 #################
-windows_build = windows_any_setup_command_base + windows_setup_hook + """
+windows_build = windows_any_setup_command_base + """
 @echo #######################################################_unit
 @echo ~CALL %pythonexe% -u %current%setup.py unittests
 rem set PYTHONPATH=additional_path --> we use a virtual environment here
@@ -569,8 +556,6 @@ windows_jenkins_27_conda = [
     + "\n__PACTHPQb__\n"
     + jenkins_windows_setup + " build_script\n"
     + windows_error
-    + "\n@echo ~CALL %jenkinspythonexe% %current%setup.py setup_hook\n%jenkinspythonexe% %current%setup.py setup_hook\n"
-    + windows_error
     + "\nauto_setup_co + y27.bat %jenkinspythonexe%\n" + windows_error,
     # next script #
     "\n__PACTHPQe__\n" +
@@ -592,8 +577,6 @@ windows_jenkins_27_def = [
     "set jenkinspythonexe=__DEFAULTPYTHON__\n@echo ~SET jenkinspythonexe=__DEFAULTPYTHON__\n" +
     "\n__PACTHPQb__\n" +
     jenkins_windows_setup + " build_script\n" +
-    windows_error +
-    "\n@echo ~CALL %jenkinspythonexe% %current%setup.py setup_hook\n%jenkinspythonexe% %current%setup.py setup_hook\n" +
     windows_error +
     "\nauto_setup_copy27.bat %jenkinspythonexe%\n" +
     windows_error,
