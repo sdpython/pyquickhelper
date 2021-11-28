@@ -11,7 +11,6 @@ Defines setup commands.
 * unittests_LONG *
 * unittests_SKIP *
 * unittests_GUI *
-* setup_hook
 * write_version
 """
 import os

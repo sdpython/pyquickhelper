@@ -7,7 +7,6 @@ import unittest
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper import __file__ as PYQ
-from pyquickhelper.pycode.call_setup_hook import call_setup_hook, call_setup_hook_cmd
 
 
 class TestCallSetupHook(unittest.TestCase):

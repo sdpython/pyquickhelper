@@ -40,10 +40,10 @@ def _modifies_coverage_report(name, bsrcp, bproj):
 
 
 def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=False,
-                       report_folder=None, skip_function=None, setup_params=None,
-                       only_setup_hook=False, coverage_options=None,
+                       report_folder=None, skip_function=None,
+                       coverage_options=None,
                        coverage_exclude_lines=None, additional_ut_path=None,
-                       covtoken=None, hook_print=True, stdout=None, stderr=None,
+                       covtoken=None, stdout=None, stderr=None,
                        filter_warning=None, dump_coverage=None,
                        add_coverage_folder=None, coverage_root="src", fLOG=None):
     """
@@ -59,14 +59,11 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     @param      add_coverage            (bool) run the unit tests and measure the coverage at the same time
     @param      report_folder           (str) folder where the coverage report will be stored
     @param      skip_function           *function(filename,content,duration) --> boolean* to skip a unit test
-    @param      setup_params            parameters sent to @see fn call_setup_hook
-    @param      only_setup_hook         calls only @see fn call_setup_hook, do not run the unit test
     @param      coverage_options        (dict) options for module coverage as a dictionary, see below, default is None
     @param      coverage_exclude_lines  (list) options for module coverage, lines to exclude from the coverage report, defaul is None
     @param      additional_ut_path      (list) additional paths to add when running the unit tests
     @param      covtoken                (str|tuple(str, str)) token used when publishing coverage report to `codecov <https://codecov.io/>`_
                                         or None to not publish
-    @param      hook_print              enable print display when calling *_setup_hook*
     @param      stdout                  if not None, write output on this stream instead of *sys.stdout*
     @param      stderr                  if not None, write errors on this stream instead of *sys.stderr*
     @param      filter_warning          function which removes some warnings in the final output,
@@ -119,18 +116,6 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     generating-matplotlib-graphs-without-a-running-x-server>`_.
     If the skip function is None, it will replace it by
     the function @see fn default_skip_function.
-    Calls function @see fn _setup_hook if it is available
-    in the unit tested module. Parameter *tested_module* was added,
-    the function then checks the presence of
-    function @see fn _setup_hook, it is the case, it runs it.
-
-    Parameter *setup_params*: a mechanism was put in place
-    to let the module to test a possibility to run some preprocessing steps
-    in a separate process. They are described in @see fn _setup_hook
-    which must be found in the main file ``__init__.py``.
-    Parameter *only_setup_hook*:
-    saves the report in XML format, binary format,
-    replace full paths by relative path.
 
     Parameters *coverage_options*, *coverage_exclude_lines*, *additional_ut_path*:
     see class `Coverage <https://coverage.readthedocs.io/en/coverage-5.5/api_coverage.html>`_
@@ -217,36 +202,6 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
          "matplotlib" in sys.modules, "first execution", _first_execution)
     fLOG("[main_wrapper_tests] fix_tkinter_issues_virtualenv", r)
 
-    def tested_module(folder, project_var_name, setup_params):
-        # module mod
-        # delayed import
-        from .call_setup_hook import call_setup_hook
-        if setup_params is None:
-            setup_params = {}
-        out, err = call_setup_hook(
-            folder, project_var_name, fLOG=fLOG, use_print=hook_print, **setup_params)
-        if len(err) > 0 and err != "no _setup_hook":  # pragma: no cover
-            # fix introduced because pip 8.0 displays annoying warnings
-            # RuntimeWarning: Config variable 'Py_DEBUG' is unset, Python ABI tag may be incorrect
-            # RuntimeWarning: Config variable 'WITH_PYMALLOC' is unset, Python
-            # ABI tag may be incorrect
-            lines = err.split("\n")
-            keep = []
-            for line in lines:
-                line = line.rstrip("\r\t ")
-                if (line and not line.startswith(" ") and
-                        "RuntimeWarning: Config variable" not in line):
-                    keep.append(line)
-            if len(keep) > 0:
-                raise SetupHookException(
-                    "Unable to run _setup_hook\n**OUT:\n{0}\n**[pyqerror]"
-                    "\n{1}\n**FOLDER:\n{2}\n**NAME:\n{3}\n**KEEP:\n{4}\n**"
-                    "".format(out, err, folder, project_var_name,
-                              "\n".join(keep)))
-            out += "\nWARNINGS:\n" + err
-            err = None
-        return out, err
-
     # project_var_name
     folder = os.path.normpath(
         os.path.join(os.path.dirname(logfile), "..", "src"))
@@ -295,10 +250,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             "The location of the source should not contain "
             "'{0}': {1}".format(get_user(), srcp))
 
-    if only_setup_hook:
-        tested_module(src_abs, project_var_name, setup_params)
-
-    else:
+    if True:
         # coverage
         if add_coverage:  # pragma: no cover
             stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
@@ -306,11 +258,6 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 report_folder = os.path.join(
                     os.path.abspath(os.path.dirname(logfile)), "..", "_doc",
                     "sphinxdoc", "source", "coverage")
-
-            fLOG("[main_wrapper_tests] call _setup_hook",
-                 src_abs, "name=", project_var_name)
-            tested_module(src_abs, project_var_name, setup_params)
-            fLOG("[main_wrapper_tests] end _setup_hook")
 
             fLOG("[main_wrapper_tests] current folder", os.getcwd())
             fLOG("[main_wrapper_tests] enabling coverage", srcp)
@@ -509,7 +456,6 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
                 raise CoverageException(  # pragma: no cover
                     "covtoken is not null but add_coverage is not True, coverage cannot be published")
-            tested_module(src_abs, project_var_name, setup_params)
             res = run_main()
             stdout_this.write("[main_wrapper_tests] --- NO COVERAGE END ---\n")
 

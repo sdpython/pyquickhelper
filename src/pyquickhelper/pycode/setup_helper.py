@@ -20,7 +20,7 @@ def get_available_setup_commands():
                 'build_ext', 'build_script', 'build_sphinx', 'clean_pyd', 'clean_space',
                 'copy27', 'copy_dist', 'copy_sphinx', 'history', 'lab', 'local_pypi',
                 'notebook', 'publish', 'publish_doc', 'register', 'run27', 'run_pylint',
-                'sdist', 'setup_hook', 'setupdep', 'test_local_pypi',
+                'sdist', 'setupdep', 'test_local_pypi',
                 'unittests', 'unittests_GUI', 'unittests_LONG', 'unittests_SKIP',
                 'upload_docs', 'write_version', 'local_jenkins']
     return commands
@@ -131,14 +131,14 @@ def process_standard_options_for_setup(
         argv, file_or_folder, project_var_name, module_name=None, unittest_modules=None,
         pattern_copy=None,
         requirements=None, port=8067, blog_list=None, default_engine_paths=None,
-        extra_ext=None, add_htmlhelp=False, setup_params=None, coverage_options=None,
+        extra_ext=None, add_htmlhelp=False, coverage_options=None,
         coverage_exclude_lines=None, func_sphinx_begin=None, func_sphinx_end=None,
         additional_notebook_path=None, additional_local_path=None, copy_add_ext=None,
         nbformats=("ipynb", "html", "python", "rst", "slides",
                    "pdf", "github"),
         layout=None, direct_call=False,
         additional_ut_path=None,
-        skip_function=None, covtoken=None, hook_print=True,
+        skip_function=None, covtoken=None,
         stdout=None, stderr=None, use_run_cmd=False, filter_warning=None,
         file_filter_pep8=None, github_owner=None,
         existing_history=None, coverage_root='src',
@@ -172,7 +172,6 @@ def process_standard_options_for_setup(
     @param      extra_ext                   extra file extension to process (add a page for each of them,
                                             ex ``["doc"]``)
     @param      add_htmlhelp                run HTML Help too (only on Windows)
-    @param      setup_params                parameters send to @see fn call_setup_hook
     @param      coverage_options            see @see fn main_wrapper_tests
     @param      coverage_exclude_lines      see @see fn main_wrapper_tests
     @param      func_sphinx_begin           function called before the documentation generation,
@@ -194,7 +193,6 @@ def process_standard_options_for_setup(
                                             `codecov <https://codecov.io/>`_,
                                             more in @see fn main_wrapper_tests
     @param      fLOG                        logging function
-    @param      hook_print                  enable, disable print when calling *_setup_hook*
     @param      stdout                      redirect stdout for unit test if not None
     @param      stderr                      redirect stderr for unit test  if not None
     @param      use_run_cmd                 to run the sphinx documentation with @see fn run_cmd and
@@ -365,7 +363,6 @@ def process_standard_options_for_setup(
 
     elif "build_sphinx" in argv:
         # delayed import
-        from .call_setup_hook import call_setup_hook
         try:
             from nbconvert.nbconvertapp import main as nbconvert_main
             if nbconvert_main is None:  # pragma: no cover
@@ -373,15 +370,6 @@ def process_standard_options_for_setup(
         except AttributeError as e:  # pragma: no cover
             raise ImportError(
                 "Unable to import nbconvert, cannot generate the documentation") from e
-        if setup_params is None:
-            setup_params = {}
-        out, err = call_setup_hook(
-            folder, project_var_name if module_name is None else module_name,
-            fLOG=fLOG, **setup_params)
-        if len(err) > 0 and err != "no _setup_hook":
-            raise Exception(  # pragma: no cover
-                "Unable to run _setup_hook\nOUT:\n{0}\n[setuperror]\n"
-                "{1}".format(out, err))
 
         if func_sphinx_begin is not None:
             func_sphinx_begin(
@@ -392,7 +380,7 @@ def process_standard_options_for_setup(
                 requirements=requirements, port=port, blog_list=blog_list,
                 default_engine_paths=default_engine_paths,
                 extra_ext=extra_ext, add_htmlhelp=add_htmlhelp,
-                setup_params=setup_params, coverage_options=coverage_options,
+                coverage_options=coverage_options,
                 coverage_exclude_lines=coverage_exclude_lines,
                 func_sphinx_begin=func_sphinx_begin,
                 func_sphinx_end=func_sphinx_end,
@@ -417,7 +405,7 @@ def process_standard_options_for_setup(
                 requirements=requirements, port=port, blog_list=blog_list,
                 default_engine_paths=default_engine_paths,
                 extra_ext=extra_ext, add_htmlhelp=add_htmlhelp,
-                setup_params=setup_params, coverage_options=coverage_options,
+                coverage_options=coverage_options,
                 coverage_exclude_lines=coverage_exclude_lines,
                 func_sphinx_begin=func_sphinx_begin,
                 func_sphinx_end=func_sphinx_end,
@@ -431,35 +419,24 @@ def process_standard_options_for_setup(
     elif "unittests" in argv:
         skip_f = process_argv_for_unittest(argv, skip_function)
         run_unittests_for_setup(
-            file_or_folder, setup_params=setup_params,
+            file_or_folder,
             coverage_options=coverage_options,
             coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path,
             skip_function=skip_f, covtoken=covtoken,
-            hook_print=hook_print, stdout=stdout, stderr=stderr,
+            stdout=stdout, stderr=stderr,
             filter_warning=filter_warning, dump_coverage=dump_coverage_fct(),
             add_coverage_folder=dump_coverage_fct(False),
             coverage_root=coverage_root, fLOG=fLOG)
-        return True
-
-    elif "setup_hook" in argv:  # pragma: no cover
-        fLOG("---- JENKINS BEGIN SETUPHOOK ----")
-        run_unittests_for_setup(
-            file_or_folder, setup_params=setup_params, only_setup_hook=True,
-            coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, skip_function=skip_function,
-            hook_print=hook_print, stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
-            fLOG=fLOG)
-        fLOG("---- JENKINS END SETUPHOOK ----")
         return True
 
     elif "unittests_LONG" in argv:
         def skip_long(name, code, duration):
             return "test_LONG_" not in name
         run_unittests_for_setup(
-            file_or_folder, skip_function=skip_long, setup_params=setup_params,
+            file_or_folder, skip_function=skip_long,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, hook_print=hook_print,
+            additional_ut_path=additional_ut_path,
             stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         return True
@@ -468,9 +445,9 @@ def process_standard_options_for_setup(
         def skip_skip(name, code, duration):
             return "test_SKIP_" not in name
         run_unittests_for_setup(
-            file_or_folder, skip_function=skip_skip, setup_params=setup_params,
+            file_or_folder, skip_function=skip_skip,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, hook_print=hook_print,
+            additional_ut_path=additional_ut_path,
             stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         return True
@@ -479,9 +456,9 @@ def process_standard_options_for_setup(
         def skip_skip(name, code, duration):
             return "test_GUI_" not in name
         run_unittests_for_setup(
-            file_or_folder, skip_function=skip_skip, setup_params=setup_params,
+            file_or_folder, skip_function=skip_skip,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
-            additional_ut_path=additional_ut_path, hook_print=hook_print,
+            additional_ut_path=additional_ut_path,
             stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
         return True
@@ -504,7 +481,7 @@ def process_standard_options_for_setup(
                   "write_version", "clean_pyd",
                   "build_sphinx", "unittests",
                   "unittests_LONG", "unittests_SKIP", "unittests_GUI",
-                  "unittests -d 5", "setup_hook", "copy27",
+                  "unittests -d 5", "copy27",
                   "local_pypi", 'run_pylint'):
             sc = get_script_command(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
@@ -775,9 +752,9 @@ def standard_help_for_setup(argv, file_or_folder, project_var_name, module_name=
                              direct_call=direct_call, fexclude=fexclude)
 
 
-def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=None,
-                            only_setup_hook=False, coverage_options=None, coverage_exclude_lines=None,
-                            additional_ut_path=None, covtoken=None, hook_print=True, stdout=None,
+def run_unittests_for_setup(file_or_folder, skip_function=None,
+                            coverage_options=None, coverage_exclude_lines=None,
+                            additional_ut_path=None, covtoken=None, stdout=None,
                             stderr=None, filter_warning=None, dump_coverage=None,
                             add_coverage_folder=None, coverage_root='src', fLOG=None):
     """
@@ -787,13 +764,10 @@ def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=Non
 
     @param      file_or_folder          file ``setup.py`` or folder which contains it
     @param      skip_function           see @see fn main_wrapper_tests
-    @param      setup_params            see @see fn main_wrapper_tests
-    @param      only_setup_hook         see @see fn main_wrapper_tests
     @param      coverage_options        see @see fn main_wrapper_tests
     @param      coverage_exclude_lines  see @see fn main_wrapper_tests
     @param      additional_ut_path      see @see fn main_wrapper_tests
     @param      covtoken                see @see fn main_wrapper_tests
-    @param      hook_print              see @see fn main_wrapper_tests
     @param      stdout                  see @see fn main_wrapper_tests
     @param      stderr                  see @see fn main_wrapper_tests
     @param      filter_warning          see @see fn main_wrapper_tests
@@ -839,10 +813,10 @@ def run_unittests_for_setup(file_or_folder, skip_function=None, setup_params=Non
 
     logfile = os.path.join(funit, "unittests.out")
     main_wrapper_tests(
-        logfile, add_coverage=cov, skip_function=skip_function, setup_params=setup_params,
-        only_setup_hook=only_setup_hook, coverage_options=coverage_options,
+        logfile, add_coverage=cov, skip_function=skip_function,
+        coverage_options=coverage_options,
         coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
-        covtoken=covtoken, hook_print=hook_print, stdout=stdout, stderr=stderr,
+        covtoken=covtoken, stdout=stdout, stderr=stderr,
         filter_warning=filter_warning, dump_coverage=dump_coverage,
         add_coverage_folder=add_coverage_folder, coverage_root=coverage_root, fLOG=fLOG)
 
@@ -928,7 +902,6 @@ def process_standard_options_for_setup_help(argv):
         "local_jenkins": "sets up jobs on a local jenkins server",
         "run27": "run the unit tests for the Python 2.7",
         "run_pylint": "run pylint on the sources, allowed parameters <pattern> <neg_pattern>",
-        "setup_hook": "call function setup_hook which initializes the module before running unit tests",
         "unittests": "run the unit tests which do not contain test_LONG, test_SKIP or test_GUI in their file name",
         "unittests_LONG": "run the unit tests which contain test_LONG their file name",
         "unittests_SKIP": "run the unit tests which contain test_SKIP their file name",
