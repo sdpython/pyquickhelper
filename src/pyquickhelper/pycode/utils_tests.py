@@ -249,238 +249,237 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             "The location of the source should not contain "
             "'{0}': {1}".format(get_user(), srcp))
 
-    if True:
-        # coverage
-        if add_coverage:  # pragma: no cover
-            stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
-            if report_folder is None:
-                report_folder = os.path.join(
-                    os.path.abspath(os.path.dirname(logfile)), "..", "_doc",
-                    "sphinxdoc", "source", "coverage")
+    # coverage
+    if add_coverage:  # pragma: no cover
+        stdout_this.write("[main_wrapper_tests] --- COVERAGE BEGIN ---\n")
+        if report_folder is None:
+            report_folder = os.path.join(
+                os.path.abspath(os.path.dirname(logfile)), "..", "_doc",
+                "sphinxdoc", "source", "coverage")
 
-            fLOG("[main_wrapper_tests] current folder", os.getcwd())
-            fLOG("[main_wrapper_tests] enabling coverage", srcp)
-            dfile = os.path.join(report_folder, ".coverage")
+        fLOG("[main_wrapper_tests] current folder", os.getcwd())
+        fLOG("[main_wrapper_tests] enabling coverage", srcp)
+        dfile = os.path.join(report_folder, ".coverage")
 
-            # we clean previous report or we create an empty folder
-            if os.path.exists(report_folder):
-                for afile in os.listdir(report_folder):
-                    full = os.path.join(report_folder, afile)
-                    os.remove(full)
+        # we clean previous report or we create an empty folder
+        if os.path.exists(report_folder):
+            for afile in os.listdir(report_folder):
+                full = os.path.join(report_folder, afile)
+                os.remove(full)
 
-            # we run the coverage
-            if coverage_options is None:
-                coverage_options = {}
-            if "source" in coverage_options:
-                coverage_options["source"].append(srcp)
-            else:
-                coverage_options["source"] = [srcp]
-            if "data_file" not in coverage_options:
-                coverage_options["data_file"] = dfile
+        # we run the coverage
+        if coverage_options is None:
+            coverage_options = {}
+        if "source" in coverage_options:
+            coverage_options["source"].append(srcp)
+        else:
+            coverage_options["source"] = [srcp]
+        if "data_file" not in coverage_options:
+            coverage_options["data_file"] = dfile
 
-            from coverage import coverage
-            cov = coverage(**coverage_options)
-            if coverage_exclude_lines is not None:
-                for line in coverage_exclude_lines:
-                    cov.exclude(line)
-            else:
-                cov.exclude("raise NotImplementedError")
-            stdout_this.write("[main_wrapper_tests] ENABLE COVERAGE\n")
-            cov.start()
+        from coverage import coverage
+        cov = coverage(**coverage_options)
+        if coverage_exclude_lines is not None:
+            for line in coverage_exclude_lines:
+                cov.exclude(line)
+        else:
+            cov.exclude("raise NotImplementedError")
+        stdout_this.write("[main_wrapper_tests] ENABLE COVERAGE\n")
+        cov.start()
 
-            res = run_main()
+        res = run_main()
 
-            cov.stop()
-            stdout_this.write(
-                "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}"
-                "\n'".format(report_folder))
+        cov.stop()
+        stdout_this.write(
+            "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}"
+            "\n'".format(report_folder))
 
-            from coverage.misc import CoverageException as RawCoverageException
-            try:
-                cov.html_report(directory=report_folder)
-            except RawCoverageException as e:
-                raise RuntimeError(
-                    "Unable to publish the coverage repot into '{}',"
-                    "\nsource='{}'\ndata='{}'".format(
-                        report_folder, coverage_options["source"],
-                        coverage_options.get("data_file", ''))) from e
-            outfile = os.path.join(report_folder, "coverage_report.xml")
-            cov.xml_report(outfile=outfile)
-            cov.save()
-            srcp_s = []
+        from coverage.misc import CoverageException as RawCoverageException
+        try:
+            cov.html_report(directory=report_folder)
+        except RawCoverageException as e:
+            raise RuntimeError(
+                "Unable to publish the coverage repot into '{}',"
+                "\nsource='{}'\ndata='{}'".format(
+                    report_folder, coverage_options["source"],
+                    coverage_options.get("data_file", ''))) from e
+        outfile = os.path.join(report_folder, "coverage_report.xml")
+        cov.xml_report(outfile=outfile)
+        cov.save()
+        srcp_s = []
 
-            # we clean absolute path from the produced files
-            def clean_absolute_path():
-                fLOG("[main_wrapper_tests] replace ",
-                     srcp, ' by ', project_var_name)
-                srcp_s.clear()
-                srcp_s.extend([os.path.abspath(os.path.normpath(srcp)),
-                               os.path.normpath(srcp)])
-                bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
-                bproj = bytes(project_var_name, encoding="utf-8")
-                for afile in os.listdir(report_folder):
-                    full = os.path.join(report_folder, afile)
-                    if '.coverage' in afile:
-                        # sqlite3 format
-                        _modifies_coverage_report(
-                            full, srcp_s, project_var_name)
-                    else:
-                        with open(full, "rb") as f:
-                            content = f.read()
-                        for b in bsrcp:
-                            content = content.replace(b, bproj)
-                        with open(full, "wb") as f:
-                            f.write(content)
-
-            clean_absolute_path()
-
-            # we print debug information for the coverage
-            def write_covlog(covs):
-                fLOG("[main_wrapper_tests] add debug information")
-                outcov = os.path.join(report_folder, "covlog.txt")
-                rows = []
-                rows.append("COVERAGE OPTIONS")
-                for k, v in sorted(coverage_options.items()):
-                    rows.append("{0}={1}".format(k, v))
-                rows.append("")
-                rows.append("EXCLUDE LINES")
-                for k in cov.get_exclude_list():
-                    rows.append(k)
-                rows.append("")
-                rows.append("OPTIONS")
-                for option_spec in sorted(cov.config.CONFIG_FILE_OPTIONS):
-                    attr = option_spec[0]
-                    if attr == "sort":
-                        # we skip, it raises an exception with coverage 4.2
-                        continue
-                    v = getattr(cov.config, attr)
-                    st = "{0}={1}".format(attr, v)
-                    rows.append(st)
-                rows.append("")
-
-                if covs is not None:
-                    for add in sorted(covs):
-                        rows.append("MERGE='{0}'".format(add))
-
-                content = "\n".join(rows)
-
-                reps = []
-                for _ in srcp_s[:1]:
-                    __ = os.path.normpath(os.path.join(_, "..", "..", ".."))
-                    __ += "/"
-                    reps.append(__)
-                    reps.append(__.replace("/", "\\"))
-                    reps.append(__.replace("/", "\\\\"))
-                    reps.append(__.replace("\\", "\\\\"))
-
-                for s in reps:
-                    content = content.replace(s, "")
-
-                with open(outcov, "w", encoding="utf8") as f:
-                    f.write(content)
-
-            write_covlog(None)
-
-            if dump_coverage is not None:
-                # delayed import
-                from ..filehelper import synchronize_folder
-                src = os.path.dirname(outfile)
-                stdout_this.write(
-                    "[main_wrapper_tests] dump coverage from '{1}' to '{0}'"
-                    "\n".format(dump_coverage, outfile))
-                synchronize_folder(src, dump_coverage,
-                                   copy_1to2=True, fLOG=fLOG)
-
-                if other_cov_folders is not None:
-                    source = _find_source(src)
-                    if not source:
-                        raise FileNotFoundError(
-                            "Unable to find source '{0}' from '{1}'".format(
-                                source, src))
-                    if coverage_root:
-                        source_src = os.path.join(source, coverage_root)
-                        if os.path.exists(source_src):
-                            source = source_src
-                    stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE for source='{0}'"
-                        "\n".format(source))
-                    covs = list(_[0] for _ in other_cov_folders.values())
-                    covs.append(os.path.abspath(
-                        os.path.normpath(os.path.join(src, '.coverage'))))
-                    stdout_this.write(
-                        "[main_wrapper_tests] ADD COVERAGE COMBINE={0}"
-                        "\n".format(covs))
-                    stdout_this.write(
-                        "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
-                    try:
-                        coverage_combine(covs, src, source)
-                        write_covlog(covs)
-                    except Exception as e:
-                        warnings.warn("[main_wrapper_tests] {}".format(
-                            str(e).replace("\n", " ")))
-
-            if covtoken:
-                if isinstance(covtoken, tuple):
-                    if eval(covtoken[1]):
-                        # publishing token
-                        mes = (
-                            "[main_wrapper_tests] PUBLISH COVERAGE to "
-                            "codecov '{0}' EVAL ({1})".format(
-                                covtoken[0], covtoken[1]))
-                        if stdout is not None:
-                            stdout.write(mes)
-                        stdout_this.write(mes + '\n')
-                        fLOG(mes)
-                        publish_coverage_on_codecov(
-                            token=covtoken[0], path=outfile, fLOG=fLOG)
-                    else:
-                        fLOG(
-                            "[main_wrapper_tests] skip publishing "
-                            "coverage to codecov due to False:",
-                            covtoken[1])
+        # we clean absolute path from the produced files
+        def clean_absolute_path():
+            fLOG("[main_wrapper_tests] replace ",
+                 srcp, ' by ', project_var_name)
+            srcp_s.clear()
+            srcp_s.extend([os.path.abspath(os.path.normpath(srcp)),
+                           os.path.normpath(srcp)])
+            bsrcp = [bytes(b, encoding="utf-8") for b in srcp_s]
+            bproj = bytes(project_var_name, encoding="utf-8")
+            for afile in os.listdir(report_folder):
+                full = os.path.join(report_folder, afile)
+                if '.coverage' in afile:
+                    # sqlite3 format
+                    _modifies_coverage_report(
+                        full, srcp_s, project_var_name)
                 else:
-                    # publishing token
-                    fLOG(
-                        "[main_wrapper_tests] publishing coverage to "
-                        "codecov %r." % covtoken)
-                    publish_coverage_on_codecov(
-                        token=covtoken, path=outfile, fLOG=fLOG)
-            else:
+                    with open(full, "rb") as f:
+                        content = f.read()
+                    for b in bsrcp:
+                        content = content.replace(b, bproj)
+                    with open(full, "wb") as f:
+                        f.write(content)
+
+        clean_absolute_path()
+
+        # we print debug information for the coverage
+        def write_covlog(covs):
+            fLOG("[main_wrapper_tests] add debug information")
+            outcov = os.path.join(report_folder, "covlog.txt")
+            rows = []
+            rows.append("COVERAGE OPTIONS")
+            for k, v in sorted(coverage_options.items()):
+                rows.append("{0}={1}".format(k, v))
+            rows.append("")
+            rows.append("EXCLUDE LINES")
+            for k in cov.get_exclude_list():
+                rows.append(k)
+            rows.append("")
+            rows.append("OPTIONS")
+            for option_spec in sorted(cov.config.CONFIG_FILE_OPTIONS):
+                attr = option_spec[0]
+                if attr == "sort":
+                    # we skip, it raises an exception with coverage 4.2
+                    continue
+                v = getattr(cov.config, attr)
+                st = "{0}={1}".format(attr, v)
+                rows.append(st)
+            rows.append("")
+
+            if covs is not None:
+                for add in sorted(covs):
+                    rows.append("MERGE='{0}'".format(add))
+
+            content = "\n".join(rows)
+
+            reps = []
+            for _ in srcp_s[:1]:
+                __ = os.path.normpath(os.path.join(_, "..", "..", ".."))
+                __ += "/"
+                reps.append(__)
+                reps.append(__.replace("/", "\\"))
+                reps.append(__.replace("/", "\\\\"))
+                reps.append(__.replace("\\", "\\\\"))
+
+            for s in reps:
+                content = content.replace(s, "")
+
+            with open(outcov, "w", encoding="utf8") as f:
+                f.write(content)
+
+        write_covlog(None)
+
+        if dump_coverage is not None:
+            # delayed import
+            from ..filehelper import synchronize_folder
+            src = os.path.dirname(outfile)
+            stdout_this.write(
+                "[main_wrapper_tests] dump coverage from '{1}' to '{0}'"
+                "\n".format(dump_coverage, outfile))
+            synchronize_folder(src, dump_coverage,
+                               copy_1to2=True, fLOG=fLOG)
+
+            if other_cov_folders is not None:
+                source = _find_source(src)
+                if not source:
+                    raise FileNotFoundError(
+                        "Unable to find source '{0}' from '{1}'".format(
+                            source, src))
+                if coverage_root:
+                    source_src = os.path.join(source, coverage_root)
+                    if os.path.exists(source_src):
+                        source = source_src
                 stdout_this.write(
-                    "[main_wrapper_tests] NO PUBLISHING {}.\n".format(covtoken))
-            stdout_this.write("[main_wrapper_tests] --- COVERAGE END ---\n")
+                    "[main_wrapper_tests] ADD COVERAGE for source='{0}'"
+                    "\n".format(source))
+                covs = list(_[0] for _ in other_cov_folders.values())
+                covs.append(os.path.abspath(
+                    os.path.normpath(os.path.join(src, '.coverage'))))
+                stdout_this.write(
+                    "[main_wrapper_tests] ADD COVERAGE COMBINE={0}"
+                    "\n".format(covs))
+                stdout_this.write(
+                    "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
+                try:
+                    coverage_combine(covs, src, source)
+                    write_covlog(covs)
+                except Exception as e:
+                    warnings.warn("[main_wrapper_tests] {}".format(
+                        str(e).replace("\n", " ")))
+
+        if covtoken:
+            if isinstance(covtoken, tuple):
+                if eval(covtoken[1]):
+                    # publishing token
+                    mes = (
+                        "[main_wrapper_tests] PUBLISH COVERAGE to "
+                        "codecov '{0}' EVAL ({1})".format(
+                            covtoken[0], covtoken[1]))
+                    if stdout is not None:
+                        stdout.write(mes)
+                    stdout_this.write(mes + '\n')
+                    fLOG(mes)
+                    publish_coverage_on_codecov(
+                        token=covtoken[0], path=outfile, fLOG=fLOG)
+                else:
+                    fLOG(
+                        "[main_wrapper_tests] skip publishing "
+                        "coverage to codecov due to False:",
+                        covtoken[1])
+            else:
+                # publishing token
+                fLOG(
+                    "[main_wrapper_tests] publishing coverage to "
+                    "codecov %r." % covtoken)
+                publish_coverage_on_codecov(
+                    token=covtoken, path=outfile, fLOG=fLOG)
         else:
             stdout_this.write(
-                "[main_wrapper_tests] --- NO COVERAGE BEGIN ---\n")
-            if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
-                raise CoverageException(  # pragma: no cover
-                    "covtoken is not null but add_coverage is not True, coverage cannot be published")
-            res = run_main()
-            stdout_this.write("[main_wrapper_tests] --- NO COVERAGE END ---\n")
+                "[main_wrapper_tests] NO PUBLISHING {}.\n".format(covtoken))
+        stdout_this.write("[main_wrapper_tests] --- COVERAGE END ---\n")
+    else:
+        stdout_this.write(
+            "[main_wrapper_tests] --- NO COVERAGE BEGIN ---\n")
+        if covtoken and (not isinstance(covtoken, tuple) or eval(covtoken[1])):
+            raise CoverageException(  # pragma: no cover
+                "covtoken is not null but add_coverage is not True, coverage cannot be published")
+        res = run_main()
+        stdout_this.write("[main_wrapper_tests] --- NO COVERAGE END ---\n")
 
-        fLOG("[main_wrapper_tests] SUMMARY -------------------------")
-        for r in res["tests"]:
-            k = str(r[1])
-            if "errors=0" not in k or "failures=0" not in k:
-                fLOG("*", r[1], r[0])  # pragma: no cover
+    fLOG("[main_wrapper_tests] SUMMARY -------------------------")
+    for r in res["tests"]:
+        k = str(r[1])
+        if "errors=0" not in k or "failures=0" not in k:
+            fLOG("*", r[1], r[0])  # pragma: no cover
 
-        fLOG("[main_wrapper_tests] CHECK EXCEPTION -----------------")
-        err = res.get("err", "")
-        if len(err) > 0:  # pragma: no cover
-            # Remove most of the Sphinx warnings (sphinx < 1.8)
-            lines = err.split("\n")
-            lines = [
-                _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
-            err = "\n".join(lines)
-        if len(err) > 0:
-            raise TestWrappedException(err)  # pragma: no cover
+    fLOG("[main_wrapper_tests] CHECK EXCEPTION -----------------")
+    err = res.get("err", "")
+    if len(err) > 0:  # pragma: no cover
+        # Remove most of the Sphinx warnings (sphinx < 1.8)
+        lines = err.split("\n")
+        lines = [
+            _ for _ in lines if _ and "is already registered, it will be overridden" not in _]
+        err = "\n".join(lines)
+    if len(err) > 0:
+        raise TestWrappedException(err)  # pragma: no cover
 
-        datetime_end = datetime.now()
+    datetime_end = datetime.now()
 
-        rows = ["[main_wrapper_tests] END",
-                "[main_wrapper_tests] begin time {0}".format(datetime_begin),
-                "[main_wrapper_tests] end time {0}".format(datetime_end),
-                "[main_wrapper_tests] duration {0}".format(datetime_end - datetime_begin)]
-        for row in rows:
-            fLOG(row)
-            stdout_this.write(row + "\n")
+    rows = ["[main_wrapper_tests] END",
+            "[main_wrapper_tests] begin time {0}".format(datetime_begin),
+            "[main_wrapper_tests] end time {0}".format(datetime_end),
+            "[main_wrapper_tests] duration {0}".format(datetime_end - datetime_begin)]
+    for row in rows:
+        fLOG(row)
+        stdout_this.write(row + "\n")
