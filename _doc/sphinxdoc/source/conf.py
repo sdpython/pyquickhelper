@@ -11,6 +11,11 @@ from sphinx.builders.html import Stylesheet
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.split(__file__)[0])))
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables
 
+
+def callback_begin():
+    print("[sphinx.conf.py] documentation started.")
+
+
 set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2021,
                      "alabaster", alabaster.get_path(),
                      locals(),
@@ -18,7 +23,8 @@ set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2021,
                      extlinks=dict(issue=(
                          'https://github.com/sdpython/pyquickhelper/issues/%s',
                          'issue ')),
-                     link_resolve="http://www.xavierdupre.fr/app/")
+                     link_resolve="http://www.xavierdupre.fr/app/",
+                     callback_begin=callback_begin)
 
 # there is an issue with this attribute on Anaconda math_number_all
 assert math_number_all or not math_number_all
