@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2021-11-30 - 0.00Mb
+current - 2021-12-07 - 0.00Mb
 =============================
 
+* #358: Add parameter callback_begin when generating the documentation (2021-12-07)
 * #357: Removes setup_hook (2021-11-28)
 * #356: Fixes ExtTestCase.assertLogging (2021-11-28)
 * #355: Adds function to concatenate images (2021-11-23)
