@@ -7,18 +7,20 @@ from ..loghelper import run_cmd
 from .conf_path_tools import find_graphviz_dot
 
 
-def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300):
+def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300,
+                  keep_axis=False):
     """
     Plots a dot graph into a :epkg:`matplotlib` plot.
 
-    @param  dot         dot language
-    @param  ax          existing ax
-    @param  temp_dot    temporary file, if None,
-                        a file is created and removed
-    @param  temp_img    temporary image, if None,
-                        a file is created and removed
-    @param  dpi         dpi
-    @return             ax
+    :param dot: dot language
+    :param ax: existing ax
+    :param temp_dot: temporary file, if None,
+        a file is created and removed
+    :param temp_img: temporary image, if None,
+        a file is created and removed
+    :param dpi: dpi
+    :param keep_axis: keep axis in the graph
+    :return: ax
     """
     if temp_dot is None:
         temp_dot = "temp_%d.dot" % id(dot)
@@ -60,6 +62,8 @@ def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300):
         import matplotlib.pyplot as plt
         image = plt.imread(temp_img)
     ax.imshow(image)
+    if not keep_axis:
+        ax.set_axis_off()
     if clean_dot:
         os.remove(temp_dot)
     if clean_img and os.path.exists(temp_img):
