@@ -56,9 +56,14 @@ package_data = {
     project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.font": [
         "league-gothic/*.*", "source-sans-pro/*.*"],
     project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.js": ["*.js"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin.highlight": ["*.js"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin.markdown": ["*.*"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin.math": ["*.js"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin.multiplex": ["*.*"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin.notes": ["*.js"],
+    project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin.search": ["*.js"],
     project_var_name + ".sphinxext.revealjs.templates.revealjs.static.lib.plugin": [
-        "highlight/*.js", "markdown/*.*", "math/*.js", "multiplex/*.*",
-        "notes/*.*", "notes-server/*.*", "print-pdf/*.js", "search/*js", "zoom-js/*.js"],
+        "notes-server/*.*", "print-pdf/*.js", "zoom-js/*.js"],
     project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2_customize": ["*.js"],
     project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.css": ["*.css"],
     project_var_name + ".sphinxext.sphinximages.sphinxcontrib_images_lightbox2.lightbox2.img": ["*.png", "*.gif"],
