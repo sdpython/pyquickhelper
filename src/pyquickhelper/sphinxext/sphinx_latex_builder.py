@@ -59,7 +59,7 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
 
         def get_enumtype(node):
             enumtype = node.get('enumtype', 'arabic')
-            if 'alpha' in enumtype and 26 < node.get('start', 0) + len(node):  # pylint: disable=C0122
+            if 'alpha' in enumtype and 26 < node.get('start', 0) + len(node):
                 # fallback to arabic if alphabet counter overflows
                 enumtype = 'arabic'
 
