@@ -193,6 +193,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     htmlhelp_basename = '%s_doc' % project_var_name
     enable_disabled_parts = enable_disabled_parts  # pylint: disable=W0127
 
+    html_show_copyright = False
+    html_show_sphinx = False
+
     # personnalization latex
     _proj = project_var_name.replace("_", "\\_")
     latex_book = book
