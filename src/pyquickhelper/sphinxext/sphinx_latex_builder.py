@@ -255,7 +255,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
                 toctree_only = entry[5]
             destination = self._get_filename(targetname, encoding='utf-8',
                                              overwrite_if_changed=True)
-            self.logger.info(__("processing %s..."), targetname, nonl=1)
+            self.logger.info(__("processing %s..."), targetname)
             toctrees = self.env.get_doctree(docname).traverse(addnodes.toctree)
             if toctrees:
                 if toctrees[0].get('maxdepth') > 0:
@@ -270,7 +270,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
             doctree['tocdepth'] = tocdepth
             self.post_process_images(doctree)
 
-            self.logger.info(__("writing... "), nonl=1)
+            self.logger.info(__("writing... "))
             doctree.settings = docsettings
             doctree.settings.author = author
             doctree.settings.title = title

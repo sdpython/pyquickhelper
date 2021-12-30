@@ -3,7 +3,7 @@ sudo: true
 language: python
 matrix:
   include:
-  - python: 3.9
+  - python: 3.10
 install: 
     - pip install -r requirements.txt
     - npm install

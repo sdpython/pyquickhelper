@@ -57,7 +57,8 @@ default_values = {
         "__PY36_X64__": choose_path("c:\\Python36[0-9]{1}_x64", "c:\\Python36_x64", "c:\\Python36-x64", _default_nofolder),
         "__PY37_X64__": choose_path("c:\\Python37[0-9]{1}_x64", "c:\\Python37_x64", "c:\\Python37-x64", _default_nofolder),
         "__PY38_X64__": choose_path("c:\\Python38[0-9]{1}_x64", "c:\\Python38_x64", "c:\\Python38-x64", _default_nofolder),
-        "__PY39_X64__": choose_path("c:\\Python39[0-9]{1}_x64", "c:\\Python38_x64", "c:\\Python39-x64", _default_nofolder),
+        "__PY39_X64__": choose_path("c:\\Python39[0-9]{1}_x64", "c:\\Python39_x64", "c:\\Python39-x64", _default_nofolder),
+        "__PY310_X64__": choose_path("c:\\Python310[0-9]{1}_x64", "c:\\Python310_x64", "c:\\Python310-x64", _default_nofolder),
     },
 }
 
@@ -119,6 +120,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
                 "__PY37_X64__": "c:\\Python372_x64",
                 "__PY38_X64__": "c:\\Python387_x64",
                 "__PY39_X64__": "c:\\Python391_x64",
+                "__PY310_X64__": "c:\\Python3101_x64",
             },
         }
 

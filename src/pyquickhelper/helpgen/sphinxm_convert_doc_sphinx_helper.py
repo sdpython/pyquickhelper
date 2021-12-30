@@ -1241,7 +1241,7 @@ class _CustomSphinx(Sphinx):
             from sphinx.application import ENV_PICKLE_FILENAME
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
             try:
-                self.info('loading pickled environment... ', nonl=True)
+                self.info('loading pickled environment... ')
                 with open(filename, 'rb') as f:
                     self.env = pickle.load(f)
                     self.env.setup(self)
@@ -1343,14 +1343,14 @@ class _CustomSphinx(Sphinx):
     def debug(self, message, *args, **kwargs):
         self._logger.debug(message, *args, **kwargs)
 
-    def info(self, message='', nonl=False):
-        self._logger.info(message, nonl=nonl)
+    def info(self, message, *args):
+        self._logger.info(message, *args)
 
-    def warning(self, message='', nonl=False, name=None, type=None, subtype=None):
+    def warning(self, message='', name=None, type=None, subtype=None):
         if "is already registered" not in message:  # pragma: no cover
             self._logger.warning(
-                "[_CustomSphinx] {0} -- {1}".format(message, name),
-                nonl=nonl, type=type, subtype=subtype)
+                "[_CustomSphinx] %s -- %s", message, name,
+                type=type, subtype=subtype)
 
     def add_builder(self, builder, override=False):
         self._added_objects.append(('builder', builder))

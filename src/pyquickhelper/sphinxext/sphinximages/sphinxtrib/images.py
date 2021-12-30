@@ -324,9 +324,10 @@ def configure_backend(app):
     app.sphinxtrib_images_backend = backend
 
     logger = logging.getLogger("image")
-    logger.info('Initiated images backend: ', nonl=True)
-    logger.info('`{}:{}`'.format(
-        backend.__class__.__module__, backend.__class__.__name__))
+    logger.info(
+        'Initiated images backend: %s:%s',
+        backend.__class__.__module__,
+        backend.__class__.__name__)
 
     def backend_methods(node, output_type):
         "local function"

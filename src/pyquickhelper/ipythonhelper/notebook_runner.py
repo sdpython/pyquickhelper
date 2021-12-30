@@ -14,6 +14,7 @@ from queue import Empty
 from time import sleep
 from collections import Counter
 from io import StringIO, BytesIO
+import numpy
 from nbformat import NotebookNode, writes
 from nbformat.reader import reads
 from ..imghelper.svg_helper import svg2img, PYQImageException
@@ -681,11 +682,14 @@ class NotebookRunner(object):
                 dy += bb.height
                 dx = max(dx, bb.width)
 
-        ratio = abs(dx) / max(abs(dy), 1)
+        ratio = abs(dx) * 1. / max(abs(dy), 1)
         ratio = max(min(ratio, 3), 1)
         fig.set_size_inches(int((1 + size) * ratio), 1 + size)
-        ax.set_xlim([0, dx])
-        ax.set_ylim([-dy, 0])
+        try:
+            ax.set_xlim(numpy.array([0., dx]))
+            ax.set_ylim(numpy.array([-dy, 0.]))
+        except TypeError as e:
+            warnings.warn("[create_picture_from] %s" % e)
         ax.set_axis_off()
         sio = BytesIO()
         fig.savefig(sio, format="png")
