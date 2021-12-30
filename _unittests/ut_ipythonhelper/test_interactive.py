@@ -5,6 +5,7 @@
 import sys
 import os
 import unittest
+import warnings
 import numpy as np
 
 from pyquickhelper.loghelper import fLOG
@@ -50,8 +51,11 @@ class TestInteractive(ExtTestCase):
             x = np.linspace(0, 10, 1000)
             ax.plot(x, amplitude * np.sin(x), color=color,
                     lw=5, alpha=0.4)
-            ax.set_xlim(0, 10)
-            ax.set_ylim(-1.1, 1.1)
+            try:
+                ax.set_xlim(0, 10)
+                ax.set_ylim(-1.1, 1.1)
+            except TypeError as e:
+                warnings.warn(e)
             return fig
 
         res = StaticInteract(plot,

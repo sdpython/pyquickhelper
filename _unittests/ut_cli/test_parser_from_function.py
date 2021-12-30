@@ -35,7 +35,7 @@ class TestParserFromFunction(unittest.TestCase):
         if ":param" in doc:
             # doctree was not cleaned.
             raise Exception(doc)
-        if "optional arguments:" not in doc:
+        if "-h, --help" not in doc:
             raise Exception(doc)
         if "-b BSTRING, --bstring BSTRING" not in doc:
             raise Exception(doc)

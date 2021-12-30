@@ -223,6 +223,7 @@ def process_standard_options_for_setup(
                 "__PY37_X64__": "c:\\Python372_x64",
                 "__PY38_X64__": "c:\\Python387_x64",
                 "__PY39_X64__": "c:\\Python391_x64",
+                "__PY310_X64__": "c:\\Python3101_x64",
             },
         }
 
