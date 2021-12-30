@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2021-12-07 - 0.00Mb
+current - 2021-12-30 - 0.00Mb
 =============================
 
+* #360: Switches CI to python 3.10 (2021-12-30)
+* #359: Removes axes by default in plot_graphviz (2021-12-08)
 * #358: Add parameter callback_begin when generating the documentation (2021-12-07)
 * #357: Removes setup_hook (2021-11-28)
 * #356: Fixes ExtTestCase.assertLogging (2021-11-28)
@@ -135,16 +137,8 @@ current - 2021-12-07 - 0.00Mb
 ==============================
 
 * #288: Fix build for python 3.8 (2020-01-02)
-
-1.9.3289 - 2019-12-16 - 2.06Mb
-==============================
-
 * #287: Fix pyquickhelper for coverage 5.0 (2019-12-16)
 * #286: Fix pyquickhelper for sphinx 2.3.0 (2019-12-16)
-
-1.9.3280 - 2019-12-13 - 2.06Mb
-==============================
-
 * #285: Make ftp command line work with keyring (2019-12-08)
 * #284: Implements untar_files for .tar.gz extensions (2019-11-25)
 * #283: Add a command line to publish a file through ftp and ftps (2019-11-25)
