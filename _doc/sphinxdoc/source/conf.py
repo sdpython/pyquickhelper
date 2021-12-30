@@ -16,7 +16,7 @@ def callback_begin():
     print("[sphinx.conf.py] documentation started.")
 
 
-set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2021,
+set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2022,
                      "alabaster", alabaster.get_path(),
                      locals(),
                      github_repo="https://github.com/sdpython/pyquickhelper.git",
