@@ -61,6 +61,12 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
     # delayed import (otherwise, it has circular references)
     from ..pycode import get_temp_folder
 
+    if filename in (None, ''):
+        raise ValueError(  # pragma: no cover
+            "filename cannot be empty.")
+    if not os.path.exists(filename):
+        raise FileNotFoundError(  # pragma: no cover
+            "filename %r cannot be found." % filename)
     filename = os.path.abspath(filename)
     temp = get_temp_folder(filename, "temp_nb_{0}".format(name))
     doc = os.path.normpath(os.path.join(
