@@ -79,11 +79,16 @@ class MagicDiff(MagicClassWithHelpers):
         args = self.get_args(line, parser)
 
         if args is not None:
+            import IPython.core.display as ipydisplay
             html, js = create_visual_diff_through_html_files(
                 args.f1, args.f2, encoding=args.encoding, notebook=True,
                 context_size=None if args.context in [
                     None, ""] else int(args.context),
                 inline_view=args.inline)
+            if 'display' not in dir(ipydisplay):
+                # Weird bug introduced in IPython 8.0.0
+                import IPython.core.display_functions
+                ipydisplay.display = IPython.core.display_functions.display
             display_html(html)
             return js
         return None  # pragma: no cover
