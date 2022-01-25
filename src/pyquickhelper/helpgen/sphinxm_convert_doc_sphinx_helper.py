@@ -1535,7 +1535,8 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('post_transform', transform))
         Sphinx.add_post_transform(self, transform)
 
-    def add_js_file(self, filename, priority=500, **kwargs):
+    def add_js_file(self, filename, priority=500, **kwargs):  # pylint: disable=W0221
+        # loading_method=None: added in Sphinx 4.4
         self._added_objects.append(('js', filename))
         Sphinx.add_js_file(self, filename, priority=priority, **kwargs)
 
