@@ -1,14 +1,10 @@
 """
 @brief      test log(time=1s)
 """
-
-
 import sys
 import os
 import unittest
 import warnings
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.loghelper import run_cmd, reap_children, CustomLog
 from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 
@@ -16,11 +12,6 @@ from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
 class TestProcessHelper(unittest.TestCase):
 
     def test_reap_children(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if sys.platform.startswith("win"):
             cmd = "pause"
         else:
@@ -38,8 +29,6 @@ class TestProcessHelper(unittest.TestCase):
             return
         self.assertTrue(ki is not None)
         self.assertEqual(len(ki), 1)
-        # fLOG(ki)
-        # To avoid a warning.
         proc.returncode = 0
 
 

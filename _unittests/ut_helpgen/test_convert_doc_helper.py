@@ -9,14 +9,11 @@ For some reason, the test fails if it is run after another one:
 import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper.flog import fLOG
+from IPython.core.display import HTML
+import pandas
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.helpgen.rst_converters import rst2html, docstring2html
 from pyquickhelper.pandashelper import df2rst
-
-from IPython.core.display import HTML
-import pandas
 
 
 class TestConvertDocHelper(ExtTestCase):
@@ -25,10 +22,6 @@ class TestConvertDocHelper(ExtTestCase):
     """
 
     def test_rst2html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         rst = """
             run the server
 
@@ -76,10 +69,6 @@ class TestConvertDocHelper(ExtTestCase):
             raise Exception(html)
 
     def test_doctring2html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         html = docstring2html(df2rst, "rawhtml")
         self.assertNotEmpty(html)
         self.assertNotIn("<p>&#64;code", html)
@@ -87,10 +76,6 @@ class TestConvertDocHelper(ExtTestCase):
         self.assertIsInstance(html, HTML)
 
     def test_object(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         class AA:
             """one doc"""

@@ -5,6 +5,7 @@
 from io import StringIO
 import os
 import sys
+import logging
 import unittest
 import warnings
 import decimal
@@ -22,7 +23,6 @@ class ExtTestCase(unittest.TestCase):
     Unless *setUp* is overwritten, warnings *FutureWarning* and
     *PendingDeprecationWarning* are filtered out.
     """
-
     @classmethod
     def setUpClass(cls):
         """
@@ -33,6 +33,10 @@ class ExtTestCase(unittest.TestCase):
                                PendingDeprecationWarning,
                                ImportWarning,
                                DeprecationWarning))
+        logger = logging.getLogger('sphinx.util')
+        cls._log_info = (logger.getEffectiveLevel(), logger.propagate)
+        logger.setLevel(logging.ERROR)
+        logger.propagate = False
 
     @classmethod
     def tearDownClass(cls):
@@ -44,6 +48,9 @@ class ExtTestCase(unittest.TestCase):
                                PendingDeprecationWarning,
                                ImportWarning,
                                DeprecationWarning))
+        logger = logging.getLogger('sphinx.util')
+        logger.setLevel(cls._log_info[0])
+        logger.propagate = cls._log_info[1]
 
     @staticmethod
     def _format_str(s):
