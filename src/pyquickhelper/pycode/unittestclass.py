@@ -23,7 +23,8 @@ class ExtTestCase(unittest.TestCase):
     *PendingDeprecationWarning* are filtered out.
     """
 
-    def setUp(self):
+    @classmethod
+    def setUpClass(cls):
         """
         Filters out *FutureWarning*, *PendingDeprecationWarning*.
         """
@@ -33,7 +34,8 @@ class ExtTestCase(unittest.TestCase):
                                ImportWarning,
                                DeprecationWarning))
 
-    def tearDown(self):
+    @classmethod
+    def tearDownClass(cls):
         """
         Stops filtering out *FutureWarning*, *PendingDeprecationWarning*.
         """
@@ -545,7 +547,10 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(  # pragma: no cover
                 "Logger %r has no handlers." % logger_name)
 
+        prop = logger.propagate
+        logger.propagate = False
         res = fct()
+        logger.propagate = prop
 
         logs = log_capture_string.getvalue()
         logger.removeHandler(ch)
