@@ -47,12 +47,14 @@ def clean_documentation_for_cli(doc, cleandoc):
                 return doc
             else:
                 raise ValueError(  # pragma: no cover
-                    "cleandoc='{0}' is not implemented, only 'epkg'.".format(cleandoc))
+                    "cleandoc='{0}' is not implemented, only 'epkg'.".format(
+                        cleandoc))
         elif callable(cleandoc):
             return cleandoc(doc)
         else:
             raise ValueError(  # pragma: no cover
-                "cleandoc is not a string or a callable object but {0}".format(type(cleandoc)))
+                "cleandoc is not a string or a callable object but {0}".format(
+                    type(cleandoc)))
 
 
 def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
@@ -67,7 +69,8 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     @param      use_sphinx      simple documentation only requires :epkg:`docutils`,
                                 richer requires :epkg:`sphinx`
     @param      skip_parameters do not expose these parameters
-    @param      cleandoc        cleans the documentation before converting it into text,
+    @param      cleandoc        cleans the documentation before
+                                converting it into text,
                                 @see fn clean_documentation_for_cli
     @param      options         additional :epkg:`Sphinx` options
     @param      positional      positional argument
@@ -85,17 +88,19 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
     # from ..helpgen import docstring2html
     if "@param" in f.__doc__:
         raise RuntimeError(  # pragma: no cover
-            "@param is not allowed in documentation for function '{}' in '{}'.".format(
+            "@param is not allowed in documentation for function "
+            "'{}' in '{}'.".format(
                 f, f.__module__))
     docf = clean_documentation_for_cli(f.__doc__, cleandoc)
     fulldocinfo = parse(docf)
     docparams = {}
-    for arg in fulldocinfo.args:
-        if arg.name in docparams:
-            raise ValueError(  # pragma: no cover
-                "Parameter '{0}' is documented twice.\n{1}".format(
-                    arg.name, docf))
-        docparams[arg.name] = arg.description
+    if fulldocinfo.args is not None:
+        for arg in fulldocinfo.args:
+            if arg.name in docparams:
+                raise ValueError(  # pragma: no cover
+                    "Parameter '{0}' is documented twice.\n{1}".format(
+                        arg.name, docf))
+            docparams[arg.name] = arg.description
 
     # add arguments with the signature
     signature = inspect.signature(f)
