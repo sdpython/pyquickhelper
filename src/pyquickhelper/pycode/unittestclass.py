@@ -48,9 +48,13 @@ class ExtTestCase(unittest.TestCase):
                                PendingDeprecationWarning,
                                ImportWarning,
                                DeprecationWarning))
-        logger = logging.getLogger('sphinx.util')
-        logger.setLevel(cls._log_info[0])
-        logger.propagate = cls._log_info[1]
+        if hasattr(cls, '_log_info'):
+            logger = logging.getLogger('sphinx.util')
+            logger.setLevel(cls._log_info[0])
+            logger.propagate = cls._log_info[1]
+        else:
+            raise AssertionError(  # pragma: no cover
+                "ExtTestCase must be called.")
 
     @staticmethod
     def _format_str(s):
