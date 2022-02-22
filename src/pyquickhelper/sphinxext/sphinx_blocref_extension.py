@@ -437,8 +437,8 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 targ_refid = blocref_info['target']['refid']
             except KeyError as e:
                 logger = logging.getLogger("blocref")
-                logger.warning("Unable to find key 'refid' in %r (e=%r)",
-                    targ, e)
+                logger.warning(
+                    "Unable to find key 'refid' in %r (e=%r)", targ, e)
                 continue
             int_ids = ['index%s-%s' % (targ_refid, env.new_serialno(targ_refid))]
             int_targetnode = nodes.target(
