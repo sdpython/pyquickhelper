@@ -395,6 +395,8 @@ class TestYaml(unittest.TestCase):
             if [ $? -ne 0 ]; then exit $?; fi
             cp -R -f _doc/sphinxdoc/build/html dist/html
             if [ $? -ne 0 ]; then exit $?; fi
+            zip doc.zip -r dist/html
+            if [ $? -ne 0 ]; then exit $?; fi
             """.replace("            ", "").strip("\n \t\r")
             expected = expected.replace("__VERS__", vers)
             expected = expected.replace("__VERSP__", vers_)
