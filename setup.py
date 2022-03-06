@@ -16,9 +16,9 @@ readme = 'README.rst'
 history = "HISTORY.rst"
 requirements = None
 
-KEYWORDS = project_var_name + (
-    ', synchronization, files, documentation, Xavier Dupré, sphinx, '
-    'extension, notebooks, rst, builder, cli, setup, unit tests')
+KEYWORDS = [project_var_name,
+            'synchronization, files', 'documentation', 'Xavier Dupré',
+            'sphinx', 'notebooks', 'rst', 'helpers', 'automation']
 DESCRIPTION = (
     "Various functionalities: folder synchronization, simple logging function, "
     "helpers to generate documentation with sphinx, sphinx extension, "
