@@ -451,7 +451,8 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
     @param      indent      indentation
     @param      rule        determines the rule which specifies execution numbers,
                             'None' for None, 'int' for consectuive integers numbers.
-    @return                 modified string or None if outfile is not None and the file was not modified
+    @return                 modified string or None if outfile is not None
+                            and the file was not modified
 
     .. todoext::
         :title: remove execution number from notebook facilitate git versionning
@@ -465,7 +466,8 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
         Remove execution number from the notebook
         to avoid commiting changes only about those numbers
 
-    `notebook 5.1.0 <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html>`_
+    `notebook 5.1.0
+    <https://jupyter-notebook.readthedocs.io/en/stable/changelog.html>`_
     introduced changes which are incompatible with
     leaving the cell executing number empty.
     """
@@ -497,9 +499,17 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
                                        outputs=outputs)
         return cellno
 
+    def widget(adict):
+        metadata = adict.get('metadata', None)
+        if metadata is None:
+            return
+        if 'widgets' in metadata:
+            del metadata['widgets']
+
     content = read_content_ufs(infile)
     js = json.loads(content)
     fixup(js, "execution_count", None)
+    widget(js)
     st = StringIO()
     json.dump(js, st, indent=indent, sort_keys=True)
     res = st.getvalue()
