@@ -323,12 +323,6 @@ def configure_backend(app):
     # because sphinx try to make a pickle from it.
     app.sphinxtrib_images_backend = backend
 
-    logger = logging.getLogger("image")
-    logger.info(
-        'Initiated images backend: %s:%s',
-        backend.__class__.__module__,
-        backend.__class__.__name__)
-
     def backend_methods(node, output_type):
         "local function"
         def backend_method(f):
