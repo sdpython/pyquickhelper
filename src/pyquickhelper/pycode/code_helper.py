@@ -9,11 +9,11 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
     """
     Removes extra spaces in a filename, replaces the file in place.
 
-    @param      filename        file name or string (but it assumes it is python).
-    @param      apply_pep8      if True, calls :epkg:`autopep8` on the file
-    @param      aggressive      more aggressive
-    @param      is_string       force *filename* to be a string
-    @return                     number of removed extra spaces
+    :param filename: file name or string (but it assumes it is python).
+    :param apply_pep8: if True, calls :epkg:`autopep8` on the file
+    :param aggressive: more aggressive
+    :param is_string: force *filename* to be a string
+    :return: number of removed extra spaces
     """
     encoding = None
     initial_content = None
@@ -163,7 +163,8 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
 
     if not os.path.exists(filename):
         raise FileNotFoundError(  # pragma: no cover
-            "issue when applying autopep8 with filename: {0}".format(filename))
+            "Issue when applying autopep8 with filename: '{0}'.".format(
+                filename))
     return diff
 
 
