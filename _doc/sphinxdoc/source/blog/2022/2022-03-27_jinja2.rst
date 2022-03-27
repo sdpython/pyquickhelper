@@ -1,0 +1,15 @@
+
+.. blogpost::
+    :title: AttributeError: module 'jinja2' has no attribute 'Markup
+    :keywords: jinja2, notebook, nbconvert
+    :date: 2022-03-27
+    :categories: notebook
+
+    The notebook conversion fails again due to the following error:
+
+    ::
+
+        AttributeError: module 'jinja2' has no attribute 'Markup
+
+    :epkg:`jinja2` needs to be downgraded to 3.0.3. See
+    `nbconvert #9468 <https://github.com/microsoft/vscode-jupyter/issues/9468>`_.

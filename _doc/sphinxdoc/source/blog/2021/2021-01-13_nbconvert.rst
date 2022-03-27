@@ -2,7 +2,7 @@
 .. blogpost::
     :title: Issue with nbconvert: unknown exporter "python"
     :keywords: linux, logging
-    :date: 2020-01-13
+    :date: 2021-01-13
     :categories: security
 
     I bumped into the following error:
