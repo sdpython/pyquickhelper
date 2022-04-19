@@ -26,7 +26,7 @@ class QuoteNode(BaseAdmonition):
     It takes the following options:
 
     * *author*
-    * *book*
+    * *book* or *manga*
     * *year*
     * *pages*
     * *tag*
@@ -58,6 +58,7 @@ class QuoteNode(BaseAdmonition):
     option_spec = {
         'author': directives.unchanged,
         'book': directives.unchanged,
+        'manga': directives.unchanged,
         'year': directives.unchanged,
         'pages': directives.unchanged,
         'tag': directives.unchanged,
@@ -100,6 +101,7 @@ class QuoteNode(BaseAdmonition):
         # book
         author = __(self.options.get('author', "").strip())
         book = __(self.options.get('book', "").strip())
+        manga = __(self.options.get('manga', "").strip())
         pages = __(self.options.get('pages', "").strip())
         year = __(self.options.get('year', "").strip())
         source = __(self.options.get('source', "").strip())
@@ -123,6 +125,9 @@ class QuoteNode(BaseAdmonition):
         if book:
             tnl.append("*{0}*".format(book))
             indexes.append(book)
+        if manga:
+            tnl.append("*{0}*".format(manga))
+            indexes.append(manga)
         if pages:
             tnl.append(", {0}".format(pages))
         if date:
@@ -146,7 +151,7 @@ class QuoteNode(BaseAdmonition):
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
-                "[blogpost] unable to parse '{0}' - '{1}' - {2}".format(author, book, e))
+                "[blogpost] unable to parse '{0}' - '{1}' - {2}".format(author, book or manga, e))
             raise e
 
         node['tag'] = tag
@@ -156,6 +161,7 @@ class QuoteNode(BaseAdmonition):
         node['label'] = lid
         node['source'] = source
         node['book'] = book
+        node['manga'] = manga
         node['index'] = index
         node['content'] = '\n'.join(self.content)
         node['classes'] += ["quote"]
