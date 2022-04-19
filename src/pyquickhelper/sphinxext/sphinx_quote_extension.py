@@ -26,7 +26,7 @@ class QuoteNode(BaseAdmonition):
     It takes the following options:
 
     * *author*
-    * *book* or *manga*
+    * *book* or *manga* or *film* or *show*
     * *year*
     * *pages*
     * *tag*
@@ -59,6 +59,8 @@ class QuoteNode(BaseAdmonition):
         'author': directives.unchanged,
         'book': directives.unchanged,
         'manga': directives.unchanged,
+        'show': directives.unchanged,
+        'film': directives.unchanged,
         'year': directives.unchanged,
         'pages': directives.unchanged,
         'tag': directives.unchanged,
@@ -102,6 +104,8 @@ class QuoteNode(BaseAdmonition):
         author = __(self.options.get('author', "").strip())
         book = __(self.options.get('book', "").strip())
         manga = __(self.options.get('manga', "").strip())
+        film = __(self.options.get('film', "").strip())
+        show = __(self.options.get('show', "").strip())
         pages = __(self.options.get('pages', "").strip())
         year = __(self.options.get('year', "").strip())
         source = __(self.options.get('source', "").strip())
@@ -128,6 +132,12 @@ class QuoteNode(BaseAdmonition):
         if manga:
             tnl.append("*{0}*".format(manga))
             indexes.append(manga)
+        if show:
+            tnl.append("*{0}*".format(show))
+            indexes.append(show)
+        if film:
+            tnl.append("*{0}*".format(film))
+            indexes.append(film)
         if pages:
             tnl.append(", {0}".format(pages))
         if date:
@@ -162,6 +172,8 @@ class QuoteNode(BaseAdmonition):
         node['source'] = source
         node['book'] = book
         node['manga'] = manga
+        node['film'] = film
+        node['show'] = show
         node['index'] = index
         node['content'] = '\n'.join(self.content)
         node['classes'] += ["quote"]
