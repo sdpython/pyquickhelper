@@ -11,6 +11,7 @@ from sphinx.locale import _
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
+from ..texthelper.texts_language import TITLES
 
 
 class quote_node(nodes.admonition):
@@ -26,7 +27,7 @@ class QuoteNode(BaseAdmonition):
     It takes the following options:
 
     * *author*
-    * *book* or *manga* or *film* or *show*
+    * *book* or *manga* or *film* or *show* or *disc* or *comic*
     * *year*
     * *pages*
     * *tag*
@@ -60,6 +61,8 @@ class QuoteNode(BaseAdmonition):
         'author': directives.unchanged,
         'book': directives.unchanged,
         'manga': directives.unchanged,
+        'disc': directives.unchanged,
+        'comic': directives.unchanged,
         'show': directives.unchanged,
         'film': directives.unchanged,
         'year': directives.unchanged,
@@ -83,6 +86,8 @@ class QuoteNode(BaseAdmonition):
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
+        language_code = self.state.document.settings.language_code if hasattr(
+            self.state.document.settings, "language_code") else "en"
 
         if not self.options.get('class'):
             self.options['class'] = ['admonition-quote']
@@ -106,6 +111,8 @@ class QuoteNode(BaseAdmonition):
         author = __(self.options.get('author', "").strip())
         book = __(self.options.get('book', "").strip())
         manga = __(self.options.get('manga', "").strip())
+        comic = __(self.options.get('comic', "").strip())
+        disc = __(self.options.get('disc', "").strip())
         film = __(self.options.get('film', "").strip())
         show = __(self.options.get('show', "").strip())
         pages = __(self.options.get('pages', "").strip())
@@ -127,37 +134,58 @@ class QuoteNode(BaseAdmonition):
             tnl = []  # pragma: no cover
 
         if title1:
+            if comic:
+                tnl.append("**{0}**".format(comic))
+            if disc:
+                tnl.append("**{0}**".format(disc))
             if book:
                 tnl.append("**{0}**".format(book))
-                indexes.append(book)
             if manga:
                 tnl.append("**{0}**".format(manga))
-                indexes.append(manga)
             if show:
                 tnl.append("**{0}**".format(show))
-                indexes.append(show)
             if film:
                 tnl.append("**{0}**".format(film))
-                indexes.append(film)
             if author:
                 tnl.append("*{0}*, ".format(author))
-                indexes.append(author)
         else:
             if author:
                 tnl.append("**{0}**, ".format(author))
-                indexes.append(author)
+            if comic:
+                tnl.append("*{0}*".format(comic))
+            if disc:
+                tnl.append("*{0}*".format(disc))
             if book:
                 tnl.append("*{0}*".format(book))
-                indexes.append(book)
             if manga:
                 tnl.append("*{0}*".format(manga))
-                indexes.append(manga)
             if show:
                 tnl.append("*{0}*".format(show))
-                indexes.append(show)
             if film:
                 tnl.append("*{0}*".format(film))
-                indexes.append(film)
+
+        if author:
+            indexes.append(author)
+            indexes.append(TITLES[language_code]['author'] + "; " + author)
+        if comic:
+            indexes.append(comic)
+            indexes.append(TITLES[language_code]['comic'] + "; " + comic)
+        if disc:
+            indexes.append(disc)
+            indexes.append(TITLES[language_code]['disc'] + "; " + disc)
+        if book:
+            indexes.append(book)
+            indexes.append(TITLES[language_code]['book'] + "; " + book)
+        if manga:
+            indexes.append(manga)
+            indexes.append(TITLES[language_code]['manga'] + "; " + manga)
+        if show:
+            indexes.append(show)
+            indexes.append(TITLES[language_code]['show'] + "; " + show)
+        if film:
+            indexes.append(film)
+            indexes.append(TITLES[language_code]['film'] + "; " + film)
+
         if pages:
             tnl.append(", {0}".format(pages))
         if date:
@@ -192,6 +220,8 @@ class QuoteNode(BaseAdmonition):
         node['source'] = source
         node['book'] = book
         node['manga'] = manga
+        node['disc'] = disc
+        node['comic'] = comic
         node['film'] = film
         node['show'] = show
         node['index'] = index
