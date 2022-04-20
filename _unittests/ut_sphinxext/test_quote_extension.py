@@ -219,6 +219,7 @@ class TestMathDefExtension(unittest.TestCase):
                         :lid: label1
                         :pages: 234
                         :year: 2018
+                        :title1: true
 
                         this code should appear___
 
