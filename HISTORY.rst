@@ -5,8 +5,17 @@
 History
 =======
 
-current - 2022-01-07 - 0.00Mb
+current - 2022-04-20 - 0.00Mb
 =============================
+
+* #365: Extends quote extension (2022-04-20)
+* #364: Adds parameter title1 to quote directive (2022-04-20)
+* #363: Extends quote extension (sphinx) (2022-04-19)
+* #362: Simplifications (2022-03-14)
+* #361: Removes logging propagation when catching it for unittest (2022-02-13)
+
+1.11.3697 - 2022-01-07 - 2.20Mb
+===============================
 
 * #360: Switches CI to python 3.10 (2021-12-30)
 * #359: Removes axes by default in plot_graphviz (2021-12-08)
@@ -111,24 +120,12 @@ current - 2022-01-07 - 0.00Mb
 * #301: Implements method assertWarning in ExtTestCase (2020-05-10)
 * #300: Use fire instead of docutils to parse function documentation in cli (2020-05-02)
 * #298: SingleFileHTMLBuilder is deprecated in Sphinx (2020-04-07)
-
-1.9.3359 - 2020-04-06 - 2.06Mb
-==============================
-
 * #297: Fix import issue with sphinx==3.0.0 (2020-04-05)
-
-1.9.3350 - 2020-03-16 - 2.06Mb
-==============================
-
 * #296: Automatically modifies __init__.py with git number version (2020-03-12)
 * #295: Speed up import time of ExtTestCase (2020-02-28)
 * #294: Rename command line process_notebook into convert_notebook (2020-02-20)
 * #293: Fix notebook format after execution (function run_notebook) (2020-02-20)
 * #292: Add command line to run notebook (2020-02-19)
-
-1.9.3325 - 2020-02-12 - 2.06Mb
-==============================
-
 * #291: Sphinx extension bigger fails with sphinx 2.4.1 (2020-02-12)
 * #290: Issue raised with pandas.set_option in class BenchMark (2020-02-02)
 * #289: Fix notebook conversion after nbconvert update (minor_version=0, ...) (2020-01-14)

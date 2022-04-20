@@ -120,7 +120,8 @@ class QuoteNode(BaseAdmonition):
         source = __(self.options.get('source', "").strip())
         index = __(self.options.get('index', "").strip())
         date = __(self.options.get('date', "").strip())
-        title1 = __(self.options.get('title1', "").strip()) in ('1', 1, 'True', True, 'true')
+        title1 = __(self.options.get('title1', "").strip()
+                    ) in ('1', 1, 'True', True, 'true')
 
         indexes = []
         if index:

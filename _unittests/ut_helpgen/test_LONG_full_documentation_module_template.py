@@ -283,7 +283,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                             content = f.read()
                         fo = os.path.dirname(r)
                         found = os.listdir(fo)
-                        fo2 = fo.replace("build", "source").replace("/html", "")
+                        fo2 = fo.replace(
+                            "build", "source").replace("/html", "")
                         found2 = os.listdir(os.path.dirname(fo2))
                         raise FileNotFoundError(
                             "Unable to find '{}' in\n+{}\n{}\n----\n+{}\n{}"
