@@ -34,6 +34,7 @@ class QuoteNode(BaseAdmonition):
     * *lid* or *label*
     * *index*, additional index words beside the title and the author
     * *date*, if the text was written or declared at specific date
+    * *title1*, by default, the author comes first, if True, the title is
 
     Example::
 
@@ -70,6 +71,7 @@ class QuoteNode(BaseAdmonition):
         'class': directives.class_option,
         'index': directives.unchanged,
         'date': directives.unchanged,
+        'title1': directives.unchanged,
     }
 
     def run(self):
@@ -111,6 +113,7 @@ class QuoteNode(BaseAdmonition):
         source = __(self.options.get('source', "").strip())
         index = __(self.options.get('index', "").strip())
         date = __(self.options.get('date', "").strip())
+        title1 = __(self.options.get('title1', "").strip()) in ('1', 1, 'True', True, 'true')
 
         indexes = []
         if index:
@@ -123,21 +126,38 @@ class QuoteNode(BaseAdmonition):
         else:
             tnl = []  # pragma: no cover
 
-        if author:
-            tnl.append("**{0}**, ".format(author))
-            indexes.append(author)
-        if book:
-            tnl.append("*{0}*".format(book))
-            indexes.append(book)
-        if manga:
-            tnl.append("*{0}*".format(manga))
-            indexes.append(manga)
-        if show:
-            tnl.append("*{0}*".format(show))
-            indexes.append(show)
-        if film:
-            tnl.append("*{0}*".format(film))
-            indexes.append(film)
+        if title1:
+            if book:
+                tnl.append("**{0}**".format(book))
+                indexes.append(book)
+            if manga:
+                tnl.append("**{0}**".format(manga))
+                indexes.append(manga)
+            if show:
+                tnl.append("**{0}**".format(show))
+                indexes.append(show)
+            if film:
+                tnl.append("**{0}**".format(film))
+                indexes.append(film)
+            if author:
+                tnl.append("*{0}*, ".format(author))
+                indexes.append(author)
+        else:
+            if author:
+                tnl.append("**{0}**, ".format(author))
+                indexes.append(author)
+            if book:
+                tnl.append("*{0}*".format(book))
+                indexes.append(book)
+            if manga:
+                tnl.append("*{0}*".format(manga))
+                indexes.append(manga)
+            if show:
+                tnl.append("*{0}*".format(show))
+                indexes.append(show)
+            if film:
+                tnl.append("*{0}*".format(film))
+                indexes.append(film)
         if pages:
             tnl.append(", {0}".format(pages))
         if date:
