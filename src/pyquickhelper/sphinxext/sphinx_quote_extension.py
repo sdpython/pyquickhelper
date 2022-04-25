@@ -27,7 +27,8 @@ class QuoteNode(BaseAdmonition):
     It takes the following options:
 
     * *author*
-    * *book* or *manga* or *film* or *show* or *disc* or *comic*
+    * *book* or *manga* or *film* or *show* or *disc* or
+      *comic* or *child* or *ado*
     * *year*
     * *pages*
     * *tag*
@@ -62,6 +63,8 @@ class QuoteNode(BaseAdmonition):
         'book': directives.unchanged,
         'manga': directives.unchanged,
         'disc': directives.unchanged,
+        'ado': directives.unchanged,
+        'child': directives.unchanged,
         'comic': directives.unchanged,
         'show': directives.unchanged,
         'film': directives.unchanged,
@@ -112,6 +115,8 @@ class QuoteNode(BaseAdmonition):
         book = __(self.options.get('book', "").strip())
         manga = __(self.options.get('manga', "").strip())
         comic = __(self.options.get('comic', "").strip())
+        ado = __(self.options.get('ado', "").strip())
+        child = __(self.options.get('child', "").strip())
         disc = __(self.options.get('disc', "").strip())
         film = __(self.options.get('film', "").strip())
         show = __(self.options.get('show', "").strip())
@@ -135,6 +140,10 @@ class QuoteNode(BaseAdmonition):
             tnl = []  # pragma: no cover
 
         if title1:
+            if ado:
+                tnl.append("**{0}**".format(ado))
+            if child:
+                tnl.append("**{0}**".format(child))
             if comic:
                 tnl.append("**{0}**".format(comic))
             if disc:
@@ -152,6 +161,10 @@ class QuoteNode(BaseAdmonition):
         else:
             if author:
                 tnl.append("**{0}**, ".format(author))
+            if ado:
+                tnl.append("*{0}*".format(ado))
+            if child:
+                tnl.append("*{0}*".format(child))
             if comic:
                 tnl.append("*{0}*".format(comic))
             if disc:
@@ -168,6 +181,12 @@ class QuoteNode(BaseAdmonition):
         if author:
             indexes.append(author)
             indexes.append(TITLES[language_code]['author'] + "; " + author)
+        if ado:
+            indexes.append(ado)
+            indexes.append(TITLES[language_code]['ado'] + "; " + ado)
+        if child:
+            indexes.append(child)
+            indexes.append(TITLES[language_code]['child'] + "; " + child)
         if comic:
             indexes.append(comic)
             indexes.append(TITLES[language_code]['comic'] + "; " + comic)
@@ -225,6 +244,8 @@ class QuoteNode(BaseAdmonition):
         node['manga'] = manga
         node['disc'] = disc
         node['comic'] = comic
+        node['ado'] = ado
+        node['child'] = child
         node['film'] = film
         node['show'] = show
         node['index'] = index

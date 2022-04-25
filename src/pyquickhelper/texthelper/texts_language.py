@@ -6,6 +6,7 @@
 
 TITLES = {
     'en': {
+        'ado': 'teen',
         'allblogs': 'All blog posts',
         'author': 'author',
         'blocref_node': '',
@@ -18,11 +19,12 @@ TITLES = {
         'by title:': 'By title :',
         'catsmaonths': 'All categories and months',
         'changes': 'Changes',
+        'child': 'child',
         'cmdmes': '(<<%s>> : %s, line %d)',
         'code': 'code',
         'comic': 'comic',
-        'download': 'download',
         'disc': 'disc',
+        'download': 'download',
         'exmes': '(<<%s>> : %s, line %d)',
         'exref_node': 'Examples',
         'FAQ': 'FAQ',
@@ -59,6 +61,7 @@ TITLES = {
         'unhide': 'unhide',
     },
     'fr': {
+        'ado': 'ado',
         'allblogs': 'Tous les articles de blog',
         'author': 'auteur',
         'blocref_node': '',
@@ -71,6 +74,7 @@ TITLES = {
         'by title:': 'Par titre :',
         'catsmaonths': 'Catégories et mois',
         'changes': 'Changements',
+        'child': 'enfant',
         'cmdmes': '(<<%s>> : %s, line %d)',
         'code': 'code',
         'comic': 'bande dessinée',
