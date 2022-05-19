@@ -148,7 +148,8 @@ class StaticInteract(object):
         """
         # TODO: implement *args (difficult because of the name thing)
         # update names
-        for name in kwargs:
+        keys = list(kwargs.keys())
+        for name in keys:
             kwargs[name] = kwargs[name].renamed(name)
 
         self.widgets = OrderedDict(kwargs)

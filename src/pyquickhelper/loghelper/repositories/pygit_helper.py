@@ -600,7 +600,8 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                                    log_error=False, shell=sys.platform.startswith("win32"))
             except Exception as e:
                 raise GitException(
-                    "Problem with subprocess. Path is '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err)) from e
+                    "Problem with subprocess. Path is '{0}'\n[CMD]\n{1}"
+                    "".format(path, cmd)) from e
 
             if len(err) > 0:
                 if log:
@@ -657,7 +658,8 @@ def get_master_location(path=None, commandline=True):
                                log_error=False, shell=sys.platform.startswith("win32"))
         except Exception as e:  # pragma: no cover
             raise GitException(
-                "Problem with subprocess. Path is '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err)) from e
+                "Problem with subprocess. Path is '{0}'\n[CMD]\n{1}"
+                "".format(path, cmd)) from e
 
         if len(err) > 0:
             raise GitException(  # pragma: no cover
