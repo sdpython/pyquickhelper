@@ -162,8 +162,8 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
                     try:
                         content = res.decode(encode)
                         break
-                    except UnicodeDecodeError as e:
-                        laste.append(e)
+                    except UnicodeDecodeError as ee:
+                        laste.append(ee)
                         content = None
 
                 if content is None:

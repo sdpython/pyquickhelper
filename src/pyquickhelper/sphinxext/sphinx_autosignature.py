@@ -259,9 +259,9 @@ class AutoSignatureDirective(Directive):
                         signature = inspect._signature_fromstr(
                             inspect.Signature, obj_sig, list(sigs)[0])
                         parameters = signature.parameters
-                    except TypeError as e:
+                    except TypeError as ee:
                         mes = "[autosignature](3) unable to get signature of '{0}' - {1}.".format(
-                            object_name, str(e).replace("\n", "\\n"))
+                            object_name, str(ee).replace("\n", "\\n"))
                         logger = logging.getLogger("autosignature")
                         logger.warning(mes)
                         if logging_function:

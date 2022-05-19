@@ -1384,7 +1384,7 @@ class _CustomSphinx(Sphinx):
         finally:
             logger.logger = disa
 
-    def add_directive(self, name, obj, content=None, arguments=None,  # pylint: disable=W0221
+    def add_directive(self, name, obj, content=None, arguments=None,  # pylint: disable=W0221,W0237
                       override=True, **options):
         self._added_objects.append(('directive', name))
         if name == 'plot' and obj.__name__ == 'PlotDirective':

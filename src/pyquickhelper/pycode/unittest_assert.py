@@ -67,14 +67,14 @@ def getstate(obj, recursive=True, type_stop=None, type_stack=None, done=None):
     except AttributeError as e:
         try:
             state = obj.__dict__.copy()
-        except AttributeError as e:  # pragma: no cover
+        except AttributeError as eee:  # pragma: no cover
             raise NotImplementedError(
                 "Unable to retrieve state of object %r, type_stack=%r."
-                "" % (type(obj), ", ".join(map(str, type_stack)))) from e
-        except Exception as e:  # pragma: no cover
+                "" % (type(obj), ", ".join(map(str, type_stack)))) from eee
+        except Exception as ee:  # pragma: no cover
             raise NotImplementedError(
                 "Unable to retrieve state of object %r, type_stack=%r."
-                "" % (type(obj), ", ".join(map(str, type_stack)))) from e
+                "" % (type(obj), ", ".join(map(str, type_stack)))) from ee
     except Exception as e:
         raise NotImplementedError(
             "Unable to retrieve state of object %r, type_stack=%r."
