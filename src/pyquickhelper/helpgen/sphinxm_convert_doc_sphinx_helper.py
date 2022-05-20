@@ -1511,7 +1511,7 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('config_value', name))
         Sphinx.add_config_value(self, name, default, rebuild, types_)
 
-    def add_directive_to_domain(self, domain, name, obj, has_content=None,  # pylint: disable=W0221
+    def add_directive_to_domain(self, domain, name, obj, has_content=None,  # pylint: disable=W0221,W0237
                                 argument_spec=None, override=False, **option_spec):
         self._added_objects.append(('directive_to_domain', domain, name))
         try:

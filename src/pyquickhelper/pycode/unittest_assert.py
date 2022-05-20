@@ -75,10 +75,10 @@ def getstate(obj, recursive=True, type_stop=None, type_stack=None, done=None):
             raise NotImplementedError(
                 "Unable to retrieve state of object %r, type_stack=%r."
                 "" % (type(obj), ", ".join(map(str, type_stack)))) from ee
-    except Exception as e:
+    except Exception as eeee:
         raise NotImplementedError(
             "Unable to retrieve state of object %r, type_stack=%r."
-            "" % (type(obj), ", ".join(map(str, type_stack)))) from e
+            "" % (type(obj), ", ".join(map(str, type_stack)))) from eeee
 
     if not recursive:
         return state  # pragma: no cover
