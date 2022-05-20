@@ -64,7 +64,7 @@ def getstate(obj, recursive=True, type_stop=None, type_stack=None, done=None):
 
     try:
         state = obj.__getstate__()
-    except AttributeError as e:
+    except AttributeError:
         try:
             state = obj.__dict__.copy()
         except AttributeError as eee:  # pragma: no cover
