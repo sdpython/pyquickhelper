@@ -27,23 +27,31 @@ class SqlLite3FileStore:
         self.path_ = path
         self._create()
 
-    def _get_column_table(self, table):
-        cur = self.con_.cursor()
+    def _get_column_table(self, table, con=None):
+        close = con is None
+        if con is None:
+            con = self._get_connexion()
+        cur = con.cursor()
         res = cur.execute("PRAGMA table_info(%s);" % table)
         res = cur.fetchall()
+        if close:
+            con.close()
         return res
 
-    def _check_same_column(self, table, columns):
-        cols = self._get_column_table(table)
+    def _check_same_column(self, table, columns, con=None):
+        cols = self._get_column_table(table, con=con)
         names = [_[1] for _ in cols]
         return names == columns
+
+    def _get_connexion(self):
+        return sqlite3.connect(self.path_)
 
     def _create(self):
         """
         Creates the database if it does not exists.
         """
-        self.con_ = sqlite3.connect(self.path_)
-        cur = self.con_.cursor()
+        con = self._get_connexion()
+        cur = con.cursor()
         cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
         res = cur.fetchall()
         commit = False
@@ -56,9 +64,10 @@ class SqlLite3FileStore:
             commit = True
 
         if (('data',) in res and not self._check_same_column(
-                "data", ["id", "idfile", "name", "value", "date", "comment"])):
+                "data", ["id", "idfile", "name", "value", "date", "comment"],
+                con=con)):
             cur.execute("DROP TABLE data;")
-            self.con_.commit()
+            con.commit()
             cur.execute("SELECT name FROM sqlite_master WHERE type='table';")
             res = cur.fetchall()
 
@@ -69,7 +78,8 @@ class SqlLite3FileStore:
                     name TEXT, value REAL, date TEXT, comment TEXT)''')
             commit = True
         if commit:
-            self.con_.commit()
+            con.commit()
+        con.close()
 
     def submit(self, name, content, format=None, date=None, metadata=None,
                team=None, project=None, version=None):
@@ -118,9 +128,11 @@ class SqlLite3FileStore:
         sqlite_insert_blob_query = """
             INSERT INTO files (%s) VALUES (%s)""" % (
             ",".join(fields), ",".join(map(SqlLite3FileStore.v2s, values)))
-        cur = self.con_.cursor()
+        con = self._get_connexion()
+        cur = con.cursor()
         cur.execute(sqlite_insert_blob_query)
-        self.con_.commit()
+        con.commit()
+        con.close()
         output = dict(name=name, format=format,
                       metadata=metadata, team=team, project=project,
                       version=version, date=date)
@@ -148,12 +160,15 @@ class SqlLite3FileStore:
         sqlite_insert_blob_query = """
             INSERT INTO data (%s) VALUES (%s)""" % (
             ",".join(fields), ",".join("%r" % v for v in values))
-        cur = self.con_.cursor()
+        con = self._get_connexion()
+        cur = con.cursor()
         cur.execute(sqlite_insert_blob_query)
-        self.con_.commit()
+        con.commit()
+        con.close()
 
     def _enumerate(self, condition, fields):
-        cur = self.con_.cursor()
+        con = self._get_connexion()
+        cur = con.cursor()
         query = '''SELECT %s FROM files %s %s''' % (
             ",".join(fields),
             "WHERE" if len(condition) > 0 else "",
@@ -169,6 +184,7 @@ class SqlLite3FileStore:
             if 'metadata' in res and res['metadata']:
                 res['metadata'] = json.loads(res['metadata'])
             yield res
+        con.close()
 
     def enumerate_content(self, name=None, format=None, date=None, metadata=None,
                           team=None, project=None, version=None):
@@ -255,7 +271,8 @@ class SqlLite3FileStore:
             else:
                 cond.append('%s=%s' % (k, SqlLite3FileStore.v2s(v, '"')))
 
-        cur = self.con_.cursor()
+        con = self._get_connexion()
+        cur = con.cursor()
         if join:
             fields = ["data.id", "idfile", "data.name", "data.date",
                       "data.value", "data.comment"]
@@ -281,3 +298,4 @@ class SqlLite3FileStore:
             res = {k: v for k, v in zip(fields, line)  # pylint: disable=R1721
                    if v is not None}
             yield res
+        con.close()
