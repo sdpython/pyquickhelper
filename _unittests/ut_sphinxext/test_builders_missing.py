@@ -16,6 +16,7 @@ class TestBuildersMissing(ExtTestCase):
     def test_builders_missing(self):
         from docutils import nodes as skip_
         from sphinx.builders.latex.util import ExtBabel
+        from sphinx.builders.latex.theming import Theme
 
         context = {'sphinxpkgoptions': '', 'latex_engine': 'pdflatex',
                    'fontenc': [], 'babel': [],
@@ -68,7 +69,11 @@ class TestBuildersMissing(ExtTestCase):
         document = dummy()
 
         for cl in cls:
-            inst = cl(document, builder)
+            if cl == EnhancedLaTeXTranslator:
+                theme = Theme('manual')
+                inst = cl(document, builder, theme)
+            else:
+                inst = cl(document, builder)
             inst._footnote = 'nofootnote'
             inst.rst_image_dest = ''
             if hasattr(inst, 'visit_table'):
