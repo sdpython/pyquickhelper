@@ -35,11 +35,16 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
     and modifies a few functions.
     """
 
-    def __init__(self, document, builder):
+    def __init__(self, document, builder, theme=None):
         if not hasattr(builder, 'config'):
             raise TypeError(
                 "Unexpected type for builder {0}".format(type(builder)))
-        LaTeXTranslator.__init__(self, document, builder)
+        try:
+            # Sphinx>=5
+            LaTeXTranslator.__init__(self, document, builder, theme=theme)
+        except TypeError:
+            # Sphinx<5
+            LaTeXTranslator.__init__(self, document, builder)
 
         newlines = builder.config.text_newlines
         if newlines == 'windows':
@@ -192,7 +197,12 @@ class EnhancedLaTeXWriter(LaTeXWriter):
         LaTeXWriter.__init__(self, builder)
 
     def translate(self):
-        visitor = self.builder.create_translator(self.document, self.builder)
+        theme = self.builder.themes.get('manual')
+        if theme is None:
+            raise RuntimeError(  # pragma: no cover
+                "theme cannot be None.")
+        visitor = self.builder.create_translator(
+            self.document, self.builder, theme)
         self.document.walkabout(visitor)
         self.output = visitor.astext()
 

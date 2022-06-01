@@ -443,7 +443,12 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
         # visitor = self.builder.create_translator(self.document, self.builder)
         # automatically adds methods visit_ and depart_ for translator
         # based on the list of registered extensions. Might be worth using it.
-        visitor = self.translator_class(self.document, self.builder)
+        theme = self.builder.themes.get('manual')
+        if theme is None:
+            raise RuntimeError(  # pragma: no cover
+                "theme cannot be None.")
+        visitor = self.translator_class(
+            self.document, self.builder, theme=theme)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
@@ -1043,13 +1048,7 @@ class _CustomSphinx(Sphinx):
 
         # delayed import to speed up time
         from sphinx.application import builtin_extensions
-        try:
-            from sphinx.application import CONFIG_FILENAME, Config, Tags
-            sphinx_version = 2  # pragma: no cover
-        except ImportError:
-            # Sphinx 3.0.0
-            from sphinx.config import CONFIG_FILENAME, Config, Tags
-            sphinx_version = 3
+        from sphinx.config import CONFIG_FILENAME, Config, Tags
 
         # read config
         self.tags = Tags(tags)
@@ -1076,11 +1075,6 @@ class _CustomSphinx(Sphinx):
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
-        if sphinx_version == 2:  # pragma: no cover
-            with warnings.catch_warnings():
-                warnings.simplefilter(
-                    "ignore", (DeprecationWarning, PendingDeprecationWarning, ImportWarning))
-                self.config.check_unicode()
         self.config.pre_init_values()
 
         # set up translation infrastructure
@@ -1356,12 +1350,7 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('builder', builder))
         if builder.name not in self.registry.builders:
             self.debug('[_CustomSphinx]  adding builder: %r', builder)
-            try:
-                # Sphinx >= 1.8
-                self.registry.add_builder(builder, override=override)
-            except TypeError:  # pragma: no cover
-                # Sphinx < 1.8
-                self.registry.add_builder(builder)
+            self.registry.add_builder(builder, override=override)
         else:
             self.debug('[_CustomSphinx]  already added builder: %r', builder)
 
@@ -1409,27 +1398,11 @@ class _CustomSphinx(Sphinx):
 
             obj.run = run
 
-        try:
-            # Sphinx >= 1.8
-            Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
-                                 arguments=arguments,
-                                 override=override, **options)
-        except TypeError:
-            # Sphinx >= 3.0.0
-            Sphinx.add_directive(self, name, obj, override=override, **options)
-        except ExtensionError:  # pragma: no cover
-            # Sphinx < 1.8
-            Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
-                                 arguments=arguments, **options)
+        Sphinx.add_directive(self, name, obj, override=override, **options)
 
     def add_domain(self, domain, override=True):
         self._added_objects.append(('domain', domain))
-        try:
-            # Sphinx >= 1.8
-            Sphinx.add_domain(self, domain, override=override)
-        except TypeError:  # pragma: no cover
-            # Sphinx < 1.8
-            Sphinx.add_domain(self, domain)
+        Sphinx.add_domain(self, domain, override=override)
         # For some reason, the directives are missing from the main catalog
         # in docutils.
         for k, v in domain.directives.items():
@@ -1442,15 +1415,6 @@ class _CustomSphinx(Sphinx):
             if domain.name in ('py', 'std', 'rst'):
                 # We add the role without the domain name as a prefix.
                 self.add_role(k, v)
-
-    def override_domain(self, domain):
-        self._added_objects.append(('domain-over', domain))
-        try:
-            Sphinx.override_domain(self, domain)
-        except AttributeError:  # pragma: no cover
-            # Sphinx==3.0.0
-            raise AttributeError(
-                "override_domain not available in sphinx==3.0.0")
 
     def add_role(self, name, role, override=True):
         self._added_objects.append(('role', name))
@@ -1514,14 +1478,8 @@ class _CustomSphinx(Sphinx):
     def add_directive_to_domain(self, domain, name, obj, has_content=None,  # pylint: disable=W0221,W0237
                                 argument_spec=None, override=False, **option_spec):
         self._added_objects.append(('directive_to_domain', domain, name))
-        try:
-            Sphinx.add_directive_to_domain(self, domain, name, obj,  # pylint: disable=E1123
-                                           has_content=has_content, argument_spec=argument_spec,
-                                           override=override, **option_spec)
-        except TypeError:  # pragma: no cover
-            # Sphinx==3.0.0
-            Sphinx.add_directive_to_domain(self, domain, name, obj,
-                                           override=override, **option_spec)
+        Sphinx.add_directive_to_domain(self, domain, name, obj,
+                                       override=override, **option_spec)
 
     def add_role_to_domain(self, domain, name, role, override=False):
         self._added_objects.append(('roles_to_domain', domain, name))

@@ -1,5 +1,5 @@
 """
-@brief      test log(time=4s)
+@brief      test log(time=6s)
 @author     Xavier Dupre
 """
 import sys
@@ -10,8 +10,6 @@ import logging
 import shutil
 from io import StringIO
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import SimpleImageDirective
@@ -23,19 +21,9 @@ from pyquickhelper.helpgen.conf_path_tools import find_latex_path
 class TestSimpleImageExtension(ExtTestCase):
 
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("video", SimpleImageDirective)
 
     def test_simpleimage(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         this = os.path.abspath(os.path.dirname(__file__))
