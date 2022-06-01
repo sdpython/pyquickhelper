@@ -50,7 +50,7 @@ class TestCheckPep8Sample(ExtTestCase):
                          "F[ECL1] line too long (link) 169 > 150")
 
         check_pep8(this, fLOG=fLOG, max_line_length=170, recursive=False,
-                   pylint_ignore=('C0111', 'R0201', 'C0103'),
+                   pylint_ignore=('C0111', 'C0103'),
                    pattern="test_check_pep8_sample.py",
                    neg_pattern="##",
                    skip=["test_check_pep8_sample.py:373: [E731]",

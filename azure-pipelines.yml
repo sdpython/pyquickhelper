@@ -42,7 +42,7 @@ jobs:
     displayName: 'Install tkinterquickhelper'    
   - script: pip uninstall -y pyquickhelper
     displayName: 'uninstall pyquickhelper'
-  - script: python -m pip install sphinx$(sphinx.version)
+  - script: python -m pip install "sphinx$(sphinx.version)"
     displayName: 'Install Sphinx'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
