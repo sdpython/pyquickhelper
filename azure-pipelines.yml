@@ -6,8 +6,13 @@ jobs:
     matrix:
       Python310:
         python.version: '3.10'
+        sphinx.version: ''
+      Python310-4:
+        python.version: '3.10'
+        sphinx.version: '<5'
       Python36:
         python.version: '3.6'
+        sphinx.version: ''
     maxParallel: 3
 
   steps:
@@ -37,6 +42,8 @@ jobs:
     displayName: 'Install tkinterquickhelper'    
   - script: pip uninstall -y pyquickhelper
     displayName: 'uninstall pyquickhelper'
+  - script: python -m pip install sphinx$(sphinx.version)
+    displayName: 'Install Sphinx'
   - script: export PYTHONPATH=src
     displayName: 'PYTHONPATH=src'
   - script: |
