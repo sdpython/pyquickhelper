@@ -7,12 +7,15 @@ jobs:
       Python310:
         python.version: '3.10'
         sphinx.version: ''
+        require.version: ''
       Python310-4:
         python.version: '3.10'
         sphinx.version: '==4.5.0'
+        require.version: ''
       Python36:
         python.version: '3.6'
         sphinx.version: ''
+        require.version: '-3.6'
     maxParallel: 3
 
   steps:
@@ -34,7 +37,7 @@ jobs:
     displayName: 'Install Graphviz'
   - script: python -m pip install --upgrade pip setuptools wheel
     displayName: 'Install tools'
-  - script: pip install -r requirements.txt
+  - script: pip install -r requirements$(require.version).txt
     displayName: 'Install Requirements'
   - script: python -m pip install scikit-learn
     displayName: 'Install scipy scikit-learn'    
