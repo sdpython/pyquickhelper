@@ -5,9 +5,12 @@
 History
 =======
 
-current - 2022-04-20 - 0.00Mb
+current - 2022-06-03 - 0.00Mb
 =============================
 
+* #368: Fixes class SqlLite3FileStore where multiple thread open a sqlite3 co… (2022-06-02)
+* #367: Extends quote sphinx extension (2022-04-25)
+* #366: Updates quote sphinx extension (2022-04-22)
 * #365: Extends quote extension (2022-04-20)
 * #364: Adds parameter title1 to quote directive (2022-04-20)
 * #363: Extends quote extension (sphinx) (2022-04-19)
