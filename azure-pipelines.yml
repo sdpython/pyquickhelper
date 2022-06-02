@@ -57,7 +57,7 @@ jobs:
 #  - script: python -u setup.py build_sphinx
 #    displayName: 'Builds Documentation'
   - task: PublishPipelineArtifact@0
-    condition: eq('${{ sphinx.version }}', '')
+    condition: eq('$(sphinx.version)', '')
     inputs:
       artifactName: 'wheel-linux-$(python.version)'
       targetPath: 'dist'
