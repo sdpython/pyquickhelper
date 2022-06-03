@@ -57,7 +57,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
             initial_content = "".join(lines)
 
     if filename is not None and len(lines) == 0 and not filename.endswith("__init__.py"):
-        raise ValueError(
+        raise ValueError(  # pragma: no cover
             "File '{0}' is empty, encoding='{1}'.".format(filename, encoding))
 
     if filename is not None and ext in (".py", ".pyx", ".pxd"):

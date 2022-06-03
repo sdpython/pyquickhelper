@@ -59,7 +59,7 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
         nbfile += 1
     fLOG("[verification_html_format] checked:{0} errors:{1}".format(
         nbfile, len(errors)))
-    if len(errors) > 0:
+    if len(errors) > 0:  # pragma: no cover
         e = SphinxVerificationException(errors)
         if isinstance(raise_above, int) and len(errors) >= raise_above:
             raise e

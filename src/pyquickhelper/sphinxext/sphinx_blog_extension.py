@@ -111,7 +111,7 @@ class BlogPostDirective(Directive):
             try:
                 blog_background = getattr(
                     config, self.__class__.default_config_bg)
-            except AttributeError as e:
+            except AttributeError as e:  # pragma: no cover
                 raise AttributeError("Unable to find '{1}' in \n{0}".format(
                     "\n".join(sorted(config.values)), self.__class__.default_config_bg)) from e
             sharepost = config.sharepost if self.__class__.add_share else None

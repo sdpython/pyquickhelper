@@ -19,7 +19,7 @@ def _private_test_style_src(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
     src_ = os.path.normpath(os.path.join(thi, "..", ".."))
     check_pep8(src_, fLOG=fLOG, run_lint=run_lint, verbose=verbose, pattern=pattern,
                run_cmd_filter=_run_cmd_filter,
-               pylint_ignore=('C0103', 'C1801', 'R0201', 'R1705', 'W0108', 'W0613',
+               pylint_ignore=('C0103', 'C1801', 'R1705', 'W0108', 'W0613',
                               'W0201', 'W0212', 'W0603', 'W0622',
                               'W0511', 'C0412', 'R1702', 'E0702',
                               'W0640', 'C0111', 'R0914', 'C0302',
@@ -78,7 +78,7 @@ def _private_test_style_test(fLOG, run_lint, verbose=False, pattern=".*[.]py$"):
                pattern=pattern, max_line_length=200, run_lint=run_lint, verbose=verbose,
                run_cmd_filter=_run_cmd_filter,
                pylint_ignore=('C0111', 'C0103', 'R0914', 'W0212', 'C0413', 'W0621',
-                              'W0703', 'W0622', 'W0122', 'R0912', 'R0201',
+                              'W0703', 'W0622', 'W0122', 'R0912',
                               'W0613', 'C0123', 'W0640', 'E0202', 'C0412',
                               'R1702', 'W0612', 'C0411', 'E1101', 'C0122',
                               'W0201', 'E0702', 'W1503', 'C0102', 'W0223',

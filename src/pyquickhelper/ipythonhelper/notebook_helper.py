@@ -318,7 +318,8 @@ def get_installed_notebook_extension(user=False, prefix=None,
     path = get_jupyter_extension_dir(
         user=user, prefix=prefix, nbextensions_dir=nbextensions_dir)
     if not os.path.exists(path):
-        raise FileNotFoundError(path)
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find %r." % path)
 
     res = []
     for file in explore_folder_iterfile(path):
@@ -433,7 +434,8 @@ def remove_kernel(kernel_name, kernel_spec_manager=None):
     if kernel_name in kernels:
         fold = kernels[kernel_name]
         if not os.path.exists(fold):
-            raise FileNotFoundError("unable to remove folder " + fold)
+            raise FileNotFoundError(  # pragma: no cover
+                "Unable to remove folder %r." % fold)
         remove_folder(fold)
     else:
         raise NotebookException(  # pragma: no cover
