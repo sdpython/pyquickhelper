@@ -19,7 +19,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
                          book=True, link_resolve=None, nblayout='classic', doc_version=None,
-                         branch='master', callback_begin=None):
+                         branch='master'):
     """
     Defines variables for :epkg:`Sphinx`.
 
@@ -58,7 +58,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                                         the notebook gallery
     @param      doc_version             if not None, overwrites the current version
     @param      branch                  default branch (`'master'` by default)
-    @param      callback_begin          function to call when the documentation is generated
 
     If the parameter *custom_style* is not None, it will call ``app.add_css_file(custom_style)``
     in the setup.
@@ -192,9 +191,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                   ) if title is None else title
     htmlhelp_basename = '%s_doc' % project_var_name
     enable_disabled_parts = enable_disabled_parts  # pylint: disable=W0127
-
-    html_show_copyright = False
-    html_show_sphinx = False
 
     # personnalization latex
     _proj = project_var_name.replace("_", "\\_")
@@ -490,6 +486,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         pygments_style = 'monokai'
     elif html_theme == "pydata_sphinx_theme":  # pragma: no cover
         import pydata_sphinx_theme  # pylint: disable=E0401
+        pydata_sphinx_theme
         html_theme_options = {
             "github_user": github_user,
             "github_repo": github_repo,
@@ -626,8 +623,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     def this_setup(app):  # pragma: no cover
         if custom_style is not None:
             app.add_css_file(custom_style)
-        if callback_begin is not None:
-            callback_begin()
         return custom_setup(app, author)
 
     ext_locals["setup"] = this_setup

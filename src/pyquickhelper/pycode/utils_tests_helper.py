@@ -140,7 +140,7 @@ class PEP8Exception(Exception):
 def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                complexity=-1, stop_after=100, fLOG=None,
                pylint_ignore=('C0103', 'C1801',
-                              'R0201', 'R1705',
+                              'R1705',
                               'W0108', 'W0613',
                               'W0107', 'C0415',
                               'C0209'),
@@ -197,7 +197,6 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     * *C0103*: variable name is not conform
     * *C0111*: missing function docstring
     * *C1801*: do not use `len(SEQUENCE)` to determine if a sequence is empty
-    * *R0201*: method could be a function
     * *R0205*: Class '?' inherits from object, can be safely removed from bases in python3 (pylint)
     * *R0901*: too many ancestors
     * *R0902*: too many instance attributes

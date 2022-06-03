@@ -34,7 +34,7 @@ class TestCheckPep8Sample(ExtTestCase):
 
         def check_pep8_error_file():
             check_pep8(this, recursive=False,
-                       pylint_ignore=('C0111', 'R0201', 'C0103'),
+                       pylint_ignore=('C0111', 'C0103'),
                        pattern="test_check_pep8_sample.py",
                        neg_pattern="##",
                        skip=["test_check_pep8_sample.py:15",
