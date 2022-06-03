@@ -486,7 +486,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         pygments_style = 'monokai'
     elif html_theme == "pydata_sphinx_theme":  # pragma: no cover
         import pydata_sphinx_theme  # pylint: disable=E0401
-        pydata_sphinx_theme
         html_theme_options = {
             "github_user": github_user,
             "github_repo": github_repo,

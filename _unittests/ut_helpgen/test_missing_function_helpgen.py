@@ -27,6 +27,10 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
     def test_nb_image(self):
         r = NbImage("completion.png")
         self.assertTrue(r is not None)
+        self.assertRaise(lambda: NbImage("_completion.png"), FileNotFoundError)
+        self.assertRaise(lambda: _NbImage("_completion.png"), FileNotFoundError)
+        r = _NbImage("completion.png")
+        self.assertTrue(r is not None)
 
     def test_remove_character_under32(self):
         s = "a\na\r"
