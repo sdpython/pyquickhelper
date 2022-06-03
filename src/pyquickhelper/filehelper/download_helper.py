@@ -13,7 +13,7 @@ import urllib.request as urllib_request
 import http.client as http_client
 try:
     from http.client import InvalidURL
-except ImportError:
+except ImportError:  # pragma: no cover
     InvalidURL = ValueError
 
 
@@ -93,43 +93,9 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
             else:
                 with urllib_request.urlopen(url) as ur:
                     res = ur.read()
-    except (urllib_error.HTTPError, urllib_error.URLError,
-            ConnectionRefusedError) as e:
-        if raise_exception:
-            raise InternetException(
-                "Unable to retrieve content, url='{0}'".format(url)) from e
-        warnings.warn(
-            "Unable to retrieve content from '{0}' exc: {1}".format(url, e), ResourceWarning)
-        return None
-    except socket.timeout as e:
-        if raise_exception:
-            raise InternetException(
-                "Unable to retrieve content, url='{0}'".format(url)) from e
-        warnings.warn("unable to retrieve content from {0} because of timeout {1}: {2}".format(
-            url, timeout, e), ResourceWarning)
-        return None
-    except ConnectionResetError as e:
-        if raise_exception:
-            raise InternetException(
-                "Unable to retrieve content, url='{0}'".format(url)) from e
-        warnings.warn(
-            "unable to retrieve content from {0} because of ConnectionResetError: {1}".format(url, e), ResourceWarning)
-        return None
-    except http_client.BadStatusLine as e:
-        if raise_exception:
-            raise InternetException(
-                "Unable to retrieve content, url='{0}'".format(url)) from e
-        warnings.warn(
-            "Unable to retrieve content from '{0}' because of http.client.BadStatusLine: {1}".format(url, e), ResourceWarning)
-        return None
-    except http_client.IncompleteRead as e:
-        if raise_exception:
-            raise InternetException(
-                "Unable to retrieve content url='{0}'".format(url)) from e
-        warnings.warn(
-            "Unable to retrieve content from '{0}' because of http.client.IncompleteRead: {1}".format(url, e), ResourceWarning)
-        return None
-    except (ValueError, InvalidURL) as e:
+    except (urllib_error.HTTPError, urllib_error.URLError, ConnectionRefusedError,
+            socket.timeout, ConnectionResetError, http_client.BadStatusLine,
+            http_client.IncompleteRead, ValueError, InvalidURL) as e:
         if raise_exception:
             raise InternetException(
                 "Unable to retrieve content url='{0}'".format(url)) from e
@@ -137,7 +103,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
             "Unable to retrieve content from '{0}' because of {1}".format(url, e), ResourceWarning)
         return None
     except Exception as e:
-        if raise_exception:
+        if raise_exception:  # pragma: no cover
             raise InternetException(
                 "Unable to retrieve content, url='{0}', exc={1}".format(url, e)) from e
         warnings.warn(
@@ -152,7 +118,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
         if encoding is not None:
             try:
                 content = res.decode(encoding)
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError as e:  # pragma: no cover
                 # it tries different encoding
 
                 laste = [e]

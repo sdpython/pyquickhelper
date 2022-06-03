@@ -50,7 +50,8 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
     or ``/_static`` in Sphinx.
     """
     if not os.path.exists(build):
-        raise FileNotFoundError(build)
+        raise FileNotFoundError(  # pragma: no cover
+            "Unable to find %r." % build)
 
     tofind = ' src="/static/'
     torep = ' src="../_static/'
@@ -61,7 +62,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
         with open(full, "r", encoding="utf8") as f:
             try:
                 content = f.read()
-            except UnicodeDecodeError as e:
+            except UnicodeDecodeError as e:  # pragma: no cover
                 # maybe it is Windows and the encoding is sometimes different
                 with open(full, "r", encoding="cp1252") as g:
                     try:
@@ -85,7 +86,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
         for line in lines:
             if "https://cdnjs.cloudflare.com/ajax/libs/require.js" in line:
                 if fLOG:
-                    fLOG(
+                    fLOG(  # pragma: no cover
                         "[post_process_html_nb_output_static_file] js: skip %r" % line)
                 modif = True
                 continue

@@ -61,7 +61,7 @@ class BlogPost:
             with open(filename, "r", encoding=encoding) as f:
                 try:
                     content = f.read()
-                except UnicodeDecodeError as e:
+                except UnicodeDecodeError as e:  # pragma: no cover
                     raise RuntimeError(
                         'Unable to read filename (encoding issue):\n  '
                         'File "{0}", line 1'.format(filename)) from e
@@ -100,11 +100,11 @@ class BlogPost:
         config = env.config
 
         if 'blog_background' not in config:
-            raise AttributeError(
+            raise AttributeError(  # pragma: no cover
                 "Unable to find 'blog_background' in config:\n{0}".format(
                     "\n".join(sorted(config.values))))
         if 'blog_background_page' not in config:
-            raise AttributeError(
+            raise AttributeError(  # pragma: no cover
                 "Unable to find 'blog_background_page' in config:\n{0}".format(
                     "\n".join(sorted(config.values))))
         if 'epkg_dictionary' in config:
@@ -140,7 +140,7 @@ class BlogPost:
                          "to be local relative or absolute" not in _)]
             std = keepout.getvalue().strip('\n\r\t ')
             if len(lines) > 0 and raise_exception:
-                raise BlogPostParseError(
+                raise BlogPostParseError(  # pragma: no cover
                     "Unable to parse a blogpost:\n[sphinxerror]-F\n{0}"
                     "\nFILE\n{1}\nCONTENT\n{2}\n--OUT--\n{3}".format(
                         all_err, self._filename, content, keepout.getvalue()))
@@ -163,8 +163,9 @@ class BlogPost:
         objects = pub.settings.out_blogpostlist
 
         if len(objects) != 1:
-            raise BlogPostParseError(
-                'no blog post (#={1}) in\n  File "{0}", line 1'.format(filename, len(objects)))
+            raise BlogPostParseError(  # pragma: no cover
+                'no blog post (#={1}) in\n  File "{0}", line 1'.format(
+                    filename, len(objects)))
 
         post = objects[0]
         for k in post.options:
@@ -183,16 +184,14 @@ class BlogPost:
         """
         if self.Date < other.Date:
             return -1
-        elif self.Date > other.Date:
+        if self.Date > other.Date:
             return 1
-        else:
-            if self.Tag < other.Tag:
-                return -1
-            elif self.Tag > other.Tag:
-                return 1
-            else:
-                raise Exception(
-                    "same tag for two BlogPost: {0}".format(self.Tag))
+        if self.Tag < other.Tag:
+            return -1
+        if self.Tag > other.Tag:
+            return 1
+        raise ValueError(  # pragma: no cover
+            "same tag for two BlogPost: {0}".format(self.Tag))
 
     def __lt__(self, other):
         """
@@ -200,13 +199,11 @@ class BlogPost:
         """
         if self.Date < other.Date:
             return True
-        elif self.Date > other.Date:
+        if self.Date > other.Date:
             return False
-        else:
-            if self.Tag < other.Tag:
-                return True
-            else:
-                return False
+        if self.Tag < other.Tag:
+            return True
+        return False
 
     @property
     def Fields(self):

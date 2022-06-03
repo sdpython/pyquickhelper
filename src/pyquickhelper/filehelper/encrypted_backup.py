@@ -198,7 +198,7 @@ class EncryptedBackup:
             try:
                 data = f.read(self._threshold_size)
                 cont = True
-            except PermissionError as e:
+            except PermissionError as e:  # pragma: no cover
                 yield e
                 cont = False
             if cont:
@@ -209,7 +209,7 @@ class EncryptedBackup:
                     yield enc
                     try:
                         data = f.read(self._threshold_size)
-                    except PermissionError as e:
+                    except PermissionError as e:  # pragma: no cover
                         yield e
                         cont = False
 
@@ -226,14 +226,14 @@ class EncryptedBackup:
             # delay import
             try:
                 import lzma
-            except ImportError:
+            except ImportError:  # pragma: no cover
                 import pylzma as lzma
             return lzma.compress(data)
         elif self._compress is None:
             return data
         else:
-            raise ValueError(
-                "unexpected compression algorithm {0}".format(self._compress))
+            raise ValueError(  # pragma: no cover
+                "Unexpected compression algorithm '{0}'.".format(self._compress))
 
     def decompress(self, data):
         """
@@ -248,14 +248,14 @@ class EncryptedBackup:
             # delay import
             try:
                 import lzma
-            except ImportError:
+            except ImportError:  # pragma: no cover
                 import pylzma as lzma
             return lzma.decompress(data)
         elif self._compress is None:
             return data
         else:
-            raise ValueError(
-                "unexpected compression algorithm {0}".format(self._compress))
+            raise ValueError(  # pragma: no cover
+                "Unexpected compression algorithm '{0}'.".format(self._compress))
 
     def start_transfering(self):
         """
@@ -278,8 +278,9 @@ class EncryptedBackup:
                           (i, len(total), sum_bytes))
             relp = os.path.relpath(file.fullname, self._root_local)
             if ".." in relp:
-                raise ValueError("the local root is not accurate:\n{0}\nFILE:\n{1}\nRELPATH:\n{2}".format(
-                    self, file.fullname, relp))
+                raise ValueError(  # pragma: no cover
+                    "The local root is not accurate:\n{0}\nFILE:\n{1}\nRELPATH:\n{2}".format(
+                        self, file.fullname, relp))
 
             path = self._root_remote + "/" + os.path.split(relp)[0]
             path = path.replace("\\", "/")
@@ -317,8 +318,9 @@ class EncryptedBackup:
                 issues.append((relp, err))
 
             if len(issues) >= 5:
-                raise EncryptedBackupError("too many issues:\n{0}".format(
-                    "\n".join("{0} -- {1}".format(a, b) for a, b in issues)))
+                raise EncryptedBackupError(  # pragma: no cover
+                    "Too many issues:\n{0}".format(
+                        "\n".join("{0} -- {1}".format(a, b) for a, b in issues)))
 
         self.transfer_mapping()
         return done, issues
@@ -343,11 +345,11 @@ class EncryptedBackup:
         @return                 filename or data
         """
         if self.Mapping is None:
-            raise EncryptedBackupError(
-                "load the mapping with method load_mapping")
+            raise EncryptedBackupError(  # pragma: no cover
+                "Load first the mapping with method load_mapping.")
         if path not in self.Mapping:
-            raise EncryptedBackupError(
-                "the mapping is not up to date or file {0} cannot be found".format(path))
+            raise EncryptedBackupError(  # pragma: no cover
+                "The mapping is not up to date or file '{0}' cannot be found.".format(path))
         info = self.Mapping[path]
         if len(info.pieces) == 0:
             # the file is empty

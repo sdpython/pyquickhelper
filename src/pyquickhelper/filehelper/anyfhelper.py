@@ -95,7 +95,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                             res.append(d)
                 try:
                     mode = os.stat(f).st_mode
-                except FileNotFoundError:
+                except FileNotFoundError:  # pragma: no cover
                     # it appends for some weird path
                     warnings.warn(
                         "[change_file_status] unable to find '{0}'".format(f), UserWarning)

@@ -225,7 +225,7 @@ class FolderTransferFTP:
                 with open(path, "r", encoding="utf8") as f:
                     try:
                         content = f.read()
-                    except UnicodeDecodeError as e:
+                    except UnicodeDecodeError as e:  # pragma: no cover
                         ext = os.path.splitext(path)[-1]
                         if ext in {".js"} or path.endswith(".rst.txt"):
                             # just a warning
@@ -264,7 +264,7 @@ class FolderTransferFTP:
                         "File '{0}' cannot be transferred (filtering exception)\nfunction:\n{1}\nEXC\n{2}\nStackTrace:\n{3}".format(
                             path, self._content_filter, e, trace)) from e
                 if content is None:
-                    raise FolderTransferFTPException(
+                    raise FolderTransferFTPException(  # pragma: no cover
                         "File '{0}' cannot be transferred due to its content.".format(path))
 
                 # transform
