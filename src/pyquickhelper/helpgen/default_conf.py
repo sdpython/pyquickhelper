@@ -19,45 +19,46 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                          sharepost="facebook-linkedin-twitter-20-body", custom_style=None,
                          extlinks=None, github_user=None, github_repo=None, title=None,
                          book=True, link_resolve=None, nblayout='classic', doc_version=None,
-                         branch='master'):
+                         branch='master', callback_begin=None):
     """
     Defines variables for :epkg:`Sphinx`.
 
-    @param      fileconf                location of the configuration file
-    @param      module_name             name of the module
-    @param      author                  author
-    @param      year                    year
-    @param      theme                   theme to use
-    @param      theme_path              theme path (sets ``html_theme_path``)
-    @param      ext_locals              context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
-    @param      add_extensions          additional extensions
-    @param      bootswatch_theme        for example, ``spacelab``, look at
-                                        `spacelab <https://bootswatch.com/spacelab/>`_
-    @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <https://ryan-roemer.github.io/
-                                        sphinx-bootstrap-theme/README.html>`_
-    @param      description_latex       description latex
-    @param      use_mathjax             set up the documentation to use mathjax,
-                                        see `sphinx.ext.mathjax
-                                        <https://www.sphinx-doc.org/en/master/usage/extensions/math.html>`_,
-                                        default option is True
-    @param      use_lunrsearch          suggest autocompletion in sphinx,
-                                        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/
-                                        sphinxcontrib-lunrsearch>`_
-    @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
-    @param      sharepost               add share button to share blog post on usual networks
-    @param      custom_style            custom style sheet
-    @param      extlinks                parameter `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
-                                        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
-    @param      github_user             git(hub) user
-    @param      github_repo             git(hub) project
-    @param      title                   if not None, use *title* instead of *module_name* as a title
-    @param      book                    the output is a book
-    @param      link_resolve            url where the documentation is published,
-                                        used for parameter *linkcode_resolve*
-    @param      nblayout                ``'classic'`` or ``'table'``, specifies the layout for
-                                        the notebook gallery
-    @param      doc_version             if not None, overwrites the current version
-    @param      branch                  default branch (`'master'` by default)
+    :param fileconf: location of the configuration file
+    :param module_name: name of the module
+    :param author: author
+    :param year: year
+    :param theme: theme to use
+    :param theme_path: theme path (sets ``html_theme_path``)
+    :param ext_locals: context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
+    :param add_extensions: additional extensions
+    :param bootswatch_theme: for example, ``spacelab``, look at
+        `spacelab <https://bootswatch.com/spacelab/>`_
+    :param bootswatch_navbar_links: see `sphinx-bootstrap-theme <https://ryan-roemer.github.io/
+        sphinx-bootstrap-theme/README.html>`_
+    :param description_latex: description latex
+    :param use_mathjax: set up the documentation to use mathjax,
+        see `sphinx.ext.mathjax
+        <https://www.sphinx-doc.org/en/master/usage/extensions/math.html>`_,
+        default option is True
+    :param use_lunrsearch: suggest autocompletion in sphinx,
+        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/
+        sphinxcontrib-lunrsearch>`_
+    :param enable_disabled_parts: @see fn remove_undesired_part_for_documentation
+    :param sharepost: add share button to share blog post on usual networks
+    :param custom_style: custom style sheet
+    :param extlinks: parameter `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
+        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
+    :param github_user: git(hub) user
+    :param github_repo: git(hub) project
+    :param title: if not None, use *title* instead of *module_name* as a title
+    :param book: the output is a book
+    :param link_resolve: url where the documentation is published,
+        used for parameter *linkcode_resolve*
+    :param nblayout: ``'classic'`` or ``'table'``, specifies the layout for
+        the notebook gallery
+    :param doc_version: if not None, overwrites the current version
+    :param branch: default branch (`'master'` by default)
+    :param callback_begin: function to call when the documentation is generated
 
     If the parameter *custom_style* is not None, it will call ``app.add_css_file(custom_style)``
     in the setup.
@@ -622,6 +623,8 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     def this_setup(app):  # pragma: no cover
         if custom_style is not None:
             app.add_css_file(custom_style)
+        if callback_begin is not None:
+            callback_begin()
         return custom_setup(app, author)
 
     ext_locals["setup"] = this_setup
