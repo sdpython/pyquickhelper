@@ -197,7 +197,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                                  stdout=subprocess.PIPE if wait else None,
                                  stderr=subprocess.PIPE if wait else None)
 
-    pproc.__enter__()
+    pproc.__enter__()  # pylint: disable=C2801
     if isinstance(cmd, list):
         cmd = " ".join(cmd)
 

@@ -491,7 +491,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
                             row[0] = row[0].replace(":meth:`_", ":py:meth:`_")
 
                     if len(tbl) > 0:
-                        maxi = max([len(_) for _ in tbl[k]])
+                        maxi = max(len(_) for _ in tbl[k])
                         s = 0 if tbl.iloc[0, 1] is None else len(
                             tbl.iloc[0, 1])
                         t = "" if tbl.iloc[0, 1] is None else tbl.iloc[0, 1]
@@ -803,7 +803,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
             tbl = tbl.iloc[:, 1:].copy()
 
         if len(tbl) > 0:
-            maxi = max([len(_) for _ in tbl[k]])
+            maxi = max(len(_) for _ in tbl[k])
             s = 0 if tbl.iloc[0, 1] is None else len(tbl.iloc[0, 1])
             t = "" if tbl.iloc[0, 1] is None else tbl.iloc[0, 1]
             tbl.iloc[0, 1] = t + (" " * (3 * maxi - s))
@@ -843,7 +843,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
             tbl = tbl[tbl.columns[1:]]
 
         if len(tbl) > 0:
-            maxi = max([len(_) for _ in tbl[k]])
+            maxi = max(len(_) for _ in tbl[k])
             tbl.iloc[0, 1] = tbl.iloc[0, 1] + \
                 (" " * (3 * maxi - len(tbl.iloc[0, 1])))
             sph = df2rst(tbl)
@@ -931,9 +931,9 @@ def filecontent_to_rst(filename, content):
         begin = None
         end = None
         for i, r in enumerate(spl):
-            if "/**" in spl[i]:
+            if "/**" in r:
                 begin = i
-            if end is None and begin is not None and "*/" in spl[i]:
+            if end is None and begin is not None and "*/" in r:
                 end = i
 
         content = "\n".join(rows)

@@ -692,7 +692,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             if overwrite or j is None:
                 timeout = var.get("TIMEOUT", None)
                 scheduler = var.get("SCHEDULER", None)
-                clean_repo = var.get("CLEAN", True) in {
+                clean_repo = var.get("CLEAN", True) in {  # pylint: disable=W0130
                     True, 1, "True", "true", "1"}
                 if timeout is not None:
                     kwargs["timeout"] = timeout
