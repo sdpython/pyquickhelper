@@ -7,11 +7,11 @@ import sys
 import os
 import unittest
 import shutil
-
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
 from pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
 from pyquickhelper.ipythonhelper import read_nb
+from pyquickhelper.filehelper.internet_helper import ReadUrlException
 
 
 class TestNotebookAPI(ExtTestCase):
@@ -36,7 +36,11 @@ class TestNotebookAPI(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_nb_api_html")
         outfile = os.path.join(temp, "out_nb_slides.slides.html")
-        res = nb2slides(nbr, outfile)
+        try:
+            res = nb2slides(nbr, outfile)
+        except ReadUrlException as e:
+            warnings.warn(e)
+            return
         self.assertGreater(len(res), 1)
         for r in res:
             self.assertExists(r)
