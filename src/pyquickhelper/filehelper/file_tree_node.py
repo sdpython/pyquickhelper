@@ -62,7 +62,7 @@ class FileTreeNode:
 
     _default_not_ext = "bbl out pyc log lib ind pdb opt".split()
     _default_out = re.compile("([.]svn)|(hal.*[.]((exe)|(dll)|(so)|(sln)|(vcproj)))" +
-                              "|".join(["(.*[.]%s$)" % e for e in _default_not_ext]))
+                              "|".join([f"(.*[.]{e}$)" for e in _default_not_ext]))
 
     @staticmethod
     def build_expression(ext):
@@ -72,7 +72,7 @@ class FileTreeNode:
         @param      ext     list of extension (with no points)
         @return             pattern (string)
         """
-        return ".*[.]" + "|".join(["(%s$)" % e for e in ext])
+        return ".*[.]" + "|".join([f"({e}$)" for e in ext])
 
     def __init__(self, root, file=None, filter=None, level=0, parent=None,
                  repository=False, log=False, log1=False, fLOG=noLOG):
@@ -108,16 +108,15 @@ class FileTreeNode:
         self.fLOG = fLOG
 
         if not os.path.exists(root):
-            raise PQHException("path '%s' does not exist" % root)
+            raise PQHException(f"path '{root}' does not exist")
         if not os.path.isdir(root):
             raise PQHException(  # pragma: no cover
-                "path '%s' is not a folder" % root)
+                f"path '{root}' is not a folder")
 
         if self._file is not None:
             if not self.exists():
                 raise PQHException(  # pragma: no cover
-                    "%s does not exist [%s,%s]" % (
-                        self.get_fullname(), root, file))
+                    f"{self.get_fullname()} does not exist [{root},{file}]")
 
         self._fillstat()
         if self.isdir():
@@ -316,7 +315,7 @@ class FileTreeNode:
                 except PQHException as e:  # pragma: no cover
                     if "does not exist" in str(e):
                         self.fLOG(
-                            "a folder should exist, but is it is not, it continues [opt=%s]" % opt)
+                            f"a folder should exist, but is it is not, it continues [opt={opt}]")
                         self.fLOG(e)
                         continue
                 if n.isdir() and len(n._children) == 0:
@@ -499,10 +498,10 @@ class FileTreeNode:
         """
         if not os.path.exists(path):
             raise PQHException(  # pragma: no cover
-                "This path does not exist: '{0}'.".format(path))
+                f"This path does not exist: '{path}'.")
         if self.isdir():
             raise PQHException(  # pragma: no cover
-                "This node represents a folder %r." % self.get_fullname())
+                f"This node represents a folder {self.get_fullname()!r}.")
         full = self.get_fullname()
         temp = os.path.split(self._file)[0]
         dest = os.path.join(path, temp)
@@ -516,14 +515,13 @@ class FileTreeNode:
             shutil.copy(full, dest)
             cop = os.path.join(dest, os.path.split(full)[1])
             if not os.path.exists(cop):
-                raise PQHException("Unable to copy '%s'." % cop)
+                raise PQHException(f"Unable to copy '{cop}'.")
             st1 = os.stat(full)
             st2 = os.stat(cop)
             t1 = datetime.datetime.utcfromtimestamp(st1.st_mtime)
             t2 = datetime.datetime.utcfromtimestamp(st2.st_mtime)
             if t1 >= t2:
-                mes = "t1={0} for file '{1}' >= t2={2} for file '{3}'".format(
-                    t1, full, t2, cop)
+                mes = f"t1={t1} for file '{full}' >= t2={t2} for file '{cop}'"
                 if t1 > t2 and exc:
                     raise PQHException(mes)
                 warnings.warn(mes, RuntimeWarning)

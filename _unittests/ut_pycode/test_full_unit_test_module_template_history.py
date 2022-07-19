@@ -102,7 +102,7 @@ class TestUnitTestFullModuleTemplateHistory(unittest.TestCase):
             fLOG("--OUT--\n", sout)
             fLOG("--ERR--\n", stderr.getvalue())
             if len(sout) == 0:
-                fLOG("Empty output. thispath='{}'".format(thispath))
+                fLOG(f"Empty output. thispath='{thispath}'")
 
 
 if __name__ == "__main__":

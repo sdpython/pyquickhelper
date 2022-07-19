@@ -51,7 +51,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
     """
     if not os.path.exists(build):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find %r." % build)
+            f"Unable to find {build!r}.")
 
     tofind = ' src="/static/'
     torep = ' src="../_static/'
@@ -71,7 +71,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
                             "charset=cp1252", "charset=utf-8")
                     except UnicodeDecodeError:
                         raise FileNotFoundError(
-                            "Unable to load %r\n%r" % (full, os.path.abspath(full))) from e
+                            f"Unable to load {full!r}\n{os.path.abspath(full)!r}") from e
 
         if tofind in content:
             res.append(full)
@@ -87,7 +87,7 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
             if "https://cdnjs.cloudflare.com/ajax/libs/require.js" in line:
                 if fLOG:
                     fLOG(  # pragma: no cover
-                        "[post_process_html_nb_output_static_file] js: skip %r" % line)
+                        f"[post_process_html_nb_output_static_file] js: skip {line!r}")
                 modif = True
                 continue
             new_lines.append(line)
@@ -95,12 +95,12 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
         for k, v in repl.items():
             if k in content:
                 if fLOG:
-                    fLOG("[post_process_html_output] js: replace %r -> %r" % (k, v))
+                    fLOG(f"[post_process_html_output] js: replace {k!r} -> {v!r}")
                 content = content.replace(k, v)
                 modif = True
 
         if modif:
-            fLOG("[post_process_html_nb_output_static_file] %r" % full)
+            fLOG(f"[post_process_html_nb_output_static_file] {full!r}")
             with open(full, "w", encoding="utf8") as f:
                 f.write(content)
 

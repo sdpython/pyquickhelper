@@ -135,48 +135,48 @@ class QuoteNode(BaseAdmonition):
         # add a label
         lid = self.options.get('lid', self.options.get('label', None))
         if lid:
-            tnl = ['', ".. _{0}:".format(lid), ""]
+            tnl = ['', f".. _{lid}:", ""]
         else:
             tnl = []  # pragma: no cover
 
         if title1:
             if ado:
-                tnl.append("**{0}**".format(ado))
+                tnl.append(f"**{ado}**")
             if child:
-                tnl.append("**{0}**".format(child))
+                tnl.append(f"**{child}**")
             if comic:
-                tnl.append("**{0}**".format(comic))
+                tnl.append(f"**{comic}**")
             if disc:
-                tnl.append("**{0}**".format(disc))
+                tnl.append(f"**{disc}**")
             if book:
-                tnl.append("**{0}**".format(book))
+                tnl.append(f"**{book}**")
             if manga:
-                tnl.append("**{0}**".format(manga))
+                tnl.append(f"**{manga}**")
             if show:
-                tnl.append("**{0}**".format(show))
+                tnl.append(f"**{show}**")
             if film:
-                tnl.append("**{0}**".format(film))
+                tnl.append(f"**{film}**")
             if author:
-                tnl.append("*{0}*, ".format(author))
+                tnl.append(f"*{author}*, ")
         else:
             if author:
-                tnl.append("**{0}**, ".format(author))
+                tnl.append(f"**{author}**, ")
             if ado:
-                tnl.append("*{0}*".format(ado))
+                tnl.append(f"*{ado}*")
             if child:
-                tnl.append("*{0}*".format(child))
+                tnl.append(f"*{child}*")
             if comic:
-                tnl.append("*{0}*".format(comic))
+                tnl.append(f"*{comic}*")
             if disc:
-                tnl.append("*{0}*".format(disc))
+                tnl.append(f"*{disc}*")
             if book:
-                tnl.append("*{0}*".format(book))
+                tnl.append(f"*{book}*")
             if manga:
-                tnl.append("*{0}*".format(manga))
+                tnl.append(f"*{manga}*")
             if show:
-                tnl.append("*{0}*".format(show))
+                tnl.append(f"*{show}*")
             if film:
-                tnl.append("*{0}*".format(film))
+                tnl.append(f"*{film}*")
 
         if author:
             indexes.append(author)
@@ -207,16 +207,16 @@ class QuoteNode(BaseAdmonition):
             indexes.append(TITLES[language_code]['film'] + "; " + film)
 
         if pages:
-            tnl.append(", {0}".format(pages))
+            tnl.append(f", {pages}")
         if date:
-            tnl.append(" ({0})".format(date))
+            tnl.append(f" ({date})")
         if year:
-            tnl.append(" ({0})".format(year))
+            tnl.append(f" ({year})")
         if source:
             if source.startswith("http"):
-                tnl.append(", `source <{0}>`_".format(source))
+                tnl.append(f", `source <{source}>`_")
             else:
-                tnl.append(", {0}".format(source))
+                tnl.append(f", {source}")
         tnl.append('')
         tnl.append(".. index:: " + ", ".join(indexes))
         tnl.append('')
@@ -231,7 +231,7 @@ class QuoteNode(BaseAdmonition):
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
-                "[blogpost] unable to parse '{0}' - '{1}' - {2}".format(author, book or manga, e))
+                f"[blogpost] unable to parse '{author}' - '{book or manga}' - {e}")
             raise e
 
         node['tag'] = tag
@@ -281,7 +281,7 @@ def visit_quote_node_rst(self, node):
             continue
         if v:
             self.new_state(4)
-            self.add_text(":{0}: {1}".format(k, v))
+            self.add_text(f":{k}: {v}")
             self.end_state(wrap=False, end=None)
     self.add_text(self.nl)
     self.new_state(4)

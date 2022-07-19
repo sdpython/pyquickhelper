@@ -67,7 +67,7 @@ class StringIOAndFile(StringIO):
         """
         if self.to is not None:
             raise Exception(  # pragma: no cover
-                "A test has not finished: '{0}'".format(self.to))
+                f"A test has not finished: '{self.to}'")
         if name is None:
             raise ValueError(  # pragma: no cover
                 "name is None")
@@ -82,8 +82,7 @@ class StringIOAndFile(StringIO):
         """
         if name != self.to:
             raise ValueError(  # pragma: no cover
-                "Inconsistency in test name '{0}' != '{1}'".format(
-                    name, self.to))
+                f"Inconsistency in test name '{name}' != '{self.to}'")
         self.to = None
 
     def getvalue(self):

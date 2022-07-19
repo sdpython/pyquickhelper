@@ -128,7 +128,7 @@ class CustomSphinxApp(Sphinx):
         usual
         """
         classname = self.__class__.__name__
-        return '<%s buildername=%r>' % (classname, self.builder.name)
+        return f'<{classname} buildername={self.builder.name!r}>'
 
     def cleanup(self, error=None):
         """

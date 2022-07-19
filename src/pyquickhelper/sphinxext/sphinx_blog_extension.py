@@ -154,15 +154,15 @@ class BlogPostDirective(Directive):
         """
         # add a label
         suffix_label = self.suffix_label() if not p['lid'] else ""
-        tag = "{0}{1}".format(tag, suffix_label)
-        tnl = [".. _{0}:".format(tag), ""]
-        title = "{0} {1}".format(p["date"], p["title"])
+        tag = f"{tag}{suffix_label}"
+        tnl = [f".. _{tag}:", ""]
+        title = f"{p['date']} {p['title']}"
         tnl.append(title)
         tnl.append("=" * len(title))
         tnl.append("")
         if sharepost is not None:
             tnl.append("")
-            tnl.append(":sharenet:`{0}`".format(sharepost))
+            tnl.append(f":sharenet:`{sharepost}`")
             tnl.append('')
         tnl.append('')
         content = StringList(tnl)
@@ -173,7 +173,7 @@ class BlogPostDirective(Directive):
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
-                "[blogpost] unable to parse '{0}' - {1}".format(title, e))
+                f"[blogpost] unable to parse '{title}' - {e}")
             raise e
 
         # final
@@ -233,19 +233,19 @@ class BlogPostDirectiveAgg(BlogPostDirective):
         # add a label
         suffix_label = self.suffix_label()
         container = nodes.container()
-        tnl = [".. _{0}{1}:".format(tag, suffix_label), ""]
+        tnl = [f".. _{tag}{suffix_label}:", ""]
         content = StringList(tnl)
         self.state.nested_parse(content, self.content_offset, container)
         node += container
 
         # id section
         if env is not None:
-            mid = int(env.new_serialno('indexblog-u-%s' % p["date"][:4])) + 1
+            mid = int(env.new_serialno(f"indexblog-u-{p['date'][:4]}")) + 1
         else:
             mid = -1
 
         # add title
-        sids = "y{0}-{1}".format(p["date"][:4], mid)
+        sids = f"y{p['date'][:4]}-{mid}"
         section = nodes.section(ids=[sids])
         section['year'] = p["date"][:4]
         section['blogmid'] = mid
@@ -255,9 +255,9 @@ class BlogPostDirectiveAgg(BlogPostDirective):
         section += messages
 
         # add date and share buttons
-        tnl = [":bigger:`::5:{0}`".format(p["date"])]
+        tnl = [f":bigger:`::5:{p['date']}`"]
         if sharepost is not None:
-            tnl.append(":sharenet:`{0}`".format(sharepost))
+            tnl.append(f":sharenet:`{sharepost}`")
         tnl.append('')
         content = StringList(tnl)
         content = content + self.content
@@ -361,7 +361,7 @@ def depart_blogpostagg_node_html(self, node):
             self.body.append(link)
         else:
             self.body.append(
-                "%blogpostagg: link to source only available for HTML: '{}'\n".format(type(self)))
+                f"%blogpostagg: link to source only available for HTML: '{type(self)}'\n")
 
 
 ######################

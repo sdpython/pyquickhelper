@@ -48,19 +48,19 @@ class GridBenchMark(BenchMark):
         for i, df in enumerate(datasets):
             if not isinstance(df, dict):
                 raise TypeError(  # pragma: no cover
-                    "Every dataset must be a dictionary, {0}th is not.".format(i))
+                    f"Every dataset must be a dictionary, {i}th is not.")
             if "X" not in df:
                 raise KeyError(  # pragma: no cover
-                    "Dictionary {0} should contain key 'X'.".format(i))
+                    f"Dictionary {i} should contain key 'X'.")
             if "di" in df:
                 raise KeyError(  # pragma: no cover
-                    "Dictionary {0} should not contain key 'di'.".format(i))
+                    f"Dictionary {i} should not contain key 'di'.")
             if "name" not in df:
                 raise KeyError(  # pragma: no cover
-                    "Dictionary {0} should not contain key 'name'.".format(i))
+                    f"Dictionary {i} should not contain key 'name'.")
             if "shortname" not in df:
                 raise KeyError(  # pragma: no cover
-                    "Dictionary {0} should not contain key 'shortname'.".format(i))
+                    f"Dictionary {i} should not contain key 'shortname'.")
         self._datasets = datasets
         self._repetition = repetition
 
@@ -81,7 +81,7 @@ class GridBenchMark(BenchMark):
                 if k not in skip:
                     info[k] = v
             self.fLOG(
-                "[MlGridBenchmark.init] dataset {0}: {1}".format(i, info))
+                f"[MlGridBenchmark.init] dataset {i}: {info}")
             self._datasets_info.append(info)
 
         self.fLOG("[MlGridBenchmark.init] end")
@@ -107,17 +107,17 @@ class GridBenchMark(BenchMark):
         for i, pars in enumerate(params_list):
             if "name" not in pars:
                 raise KeyError(  # pragma: no cover
-                    "Dictionary {0} must contain key 'name'.".format(i))
+                    f"Dictionary {i} must contain key 'name'.")
             if "shortname" not in pars:
                 raise KeyError(  # pragma: no cover
-                    "Dictionary {0} must contain key 'shortname'.".format(i))
+                    f"Dictionary {i} must contain key 'shortname'.")
             if pars["name"] in unique:
                 raise ValueError(  # pragma: no cover
-                    "'{0}' is duplicated.".format(pars["name"]))
+                    f"'{pars['name']}' is duplicated.")
             unique.add(pars["name"])
             if pars["shortname"] in unique:
                 raise ValueError(  # pragma: no cover
-                    "'{0}' is duplicated.".format(pars["shortname"]))
+                    f"'{pars['shortname']}' is duplicated.")
             unique.add(pars["shortname"])
 
         # Multiplies the experiments.
@@ -167,7 +167,7 @@ class GridBenchMark(BenchMark):
             metrics["time_preproc"] = split
             metrics["time_train"] = train
             metrics["time_test"] = test
-            metrics["_btry"] = "{0}-{1}".format(shortname_model, shortname_ds)
+            metrics["_btry"] = f"{shortname_model}-{shortname_ds}"
             metrics["_iexp"] = iexp
             metrics["model_name"] = name_model
             metrics["ds_name"] = name_ds

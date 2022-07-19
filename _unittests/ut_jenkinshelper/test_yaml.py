@@ -36,7 +36,7 @@ class TestYaml(unittest.TestCase):
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]
-        context["Python%s" % vers] = os.path.dirname(sys.executable)
+        context[f"Python{vers}"] = os.path.dirname(sys.executable)
         obj, name = load_yaml(yml, context=context)
         for k, v in obj.items():
             fLOG(k, type(v), v)
@@ -125,10 +125,10 @@ class TestYaml(unittest.TestCase):
         this = os.path.abspath(os.path.dirname(__file__))
         plat = "win" if platform.startswith("win") else "lin"
         yml = os.path.abspath(os.path.join(
-            this, "..", "..", ".local.jenkins.%s.yml" % plat))
+            this, "..", "..", f".local.jenkins.{plat}.yml"))
         if not os.path.exists(yml):
             yml = os.path.abspath(os.path.join(
-                this, "..", "..", "..", ".local.jenkins.%s.yml" % plat))
+                this, "..", "..", "..", f".local.jenkins.{plat}.yml"))
         if not os.path.exists(yml):
             raise FileNotFoundError(yml)
         context = dict(Python34="fake",
@@ -141,7 +141,7 @@ class TestYaml(unittest.TestCase):
                        WinPython36=None, project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]
-        context["Python%s" % vers] = "C:/Python%s_x64" % vers
+        context[f"Python{vers}"] = f"C:/Python{vers}_x64"
         if platform.startswith("win"):
             ck = list(context.keys())
             for k in ck:
@@ -164,13 +164,13 @@ class TestYaml(unittest.TestCase):
         vers_ = "%d.%d" % sys.version_info[:2]
         conv = [
             _ for _ in convs
-            if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+            if set_name + " NAME=UT" in _ and f"VERSION={vers_}" in _ and '-g' not in _]
         if len(conv) != 3:
             vers_ = "3.9"
             vers = "39"
             conv = [
                 _ for _ in convs
-                if set_name + " NAME=UT" in _ and "VERSION=%s" % vers_ in _ and '-g' not in _]
+                if set_name + " NAME=UT" in _ and f"VERSION={vers_}" in _ and '-g' not in _]
         if len(conv) not in (3, 4, 5, 6, 7):
             rows = [str(_) for _ in conv]
             raise AssertionError(
@@ -245,18 +245,18 @@ class TestYaml(unittest.TestCase):
             expected = expected.replace("__VERSP__", vers_)
             val = conv.strip("\n \t\r")
             if expected != val:
-                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                mes = f"EXP:\n{expected}\n###########\nGOT:\n{val}"
                 for a, b in zip(expected.split("\n"), val.split("\n")):
                     if a != b:
                         raise Exception(
-                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
+                            f"error on line:\nEXP:\n{a}\nGOT:\n{b}\n#######\n{mes}")
                 raise Exception(mes)
 
         conv = [_ for _ in convs if set_name +
                 " DIST=std" in _ and "TIMEOUT=899" in _]
         if len(conv) not in (1, 2):
             raise Exception(
-                "################################\nlen(conv)={0}\n{1}".format(len(conv), conv))
+                f"################################\nlen(conv)={len(conv)}\n{conv}")
         conv = conv[0]
         if platform.startswith("win"):
             expected = """
@@ -325,11 +325,11 @@ class TestYaml(unittest.TestCase):
             expected = expected.replace("__VERSP__", vers_)
             val = conv.strip("\n \t\r")
             if expected != val:
-                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                mes = f"EXP:\n{expected}\n###########\nGOT:\n{val}"
                 for a, b in zip(expected.split("\n"), val.split("\n")):
                     if a != b:
                         raise Exception(
-                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
+                            f"error on line:\nEXP:\n{a}\nGOT:\n{b}\n#######\n{mes}")
                 raise Exception(mes)
         else:
             expected = """
@@ -403,11 +403,11 @@ class TestYaml(unittest.TestCase):
             expected = expected.replace("__VERSP__", vers_)
             val = conv.strip("\n \t\r")
             if expected != val:
-                mes = "EXP:\n{0}\n###########\nGOT:\n{1}".format(expected, val)
+                mes = f"EXP:\n{expected}\n###########\nGOT:\n{val}"
                 for a, b in zip(expected.split("\n"), val.split("\n")):
                     if a != b:
                         raise Exception(
-                            "error on line:\nEXP:\n{0}\nGOT:\n{1}\n#######\n{2}".format(a, b, mes))
+                            f"error on line:\nEXP:\n{a}\nGOT:\n{b}\n#######\n{mes}")
                 raise Exception(mes)
 
     def test_jconvert_sequence_into_batch_file27(self):
@@ -438,7 +438,7 @@ class TestYaml(unittest.TestCase):
                        project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]
-        context["Python%s" % vers] = "C:\\Python%s_x64" % vers
+        context[f"Python{vers}"] = f"C:\\Python{vers}_x64"
         obj, name = load_yaml(yml, context=context, platform=platform)
         self.assertTrue(name is not None)
         res = list(enumerate_convert_yaml_into_instructions(

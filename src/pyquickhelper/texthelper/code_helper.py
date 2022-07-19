@@ -52,7 +52,7 @@ def add_rst_links(text, values, tag="epkg", n=4):
         for last in range(mx, i, -1):
             w = ''.join(words[i:last])
             if w in values:
-                return last, ":{0}:`{1}`".format(tag, w)
+                return last, f":{tag}:`{w}`"
         return i + 1, words[i]
 
     reg = re.compile("(([\\\"_*`\\w']+)|([\\W]+)|([ \\n]+))")

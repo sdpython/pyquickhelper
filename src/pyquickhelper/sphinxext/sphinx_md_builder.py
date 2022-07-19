@@ -57,7 +57,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def __init__(self, document, builder):
         if not hasattr(builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {}".format(type(builder)))
+                f"Builder has no config: {type(builder)}")
         TextTranslator.__init__(self, document, builder)
 
         newlines = builder.config.text_newlines
@@ -82,7 +82,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("MdBuilder")
-        logger.warning("%s(%s) unsupported formatting" % (type, node))
+        logger.warning(f"{type}({node}) unsupported formatting")
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width
@@ -323,7 +323,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
                 self.add_text(production['tokenname'].ljust(maxlen) + ' ::=')
                 lastname = production['tokenname']
             else:
-                self.add_text('%s    ' % (' ' * len(lastname)))
+                self.add_text(f"{' ' * len(lastname)}    ")
             self.add_text(production.astext() + self.nl)
         self.end_state(wrap=False)
         raise nodes.SkipNode
@@ -339,7 +339,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.new_state(len(self._footnote) + self.indent)
 
     def depart_footnote(self, node):
-        self.end_state(first='[%s] ' % self._footnote)
+        self.end_state(first=f'[{self._footnote}] ')
 
     def visit_citation(self, node):
         if len(node) and isinstance(node[0], nodes.label):
@@ -349,7 +349,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.new_state(len(self._citlabel) + self.indent)
 
     def depart_citation(self, node):
-        self.end_state(first='[%s] ' % self._citlabel)
+        self.end_state(first=f'[{self._citlabel}] ')
 
     def visit_label(self, node):
         raise nodes.SkipNode
@@ -526,10 +526,10 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         uri = atts.get('uri', atts['src'])
         width = atts.get('width', '').replace('px', '').replace("auto", "")
         height = atts.get('height', '').replace('px', '').replace("auto", "")
-        style = " ={0}x{1}".format(width, height)
+        style = f" ={width}x{height}"
         if style == " =x":
             style = ""
-        text = "![{0}]({1}{2})".format(alt, uri, style)
+        text = f"![{alt}]({uri}{style})"
         self.add_text(text)
 
     def depart_image(self, node):
@@ -578,7 +578,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         elif self.list_counter[-1] == -2:
             pass
         else:
-            self.end_state(first='%s. ' % self.list_counter[-1], end=None)
+            self.end_state(first=f'{self.list_counter[-1]}. ', end=None)
 
     def visit_definition_list_item(self, node):
         self._li_has_classifier = len(node) >= 2 and \
@@ -745,11 +745,9 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_pending_xref(self, node):
         if node.get('refexplicit'):
-            text = '[%s](%s.md#%s)' % (
-                node.astext(), node['refdoc'], node['reftarget'])
+            text = f"[{node.astext()}]({node['refdoc']}.md#{node['reftarget']})"
         else:
-            text = '[%s](%s.md#%s)' % (
-                node['reftarget'], node['refdoc'], node['reftarget'])
+            text = f"[{node['reftarget']}]({node['refdoc']}.md#{node['reftarget']})"
         self.add_text(text)
         raise nodes.SkipNode
 
@@ -764,29 +762,26 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
         if 'refuri' not in node:
             if 'name' in node.attributes:
-                self.add_text('[!%s]' % node['name'])
+                self.add_text(f"[!{node['name']}]")
             elif 'refid' in node and node['refid']:
-                self.add_text('[!%s]' % node['refid'])
+                self.add_text(f"[!{node['refid']}]")
             else:
                 self.log_unknown(type(node), node)
         elif 'internal' not in node and 'name' in node.attributes:
-            self.add_text('[%s](%s)' %
-                          (node['name'], clean_refuri(node['refuri'])))
+            self.add_text(f"[{node['name']}]({clean_refuri(node['refuri'])})")
             raise nodes.SkipNode
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
-            self.add_text('[%s](%s)' %
-                          (anchor, clean_refuri(node['refuri'])))
+            self.add_text(f"[{anchor}]({clean_refuri(node['refuri'])})")
             raise nodes.SkipNode
         elif 'reftitle' in node:
             name = node['name'] if 'name' in node else node.astext()
-            self.add_text('[%s](%s)' %
-                          (name, clean_refuri(node['refuri'])))
+            self.add_text(f"[{name}]({clean_refuri(node['refuri'])})")
             raise nodes.SkipNode
         else:
             name = node['name'] if 'name' in node else node.astext()
-            self.add_text('[%s](%s)' % (name, node['refuri']))
+            self.add_text(f"[{name}]({node['refuri']})")
             raise nodes.SkipNode
         if 'internal' in node:
             raise nodes.SkipNode
@@ -829,7 +824,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def depart_abbreviation(self, node):
         if node.hasattr('explanation'):
-            self.add_text(' (%s)' % node['explanation'])
+            self.add_text(f" ({node['explanation']})")
 
     def visit_title_reference(self, node):
         # self.log_unknown("title_reference", node)
@@ -857,11 +852,11 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         pass
 
     def visit_footnote_reference(self, node):
-        self.add_text('[%s]' % node.astext())
+        self.add_text(f'[{node.astext()}]')
         raise nodes.SkipNode
 
     def visit_citation_reference(self, node):
-        self.add_text('[%s]' % node.astext())
+        self.add_text(f'[{node.astext()}]')
         raise nodes.SkipNode
 
     def visit_Text(self, node):
@@ -892,7 +887,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_system_message(self, node):
         self.new_state(0)
-        self.add_text('<SYSTEM MESSAGE: %s>' % node.astext())
+        self.add_text(f'<SYSTEM MESSAGE: {node.astext()}>')
         self.end_state()
         raise nodes.SkipNode
 
@@ -926,7 +921,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
             ev = eval(expr)
         except Exception as e:  # pragma: no cover
             raise ValueError(
-                "Unable to interpret expression '{0}'".format(expr))
+                f"Unable to interpret expression '{expr}'")
         return ev
 
     def visit_only(self, node):
@@ -1070,7 +1065,7 @@ class MdBuilder(Builder):
         """
         Overwrite *get_target_uri* to control file names.
         """
-        return "{0}/{1}.md".format(self.outdir, pagename).replace("\\", "/")
+        return f"{self.outdir}/{pagename}.md".replace("\\", "/")
 
     def write_doc(self, docname, doctree):
         destination = StringOutput(encoding='utf-8')

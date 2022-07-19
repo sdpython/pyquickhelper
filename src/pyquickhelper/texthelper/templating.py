@@ -65,4 +65,4 @@ def apply_template(text, context, engine="mako"):
         return res
 
     raise ValueError(  # pragma: no cover
-        "Engine should be 'mako' or 'jinja2', not '{0}'.".format(engine))
+        f"Engine should be 'mako' or 'jinja2', not '{engine}'.")

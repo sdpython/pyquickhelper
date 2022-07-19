@@ -7,11 +7,11 @@ import sys
 import os
 import unittest
 import shutil
-
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
 from pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
 from pyquickhelper.ipythonhelper import read_nb
+from pyquickhelper.filehelper.internet_helper import ReadUrlException
 
 
 class TestNotebookAPI(ExtTestCase):
@@ -36,7 +36,11 @@ class TestNotebookAPI(ExtTestCase):
 
         temp = get_temp_folder(__file__, "temp_nb_api_html")
         outfile = os.path.join(temp, "out_nb_slides.slides.html")
-        res = nb2slides(nbr, outfile)
+        try:
+            res = nb2slides(nbr, outfile)
+        except ReadUrlException as e:
+            warnings.warn(e)
+            return
         self.assertGreater(len(res), 1)
         for r in res:
             self.assertExists(r)
@@ -85,13 +89,13 @@ class TestNotebookAPI(ExtTestCase):
         if not os.path.exists(fold):
             os.mkdir(fold)
         for tpl in ['rst', 'display_priority', 'null']:
-            sty = os.path.join(fold, '%s.tpl' % tpl)
-            sr = os.path.join(temp, '..', 'data', '%s.tpl' % tpl)
+            sty = os.path.join(fold, f'{tpl}.tpl')
+            sr = os.path.join(temp, '..', 'data', f'{tpl}.tpl')
             if not os.path.exists(sr):
                 raise FileNotFoundError(sr)
             if not os.path.exists(sty):
                 shutil.copy(sr, fold)
-            if not os.path.exists('%s.tpl' % tpl):
+            if not os.path.exists(f'{tpl}.tpl'):
                 shutil.copy(sr, '.')
 
         outfile = os.path.join(temp, "out_nb_slides.rst")

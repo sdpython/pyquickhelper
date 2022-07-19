@@ -37,11 +37,11 @@ pwd = keyring.get_password("jenkins", "pwd")
 key = "Python%d%d" % sys.version_info[:2]
 engines = {key: os.path.abspath(os.path.dirname(sys.executable))}
 if sys.platform.startswith("win"):
-    folder = "C:\\%s\\github\\_whl" % get_user()
+    folder = f"C:\\{get_user()}\\github\\_whl"
     location = "c:\\jenkins\\pymy"
     suf = "win"
 else:
-    folder = "/home/%s/github/_whl" % get_user()
+    folder = f"/home/{get_user()}/github/_whl"
     location = "/usr/local/Python%d.%d" % sys.version_info[:2]
     suf = "lin"
 
@@ -51,7 +51,7 @@ if not os.path.exists("build"):
 
 #################################
 # Loads the yml template.
-yml = os.path.join(folder, ".local.jenkins.%s.yml" % suf)
+yml = os.path.join(folder, f".local.jenkins.{suf}.yml")
 with open(yml, "r", encoding="utf-8") as f:
     content = f.read()
 
@@ -66,15 +66,15 @@ ymls = []
 for mod in ["polylearn", "dynd-python"]:
     new_content = content.replace("__MODULE__", mod)
     yml = os.path.join(
-        "build", ".local.jenkins.{1}.{0}.yml".format(mod, "lin"))
+        "build", f".local.jenkins.lin.{mod}.yml")
     with open(yml, "w", encoding="utf-8") as f:
         f.write(new_content)
-    batch = os.path.join(folder, "windows", "build_{0}.bat".format(mod))
+    batch = os.path.join(folder, "windows", f"build_{mod}.bat")
     with open(batch, "r", encoding="utf-8") as f:
         cbat = f.read()
     with open(yml, "w", encoding="utf-8") as f:
         f.write(new_content)
-    toadd = [dict(name="build_{0}.bat".format(mod),
+    toadd = [dict(name=f"build_{mod}.bat",
                   content=cbat)]
     ymls.append(("yml", yml, dict(scripts=toadd)))
 

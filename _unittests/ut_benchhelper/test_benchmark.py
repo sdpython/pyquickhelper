@@ -91,7 +91,7 @@ class TestBenchMark(unittest.TestCase):
 
         # clear one cache
         name = bench._metrics[0]["_btry"]
-        look = os.path.join(temp, "cache.pickle.{0}.clean_cache".format(name))
+        look = os.path.join(temp, f"cache.pickle.{name}.clean_cache")
         if not os.path.exists(look):
             raise FileNotFoundError(look)
         os.remove(look)

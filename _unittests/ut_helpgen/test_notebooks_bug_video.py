@@ -30,13 +30,13 @@ class TestNoteBooksBugVideo(ExtTestCase):
         if not os.path.exists(fold):
             os.mkdir(fold)
         for tpl in ['article']:
-            sty = os.path.join(fold, '%s.tplx' % tpl)
-            sr = os.path.join(temp, '..', 'data', '%s.tplx' % tpl)
+            sty = os.path.join(fold, f'{tpl}.tplx')
+            sr = os.path.join(temp, '..', 'data', f'{tpl}.tplx')
             if not os.path.exists(sr):
                 raise FileNotFoundError(sr)
             if not os.path.exists(sty):
                 shutil.copy(sr, fold)
-            if not os.path.exists('%s.tplx' % tpl):
+            if not os.path.exists(f'{tpl}.tplx'):
                 shutil.copy(sr, '.')
 
         clog("process_notebooks: begin")

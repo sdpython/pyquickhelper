@@ -58,9 +58,9 @@ def _get_html(obj):
             plt.close(obj)  # keep from displaying twice
         new_bytes = base64.b64encode(png_rep)
         new_str = new_bytes.decode("utf8")
-        return '<img src="data:image/png;base64,{0}">'.format(new_str)
+        return f'<img src="data:image/png;base64,{new_str}">'
     else:
-        return "<p> {0} </p>".format(str(obj))
+        return f"<p> {str(obj)} </p>"
 
     rep = ip.display_formatter.formatters['text/html'](obj)
 
@@ -172,7 +172,7 @@ class StaticInteract(object):
         results = [self.function(**dict(zip(names, vals)))
                    for vals in itertools.product(*values)]
 
-        divnames = [''.join(['{0}{1}'.format(n, self._get_strrep(v))
+        divnames = [''.join([f'{n}{self._get_strrep(v)}'
                              for n, v in zip(names, vals)])
                     for vals in itertools.product(*values)]
         display = [vals == defaults for vals in itertools.product(*values)]

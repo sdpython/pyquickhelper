@@ -44,7 +44,7 @@ class TestSphinxDocFull (ExtTestCase):
         utils_sphinx_doc.prepare_file_for_sphinx_help_generation(
             store_obj, file, temp, silent=True,
             subfolders=[("src/" + project_var_name, project_var_name), ],
-            rootrep=("ut_helpgen.temp_doc.%s." % (project_var_name,), ""),
+            rootrep=(f"ut_helpgen.temp_doc.{project_var_name}.", ""),
             optional_dirs=[], mapped_function=[(".*[.]tohelp$", None)],
             issues=issues, module_name=project_var_name)
 
@@ -89,16 +89,16 @@ class TestSphinxDocFull (ExtTestCase):
                 for k, v in store_obj.items():
                     if isinstance(v, list):
                         for o in v:
-                            stk.append("storedl %s=%s " % (k, o.rst_link()))
+                            stk.append(f"storedl {k}={o.rst_link()} ")
                     else:
-                        stk.append("stored  %s=%s " % (k, v.rst_link()))
+                        stk.append(f"stored  {k}={v.rst_link()} ")
                 mes += "\nstored:\n" + "\n".join(sorted(stk))
                 name = func[0][1].split("'")[-2]
                 with open(name, "r", encoding="utf-8") as f:
                     content = f.read()
                 mes += "\n-------------FILE------------\n" + content
                 raise AssertionError(
-                    "issues detected for function '{0}' - {1}\n{2}".format(f, func, mes))
+                    f"issues detected for function '{f}' - {func}\n{mes}")
 
         exclude = os.path.join(temp, "pyquickhelper",
                                "helpgen", "utils_sphinx_doc.py")

@@ -80,8 +80,8 @@ class TocDelayDirective(Directive):
         spl = rule.split(",")
         if len(spl) > 4:
             ret.append(self.state.document.reporter.warning(
-                "tocdelay rule is wrong: '{0}' ".format(rule) +
-                'document %r' % docname, line=self.lineno))
+                f"tocdelay rule is wrong: '{rule}' " +
+                f'document {docname!r}', line=self.lineno))
         elif len(spl) == 4:
             rule = tuple(spl)
         else:
@@ -113,8 +113,8 @@ class TocDelayDirective(Directive):
                     name = gr[1].strip()
                 else:
                     ret.append(self.state.document.reporter.warning(
-                        "tocdelay: wrong format for '{0}' ".format(name) +
-                        'document %r' % docname, line=self.lineno))
+                        f"tocdelay: wrong format for '{name}' " +
+                        f'document {docname!r}', line=self.lineno))
             else:
                 title = None
 
@@ -221,11 +221,11 @@ def transform_tocdelay(app, doctree, fromdocname):
         for name, subname, extitle in docs:
             if not os.path.exists(subname):
                 raise FileNotFoundError(
-                    "Unable to find document '{0}'".format(subname))
+                    f"Unable to find document '{subname}'")
 
             # The doctree it needs is not necessarily accessible from the main node
             # as they are not necessarily attached to it.
-            subname = "{0}/{1}".format(dirdocname, name)
+            subname = f"{dirdocname}/{name}"
             doc_doctree = env.get_doctree(subname)
             if doc_doctree is None:
                 logger.info("[tocdelay] ERROR (4): No doctree found for '{0}' from '{1}'".format(
@@ -238,7 +238,7 @@ def transform_tocdelay(app, doctree, fromdocname):
                     diginto.append(n)
             if len(diginto) == 0:
                 logger.info(
-                    "[tocdelay] ERROR (3): No node '{0}' found for '{1}'".format(clname, subname))
+                    f"[tocdelay] ERROR (3): No node '{clname}' found for '{subname}'")
                 continue
 
             # It takes the first one available.
@@ -259,11 +259,11 @@ def transform_tocdelay(app, doctree, fromdocname):
 
             if tocid not in rootnode.attributes:
                 logger.warning(
-                    "[tocdelay] ERROR (7): Unable to find 'tocid' in '{0}'".format(rootnode))
+                    f"[tocdelay] ERROR (7): Unable to find 'tocid' in '{rootnode}'")
                 continue
             if tocdoc not in rootnode.attributes:
                 logger.warning(
-                    "[tocdelay] ERROR (8): Unable to find 'tocdoc' in '{0}'".format(rootnode))
+                    f"[tocdelay] ERROR (8): Unable to find 'tocdoc' in '{rootnode}'")
                 continue
             refid = rootnode[tocid]
             refdoc = rootnode[tocdoc]
@@ -271,14 +271,14 @@ def transform_tocdelay(app, doctree, fromdocname):
             subnode = list(rootnode.traverse(nodes.title))
             if not subnode:
                 logger.warning(
-                    "[tocdelay] ERROR (5): Unable to find a title in '{0}'".format(subname))
+                    f"[tocdelay] ERROR (5): Unable to find a title in '{subname}'")
                 continue
             subnode = subnode[0]
 
             try:
                 refuri = app.builder.get_relative_uri(nodedocname, refdoc)
                 logger.info(
-                    "[tocdelay] add link for '{0}' - '{1}' from '{2}'".format(refid, refdoc, nodedocname))
+                    f"[tocdelay] add link for '{refid}' - '{refdoc}' from '{nodedocname}'")
             except NoUri:
                 docn = list(sorted(app.builder.docnames))
                 logger.info("[tocdelay] ERROR (9): unable to find a link for '{0}' - '{1}' from '{2}` -- {3} - {4}".format(
@@ -301,7 +301,7 @@ def _print_loop_on_children(node, indent="", msg="-"):
     logger = logging.getLogger("tocdelay")
     if hasattr(node, "children"):
         logger.info(
-            "[tocdelay] '{0}' - {1} - {2}".format(type(node), msg, node))
+            f"[tocdelay] '{type(node)}' - {msg} - {node}")
         for child in node.children:
             logger.info("[tocdelay]       {0}{1} - '{2}'".format(indent, type(child),
                                                                  child.astext().replace("\n", " #EOL# ")))

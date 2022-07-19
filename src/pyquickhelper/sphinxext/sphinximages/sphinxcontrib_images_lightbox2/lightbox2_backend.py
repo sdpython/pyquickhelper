@@ -31,18 +31,17 @@ class LightBox2(Backend):
 
         if node['show_caption'] is True:
             writer.body.append(
-                '''<figure class="{cls}">
-            '''.format(cls=' '.join(node['classes']),))
+                f'''<figure class="{' '.join(node['classes'])}">
+            ''')
             if node['legacy_classes']:
                 writer.body.append(
-                    '''<a class="{legcls}"'''.format(legcls=' '.join(node['legacy_classes']),))
+                    f"<a class=\"{' '.join(node['legacy_classes'])}\"")
             else:
                 writer.body.append('''<a ''')
         else:
-            writer.body.append('''<a class="{cls}"'''.format(
-                cls=' '.join(node['classes']),))
+            writer.body.append(f'''<a class="{' '.join(node['classes'])}\"''')
         if node['target']:
-            writer.body.append(' href="{0}" '.format(node['target']))
+            writer.body.append(f" href=\"{node['target']}\" ")
         writer.body.append(
             '''
                data-lightbox="{group}"
@@ -70,6 +69,6 @@ class LightBox2(Backend):
         "translator method"
         writer.body.append('</a>')
         if node['show_caption'] is True:
-            writer.body.append('''<figcaption>{title}</figcaption>
-            '''.format(title=node['title'],))
+            writer.body.append(f'''<figcaption>{node['title']}</figcaption>
+            ''')
             writer.body.append('</figure>')

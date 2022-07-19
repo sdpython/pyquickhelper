@@ -54,11 +54,11 @@ class TestPy3to2(unittest.TestCase):
                 break
 
         if pyexe2 is not None:
-            cmd = "{0} {1}".format(pyexe2, to)
+            cmd = f"{pyexe2} {to}"
             out, err = run_cmd(cmd, wait=True)
             if len(err) > 0:
                 raise Exception(
-                    "conversion did not work:\nOUT\n:{0}\nERR:\n{1}".format(out, err))
+                    f"conversion did not work:\nOUT\n:{out}\nERR:\n{err}")
         else:
             fLOG("python 2.7 was not found")
 

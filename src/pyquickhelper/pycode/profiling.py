@@ -40,7 +40,7 @@ class ProfileNode:
     def __init__(self, filename, line, func_name, nc1, nc2, tin, tall):
         if "method 'disable' of '_lsprof.Profiler'" in func_name:
             raise RuntimeError(  # pragma: no cover
-                "Function not allowed in the profiling: %r." % func_name)
+                f"Function not allowed in the profiling: {func_name!r}.")
         self.filename = filename
         self.line = line
         self.func_name = func_name
@@ -194,7 +194,7 @@ class ProfileNode:
             sortk = sort_key_tin
         else:
             raise NotImplementedError(
-                "Unable to sort subcalls with this key %r." % sort_key)
+                f"Unable to sort subcalls with this key {sort_key!r}.")
 
         def depth_first(node, roots_keys, indent=0):
             text = {'fct': node.func_name, 'where': node.key,
@@ -311,7 +311,7 @@ class ProfileNode:
             sortk = sort_key_tin
         else:
             raise NotImplementedError(
-                "Unable to sort subcalls with this key %r." % sort_key)
+                f"Unable to sort subcalls with this key {sort_key!r}.")
 
         def walk(node, roots_keys, indent=0):
             item = {'details': {
@@ -324,7 +324,7 @@ class ProfileNode:
             for n, nel in sorted(zip(node.calls_to,
                                      node.calls_to_elements),
                                  key=sortk):
-                key = (nel[0], "%1.5f:%s" % (nel[3], n.func_name))
+                key = (nel[0], f"{nel[3]:1.5f}:{n.func_name}")
                 if n.key in roots_keys:
                     details = {'fct': n.func_name, 'where': n.key,
                                'nc1': nel[0], 'nc2': nel[1], 'tin': nel[2],
@@ -342,7 +342,7 @@ class ProfileNode:
             if len(child) > 0:
                 mx = max(_[0] for _ in child)
                 dg = int(math.log(mx) / math.log(10) + 1.5)
-                form = "%-{}d-%s".format(dg)
+                form = f"%-{dg}d-%s"
                 child = OrderedDict((form % k, v) for k, v in child.items())
                 item['calls'] = child
             return item
@@ -356,11 +356,11 @@ class ProfileNode:
         for root in sorted(roots, key=sortk):
             if filter_node is not None and not filter_node(root):
                 continue
-            key = (root.nc1, "%1.5f:::%s" % (root.tall, root.func_name))
+            key = (root.nc1, f"{root.tall:1.5f}:::{root.func_name}")
             rows[key] = walk(root, roots_key)
         mx = max(_[0] for _ in rows)
         dg = int(math.log(mx) / math.log(10) + 1.5)
-        form = "%-{}d-%s".format(dg)
+        form = f"%-{dg}d-%s"
         rows = OrderedDict((form % k, v) for k, v in rows.items())
         if as_str:
             return json.dumps({'profile': rows}, **kwargs)
@@ -533,9 +533,9 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
 
             def better_name(row):
                 if len(row['fct']) > 15:
-                    return "{}-{}".format(row['file'].split(':')[-1], row['fct'])
+                    return f"{row['file'].split(':')[-1]}-{row['fct']}"
                 name = row['file'].replace("\\", "/")
-                return "{}-{}".format(name.split('/')[-1], row['fct'])
+                return f"{name.split('/')[-1]}-{row['fct']}"
 
             rows = _process_pstats(ps, clean_text)
             import pandas
@@ -587,7 +587,7 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
         if return_results:
             return fct_res, profiler, profiler.output_html()
         return profiler, profiler.output_html()
-    raise ValueError("Unknown format '{}'.".format(pyinst_format))
+    raise ValueError(f"Unknown format '{pyinst_format}'.")
 
 
 def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
@@ -652,7 +652,7 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
     nodes = {}
     for k, v in ps.stats.items():
         if verbose and fLOG is not None:
-            fLOG("[pstats] %s=%r" % (k, v))
+            fLOG(f"[pstats] {k}={v!r}")
         if len(v) < 5:
             continue
         if k[0] == '~' and len(v) == 0:
@@ -666,7 +666,7 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
             nc1=v[0], nc2=v[1], tin=v[2], tall=v[3])
         if node.key in nodes:
             raise RuntimeError(  # pragma: no cover
-                "Key %r is already present, node=%r." % (node.key, node))
+                f"Key {node.key!r} is already present, node={node!r}.")
         nodes[node.key] = node
 
     for k, v in ps.stats.items():

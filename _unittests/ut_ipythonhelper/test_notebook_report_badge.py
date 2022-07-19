@@ -44,7 +44,7 @@ class TestNotebookReportBadge(unittest.TestCase):
                 c2 = f.read()
             if c1 != c2:
                 raise Exception(
-                    "Difference in '{0}' and '{1}'".format(img, exp))
+                    f"Difference in '{img}' and '{exp}'")
 
 
 if __name__ == "__main__":

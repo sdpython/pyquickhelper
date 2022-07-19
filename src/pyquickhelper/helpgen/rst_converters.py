@@ -281,7 +281,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
             destination_path=destination_path)
     else:
         raise ValueError(
-            "Unexpected writer '{0}', should be 'rst' or 'html' or 'md' or 'elatex' or 'text'.".format(writer))
+            f"Unexpected writer '{writer}', should be 'rst' or 'html' or 'md' or 'elatex' or 'text'.")
 
     if writer is None and directives is not None and len(directives) > 0:
         raise NotImplementedError(
@@ -329,8 +329,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
             lang.labels[name] = TITLES[language][name]
 
     for k, v in sorted(settings_overrides.items()):
-        fLOG("[rst2html] {0}={1}{2}".format(
-            k, v, " --- added" if hasattr(config, k) else ""))
+        fLOG(f"[rst2html] {k}={v}{' --- added' if hasattr(config, k) else ''}")
     for k, v in sorted(settings_overrides.items()):
         if hasattr(writer.builder.config, k) and writer.builder.config[k] != v:
             writer.builder.config[k] = v
@@ -375,12 +374,12 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     else:
         page = None
         pages = []
-        main = ("/{0}.m.html".format(document_name),
-                "/{0}.m.{1}".format(document_name, writer_name),
+        main = (f"/{document_name}.m.html",
+                f"/{document_name}.m.{writer_name}",
                 document_name)
         if not hasattr(writer.builder, "iter_pages"):
             raise AttributeError(
-                "Class '{0}' must have a method 'iter_pages' which returns a dictionary.".format(writer.builder))
+                f"Class '{writer.builder}' must have a method 'iter_pages' which returns a dictionary.")
         contents = []
         for k, v in writer.builder.iter_pages():
             pages.append(k)
@@ -392,7 +391,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
             page = contents[0]
         if page is None:
             raise ValueError(
-                "No page contents was produced, only '{0}'.".format(pages))
+                f"No page contents was produced, only '{pages}'.")
         if layout == "sphinx":
             if isinstance(page, str):
                 return page
@@ -414,7 +413,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
             return res
         else:
             raise ValueError(
-                "Unexpected value for layout '{0}'".format(layout))
+                f"Unexpected value for layout '{layout}'")
 
 
 def correct_indentation(text):

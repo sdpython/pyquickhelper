@@ -17,14 +17,14 @@ def get_parser(encrypt):
     """
     task = "encrypt_file" if encrypt else "decrypt_file"
     parser = argparse.ArgumentParser(prog=task,
-                                     description='%s a file' % task +
+                                     description=f'{task} a file' +
                                      '\ndoes not work well in Python 2.7 with pycryptodome')
     parser.add_argument(
         'source',
-        help='file to %s' % task)
+        help=f'file to {task}')
     parser.add_argument(
         'dest',
-        help='location of the %sed file' % task)
+        help=f'location of the {task}ed file')
     parser.add_argument(
         'password',
         help='password, usually an ascii string with 16x characters')

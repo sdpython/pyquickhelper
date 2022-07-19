@@ -131,12 +131,12 @@ class _AdditionalVisitDepart:
         doctree = self.output_format in ('doctree', 'doctree.txt')
         if not(rst or html or latex or md or doctree):
             raise ValueError(  # pragma: no cover
-                "Unknown output format '{0}'.".format(self.output_format))
+                f"Unknown output format '{self.output_format}'.")
         try:
             ev = eval(expr)
         except Exception:  # pragma: no cover
             raise ValueError(
-                "Unable to interpret expression '{0}'".format(expr))
+                f"Unable to interpret expression '{expr}'")
         return ev
 
     def visit_only(self, node):
@@ -258,7 +258,7 @@ class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXT
             builder, document = document, builder
         if not hasattr(builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {} - {}".format(type(builder), type(document)))
+                f"Builder has no config: {type(builder)} - {type(document)}")
         EnhancedLaTeXTranslator.__init__(
             self, document, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'md')
@@ -433,12 +433,12 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
             self, EnhancedLaTeXWriter, LatexTranslatorWithCustomDirectives, app)
         if not hasattr(self.builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {}".format(type(self.builder)))
+                f"Builder has no config: {type(self.builder)}")
 
     def translate(self):
         if not hasattr(self.builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {}".format(type(self.builder)))
+                f"Builder has no config: {type(self.builder)}")
         # The instruction
         # visitor = self.builder.create_translator(self.document, self.builder)
         # automatically adds methods visit_ and depart_ for translator
@@ -563,15 +563,15 @@ class _MemoryBuilder:
             return self.config.master_doc + '-#' + docname
         else:
             docs = ", ".join(  # pragma: no cover
-                sorted("'{0}'".format(_) for _ in self.env.all_docs))
+                sorted(f"'{_}'" for _ in self.env.all_docs))
             raise ValueError(  # pragma: no cover
-                "docname='{0}' should be in 'self.env.all_docs' which contains:\n{1}".format(docname, docs))
+                f"docname='{docname}' should be in 'self.env.all_docs' which contains:\n{docs}")
 
     def get_outfilename(self, pagename):
         """
         Overwrites *get_target_uri* to control file names.
         """
-        return "{0}/{1}.m.html".format(self.outdir, pagename).replace("\\", "/")
+        return f"{self.outdir}/{pagename}.m.html".replace("\\", "/")
 
     def handle_page(self, pagename, addctx, templatename='page.html',
                     outfilename=None, event_arg=None):
@@ -611,8 +611,8 @@ class _MemoryBuilder:
                 if value is not None:
                     attrs.append('%s="%s"' % (key, htmlescape(    # pylint: disable=W1505
                         value, True)))  # pylint: disable=W1505
-            attrs.append('href="%s"' % pathto(css.filename, resource=True))
-            return '<link %s />' % ' '.join(attrs)
+            attrs.append(f'href="{pathto(css.filename, resource=True)}"')
+            return f"<link {' '.join(attrs)} />"
         ctx['css_tag'] = css_tag
 
         def hasdoc(name):
@@ -860,7 +860,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
     def _get_filename(self, targetname, encoding='utf-8', overwrite_if_changed=True):
         if not isinstance(targetname, str):
             raise TypeError(  # pragma: no cover
-                "targetname must be a string: {0}".format(targetname))
+                f"targetname must be a string: {targetname}")
         destination = MemoryLatexBuilder.EnhancedStringIO()
         self.built_pages[targetname] = destination
         return destination
@@ -1033,8 +1033,7 @@ class _CustomSphinx(Sphinx):
 
         # say hello to the world
         from sphinx import __display_version__
-        self.info('Running Sphinx v%s' %
-                  __display_version__)  # pragma: no cover
+        self.info(f'Running Sphinx v{__display_version__}')  # pragma: no cover
 
         # notice for parallel build on macOS and py38+
         if sys.version_info > (3, 8) and platform.system() == 'Darwin' and parallel > 1:
@@ -1146,7 +1145,7 @@ class _CustomSphinx(Sphinx):
 
         # the config file itself can be an extension
         if self.config.setup:
-            prefix = 'while setting up extension %s:' % "conf.py"
+            prefix = f"while setting up extension {'conf.py'}:"
             if prefixed_warnings is not None:
                 with prefixed_warnings(prefix):
                     if callable(self.config.setup):
@@ -1212,7 +1211,7 @@ class _CustomSphinx(Sphinx):
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
-                "self.env is not _CustomBuildEnvironment: '{0}' buildername='{1}'".format(type(self.env), buildername))
+                f"self.env is not _CustomBuildEnvironment: '{type(self.env)}' buildername='{buildername}'")
 
         # addition
         self._extended_init_()
@@ -1241,7 +1240,7 @@ class _CustomSphinx(Sphinx):
                     self.env.setup(self)
                 self.info('done')
             except Exception as err:
-                self.info('failed: %s' % err)
+                self.info(f'failed: {err}')
                 self._init_env(freshenv=True)
         elif self.env is None:  # pragma: no cover
             self.env = _CustomBuildEnvironment(self)
@@ -1303,7 +1302,7 @@ class _CustomSphinx(Sphinx):
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
-                "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
+                f"self.env is not _CustomBuildEnvironment: '{type(self.env)}'")
         if not isinstance(self.builder.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
                 "self.builder.env is not _CustomBuildEnvironment: '{0}'".format(
@@ -1369,7 +1368,7 @@ class _CustomSphinx(Sphinx):
                 self.registry.load_extension(self, extname)
         except Exception as e:  # pragma: no cover
             raise ExtensionError(
-                "Unable to setup extension '{0}'".format(extname)) from e
+                f"Unable to setup extension '{extname}'") from e
         finally:
             logger.logger = disa
 
@@ -1384,7 +1383,7 @@ class _CustomSphinx(Sphinx):
                 """Run the plot directive."""
                 logger = getLogger("MockSphinxApp")
                 logger.info(
-                    '[MockSphinxApp] PlotDirective: {}'.format(self.content))
+                    f'[MockSphinxApp] PlotDirective: {self.content}')
                 try:
                     res = old_run(self)
                     logger.info(
@@ -1393,7 +1392,7 @@ class _CustomSphinx(Sphinx):
                 except OSError as e:  # pragma: no cover
                     logger = getLogger("MockSphinxApp")
                     logger.info(
-                        '[MockSphinxApp] PlotDirective failed: {}'.format(e))
+                        f'[MockSphinxApp] PlotDirective failed: {e}')
                 return []
 
             obj.run = run
@@ -1406,12 +1405,12 @@ class _CustomSphinx(Sphinx):
         # For some reason, the directives are missing from the main catalog
         # in docutils.
         for k, v in domain.directives.items():
-            self.add_directive("{0}:{1}".format(domain.name, k), v)
+            self.add_directive(f"{domain.name}:{k}", v)
             if domain.name in ('py', 'std', 'rst'):
                 # We add the directive without the domain name as a prefix.
                 self.add_directive(k, v)
         for k, v in domain.roles.items():
-            self.add_role("{0}:{1}".format(domain.name, k), v)
+            self.add_role(f"{domain.name}:{k}", v)
             if domain.name in ('py', 'std', 'rst'):
                 # We add the role without the domain name as a prefix.
                 self.add_role(k, v)

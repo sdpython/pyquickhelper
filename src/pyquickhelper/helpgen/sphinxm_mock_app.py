@@ -244,7 +244,7 @@ class MockSphinxApp:
                 if exc:
                     raise
                 logger = logging.getLogger("MockSphinxApp")
-                logger.warning('[MockSphinxApp] {0}'.format(e))
+                logger.warning(f'[MockSphinxApp] {e}')
 
     def disconnect_env_collector(self, clname):
         """
@@ -358,7 +358,7 @@ class MockSphinxApp:
                                         new_extensions=new_extensions)
             else:
                 raise ValueError(
-                    "Writer must be 'html', 'rst', 'md', 'elatex', not '{0}'.".format(writer))
+                    f"Writer must be 'html', 'rst', 'md', 'elatex', not '{writer}'.")
 
         if restore:
             logger.disabled = False

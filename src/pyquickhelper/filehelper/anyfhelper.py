@@ -66,7 +66,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                 except FileNotFoundError:  # pragma: no cover
                     # It appends for some weird path.
                     warnings.warn(
-                        "[change_file_status] unable to find '{0}'".format(f), UserWarning)
+                        f"[change_file_status] unable to find '{f}'", UserWarning)
                     continue
                 nmode = status
                 if nmode != mode:
@@ -98,7 +98,7 @@ def change_file_status(folder, status=stat.S_IWRITE, strict=False,
                 except FileNotFoundError:  # pragma: no cover
                     # it appends for some weird path
                     warnings.warn(
-                        "[change_file_status] unable to find '{0}'".format(f), UserWarning)
+                        f"[change_file_status] unable to find '{f}'", UserWarning)
                     continue
                 nmode = mode | stat.S_IWRITE
                 if nmode != mode:
@@ -149,8 +149,7 @@ def read_content_ufs(file_url_stream, encoding="utf8", asbytes=False,
     def check_size(cont):
         if min_size is not None and len(cont) < min_size:
             raise RuntimeError(  # pragma: no cover
-                "File '{}' is smaller than {}.".format(
-                    file_url_stream, min_size))
+                f"File '{file_url_stream}' is smaller than {min_size}.")
 
     if isinstance(file_url_stream, str):
         if is_file_string(file_url_stream) and os.path.exists(file_url_stream):

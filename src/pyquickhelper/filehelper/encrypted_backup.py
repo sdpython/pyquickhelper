@@ -233,7 +233,7 @@ class EncryptedBackup:
             return data
         else:
             raise ValueError(  # pragma: no cover
-                "Unexpected compression algorithm '{0}'.".format(self._compress))
+                f"Unexpected compression algorithm '{self._compress}'.")
 
     def decompress(self, data):
         """
@@ -255,7 +255,7 @@ class EncryptedBackup:
             return data
         else:
             raise ValueError(  # pragma: no cover
-                "Unexpected compression algorithm '{0}'.".format(self._compress))
+                f"Unexpected compression algorithm '{self._compress}'.")
 
     def start_transfering(self):
         """
@@ -349,7 +349,7 @@ class EncryptedBackup:
                 "Load first the mapping with method load_mapping.")
         if path not in self.Mapping:
             raise EncryptedBackupError(  # pragma: no cover
-                "The mapping is not up to date or file '{0}' cannot be found.".format(path))
+                f"The mapping is not up to date or file '{path}' cannot be found.")
         info = self.Mapping[path]
         if len(info.pieces) == 0:
             # the file is empty

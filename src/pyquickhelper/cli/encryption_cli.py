@@ -17,16 +17,16 @@ def get_parser(encrypt):  # pylint: disable=W0621
     """
     task = "encrypt" if encrypt else "decrypt"
     parser = argparse.ArgumentParser(prog=task,
-                                     description='%s a folder.' % task +
+                                     description=f'{task} a folder.' +
                                      '\nFor a second run, the program looks into file status' +
                                      '\nto avoid crypting same file gain, it does only modified files' +
                                      '\nit does not work well in Python 2.7 with pycryptodome.')
     parser.add_argument(
         'source',
-        help='folder to %s' % task)
+        help=f'folder to {task}')
     parser.add_argument(
         'dest',
-        help='location of the %sed files' % task)
+        help=f'location of the {task}ed files')
     parser.add_argument(
         'password',
         help='password, usually an ascii string with 16x characters')
@@ -99,7 +99,7 @@ def do_main(source, dest, password, encrypt,  # pylint: disable=W0621
 
         for file, exc in issue:
             if fLOG:  # pragma: no cover
-                fLOG("{0} -- {1}".format(file, exc))
+                fLOG(f"{file} -- {exc}")
     else:
         enc = EncryptedBackup(key=password, file_tree_node=None,
                               transfer_api=api, root_local=None, file_status=None,

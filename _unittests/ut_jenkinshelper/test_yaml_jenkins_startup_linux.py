@@ -45,11 +45,11 @@ class TestYamlJenkinsStartupLinux(unittest.TestCase):
         for i, r in enumerate(res):
             conf = r[-1]
             if "set current=" in conf.lower():
-                raise Exception("The job is for linux\n{0}".format(conf))
+                raise Exception(f"The job is for linux\n{conf}")
             if "SET " in conf:
-                raise Exception("The job is for linux\n{0}".format(conf))
+                raise Exception(f"The job is for linux\n{conf}")
             if "c:" in conf:
-                raise Exception("The job is for linux\n{0}".format(conf))
+                raise Exception(f"The job is for linux\n{conf}")
             if disp:
                 fLOG(conf)
 

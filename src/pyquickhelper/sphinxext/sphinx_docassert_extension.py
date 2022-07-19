@@ -204,12 +204,12 @@ class OverrideDocFieldTransformer:
 
             if myfunc is None:
                 if len(excs) > 0:
-                    reasons = "\n".join("   {0}".format(e) for e in excs)
+                    reasons = "\n".join(f"   {e}" for e in excs)
                 else:
                     reasons = "unknown"
                 logger = logging.getLogger("docassert")
                 logger.warning(
-                    "[docassert] unable to import object '{0}', reasons:\n{1}".format(docs, reasons))
+                    f"[docassert] unable to import object '{docs}', reasons:\n{reasons}")
                 myfunc = None
 
             if myfunc is None:
@@ -222,7 +222,7 @@ class OverrideDocFieldTransformer:
                 except (TypeError, ValueError):
                     logger = logging.getLogger("docassert")
                     logger.warning(
-                        "[docassert] unable to get signature of '{0}'.".format(docs))
+                        f"[docassert] unable to get signature of '{docs}'.")
                     signature = None
                     parameters = None
 
@@ -253,7 +253,7 @@ class OverrideDocFieldTransformer:
             env = other_self.directive.state.document.settings.env
         except AttributeError as e:
             logger = logging.getLogger("docassert")
-            logger.warning("[docassert] {0}".format(e))
+            logger.warning(f"[docassert] {e}")
             env = None
 
         docname = fieldbody.parent.source.split(':docstring')[0]
@@ -262,7 +262,7 @@ class OverrideDocFieldTransformer:
             if isinstance(entry, nodes.field):
                 logger = logging.getLogger("docassert")
                 logger.warning(
-                    "[docassert] unable to check [nodes.field] {0}".format(entry))
+                    f"[docassert] unable to check [nodes.field] {entry}")
             else:
                 fieldtype, content = entry
                 fieldtypes = types.get(fieldtype.name, {})

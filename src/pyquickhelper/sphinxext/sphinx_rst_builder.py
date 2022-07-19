@@ -67,7 +67,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def __init__(self, document, builder):
         if not hasattr(builder, "config"):
-            raise TypeError("Builder has no config: {}".format(type(builder)))
+            raise TypeError(f"Builder has no config: {type(builder)}")
         TextTranslator.__init__(self, document, builder)
 
         newlines = builder.config.text_newlines
@@ -92,7 +92,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("RstBuilder")
-        logger.warning("[rst] %s(%s) unsupported formatting" % (type, node))
+        logger.warning(f"[rst] {type}({node}) unsupported formatting")
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width
@@ -204,7 +204,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             char = '^'
         text = ''.join(x[1] for x in self.states.pop() if x[0] == -1)
         self.stateindent.pop()
-        self.states[-1].append((0, ['', text, '%s' % (char * len(text)), '']))
+        self.states[-1].append((0, ['', text, f'{char * len(text)}', '']))
 
     def visit_subtitle(self, node):
         # self.log_unknown("subtitle", node)
@@ -332,7 +332,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
                 self.add_text(production['tokenname'].ljust(maxlen) + ' ::=')
                 lastname = production['tokenname']
             else:
-                self.add_text('%s    ' % (' ' * len(lastname)))
+                self.add_text(f"{' ' * len(lastname)}    ")
             self.add_text(production.astext() + self.nl)
         self.end_state(wrap=False)
         raise nodes.SkipNode
@@ -348,7 +348,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.new_state(len(self._footnote) + self.indent)
 
     def depart_footnote(self, node):
-        self.end_state(first='[%s] ' % self._footnote)
+        self.end_state(first=f'[{self._footnote}] ')
 
     def visit_citation(self, node):
         if len(node) and isinstance(node[0], nodes.label):
@@ -358,7 +358,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         self.new_state(len(self._citlabel) + self.indent)
 
     def depart_citation(self, node):
-        self.end_state(first='[%s] ' % self._citlabel)
+        self.end_state(first=f'[{self._citlabel}] ')
 
     def visit_label(self, node):
         raise nodes.SkipNode
@@ -538,11 +538,11 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
     def visit_image(self, node):
         self.new_state(0)
         atts = self.base_visit_image(node, self.builder.rst_image_dest)
-        self.add_text('.. image:: {0}'.format(atts['src']))
+        self.add_text(f".. image:: {atts['src']}")
         for att_name in 'width', 'height', 'alt', 'download':
             if att_name in node.attributes and node.get(att_name) != 'auto':
                 self.new_state(4)
-                self.add_text(":{0}: {1}".format(att_name, node[att_name]))
+                self.add_text(f":{att_name}: {node[att_name]}")
                 self.end_state(wrap=False, end=None)
 
     def depart_image(self, node):
@@ -591,7 +591,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         elif self.list_counter[-1] == -2:
             pass
         else:
-            self.end_state(first='%s. ' % self.list_counter[-1], end=None)
+            self.end_state(first=f'{self.list_counter[-1]}. ', end=None)
 
     def visit_definition_list_item(self, node):
         self._li_has_classifier = len(node) >= 2 and \
@@ -715,7 +715,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_literal_block(self, node):
         if 'language' in node.attributes:
-            self.add_text(".. code-block:: {0}".format(node["language"]))
+            self.add_text(f".. code-block:: {node['language']}")
             if 'linenos' in node.attributes:
                 self.new_state(4)
                 self.add_text(":linenos:")
@@ -786,10 +786,9 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_pending_xref(self, node):
         if node.get('refexplicit'):
-            text = ':py:%s:`%s <%s>`' % (
-                node['reftype'], node.astext(), node['reftarget'])
+            text = f":py:{node['reftype']}:`{node.astext()} <{node['reftarget']}>`"
         else:
-            text = ':py:%s:`%s`' % (node['reftype'], node['reftarget'])
+            text = f":py:{node['reftype']}:`{node['reftarget']}`"
         self.add_text(text)
         raise nodes.SkipNode
 
@@ -839,30 +838,27 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
         if 'refuri' not in node:
             if 'name' in node.attributes:
-                self.add_text('`%s`_' % node['name'])
+                self.add_text(f"`{node['name']}`_")
             elif 'refid' in node and node['refid']:
-                self.add_text(':ref:`%s`' % node['refid'])
+                self.add_text(f":ref:`{node['refid']}`")
             else:
                 self.log_unknown(type(node), node)
         elif 'internal' not in node and 'name' in node.attributes:
-            self.add_text('`%s <%s>`_' %
-                          (node['name'], clean_refuri(node['refuri'])))
+            self.add_text(f"`{node['name']} <{clean_refuri(node['refuri'])}>`_")
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']
-            self.add_text('`%s <%s>`_' %
-                          (anchor, clean_refuri(node['refuri'])))
+            self.add_text(f"`{anchor} <{clean_refuri(node['refuri'])}>`_")
         elif 'reftitle' in node:
             # Include node as text, rather than with markup.
             # reST seems unable to parse a construct like ` ``literal`` <url>`_
             # Hence it reverts to the more simple `literal <url>`_
             name = node['name'] if 'name' in node else node.astext()
-            self.add_text('`%s <%s>`_' %
-                          (name, clean_refuri(node['refuri'])))
+            self.add_text(f"`{name} <{clean_refuri(node['refuri'])}>`_")
             # self.end_state(wrap=False)
         else:
             name = node['name'] if 'name' in node else node.astext()
-            self.add_text('`%s <%s>`_' % (name, node['refuri']))
+            self.add_text(f"`{name} <{node['refuri']}>`_")
         if 'internal' in node:
             raise nodes.SkipNode
 
@@ -904,7 +900,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def depart_abbreviation(self, node):
         if node.hasattr('explanation'):
-            self.add_text(' (%s)' % node['explanation'])
+            self.add_text(f" ({node['explanation']})")
 
     def visit_title_reference(self, node):
         # self.log_unknown("title_reference", node)
@@ -932,11 +928,11 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
         pass
 
     def visit_footnote_reference(self, node):
-        self.add_text('[%s]' % node.astext())
+        self.add_text(f'[{node.astext()}]')
         raise nodes.SkipNode
 
     def visit_citation_reference(self, node):
-        self.add_text('[%s]' % node.astext())
+        self.add_text(f'[{node.astext()}]')
         raise nodes.SkipNode
 
     def visit_Text(self, node):
@@ -967,7 +963,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_system_message(self, node):
         self.new_state(0)
-        self.add_text('<SYSTEM MESSAGE: %s>' % node.astext())
+        self.add_text(f'<SYSTEM MESSAGE: {node.astext()}>')
         self.end_state()
         raise nodes.SkipNode
 
@@ -1031,7 +1027,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             ev = eval(expr)
         except Exception as e:  # pragma: no cover
             raise ValueError(
-                "Unable to interpret expression '{0}'".format(expr))
+                f"Unable to interpret expression '{expr}'")
         return ev
 
     def visit_only(self, node):
@@ -1077,7 +1073,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def visit_inheritance_diagram(self, node):
         self.new_state(0)
-        self.add_text('.. inheritance_diagram:: {0}'.format(node['content']))
+        self.add_text(f".. inheritance_diagram:: {node['content']}")
 
     def depart_inheritance_diagram(self, node):
         self.end_state(wrap=False, end=['\n'])
@@ -1132,10 +1128,10 @@ class _BodyPlaceholder:
             if len(el) > 50:
                 el = el[:50] + "..."
             self.logger.warning(
-                "[rst] body.append was called with string %r." % el)
+                f"[rst] body.append was called with string {el!r}.")
         else:
             self.logger.warning(
-                "[rst] body.append was called with type %r." % type(element))
+                f"[rst] body.append was called with type {type(element)!r}.")
         self.lines.append(element)
 
 
@@ -1224,7 +1220,7 @@ class RstBuilder(Builder):
         """
         Overwrites *get_target_uri* to control file names.
         """
-        return "{0}/{1}.rst".format(self.outdir, pagename).replace("\\", "/")
+        return f"{self.outdir}/{pagename}.rst".replace("\\", "/")
 
     def write_doc(self, docname, doctree):
         destination = StringOutput(encoding='utf-8')

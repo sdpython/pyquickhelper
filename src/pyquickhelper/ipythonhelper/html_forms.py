@@ -73,7 +73,7 @@ def open_html_form(params, title='', key_save="",
 
     row = """<br />{0} <input type="{3}" id="{2}{0}" value="{1}" size="80" />"""
 
-    rows = ["""<div style="{0}"><b>{1}</b>""".format(style, title)]
+    rows = [f"""<div style="{style}"><b>{title}</b>"""]
     for k, v in sorted(params.items()):
         if k.startswith("password"):
             typ = "password"
@@ -81,14 +81,14 @@ def open_html_form(params, title='', key_save="",
             typ = "text"
         rows.append(row.format(k, "" if v is None else str(v), key_save, typ))
     rows.append(
-        """<br /><button onclick="set_value{0}()">Ok</button></div>""".format(key_save))
+        f"""<br /><button onclick="set_value{key_save}()">Ok</button></div>""")
     if hook is not None:
-        rows.append("<div id='out%s'></div>" % key_save.replace("_", ""))
+        rows.append(f"<div id='out{key_save.replace('_', '')}'></div>")
 
     rows.append("""<script type="text/Javascript">""")
     rows.append("function %scallback(msg) {" % key_save)
     rows.append("   var ret = msg.content.data['text/plain'];")
-    rows.append("   $('#out%s').text(ret);" % key_save.replace("_", ""))
+    rows.append(f"   $('#out{key_save.replace('_', '')}').text(ret);")
     rows.append("}")
     rows.append("function set_value__KEY__(){".replace("__KEY__", key_save))
 
@@ -96,8 +96,8 @@ def open_html_form(params, title='', key_save="",
     for k, v in sorted(params.items()):
         rows.append(
             """   var {0}{1}var_value = document.getElementById('{0}{1}').value;""".format(key_save, k))
-        rows.append("""   command += '"{0}":"' + """.format(k) +
-                    "{0}{1}var_value".format(key_save, k) + """ + '",';""")
+        rows.append(f"""   command += '"{k}":"' + """ +
+                    f"{key_save}{k}var_value" + """ + '",';""")
     rows.append("""   command += '}';""")
     rows.append("""   var kernel = IPython.notebook.kernel;""")
     rows.append("""   kernel.execute(command);""")

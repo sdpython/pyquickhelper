@@ -42,7 +42,7 @@ class TestLastCommit (unittest.TestCase):
             for c in last:
                 if not ("0" <= c <= "9" or "a" <= c <= "z"):
                     raise Exception(
-                        "last commit is not a hash: '{0}' - '{1}'".format(last, c))
+                        f"last commit is not a hash: '{last}' - '{c}'")
 
 
 if __name__ == "__main__":

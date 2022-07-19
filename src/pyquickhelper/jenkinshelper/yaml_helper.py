@@ -25,7 +25,7 @@ def pickname(*args):
         if s:
             return s
     raise ValueError(  # pragma: no cover
-        "Unable to find a non empty string in {0}".format(args))
+        f"Unable to find a non empty string in {args}")
 
 
 def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
@@ -61,15 +61,14 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
                     context[k] = f
     if not isinstance(context, dict):
         raise TypeError(  # pragma: no cover
-            "context must be a dictionary not {}.".format(type(context)))
+            f"context must be a dictionary not {type(context)}.")
     if "project_name" not in context:
         project_name = infer_project_name(file_or_buffer, source)
     else:
         project_name = context["project_name"]
     if project_name.endswith("__"):
         raise ValueError(  # pragma: no cover
-            "project_name is wrong, it cannot end by '__': '{0}'"
-            "".format(project_name))
+            f"project_name is wrong, it cannot end by '__': '{project_name}'")
     if "project_name" not in context and project_name is not None:
         context["project_name"] = project_name
 
@@ -83,19 +82,17 @@ def load_yaml(file_or_buffer, context=None, engine="jinja2", platform=None):
         if platform is None:
             platform = get_platform(platform)
         if platform.startswith("win"):
-            addition = "set current={0}\\%NAME_JENKINS%".format(
-                context["root_path"])
+            addition = f"set current={context['root_path']}\\%NAME_JENKINS%"
         else:
-            addition = "export current={0}/$NAME_JENKINS".format(
-                context["root_path"])
-        content = "automatedsetup:\n  - {0}\n{1}".format(addition, content)
+            addition = f"export current={context['root_path']}/$NAME_JENKINS"
+        content = f"automatedsetup:\n  - {addition}\n{content}"
 
     content = apply_template(content, context, engine)
     try:
         return yaml_load(content), project_name
     except Exception as e:  # pragma: no cover
         raise SyntaxError(
-            "Unable to parse content\n{0}".format(content)) from e
+            f"Unable to parse content\n{content}") from e
 
 
 def evaluate_condition(cond, variables=None):
@@ -113,7 +110,7 @@ def evaluate_condition(cond, variables=None):
     if variables is not None:
         for k, v in variables.items():
             rep = "${%s}" % k
-            vv = '"%s"' % v
+            vv = f'"{v}"'
             cond = cond.replace(rep, vv)
             cond = cond.replace(rep.upper(), vv)
     cond = cond.strip()
@@ -124,7 +121,7 @@ def evaluate_condition(cond, variables=None):
         return eval(cond)
     except SyntaxError as e:
         raise SyntaxError(
-            "Unable to interpret '{0}'\nvariables: {1}".format(cond, variables)) from e
+            f"Unable to interpret '{cond}'\nvariables: {variables}") from e
 
 
 def interpret_instruction(inst, variables=None):
@@ -163,7 +160,7 @@ def interpret_instruction(inst, variables=None):
     if isinstance(inst, tuple):
         if len(inst) != 2 or inst[1] is None:
             raise ValueError(  # pragma: no cover
-                "Unable to interpret '{}'.".format(inst))
+                f"Unable to interpret '{inst}'.")
         return (inst[0], interpret_instruction(inst[1], variables))
     if isinstance(inst, dict):
         return inst
@@ -229,7 +226,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
         def_variables = variables.copy()
     if 'Python37' in def_variables and 'Python38' not in def_variables:
         raise RuntimeError(  # pragma: no cover
-            "Key 'Python38' is missing in {}.".format(def_variables))
+            f"Key 'Python38' is missing in {def_variables}.")
     if add_environ:
         for k, v in os.environ.items():
             if k not in def_variables:
@@ -271,8 +268,7 @@ def enumerate_convert_yaml_into_instructions(obj, variables=None, add_environ=Tr
                 if isinstance(value, dict):
                     if 'PATH' not in value:
                         raise KeyError(  # pragma: no cover
-                            "The dictionary should include key 'path': {0}"
-                            "".format(value))
+                            f"The dictionary should include key 'path': {value}")
                     for k, v in sorted(value.items()):
                         if k != 'PATH':
                             variables[k] = v
@@ -323,7 +319,7 @@ def ospathjoin(*args, **kwargs):
     value = build_value(*args, **kwargs)
     if value == "/$PYINT":
         raise RuntimeError(  # pragma: no cover
-            "Impossible values {} - {}.".format(args, kwargs))
+            f"Impossible values {args} - {kwargs}.")
     return value
 
 
@@ -383,14 +379,14 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 "Unable to guess interpreter path from '{0}', platform={1}"
                 "".format(interpreter, platform))
         if iswin:
-            rows.append("set PATH={0};%PATH%".format(path_inter))
+            rows.append(f"set PATH={path_inter};%PATH%")
         else:
-            rows.append("export PATH={0}:$PATH".format(path_inter))
+            rows.append(f"export PATH={path_inter}:$PATH")
         if root_project is not None:
             if iswin:
-                rows.append("set ROOTPROJECT={0}".format(root_project))
+                rows.append(f"set ROOTPROJECT={root_project}")
             else:
-                rows.append("export ROOTPROJECT={0}".format(root_project))
+                rows.append(f"export ROOTPROJECT={root_project}")
 
     rows = []
     splits = [rows]
@@ -438,7 +434,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                 value = d
             p = value["path"] if isinstance(value, dict) else value
             rows.append("")
-            rows.append(echo + " CREATE VIRTUAL ENVIRONMENT in %s" % p)
+            rows.append(echo + f" CREATE VIRTUAL ENVIRONMENT in {p}")
             if not anaconda:
                 if iswin:
                     rows.append('if not exist "{0}" mkdir "{0}"'.format(p))
@@ -447,17 +443,17 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
             if anaconda:
                 pinter = ospathdirname(interpreter, platform=platform)
                 rows.append(
-                    '"{0}" create -y -v -p "{1}" --clone "{2}" --offline --no-update-deps'.format(conda, p, pinter))
+                    f'"{conda}" create -y -v -p "{p}" --clone "{pinter}" --offline --no-update-deps')
                 interpreter = ospathjoin(
                     p, "python", platform=platform)
             else:
                 if iswin:
                     rows.append("set KEEPPATH=%PATH%")
-                    rows.append("set PATH={0};%PATH%".format(venv_interpreter))
+                    rows.append(f"set PATH={venv_interpreter};%PATH%")
                 else:
                     rows.append("export KEEPPATH=$PATH")
                     rows.append(
-                        "export PATH={0}:$PATH".format(venv_interpreter))
+                        f"export PATH={venv_interpreter}:$PATH")
                 pat = '"{0}" -m virtualenv {1}'
                 if isinstance(value, dict):
                     system_site_packages = value.get(
@@ -486,9 +482,9 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                             "'{0}' or '{1}' in \n{2}".format("CMD", 'CMDPY', value))
                     if "NAME" in value:
                         if iswin:
-                            rows.append("set JOB_NAME=%s" % value["NAME"])
+                            rows.append(f"set JOB_NAME={value['NAME']}")
                         else:
-                            rows.append("export JOB_NAME=%s" % value["NAME"])
+                            rows.append(f"export JOB_NAME={value['NAME']}")
                     if "CMD" in value:
                         value = value["CMD"]
                     else:
@@ -500,8 +496,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                     pass
                 else:
                     raise TypeError(  # pragma: no cover
-                        "value must of type list, dict, not '{0}'\n{1}"
-                        "".format(type(value), value))
+                        f"value must of type list, dict, not '{type(value)}'\n{value}")
 
                 rows.append("")
                 rows.append(echo + " " + key.upper())
@@ -519,7 +514,7 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                                     nbrem = int(nbrem)
                                 except ValueError:  # pragma: no cover
                                     raise ValueError(
-                                        "Unable to interpret '{0}'".format(v))
+                                        f"Unable to interpret '{v}'")
                             else:
                                 nbrem = 0
                             rows.extend(value)
@@ -536,15 +531,15 @@ def convert_sequence_into_batch_file(seq, variables=None, platform=None):
                             value.append(error_level)
                 rows.extend(value)
         elif key == 'INFO':
-            vs = '"{0}"'.format(value[1]) if isinstance(
+            vs = f'"{value[1]}"' if isinstance(
                 value[1], str) and " " in value[1] else value[1]
             if iswin:
-                rowsset.append("SET {0}={1}".format(value[0], vs))
+                rowsset.append(f"SET {value[0]}={vs}")
             else:
-                rowsset.append("export {0}={1}".format(value[0], vs))
+                rowsset.append(f"export {value[0]}={vs}")
         else:
             raise ValueError(  # pragma: no cover
-                "unexpected key '{0}'".format(key))
+                f"unexpected key '{key}'")
 
     splits = [rowsset + _ for _ in splits]
     allres = []
@@ -591,15 +586,13 @@ def infer_project_name(file_or_buffer, source):
                 break
         if name is None:
             raise ValueError(  # pragma: no cover
-                "Unable to infer project name for '{0}'".format(
-                    file_or_buffer))
+                f"Unable to infer project name for '{file_or_buffer}'")
         return name
     elif source == "s":
         return "unknown_string"
     else:
         raise ValueError(  # pragma: no cover
-            "Unexpected value for add_source: '{0}' for '{1}'".format(
-                source, file_or_buffer))
+            f"Unexpected value for add_source: '{source}' for '{file_or_buffer}'")
     return last
 
 
@@ -668,7 +661,7 @@ def enumerate_processed_yml(file_or_buffer, context=None, engine="jinja2", platf
             except jenkins.JenkinsException as e:  # pragma: no cover
                 from .jenkins_exceptions import JenkinsExtException
                 raise JenkinsExtException(
-                    "Unable to retrieve job config for name='{0}'.".format(name)) from e
+                    f"Unable to retrieve job config for name='{name}'.") from e
 
             update_job = False
             if j is not None:

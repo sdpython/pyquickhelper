@@ -110,8 +110,7 @@ class TestSphinxDoc (unittest.TestCase):
                     message = [
                         "issues while importing file:" + well + "(" + fi + ")"]
                     message.append(
-                        "  File \"%s\", line 1" %
-                        os.path.abspath(fi))
+                        f"  File \"{os.path.abspath(fi)}\", line 1")
                     message.append("if it fails, you should add these lines:")
                     message.append("""
                             try :
@@ -146,9 +145,8 @@ class TestSphinxDoc (unittest.TestCase):
                     content, fi, silent=True)
             except SyntaxError as e:
                 issue.append(
-                    ("  File \"%s\", line 1," %
-                     fi) +
-                    "    issue 1 (unable to migrate through doxygen '{0}')". format(e))
+                    f"  File \"{fi}\", line 1," +
+                    f"    issue 1 (unable to migrate through doxygen '{e}')")
 
             if "@param" in newc:
                 if "utils_sphinx_doc.py" in fi:
@@ -159,8 +157,7 @@ class TestSphinxDoc (unittest.TestCase):
                     continue
                 fLOG("issue with file", fi)
                 nb.append(
-                    ("  File \"%s\", line 1," %
-                     fi) +
+                    f"  File \"{fi}\", line 1," +
                     "    issue 2 (contains @param)")
 
         for i in issue:

@@ -63,8 +63,7 @@ def yield_sphinx_only_markup_for_pipy(lines):
                 line = regex.sub(sub, line)
         except Exception as ex:  # pragma: no cover
             raise RuntimeError(
-                "[sphinxerror]-A %s, (line(%s)" % (
-                    regex, sub)) from ex
+                f"[sphinxerror]-A {regex}, (line({sub})") from ex
 
         return line
 

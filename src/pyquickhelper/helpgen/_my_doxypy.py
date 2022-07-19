@@ -122,7 +122,7 @@ class FSM(object):
                     self.current_transition = transition
                     if options.debug:  # pragma: no cover
                         sys.stderr.write(
-                            "# FSM: executing ({} -> {}) for line '{}'\n".format(from_state, to_state, input))
+                            f"# FSM: executing ({from_state} -> {to_state}) for line '{input}'\n")
                     callback(match)
                     return
 
@@ -141,17 +141,17 @@ class Doxypy(object):
         string_prefixes = "[uU]?[rR]?"
 
         self.start_single_comment_re = re.compile(
-            "^\\s*%s(''')" % string_prefixes)
+            f"^\\s*{string_prefixes}(''')")
         self.end_single_comment_re = re.compile("(''')\\s*$")
 
         self.start_double_comment_re = re.compile(
-            "^\\s*%s(\"\"\")" % string_prefixes)
+            f"^\\s*{string_prefixes}(\"\"\")")
         self.end_double_comment_re = re.compile("(\"\"\")\\s*$")
 
         self.single_comment_re = re.compile(
-            "^\\s*%s(''').*(''')\\s*$" % string_prefixes)
+            f"^\\s*{string_prefixes}(''').*(''')\\s*$")
         self.double_comment_re = re.compile(
-            "^\\s*%s(\"\"\").*(\"\"\")\\s*$" % string_prefixes)
+            f"^\\s*{string_prefixes}(\"\"\").*(\"\"\")\\s*$")
 
         self.defclass_re = re.compile(
             "^(\\s*)(def .+:|class .+:)\\s*([#].*?)?$")
@@ -299,7 +299,7 @@ class Doxypy(object):
         """
         if self.output:
             if options.debug:  # pragma: no cover
-                sys.stderr.write("# OUTPUT: {0}\n".format(self.output))
+                sys.stderr.write(f"# OUTPUT: {self.output}\n")
             self.print_output("\n".join(self.output), file=self.outstream)
             self.outstream.flush()
         self.output = []
@@ -431,8 +431,8 @@ class Doxypy(object):
         if options.debug:  # pragma: no cover
             self.print_output("# makeCommentBlock", file=sys.stderr)
         indent4 = "    " if len(self.defclass) > 0 else ""
-        doxyStart = "%s\"\"\"" % indent4
-        doxyEnd = "%s\"\"\"" % indent4
+        doxyStart = f"{indent4}\"\"\""
+        doxyEnd = f"{indent4}\"\"\""
 
         commentLines = self.comment
         full_indent = self.indent + indent4

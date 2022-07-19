@@ -61,7 +61,7 @@ class TestDocPage(ExtTestCase):
         ht = ht.replace('src="_images/', 'src="')
         ht = ht.replace('/scripts\\bokeh', '../bokeh_plot\\bokeh')
         ht = ht.replace('/scripts/bokeh', '../bokeh_plot/bokeh')
-        rst = os.path.join(temp, "out.{0}".format(writer))
+        rst = os.path.join(temp, f"out.{writer}")
         self.write_file(rst, ht)
 
         # Tests the content.

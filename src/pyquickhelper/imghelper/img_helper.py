@@ -35,7 +35,7 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
                 res.append(i)
             if len(res) == 0:
                 raise FileNotFoundError(  # pragma: no cover
-                    "Unable to find anything in '{}'.".format(img))
+                    f"Unable to find anything in '{img}'.")
             return res
         from PIL import Image
         obj = Image.open(img)
@@ -43,7 +43,7 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
         obj = img
     else:
         raise TypeError(  # pragma: no cover
-            "Image should be a string or an image not {}.".format(type(img)))
+            f"Image should be a string or an image not {type(img)}.")
     dx, dy = obj.size
     if max_dim is not None:
         if not isinstance(max_dim, int):
@@ -59,7 +59,7 @@ def zoom_img(img, factor=1., max_dim=None, out_file=None, fLOG=None):
         obj = obj.resize((dx, dy))
     if out_file is not None:
         if fLOG is not None:
-            fLOG("Writing '{}' dim=({},{}).".format(out_file, dx, dy))
+            fLOG(f"Writing '{out_file}' dim=({dx},{dy}).")
         obj.save(out_file)
     return obj
 

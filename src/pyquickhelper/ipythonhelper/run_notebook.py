@@ -133,12 +133,12 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
             nbc = payload.read()
         except UnicodeDecodeError as e:  # pragma: no cover
             raise NotebookException(
-                "(2) Unable to read file '{0}' encoding='{1}'.".format(filename, encoding)) from e
+                f"(2) Unable to read file '{filename}' encoding='{encoding}'.") from e
     try:
         nb = reads(nbc)
     except NotJSONError as e:  # pragma: no cover
         raise NotebookException(
-            "(1) Unable to read file '{0}' encoding='{1}'.".format(filename, encoding)) from e
+            f"(1) Unable to read file '{filename}' encoding='{encoding}'.") from e
 
     out = StringIO()
 
@@ -176,7 +176,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                     s = writes(nb_runner.nb)
                 except NotebookException as e:  # pragma: no cover
                     raise NotebookException(
-                        "issue with notebook: '{}'".format(filename)) from e
+                        f"issue with notebook: '{filename}'") from e
                 if isinstance(s, bytes):
                     s = s.decode('utf8')
                 f.write(s)
@@ -304,7 +304,7 @@ def _get_dump_default_path(dump):
                     fold = os.path.join(loc, "..", "..", "_notebook_dumps")
             if not os.path.exists(fold):
                 os.mkdir(fold)
-            dump = os.path.join(fold, "notebook.{0}.txt".format(name))
+            dump = os.path.join(fold, f"notebook.{name}.txt")
             return dump
     return dump
 
@@ -339,10 +339,10 @@ def _existing_dump(dump):
                 df = read_file(dump)
             except Exception as e:
                 raise RuntimeError(
-                    "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
+                    f"Unable to read '{dump}' due to '{e}'") from e
         except Exception as e:  # pragma: no cover
             raise RuntimeError(
-                "Unable to read '{0}' due to '{1}'".format(dump, e)) from e
+                f"Unable to read '{dump}' due to '{e}'") from e
     else:
         df = None
 
@@ -447,13 +447,11 @@ def notebook_coverage(module_or_path, dump=None, too_old=30):
         _doc = os.path.join(fold, "..", "..", "_doc")
         if not os.path.exists(_doc):
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to find path '{0}' for module '{1}'".format(
-                    _doc, module_or_path))
+                f"Unable to find path '{_doc}' for module '{module_or_path}'")
         nbpath = os.path.join(_doc, "notebooks")
         if not os.path.exists(nbpath):
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to find path '{0}' for module '{1}'".format(
-                    nbpath, module_or_path))
+                f"Unable to find path '{nbpath}' for module '{module_or_path}'")
         nbs = explore_folder(nbpath, ".*[.]ipynb$")[1]
     else:
         nbpath = module_or_path
@@ -564,11 +562,10 @@ def badge_notebook_coverage(df, image_name):
     except ValueError:  # pragma: no cover
         val = "?"
     if cov != val:
-        im.text((3, 4), "NB:{0}%-{1}%          ".format(cov, val),
+        im.text((3, 4), f"NB:{cov}%-{val}%          ",
                 (255, 255, 255), font=font)
     else:
-        im.text((3, 4), "NB: {0}%          ".format(
-            cov), (255, 255, 255), font=font)
+        im.text((3, 4), f"NB: {cov}%          ", (255, 255, 255), font=font)
     img.save(image_name)
     return dcov
 
@@ -602,5 +599,5 @@ def retrieve_notebooks_in_folder(folder, posreg=".*[.]ipynb$", negreg=None):
                 res.append(os.path.join(folder, name))
     if len(res) == 0:
         raise FileNotFoundError(  # pragma: no cover
-            "No notebook found in '{0}'.".format(folder))
+            f"No notebook found in '{folder}'.")
     return res

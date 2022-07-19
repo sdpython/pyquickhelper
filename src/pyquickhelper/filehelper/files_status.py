@@ -51,7 +51,7 @@ class FilesStatus:
                                 "expecting a filename and a date on this line: " + _)
                     except Exception as e:
                         raise Exception(  # pragma: no cover
-                            "issue with line:\n  {0} -- {1}".format(_, spl)) from e
+                            f"issue with line:\n  {_} -- {spl}") from e
 
         # contains all file to update
         self.modifiedFile = {}
@@ -127,8 +127,7 @@ class FilesStatus:
             obj = self.copyFiles[file]
             st = os.stat(file)
             if st.st_size != obj.size:
-                reason = "size %s != old size %s" % (
-                    str(st.st_size), typstr(obj.size))
+                reason = f"size {str(st.st_size)} != old size {typstr(obj.size)}"
                 res = True
             else:
                 ld = obj.mdate
@@ -161,7 +160,7 @@ class FilesStatus:
         @param      reason      reason for modification
         """
         if file in self.modifiedFile:
-            raise KeyError("file {0} is already present".format(file))
+            raise KeyError(f"file {file} is already present")
         self.modifiedFile[file] = reason
 
     def add_if_modified(self, file):
@@ -233,7 +232,7 @@ class FilesStatus:
         if delete:
             if file not in self.copyFiles:
                 raise FileNotFoundError(  # pragma: no cover
-                    "Unable to find a file in the list of monitored files: '{0}'.".format(file))
+                    f"Unable to find a file in the list of monitored files: '{file}'.")
             del self.copyFiles[file]
             return None
         st = os.stat(file)

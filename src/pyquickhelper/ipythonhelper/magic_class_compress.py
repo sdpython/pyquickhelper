@@ -70,8 +70,7 @@ class MagicCompress(MagicClassWithHelpers):
             if format == "7z":  # pragma: no cover
                 return zip7_files(dest, files)
             raise ValueError(  # pragma: no cover
-                "Unexpected format: '{0}' from file '{1}'?".format(
-                    format, dest))
+                f"Unexpected format: '{format}' from file '{dest}'?")
         return None
 
 

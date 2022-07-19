@@ -164,8 +164,7 @@ class BlogPost:
 
         if len(objects) != 1:
             raise BlogPostParseError(  # pragma: no cover
-                'no blog post (#={1}) in\n  File "{0}", line 1'.format(
-                    filename, len(objects)))
+                f'no blog post (#={len(objects)}) in\n  File "{filename}", line 1')
 
         post = objects[0]
         for k in post.options:
@@ -191,7 +190,7 @@ class BlogPost:
         if self.Tag > other.Tag:
             return 1
         raise ValueError(  # pragma: no cover
-            "same tag for two BlogPost: {0}".format(self.Tag))
+            f"same tag for two BlogPost: {self.Tag}")
 
     def __lt__(self, other):
         """
@@ -313,16 +312,16 @@ class BlogPost:
         @return                 blog post as RST
         """
         rows = []
-        rows.append(".. %s::" % directive)
+        rows.append(f".. {directive}::")
         for f, v in self.Fields.items():
             if isinstance(v, str):
-                rows.append("    :%s: %s" % (f, v))
+                rows.append(f"    :{f}: {v}")
             else:
-                rows.append("    :%s: %s" % (f, ",".join(v)))
+                rows.append(f"    :{f}: {','.join(v)}")
         if self._filename is not None:
             spl = self._filename.replace("\\", "/").split("/")
             name = "/".join(spl[-2:])
-            rows.append("    :rawfile: %s" % name)
+            rows.append(f"    :rawfile: {name}")
         rows.append("")
 
         def can_cut(i, r, rows_stack):
@@ -379,7 +378,7 @@ class BlogPost:
             r2 = row[i:]
             if "/" in r2:
                 return row
-            row = "{0}{1}/{2}".format(row[:i], self.Year, r2)
+            row = f"{row[:i]}{self.Year}/{r2}"
             return row
         else:
             return row

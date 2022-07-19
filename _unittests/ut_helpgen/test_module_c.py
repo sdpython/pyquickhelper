@@ -113,7 +113,7 @@ class TestModuleC(ExtTestCase):
         path = os.path.abspath(os.path.split(__file__)[0])
         vers = "%d%d" % sys.version_info[:2]
         file = os.path.join(path, "data", "pyd",
-                            "stdchelper.cp%s-win_amd64.pyd" % vers)
+                            f"stdchelper.cp{vers}-win_amd64.pyd")
         if os.path.exists(file):
             mo = import_module(
                 None, file, fLOG, additional_sys_path=None, first_try=True)
@@ -161,13 +161,13 @@ class TestModuleC(ExtTestCase):
         with open(setup, "w") as f:
             f.write(setup_content)
 
-        cmd = "{0} {1} build_ext --inplace".format(sys.executable, setup)
+        cmd = f"{sys.executable} {setup} build_ext --inplace"
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, change_path=temp)
         if "error" in out or "error" in err:
             out_ = out.replace("-Werror=format-security", "")
             if "error" in out_:
                 raise Exception(
-                    "Unable to compile\n--OUT--\n{0}\n--ERR--\n{1}".format(out, err))
+                    f"Unable to compile\n--OUT--\n{out}\n--ERR--\n{err}")
         if sys.platform == "win32":
             name = "stdchelper_demo.cp%d%d-win_amd64.pyd" % sys.version_info[:2]
         elif sys.platform == "darwin":

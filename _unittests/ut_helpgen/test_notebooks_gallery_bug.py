@@ -15,7 +15,7 @@ from pyquickhelper.pycode import get_temp_folder
 class TestNotebookGalleryBug(unittest.TestCase):
 
     def a_test_notebook_gallery_bug(self, layout):
-        temp = get_temp_folder(__file__, "temp_gallery_bug_{0}".format(layout))
+        temp = get_temp_folder(__file__, f"temp_gallery_bug_{layout}")
         fold = os.path.normpath(os.path.join(
             temp, "..", "notebooks_js"))
         self.assertTrue(os.path.exists(fold))

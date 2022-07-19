@@ -71,8 +71,7 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
                 module_name, module_path)
             if spec is None:
                 raise ImportError(  # pragma: no cover
-                    "Cannot import module '{}' from '{}'.".format(
-                        module_name, module_path))
+                    f"Cannot import module '{module_name}' from '{module_path}'.")
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
     if module is None:
@@ -118,4 +117,4 @@ def run_test_function(module, pattern="^test_.*", stop_first=False, verbose=Fals
         raise TestExecutionError(module, None, excs)
     if len(tested) == 0:
         raise ValueError(
-            "No function found in '{}' with pattern '{}'.".format(module, pattern))
+            f"No function found in '{module}' with pattern '{pattern}'.")

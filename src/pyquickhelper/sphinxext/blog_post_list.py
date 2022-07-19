@@ -36,16 +36,16 @@ class BlogPostList:
         for s in sorted(sub):
             full = os.path.join(folder, s)
             if os.path.isdir(full):
-                fLOG("[BlogPostList]    reading folder %r" % full)
+                fLOG(f"[BlogPostList]    reading folder {full!r}")
                 posts = os.listdir(full)
                 for post in sorted(posts):
                     if os.path.splitext(post)[-1] in [".rst"]:
                         fpost = os.path.join(full, post)
-                        fLOG("    reading post %r" % post)
+                        fLOG(f"    reading post {post!r}")
                         obj = BlogPost(fpost, encoding=encoding,
                                        extensions=extensions)
                         self._blogposts.append((obj.date, obj))
-                fLOG("[BlogPostList]    end reading folder %r" % full)
+                fLOG(f"[BlogPostList]    end reading folder {full!r}")
         self._blogposts.sort(reverse=True)
         self._blogposts = [_[1] for _ in self._blogposts]
         self._encoding = encoding
@@ -272,11 +272,11 @@ class BlogPostList:
             img = os.path.join(loc, img)
             if not os.path.exists(img):
                 raise FileNotFoundError(  # pragma: no cover
-                    "Unable to find %r." % img)
+                    f"Unable to find {img!r}.")
             return img
         else:
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to get image name: %r." % img)
+                f"Unable to get image name: {img!r}.")
 
     def write_aggregated_index(self, folder, hidden_files=None, hidden_files_html=None, only_html=True):
         """
@@ -316,7 +316,7 @@ class BlogPostList:
                 fl = os.path.split(item.FileName)[-1]
                 fl = os.path.splitext(fl)[0]
                 f.write(
-                    "    blog {2} <{0}/{1}>\n".format(item.Date[:4], fl, item_id))
+                    f"    blog {item_id} <{item.Date[:4]}/{fl}>\n")
 
             if hidden_files is not None:
                 f.write("\n\n")
@@ -340,22 +340,22 @@ class BlogPostList:
                     fl = os.path.split(item.FileName)[-1]
                     fl = os.path.splitext(fl)[0]
                     f.write(
-                        indent + "    {2} <{0}/{1}>\n".format(item.Date[:4], fl, item_id))
+                        indent + f"    {item_id} <{item.Date[:4]}/{fl}>\n")
                 for hid, h in enumerate(hidden_files_html):
                     f.write(
-                        indent + "    blog {1} <{0}>\n".format(os.path.splitext(os.path.split(h)[-1])[0], hid))
+                        indent + f"    blog {hid} <{os.path.splitext(os.path.split(h)[-1])[0]}>\n")
                 f.write("\n\n")
 
             f.write("\n")
             f.write(indent + ".. image:: feed-icon-16x16.png\n\n")
             f.write(
-                indent + ":download:`{0} rss <rss.xml>`\n".format(TITLES[self.Lang]["download"]))
+                indent + f":download:`{TITLES[self.Lang]['download']} rss <rss.xml>`\n")
             f.write("\n\n\n")
 
             f.write(
-                indent + ":ref:`{0} <hblog-blog>`, ".format(TITLES[self.Lang]["main"]))
+                indent + f":ref:`{TITLES[self.Lang]['main']} <hblog-blog>`, ")
             f.write(
-                indent + ":ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["main2"]))
+                indent + f":ref:`{TITLES[self.Lang]['main2']} <ap-main-0>`")
             f.write("\n\n\n")
 
             img = self.get_image("rss")
@@ -445,7 +445,7 @@ class BlogPostList:
         res = ["", ":orphan:", "", ".. _hblog-blog:",
                "", "", "Blog", "====", "", ""]
         res.extend(
-            ["* :ref:`{0} <ap-main-0>`".format(TITLES[self.Lang]["page1"]), "", ""])
+            [f"* :ref:`{TITLES[self.Lang]['page1']} <ap-main-0>`", "", ""])
         res.extend([TITLES[self.Lang]["by category:"], "", ""])
         for cat, nb in cats:
             res.append(
@@ -459,7 +459,7 @@ class BlogPostList:
         res.extend(["", "", ""])
         res.extend([TITLES[self.Lang]["by title:"], "", ""])
         res.extend(
-            ["", "", ":ref:`{0} <l-mainblog>`".format(TITLES[self.Lang]["allblogs"]), "", ""])
+            ["", "", f":ref:`{TITLES[self.Lang]['allblogs']} <l-mainblog>`", "", ""])
 
         filename = os.path.join(folder, "index_blog.rst")
         with open(filename, "w", encoding="utf8") as f:
@@ -515,7 +515,7 @@ class BlogPostList:
         buckets = BlogPostList.divide_list(lp, division)
         for i, b in enumerate(buckets):
             if bold_title is not None:
-                title = "{0} - {1}/{2}".format(bold_title, i + 1, len(buckets))
+                title = f"{bold_title} - {i + 1}/{len(buckets)}"
             else:
                 title = None
             name = os.path.join(folder, "%s_%04d.rst" % (prefix, i))
@@ -560,20 +560,20 @@ class BlogPostList:
         """
         direction = "|rss_image| "
         if prev is not None:
-            direction += ":ref:`<== <%s>` " % prev
+            direction += f":ref:`<== <{prev}>` "
         if bold_title is not None:
             if len(direction) > 0:
                 direction += " "
-            direction += "**{0}**".format(bold_title)
+            direction += f"**{bold_title}**"
         if next is not None:
             if len(direction) > 0:
                 direction += " "
-            direction += ":ref:`==> <%s>`" % next
+            direction += f":ref:`==> <{next}>`"
         arrows = direction
         if main_page is not None:
             if len(direction) > 0:
                 direction += " "
-            direction += ":ref:`%s <ap-main-0>`" % main_page
+            direction += f":ref:`{main_page} <ap-main-0>`"
         if rst_links_up is not None:
             if len(direction) > 0:
                 direction += " "
@@ -598,7 +598,7 @@ class BlogPostList:
             rows.append("")
 
         rows.append("")
-        rows.append(".. _%s:" % this)
+        rows.append(f".. _{this}:")
         rows.append("")
 
         if bold_title is not None:

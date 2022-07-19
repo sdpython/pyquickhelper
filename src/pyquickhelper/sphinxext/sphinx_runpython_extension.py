@@ -113,7 +113,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                 warnings.simplefilter("ignore", w)
         else:
             raise ValueError(
-                "Unexpected value for warningout: {0}".format(warningout))
+                f"Unexpected value for warningout: {warningout}")
 
     if params is None:
         params = {}
@@ -126,7 +126,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
         cmd = sys.executable
         header = ["# coding: utf-8", "import sys"]
         if setsysvar:
-            header.append("sys.{0} = True".format(setsysvar))
+            header.append(f"sys.{setsysvar} = True")
         add = 0
         for path in sys.path:
             if path.endswith("source") or path.endswith("source/") or path.endswith("source\\"):
@@ -185,7 +185,7 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
                            "").format(script, params, comment, "",
                                       str(ee), ee)
                 if exc_path:
-                    message += "\n---EXC--\n{0}".format(exc_path)
+                    message += f"\n---EXC--\n{exc_path}"
                 raise RunPythonExecutionError(message) from ee
             return str(ee), str(ee), None
     else:
@@ -198,10 +198,9 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
             if comment is None:
                 comment = ""
             if not exception:
-                message = "SCRIPT:\n{0}\nPARAMS\n{1}\nCOMMENT\n{2}".format(
-                    script, params, comment)
+                message = f"SCRIPT:\n{script}\nPARAMS\n{params}\nCOMMENT\n{comment}"
                 raise RunPythonCompileError(message) from ec
-            return "", "Cannot compile the do to {0}".format(ec), None
+            return "", f"Cannot compile the do to {ec}", None
 
         globs = globals().copy()
         loc = locals()
@@ -482,11 +481,11 @@ class RunPythonDirective(Directive):
         p['indent'] = int(self.options.get("indent", dind))
 
         # run the script
-        name = "run_python_script_{0}".format(id(p))
+        name = f"run_python_script_{id(p)}"
         if p['process']:
             content = ["if True:"]
         else:
-            content = ["def {0}():".format(name)]
+            content = [f"def {name}():"]
 
         if "numpy" in "\n".join(self.content) and p['numpy_precision'] not in (None, 'None', '-', ''):
             try:
@@ -514,9 +513,9 @@ class RunPythonDirective(Directive):
             footer = []
             assert_condition = p['assert'].split('\n')
             for cond in assert_condition:
-                footer.append("if not({0}):".format(cond))
+                footer.append(f"if not({cond}):")
                 footer.append(
-                    "    raise AssertionError('''Condition '{0}' failed.''')".format(cond))
+                    f"    raise AssertionError('''Condition '{cond}' failed.''')")
             modified_content += "\n\n" + "\n".join(footer)
 
         for line in modified_content.split("\n"):
@@ -528,7 +527,7 @@ class RunPythonDirective(Directive):
                 "        globals()['__runpython__' + __k__] = __v__")
 
         if not p['process']:
-            content.append("{0}()".format(name))
+            content.append(f"{name}()")
 
         script = "\n".join(content)
         script_disp = "\n".join(self.content)
@@ -538,12 +537,12 @@ class RunPythonDirective(Directive):
                     script_disp, is_string=True)
             except Exception as e:  # pragma: no cover
                 if '.' in docname:
-                    comment = '  File "{0}", line {1}'.format(docname, lineno)
+                    comment = f'  File "{docname}", line {lineno}'
                 else:
                     comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                         docname, lineno)
                 raise ValueError(
-                    "Pep8 issue with\n'{0}'\n---SCRIPT---\n{1}".format(docname, script)) from e
+                    f"Pep8 issue with\n'{docname}'\n---SCRIPT---\n{script}") from e
 
         # if an exception is raised, the documentation should report a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]
@@ -552,14 +551,14 @@ class RunPythonDirective(Directive):
         if docstring:
             current_source = current_source.split(":docstring of ")[0]
         if os.path.exists(current_source):
-            comment = '  File "{0}", line {1}'.format(current_source, lineno)
+            comment = f'  File "{current_source}", line {lineno}'
             if docstring:
                 new_name = os.path.split(current_source)[0] + ".py"
-                comment += '\n  File "{0}", line {1}'.format(new_name, lineno)
+                comment += f'\n  File "{new_name}", line {lineno}'
             cs_source = current_source
         else:
             if '.' in docname:
-                comment = '  File "{0}", line {1}'.format(docname, lineno)
+                comment = f'  File "{docname}", line {lineno}'
             else:
                 comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                     docname, lineno)
@@ -568,7 +567,7 @@ class RunPythonDirective(Directive):
         # Add __WD__.
         cs_source_dir = os.path.dirname(cs_source).replace("\\", "/")
         script = script.replace(
-            '## __WD__ ##', "__WD__ = '{0}'".format(cs_source_dir))
+            '## __WD__ ##', f"__WD__ = '{cs_source_dir}'")
 
         out, err, context = run_python_script(script, comment=comment, setsysvar=p['setsysvar'],
                                               process=p["process"], exception=p['exception'],

@@ -40,7 +40,7 @@ class TestNotebookExtensions(unittest.TestCase):
                 out = install_notebook_extension()
             except PermissionError as e:
                 warnings.warn(
-                    "Unable to install jupyter extensions due to permissions errors: {0}".format(e))
+                    f"Unable to install jupyter extensions due to permissions errors: {e}")
                 return
             fLOG(out)
 
@@ -51,7 +51,7 @@ class TestNotebookExtensions(unittest.TestCase):
             fLOG(e)
         if "jupyter_contrib_nbextensions-master/src/jupyter_contrib_nbextensions/nbextensions/autoscroll/main" not in ext:
             warnings.warn(
-                "Unexpected list of jupyter extension: {}".format(ext))
+                f"Unexpected list of jupyter extension: {ext}")
 
 
 if __name__ == "__main__":

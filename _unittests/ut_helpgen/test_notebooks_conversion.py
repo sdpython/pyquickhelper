@@ -28,13 +28,13 @@ class TestNotebookConversion2(ExtTestCase):
         if not os.path.exists(fold):
             os.mkdir(fold)
         for tpl in ['rst', 'display_priority', 'null', 'full']:
-            sty = os.path.join(fold, '%s.tpl' % tpl)
-            sr = os.path.join(temp, '..', 'data', '%s.tpl' % tpl)
+            sty = os.path.join(fold, f'{tpl}.tpl')
+            sr = os.path.join(temp, '..', 'data', f'{tpl}.tpl')
             if not os.path.exists(sr):
                 raise FileNotFoundError(sr)
             if not os.path.exists(sty):
                 shutil.copy(sr, fold)
-            if not os.path.exists('%s.tpl' % tpl):
+            if not os.path.exists(f'{tpl}.tpl'):
                 shutil.copy(sr, '.')
 
         this = os.path.join(temp, '..', "data", "TD_2A_Eco_Web_Scraping.ipynb")

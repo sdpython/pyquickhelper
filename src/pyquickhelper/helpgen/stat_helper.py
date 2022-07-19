@@ -34,7 +34,7 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
                 nbcontent = f.read()
             except UnicodeDecodeError as e:
                 raise ValueError(
-                    "Issue with file '{0}'".format(name)) from e
+                    f"Issue with file '{name}'") from e
         reg_title = re.compile("\\\"([#] [^#]+?)\\n")
 
     rsts = explore_folder(nb_rst, ".*[.]rst$")[1]
@@ -45,7 +45,7 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
                 crsts[rst] = f.read()
             except UnicodeDecodeError as e:
                 raise ValueError(
-                    "Issue with file '{0}'".format(rst)) from e
+                    f"Issue with file '{rst}'") from e
 
     nbcount = {}
 
@@ -55,7 +55,7 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
                 nbcontent = f.read()
             except UnicodeDecodeError as e:
                 raise ValueError(
-                    "Issue with file '{0}'".format(name)) from e
+                    f"Issue with file '{name}'") from e
         reg_title = re.compile("\\\"([#] [^#]+?)\\n")
         ftitle = reg_title.findall(nbcontent)
         if len(ftitle) > 0:
@@ -64,8 +64,8 @@ def enumerate_notebooks_link(nb_folder, nb_rst):
             title = None
         sh = os.path.splitext(os.path.split(name)[-1])[0]
         reg1 = re.compile("[/ ](" + sh + ")\\n")
-        reg2 = re.compile("(:ref:`.*? <{0}rst>`)".format(sh.replace("_", "")))
-        reg3 = re.compile("(:ref:`{0}rst`)".format(sh.replace("_", "")))
+        reg2 = re.compile(f"(:ref:`.*? <{sh.replace('_', '')}rst>`)")
+        reg3 = re.compile(f"(:ref:`{sh.replace('_', '')}rst`)")
         reg4 = re.compile("(<.*?" + sh + ">)\\n")
         nbcount[name] = 0
         for rst, content in crsts.items():

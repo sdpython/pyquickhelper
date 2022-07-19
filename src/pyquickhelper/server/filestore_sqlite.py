@@ -20,7 +20,7 @@ class SqlLite3FileStore:
     @staticmethod
     def v2s(value, s="'"):
         if isinstance(value, str):
-            return "%s%s%s" % (s, value, s)
+            return f"{s}{value}{s}"
         return str(value)
 
     def __init__(self, path="_file_store_.db3"):
@@ -32,7 +32,7 @@ class SqlLite3FileStore:
         if con is None:
             con = self._get_connexion()
         cur = con.cursor()
-        res = cur.execute("PRAGMA table_info(%s);" % table)
+        res = cur.execute(f"PRAGMA table_info({table});")
         res = cur.fetchall()
         if close:
             con.close()
@@ -265,9 +265,9 @@ class SqlLite3FileStore:
                         raise RuntimeError(
                             "join must be true if metrics are "
                             "filtered by project.")
-                    cond.append('B.%s="%s"' % (k, v))
+                    cond.append(f'B.{k}="{v}"')
                 else:
-                    cond.append('data.%s="%s"' % (k, v))
+                    cond.append(f'data.{k}="{v}"')
             else:
                 cond.append('%s=%s' % (k, SqlLite3FileStore.v2s(v, '"')))
 

@@ -43,7 +43,7 @@ def set_password(system, username, password, lib='keyrings.cryptfile',
         kr.set_password(system, username, password)
         return
     raise RuntimeError(
-        "Unknown library '{}'.".format(lib))
+        f"Unknown library '{lib}'.")
 
 
 def get_password(system, username, lib='keyrings.cryptfile',
@@ -78,4 +78,4 @@ def get_password(system, username, lib='keyrings.cryptfile',
             kr.keyring_key = getpass()
         return kr.get_password(system, username)
     raise RuntimeError(
-        "Unknown library '{}'.".format(lib))
+        f"Unknown library '{lib}'.")

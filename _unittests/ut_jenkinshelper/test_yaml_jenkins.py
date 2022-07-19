@@ -39,7 +39,7 @@ class TestYamlJenkins(unittest.TestCase):
                        WinPython36="c:\\PythonENSAE",
                        root_path="d:\\jenkins\\yml")
         vers = "%d%d" % sys.version_info[:2]
-        context["Python%s" % vers] = os.path.dirname(sys.executable)
+        context[f"Python{vers}"] = os.path.dirname(sys.executable)
         git_repo = "https://github.com/sdpython/pyquickhelper.git"
         srv = JenkinsExt("http://localhost:8080/", "user", "password",
                          mock=True, fLOG=fLOG, engines=context)
@@ -101,7 +101,7 @@ class TestYamlJenkins(unittest.TestCase):
                        WinPython36="c:\\PythonENSAE",
                        root_path="d:\\jenkins\\yml")
         vers = "%d%d" % sys.version_info[:2]
-        engines["Python%s" % vers] = os.path.dirname(sys.executable)
+        engines[f"Python{vers}"] = os.path.dirname(sys.executable)
 
         srv = JenkinsExt(
             "http://localhost:8080/", "user", "password", mock=True,
@@ -117,7 +117,7 @@ class TestYamlJenkins(unittest.TestCase):
                                        location="anything", disable_schedule=disable_schedule,
                                        credentials=credentials)
         reg = re.compile("<description>(.*)</description>")
-        exp_ut = "python3_module_template_UT_%s_std" % vers
+        exp_ut = f"python3_module_template_UT_{vers}_std"
         nb = 0
         sch = 0
         desc = 0

@@ -22,8 +22,7 @@ class SphinxVerificationException(Exception):
         """
         stack = []
         for name, line, m in errors:
-            message = '[sphinxerror]-4 {2}\n  File "{0}", line {1}'.format(
-                name, line + 1, m)
+            message = f'[sphinxerror]-4 {m}\n  File "{name}", line {line + 1}'
             stack.append(message)
         Exception.__init__(self, "\n" + "\n".join(stack))
 
@@ -46,7 +45,7 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
         fLOG("[verification_html_format]", item)
         if not os.path.exists(item):
             fLOG(
-                "[verification_html_format] unable to find and check '{0}'".format(item))
+                f"[verification_html_format] unable to find and check '{item}'")
             continue
         err = verification_html_file(item, fLOG=fLOG)
         if len(err) > 0:
@@ -57,15 +56,14 @@ def verification_html_format(folder, fLOG=noLOG, raise_above=0.1):
             else:
                 errors.extend((fitem, line, m) for line, m in err)
         nbfile += 1
-    fLOG("[verification_html_format] checked:{0} errors:{1}".format(
-        nbfile, len(errors)))
+    fLOG(f"[verification_html_format] checked:{nbfile} errors:{len(errors)}")
     if len(errors) > 0:  # pragma: no cover
         e = SphinxVerificationException(errors)
         if isinstance(raise_above, int) and len(errors) >= raise_above:
             raise e
         if len(errors) * 1.0 / nbfile >= raise_above:
             raise e
-        warnings.warn("Sphinx error {0}".format(e), UserWarning)
+        warnings.warn(f"Sphinx error {e}", UserWarning)
     return errors
 
 

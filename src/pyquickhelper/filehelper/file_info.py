@@ -103,16 +103,16 @@ class FileInfo:
         self.checksum = checksum
         if date is not None and not isinstance(self.date, datetime.datetime):
             raise ValueError(  # pragma: no cover
-                "mismatch for date (%s) and file %s" % (str(type(date)), filename))
+                f"mismatch for date ({str(type(date))}) and file {filename}")
         if mdate is not None and not isinstance(self.mdate, datetime.datetime):
             raise ValueError(  # pragma: no cover
-                "mismatch for mdate (%s) and file %s" % (str(type(mdate)), filename))
+                f"mismatch for mdate ({str(type(mdate))}) and file {filename}")
         if not isinstance(size, int):
             raise ValueError(  # pragma: no cover
-                "mismatch for size (%s) and file %s" % (str(type(size)), filename))
+                f"mismatch for size ({str(type(size))}) and file {filename}")
         if checksum is not None and not isinstance(checksum, str):
             raise ValueError(  # pragma: no cover
-                "mismatch for checksum (%s) and file %s" % (str(type(checksum)), filename))
+                f"mismatch for checksum ({str(type(checksum))}) and file {filename}")
         if date is not None and mdate is not None:
             if mdate > date:
                 raise ValueError(  # pragma: no cover
@@ -138,7 +138,7 @@ class FileInfo:
         self.date = date
         if not isinstance(self.date, datetime.datetime):
             raise ValueError(  # pragma: no cover
-                "mismatch for date (%s) and file %s" % (str(type(date)), self.filename))
+                f"mismatch for date ({str(type(date))}) and file {self.filename}")
 
     def set_mdate(self, mdate):
         """
@@ -149,7 +149,7 @@ class FileInfo:
         self.mdate = mdate
         if not isinstance(self.mdate, datetime.datetime):
             raise ValueError(  # pragma: no cover
-                "mismatch for date (%s) and file %s" % (str(type(mdate)), self.filename))
+                f"mismatch for date ({str(type(mdate))}) and file {self.filename}")
 
     def set_md5(self, checksum):
         """

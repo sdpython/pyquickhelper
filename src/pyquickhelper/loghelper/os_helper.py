@@ -45,6 +45,5 @@ def get_user():
         "USER", os.environ.get("CIRCLE_USERNAME", None)))
     if name is None:
         raise ValueError(  # pragma: no cover
-            "Unable to find user name in {0}".format(
-                ",".join(sorted(os.environ.keys()))))
+            f"Unable to find user name in {','.join(sorted(os.environ.keys()))}")
     return name

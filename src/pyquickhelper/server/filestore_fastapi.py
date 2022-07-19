@@ -172,15 +172,15 @@ def _get_password(password, env="PYQUICKHELPER_FASTAPI_PWD"):
 def _post_request(client, url, data, suffix, timeout=None):
     if client is None:
         import requests
-        resp = requests.post("%s/%s" % (url.strip('/'), suffix), data=data,
+        resp = requests.post(f"{url.strip('/')}/{suffix}", data=data,
                              timeout=timeout)
     else:
-        resp = client.post("/%s/" % suffix, json=data)
+        resp = client.post(f"/{suffix}/", json=data)
     if resp.status_code != 200:
         del data['content']
         del data['password']
         raise RuntimeError(
-            "Post request failed due to %r\ndata=%r." % (resp, data))
+            f"Post request failed due to {resp!r}\ndata={data!r}.")
     return resp
 
 

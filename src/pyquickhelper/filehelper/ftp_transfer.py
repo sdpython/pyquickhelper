@@ -107,7 +107,7 @@ class TransferFTP:
                 self.is_sftp = False
             else:
                 raise RuntimeError(  # pragma: no cover
-                    "No implementation for '{}'.".format(ftps))
+                    f"No implementation for '{ftps}'.")
             if not self.is_sftp:
                 self._ftp = cls(site, login, password)
             self._logins = [(datetime.datetime.now(), site)]
@@ -180,7 +180,7 @@ class TransferFTP:
         except Exception as e:  # pragma: no cover
             if self.is_sftp and 'No such file' in str(e):
                 raise FileNotFoundError(
-                    "Unable to find {}.".format(args)) from e
+                    f"Unable to find {args}.") from e
             if TransferFTP.errorNoDirectory in str(e):
                 raise e
             self.LOG(e)
@@ -204,7 +204,7 @@ class TransferFTP:
         if hasattr(self._ftp, 'retrlines'):
             return self.run_command(self._ftp.retrlines, 'LIST')
         raise NotImplementedError(
-            "Not implemented for ftps='{}'.".format(self._ftps_))
+            f"Not implemented for ftps='{self._ftps_}'.")
 
     def mkd(self, path):  # pragma: no cover
         """
@@ -231,7 +231,7 @@ class TransferFTP:
         try:
             self.run_command(self._ftp.cwd, path)
         except EOFError as e:  # pragma: no cover
-            raise EOFError("unable to go to: {0}".format(path)) from e
+            raise EOFError(f"unable to go to: {path}") from e
         except FileNotFoundError as e:  # pragma: no cover
             if create:
                 self.mkd(path)
@@ -354,7 +354,7 @@ class TransferFTP:
 
         if nb_logins != len(self._logins):
             raise CannotCompleteWithoutNewLoginException(  # pragma: no cover
-                "Cannot reach folder '{0}' without new login".format(to))
+                f"Cannot reach folder '{to}' without new login")
 
         bs = blocksize if blocksize else TransferFTP.blockSize
         if not self.is_sftp:
@@ -389,7 +389,7 @@ class TransferFTP:
                 done = []
             except Exception as e:
                 raise CannotCompleteWithoutNewLoginException(
-                    "Cannot transfer '{0}' without new login".format(to))
+                    f"Cannot transfer '{to}' without new login")
 
         # It may fail here, it hopes not.
         nbtry = 0
@@ -401,7 +401,7 @@ class TransferFTP:
                     break
                 except Exception as e:
                     raise CannotCompleteWithoutNewLoginException(
-                        "Cannot return to original folder'{0}' without new login".format(to)) from e
+                        f"Cannot return to original folder'{to}' without new login") from e
 
             nbtry += 1
             try:
@@ -410,7 +410,7 @@ class TransferFTP:
             except Exception as e:  # pragma: no cover
                 time.sleep(0.5)
                 self.LOG(
-                    "    issue with command .. len(done) == {0}".format(len(done)))
+                    f"    issue with command .. len(done) == {len(done)}")
                 if nbtry > nbth:
                     raise CannotReturnToFolderException(
                         "len(path)={0} nbtry={1} exc={2} nbl={3} act={4}".format(

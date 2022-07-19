@@ -55,7 +55,7 @@ def gitlog_role(role, rawtext, text, lineno, inliner, options=None, content=None
         node['text'] = value
     else:
         raise ValueError(  # pragma: no cover
-            "Unable to interpret this instuction '{}'.".format(text))
+            f"Unable to interpret this instuction '{text}'.")
     return [node], []
 
 

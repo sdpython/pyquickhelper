@@ -21,7 +21,7 @@ class clex:
         :raises TypeError: guess
         """
         if type(a) != type(b):
-            raise TypeError("Different type {0} != {1}".format(a, b))
+            raise TypeError(f"Different type {a} != {b}")
         return a + b
 
     @staticmethod
@@ -35,5 +35,5 @@ class clex:
         :raises TypeError: guess
         """
         if type(a) != type(b):
-            raise TypeError("Different type {0} != {1}".format(a, b))
+            raise TypeError(f"Different type {a} != {b}")
         return a + b

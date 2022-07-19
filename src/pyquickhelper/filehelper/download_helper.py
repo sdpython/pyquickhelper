@@ -98,16 +98,16 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
             http_client.IncompleteRead, ValueError, InvalidURL) as e:
         if raise_exception:
             raise InternetException(
-                "Unable to retrieve content url='{0}'".format(url)) from e
+                f"Unable to retrieve content url='{url}'") from e
         warnings.warn(
-            "Unable to retrieve content from '{0}' because of {1}".format(url, e), ResourceWarning)
+            f"Unable to retrieve content from '{url}' because of {e}", ResourceWarning)
         return None
     except Exception as e:
         if raise_exception:  # pragma: no cover
             raise InternetException(
-                "Unable to retrieve content, url='{0}', exc={1}".format(url, e)) from e
+                f"Unable to retrieve content, url='{url}', exc={e}") from e
         warnings.warn(
-            "Unable to retrieve content from '{0}' because of unknown exception: {1}".format(url, e), ResourceWarning)
+            f"Unable to retrieve content from '{url}' because of unknown exception: {e}", ResourceWarning)
         raise e
 
     if chunk is None:
@@ -133,7 +133,7 @@ def get_url_content_timeout(url, timeout=10, output=None, encoding="utf8",
                         content = None
 
                 if content is None:
-                    mes = ["Unable to parse text from '{0}'.".format(url)]
+                    mes = [f"Unable to parse text from '{url}'."]
                     mes.append("tried:" + str([encoding] + othenc))
                     mes.append("beginning:\n" + str([res])[:50])
                     for e in laste:

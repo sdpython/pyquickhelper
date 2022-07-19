@@ -48,5 +48,5 @@ def get_jenkins_mappings(root, loc="dist"):
 
     if len(maps) == 0:
         warnings.warn(  # pragma: no cover
-            "Unable to find any folder in '{0}'".format(root), UserWarning)
+            f"Unable to find any folder in '{root}'", UserWarning)
     return maps

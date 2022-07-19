@@ -134,9 +134,9 @@ class NotebookRunner(object):
         args = []
 
         if profile_dir:
-            args.append('--profile-dir=%s' % os.path.abspath(profile_dir))
+            args.append(f'--profile-dir={os.path.abspath(profile_dir)}')
         if log_level:
-            args.append('--log-level=%s' % log_level)
+            args.append(f'--log-level={log_level}')
 
         if extended_args is not None and len(extended_args) > 0:
             for opt in extended_args:
@@ -162,7 +162,7 @@ class NotebookRunner(object):
                         self.km.start_kernel(extra_arguments=args)
                 except Exception as e:  # pragma: no cover
                     raise NotebookKernelError(
-                        "Failure with args: {0}\nand error:\n{1}".format(args, str(e))) from e
+                        f"Failure with args: {args}\nand error:\n{str(e)}") from e
 
                 if platform.system() == 'Darwin':
                     # see http://www.pypedia.com/index.php/notebook_runner
@@ -190,7 +190,7 @@ class NotebookRunner(object):
                 self.nb = nb
                 self.comment = comment
                 raise NotebookKernelError(
-                    "Wait_for_ready fails (timeout={0}).".format(startup_timeout)) from e
+                    f"Wait_for_ready fails (timeout={startup_timeout}).") from e
         else:
             self.km = None
             self.kc = None
@@ -328,7 +328,7 @@ class NotebookRunner(object):
                 index_cell, clean_function))
         iscell, codei = NotebookRunner.get_cell_code(cell)
 
-        self.fLOG('-- running cell:\n%s\n' % codei)
+        self.fLOG(f'-- running cell:\n{codei}\n')
         if self.detailed_log:
             self.detailed_log(
                 '[run_cell] code=\n                        {0}'.format(
@@ -392,7 +392,7 @@ class NotebookRunner(object):
                 # if it doesn't, something bad has happened
                 status = "error"
                 statuses.append(status)
-                reason = "exception Empty was raised (%r)" % e
+                reason = f"exception Empty was raised ({e!r})"
                 nbissue += 1
                 if nbissue > max_nbissue:
                     # the notebook is empty
@@ -403,7 +403,7 @@ class NotebookRunner(object):
             content = msg['content']
             msg_type = msg['msg_type']
             if self.detailed_log:
-                self.detailed_log('    msg_type={0}'.format(msg_type))
+                self.detailed_log(f'    msg_type={msg_type}')
 
             out = NotebookNode(output_type=msg_type, metadata=dict())
 
@@ -443,16 +443,16 @@ class NotebookRunner(object):
                 out.comm_id = content["comm_id"]
 
             else:
-                dcontent = "\n".join("{0}={1}".format(k, v)
+                dcontent = "\n".join(f"{k}={v}"
                                      for k, v in sorted(content.items()))
                 raise NotImplementedError(  # pragma: no cover
-                    "Unhandled iopub message: '{0}'\n--CONTENT--\n{1}".format(msg_type, dcontent))
+                    f"Unhandled iopub message: '{msg_type}'\n--CONTENT--\n{dcontent}")
 
             outs.append(out)
             if self.detailed_log:
-                self.detailed_log('    out={0}'.format(type(out)))
+                self.detailed_log(f'    out={type(out)}')
                 if hasattr(out, "data"):
-                    self.detailed_log('    out={0}'.format(out.data))
+                    self.detailed_log(f'    out={out.data}')
 
         if iscell:
             cell['outputs'] = outs
@@ -481,11 +481,11 @@ class NotebookRunner(object):
                 if isinstance(v, dict):
                     temp = []
                     for _, __ in sorted(v.items()):
-                        temp.append("    [{0}]={1}".format(_, str(__)))
+                        temp.append(f"    [{_}]={str(__)}")
                     v_ = "\n".join(temp)
-                    sreply.append("reply['{0}']=dict\n{1}".format(k, v_))
+                    sreply.append(f"reply['{k}']=dict\n{v_}")
                 else:
-                    sreply.append("reply['{0}']={1}".format(k, str(v)))
+                    sreply.append(f"reply['{k}']={str(v)}")
             sreply = "\n".join(sreply)
             return sreply
 
@@ -507,7 +507,7 @@ class NotebookRunner(object):
                 self._filename, index_cell, content, msg_type, nbissue,  # 10-14
                 statuses))  # 15
         if self.detailed_log:
-            self.detailed_log('[run_cell] status={0}'.format(status))
+            self.detailed_log(f'[run_cell] status={status}')
         return outs
 
     def to_python(self):
@@ -532,7 +532,7 @@ class NotebookRunner(object):
                         rows.append("# " + line)
             else:
                 # No text, no code.
-                rows.append("# cell.type = {0}".format(cell.cell_type))
+                rows.append(f"# cell.type = {cell.cell_type}")
             rows.append("")
         return "\n".join(rows)
 
@@ -616,14 +616,14 @@ class NotebookRunner(object):
         """
         if not isinstance(b, tuple):
             raise TypeError(  # pragma: no cover
-                "tuple expected, not {0}".format(type(b)))
+                f"tuple expected, not {type(b)}")
         if len(b) != 2:
             raise TypeError(  # pragma: no cover
-                "tuple expected of lengh 2, not {0}".format(len(b)))
+                f"tuple expected of lengh 2, not {len(b)}")
         if b[1] == "svg":
             if not isinstance(b[0], str):
                 raise TypeError(  # pragma: no cover
-                    "str expected for svg, not {0}".format(type(b[0])))
+                    f"str expected for svg, not {type(b[0])}")
         elif b[1] in ("vnd.plotly.v1+html", "vnd.bokehjs_exec.v0+json",
                       "vnd.bokehjs_load.v0+json", 'vnd.plotly.v1+json'):
             # Don't know how to extract a snippet out of this.
@@ -631,7 +631,7 @@ class NotebookRunner(object):
         else:
             if not isinstance(b[0], bytes):
                 raise TypeError(  # pragma: no cover
-                    "bytes expected for images, not {0}-'{1}'\n{2}".format(type(b[0]), b[1], b))
+                    f"bytes expected for images, not {type(b[0])}-'{b[1]}'\n{b}")
         return b
 
     def create_picture_from(self, text, format, asbytes=True, context=None):
@@ -689,7 +689,7 @@ class NotebookRunner(object):
             ax.set_xlim(numpy.array([0., dx]))
             ax.set_ylim(numpy.array([-dy, 0.]))
         except TypeError as e:
-            warnings.warn("[create_picture_from] %s" % e)
+            warnings.warn(f"[create_picture_from] {e}")
         ax.set_axis_off()
         sio = BytesIO()
         fig.savefig(sio, format="png")
@@ -739,7 +739,7 @@ class NotebookRunner(object):
                     elif k == "image/svg+xml":
                         if not isinstance(v, str):
                             raise TypeError(  # pragma: no cover
-                                "This should be str not '{0}' (=SVG).".format(type(v)))
+                                f"This should be str not '{type(v)}' (=SVG).")
                         results.append((v, "svg"))
                     elif k == "text/html":
                         if image_from_text:
@@ -753,7 +753,7 @@ class NotebookRunner(object):
                         # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
                         if "model_id" not in v:
                             raise KeyError(  # pragma: no cover
-                                "model_id is missing from {0}".format(v))
+                                f"model_id is missing from {v}")
                         model_id = v["model_id"]
                         self.fLOG(
                             "[application/vnd.jupyter.widget-view+json] not rendered", model_id)
@@ -761,7 +761,7 @@ class NotebookRunner(object):
                         # see http://ipywidgets.readthedocs.io/en/latest/embedding.html
                         if "model_id" not in v:
                             raise KeyError(  # pragma: no cover
-                                "model_id is missing from {0}".format(v))
+                                f"model_id is missing from {v}")
                         model_id = v["model_id"]
                         self.fLOG(
                             "[application/vnd.jupyter.widget-state+json] not rendered", model_id)
@@ -770,7 +770,7 @@ class NotebookRunner(object):
                             v = base64.b64decode(v)
                         if not isinstance(v, bytes):
                             raise TypeError(  # pragma: no cover
-                                "This should be bytes not '{0}' (=IMG:{1}).".format(type(v), k))
+                                f"This should be bytes not '{type(v)}' (=IMG:{k}).")
                         results.append((v, k.split("/")[-1]))
                     elif k in ("text/vnd.plotly.v1+html",
                                "application/vnd.plotly.v1+json",
@@ -779,8 +779,7 @@ class NotebookRunner(object):
                         results.append((v, k.split("/")[-1]))
                     else:
                         raise NotImplementedError(  # pragma: no cover
-                            "cell type: {0}\nk={1}\nv={2}\nCELL:\n{3}".format(
-                                kind, k, v, cell))
+                            f"cell type: {kind}\nk={k}\nv={v}\nCELL:\n{cell}")
             elif output["output_type"] == "error":
                 vl = output["traceback"]
                 if image_from_text:
@@ -879,7 +878,7 @@ class NotebookRunner(object):
             return nbl
 
         raise NotImplementedError(  # pragma: no cover
-            "cell type: {0}\nCELL:\n{1}".format(kind, cell))
+            f"cell type: {kind}\nCELL:\n{cell}")
 
     def add_tag_slide(self, max_nb_cell=4, max_nb_line=25):
         """
@@ -918,7 +917,7 @@ class NotebookRunner(object):
                 if new_cell > max_nb_cell or \
                    new_nbline > max_nb_line:
                     res[i] = (
-                        "subslide", "{0}-{1} <-> {2}-{3}".format(nbcell, nbline, dc, dh), cell)
+                        "subslide", f"{nbcell}-{nbline} <-> {dc}-{dh}", cell)
                     nbline = 0
                     nbcell = 0
                     meta["slideshow"] = {'slide_type': 'subslide'}
@@ -956,7 +955,7 @@ class NotebookRunner(object):
         '''
         if self.detailed_log:
             self.detailed_log(
-                "[run_notebook] Starting execution of '{0}'".format(self._filename))
+                f"[run_notebook] Starting execution of '{self._filename}'")
         # additional path
         if additional_path is not None:
             if not isinstance(additional_path, list):
@@ -964,13 +963,13 @@ class NotebookRunner(object):
                     "Additional_path should be a list not: " + str(additional_path))
             code = ["import sys"]
             for p in additional_path:
-                code.append("sys.path.append(r'{0}')".format(p))
+                code.append(f"sys.path.append(r'{p}')")
             cell = "\n".join(code)
             self.run_cell(-1, cell)
 
         # we add local variable theNotebook
         if self.theNotebook is not None:
-            cell = "theNotebook = r'''{0}'''".format(self.theNotebook)
+            cell = f"theNotebook = r'''{self.theNotebook}'''"
             self.run_cell(-1, cell)
 
         # initialisation with a code not inside the notebook
@@ -997,22 +996,22 @@ class NotebookRunner(object):
                 nbnerr += 1
             except Empty as er:  # pragma: no cover
                 raise RuntimeError(
-                    "{0}\nissue when executing:\n{1}".format(self.comment, codei)) from er
+                    f"{self.comment}\nissue when executing:\n{codei}") from er
             except NotebookError as e:  # pragma: no cover
                 if not skip_exceptions:
                     raise
                 raise RuntimeError(
-                    "Issue when executing:\n{0}".format(codei)) from e
+                    f"Issue when executing:\n{codei}") from e
             if progress_callback:
                 progress_callback(i)
         etime = time.perf_counter() - cl
         res = dict(nbcell=nbcell, nbrun=nbrun, nbvalid=nbnerr, time=etime)
         if self.detailed_log:
             self.detailed_log(
-                "[run_notebook] end execution of '{0}'".format(self._filename))
+                f"[run_notebook] end execution of '{self._filename}'")
             self.detailed_log(
-                "[run_notebook] execution time: {0}".format(etime))
-            self.detailed_log("[run_notebook] statistics : {0}".format(res))
+                f"[run_notebook] execution time: {etime}")
+            self.detailed_log(f"[run_notebook] statistics : {res}")
         return res
 
     def count_code_cells(self):
@@ -1202,8 +1201,7 @@ class NotebookRunner(object):
             img = in_bytes
         else:
             raise TypeError(  # pragma: no cover
-                "bytes expected, not {0} - format={1}".format(
-                    type(in_bytes), format))
+                f"bytes expected, not {type(in_bytes)} - format={format}")
         width_in, height_in = img.size
         scale_w = max_width / float(width_in)
         scale_h = max_height / float(height_in)

@@ -52,9 +52,9 @@ class TestBlogHelper(unittest.TestCase):
         self.assertTrue(len(res) >= 4)
         for r in res:
             if r in (None, ''):
-                raise ValueError("An empty value in {0}".format(res))
+                raise ValueError(f"An empty value in {res}")
             if not os.path.exists(r):
-                raise FileNotFoundError("Unable to find '{0}'".format(r))
+                raise FileNotFoundError(f"Unable to find '{r}'")
             if 'main_0000.rst' in r:
                 with open(r, 'r', encoding='utf-8') as f:
                     content = f.read()

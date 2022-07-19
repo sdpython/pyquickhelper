@@ -131,13 +131,12 @@ def _modify_postcontents(node, event):
     for _, subnode in traverse(parent):
         if isinstance(subnode, nodes.section):
             if len(subnode["ids"]) == 0:
-                subnode["ids"].append("postid-{}".format(id(subnode)))
+                subnode["ids"].append(f"postid-{id(subnode)}")
             nid = subnode["ids"][0]
             if nid in memo:
                 raise KeyError(  # pragma: no cover
-                    "node was already added '{0}'".format(nid))
-            logger.info("[{}]  {}section id '{}'".format(
-                event, "  " * level, nid))
+                    f"node was already added '{nid}'")
+            logger.info(f"[{event}]  {'  ' * level}section id '{nid}'")
             level += 1
             memo[nid] = subnode
             bli = nodes.bullet_list()
@@ -145,8 +144,7 @@ def _modify_postcontents(node, event):
             roots.append(bli)
             sections.append(subnode)
         elif isinstance(subnode, nodes.title):
-            logger.info("[{}]  {}title '{}'".format(
-                event, "  " * level, subnode.astext()))
+            logger.info(f"[{event}]  {'  ' * level}title '{subnode.astext()}'")
             par = nodes.paragraph()
             ref = nodes.reference(refid=sections[-1]["ids"][0],
                                   reftitle=subnode.astext(),

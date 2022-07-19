@@ -221,7 +221,7 @@ class TestLog(ExtTestCase):
         fLOG(res)
         typstr = str  # unicode#
         if res != (typstr, 8):
-            raise Exception("different: {0}".format(res))
+            raise Exception(f"different: {res}")
 
     def test_load_content_file_with_encoding(self):
         fLOG(

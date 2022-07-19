@@ -41,7 +41,7 @@ class WinZipFile(ZipFile):
         if mode not in {"r", "w"}:
             raise ValueError('open() requires mode "r" or "w"')
         if pwd and not isinstance(pwd, bytes):
-            raise TypeError("pwd: expected bytes, got %s" % type(pwd).__name__)
+            raise TypeError(f"pwd: expected bytes, got {type(pwd).__name__}")
         if pwd and (mode == "w"):
             raise ValueError("pwd is only supported for reading files")
         if not self.fp:
@@ -138,7 +138,7 @@ class WinZipFile(ZipFile):
                     # compare against the CRC otherwise
                     check_byte = (zinfo.CRC >> 24) & 0xff
                 if h[11] != check_byte:
-                    raise RuntimeError("Bad password for file %r" % name)
+                    raise RuntimeError(f"Bad password for file {name!r}")
 
             return ZipExtFile(zef_file, mode, zinfo, zd, True)
         except Exception:

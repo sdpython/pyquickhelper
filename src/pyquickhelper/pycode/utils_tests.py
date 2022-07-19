@@ -28,7 +28,7 @@ def _modifies_coverage_report(name, bsrcp, bproj):
         for b in bsrcp:
             name = name.replace(b, bproj)
         name = name.replace('\\', '/')
-        s = "UPDATE file SET path='{}' WHERE id={};".format(name, row[0])
+        s = f"UPDATE file SET path='{name}' WHERE id={row[0]};"
         sql.append(s)
 
     c = conn.cursor()
@@ -152,7 +152,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         while not exists:
             if len(fold) < 2:
                 raise FileNotFoundError(
-                    "Unable to guess source from '{0}'.".format(fold0))
+                    f"Unable to guess source from '{fold0}'.")
             fold = os.path.split(fold)[0]
             exists = os.path.exists(os.path.join(fold, ".gitignore"))
         return os.path.normpath(os.path.abspath(fold))
@@ -181,10 +181,10 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         sub = os.path.split(sub)[-1]
         other_cov_folders = find_coverage_report(
             add_coverage_folder, exclude=sub)
-        mes = "[main_wrapper_tests] other_cov_folders...sub='{0}'".format(sub)
+        mes = f"[main_wrapper_tests] other_cov_folders...sub='{sub}'"
         stdout_this.write(mes + "\n")
         for k, v in sorted(other_cov_folders.items()):
-            mes = "[main_wrapper_tests]     k='{0}' v={1}".format(k, v)
+            mes = f"[main_wrapper_tests]     k='{k}' v={v}"
             stdout_this.write(mes + "\n")
         if len(other_cov_folders) == 0:
             other_cov_folders = None
@@ -241,13 +241,12 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
         root_src = os.path.join(src_abs, project_var_name)
     if not os.path.exists(root_src):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find '{}'.".format(root_src))
+            f"Unable to find '{root_src}'.")
     srcp = os.path.relpath(root_src, os.getcwd())
 
     if get_user() in srcp:
         raise FileNotFoundError(  # pragma: no cover
-            "The location of the source should not contain "
-            "'{0}': {1}".format(get_user(), srcp))
+            f"The location of the source should not contain '{get_user()}': {srcp}")
 
     # coverage
     if add_coverage:  # pragma: no cover
@@ -291,8 +290,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
 
         cov.stop()
         stdout_this.write(
-            "[main_wrapper_tests] STOP COVERAGE + REPORT into '{0}"
-            "\n'".format(report_folder))
+            f"[main_wrapper_tests] STOP COVERAGE + REPORT into '{report_folder}\n'")
 
         from coverage.misc import CoverageException as RawCoverageException
         try:
@@ -340,7 +338,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
             rows = []
             rows.append("COVERAGE OPTIONS")
             for k, v in sorted(coverage_options.items()):
-                rows.append("{0}={1}".format(k, v))
+                rows.append(f"{k}={v}")
             rows.append("")
             rows.append("EXCLUDE LINES")
             for k in cov.get_exclude_list():
@@ -353,13 +351,13 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                     # we skip, it raises an exception with coverage 4.2
                     continue
                 v = getattr(cov.config, attr)
-                st = "{0}={1}".format(attr, v)
+                st = f"{attr}={v}"
                 rows.append(st)
             rows.append("")
 
             if covs is not None:
                 for add in sorted(covs):
-                    rows.append("MERGE='{0}'".format(add))
+                    rows.append(f"MERGE='{add}'")
 
             content = "\n".join(rows)
 
@@ -394,23 +392,20 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                 source = _find_source(src)
                 if not source:
                     raise FileNotFoundError(
-                        "Unable to find source '{0}' from '{1}'".format(
-                            source, src))
+                        f"Unable to find source '{source}' from '{src}'")
                 if coverage_root:
                     source_src = os.path.join(source, coverage_root)
                     if os.path.exists(source_src):
                         source = source_src
                 stdout_this.write(
-                    "[main_wrapper_tests] ADD COVERAGE for source='{0}'"
-                    "\n".format(source))
+                    f"[main_wrapper_tests] ADD COVERAGE for source='{source}'\n")
                 covs = list(_[0] for _ in other_cov_folders.values())
                 covs.append(os.path.abspath(
                     os.path.normpath(os.path.join(src, '.coverage'))))
                 stdout_this.write(
-                    "[main_wrapper_tests] ADD COVERAGE COMBINE={0}"
-                    "\n".format(covs))
+                    f"[main_wrapper_tests] ADD COVERAGE COMBINE={covs}\n")
                 stdout_this.write(
-                    "[main_wrapper_tests] DUMP INTO='{0}'\n".format(src))
+                    f"[main_wrapper_tests] DUMP INTO='{src}'\n")
                 try:
                     coverage_combine(covs, src, source)
                     write_covlog(covs)
@@ -446,7 +441,7 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
                     token=covtoken, path=outfile, fLOG=fLOG)
         else:
             stdout_this.write(
-                "[main_wrapper_tests] NO PUBLISHING {}.\n".format(covtoken))
+                f"[main_wrapper_tests] NO PUBLISHING {covtoken}.\n")
         stdout_this.write("[main_wrapper_tests] --- COVERAGE END ---\n")
     else:
         stdout_this.write(
@@ -477,9 +472,9 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     datetime_end = datetime.now()
 
     rows = ["[main_wrapper_tests] END",
-            "[main_wrapper_tests] begin time {0}".format(datetime_begin),
-            "[main_wrapper_tests] end time {0}".format(datetime_end),
-            "[main_wrapper_tests] duration {0}".format(datetime_end - datetime_begin)]
+            f"[main_wrapper_tests] begin time {datetime_begin}",
+            f"[main_wrapper_tests] end time {datetime_end}",
+            f"[main_wrapper_tests] duration {datetime_end - datetime_begin}"]
     for row in rows:
         fLOG(row)
         stdout_this.write(row + "\n")

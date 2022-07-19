@@ -27,15 +27,15 @@ class MagicCrypt(MagicClassWithHelpers):
         @return                 parser
         """
         task = "encrypt" if encrypt else "decrypt"
-        parser = MagicCommandParser(prog="%scrypt_file" % task[:2],
-                                    description='%s a file' % task +
+        parser = MagicCommandParser(prog=f"{task[:2]}crypt_file",
+                                    description=f'{task} a file' +
                                     '\ndoes not work well in Python 2.7 with pycryptodomex')
         parser.add_argument(
             'source',
-            help='file to %s' % task)
+            help=f'file to {task}')
         parser.add_argument(
             'dest',
-            help='location of the %sed file' % task)
+            help=f'location of the {task}ed file')
         parser.add_argument(
             'password',
             help='password, usually an ascii string with 16x characters')

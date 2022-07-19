@@ -268,7 +268,7 @@ class TestCmdRefExtension(ExtTestCase):
             raise RuntimeError("Issue with pyquickhelper.\n{}\n--\n{}".format(
                 "\n".join(rows), html))
         if "usage: clean_files [-h] [-f FOLDER] [-p POSREG] [-n NEGREG] [--op OP]" not in html:
-            raise Exception("Unable to find a substring in\n{0}".format(html))
+            raise Exception(f"Unable to find a substring in\n{html}")
 
 
 if __name__ == "__main__":

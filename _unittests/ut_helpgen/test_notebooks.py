@@ -83,8 +83,7 @@ class TestNotebookConversion(ExtTestCase):
         for i, j in zip(exp, fou):
             if i != j:
                 raise Exception(
-                    "{0} != {1}\nfou=\n{2}\nexp=\n{3}".format(
-                        i, j, str(fou), str(exp)))
+                    f"{i} != {j}\nfou=\n{str(fou)}\nexp=\n{str(exp)}")
 
         file = os.path.join(temp, "all_notebooks.rst")
         build_notebooks_gallery(

@@ -34,7 +34,7 @@ def get_url_content(url, use_mozilla=False):
             u = urllib_request.urlopen(req)
         except HTTPError as e:  # pragma: no cover
             raise CannotDownloadException(
-                "Unable to download from url '{0}'".format(url)) from e
+                f"Unable to download from url '{url}'") from e
         text = u.read()
         u.close()
         text = text.decode("utf8")
@@ -44,7 +44,7 @@ def get_url_content(url, use_mozilla=False):
         u = urllib_request.urlopen(url)
     except HTTPError as e:  # pragma: no cover
         raise CannotDownloadException(
-            "Unable to download from url '{0}'".format(url)) from e
+            f"Unable to download from url '{url}'") from e
     text = u.read()
     u.close()
     text = text.decode("utf8")

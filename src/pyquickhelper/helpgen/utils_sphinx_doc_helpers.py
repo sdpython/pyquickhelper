@@ -150,7 +150,7 @@ def compute_truncated_documentation(doc, length=_length_truncated_doc,
 
         if raise_exception and len(doc) == 0:
             raise ValueError(  # pragma: no cover
-                "bad format for docstring:\n{}".format(doc_))
+                f"bad format for docstring:\n{doc_}")
 
         return doc
 
@@ -202,7 +202,7 @@ class ModuleMemberDoc:
         if self.cl is None and self.type in [
                 "method", "staticmethod", "property"]:
             raise TypeError(  # pragma: no cover
-                "N/a method must have a class (not None): %s" % typstr(self.obj))
+                f"N/a method must have a class (not None): {typstr(self.obj)}")
 
     def add_prefix(self, prefix):
         """
@@ -216,7 +216,7 @@ class ModuleMemberDoc:
         """
         Returns a key to identify it.
         """
-        return "%s;%s" % (self.type, self.name)
+        return f"{self.type};{self.name}"
 
     def populate(self):
         """
@@ -302,7 +302,7 @@ class ModuleMemberDoc:
 
         if self.name is None:
             raise TypeError(  # pragma: no cover
-                "S/name is None for object: %s" % typstr(self.obj))
+                f"S/name is None for object: {typstr(self.obj)}")
 
     def __str__(self):
         """
@@ -333,20 +333,19 @@ class ModuleMemberDoc:
                "property": "meth"}
 
         if self.type in ["method", "staticmethod", "property"]:
-            path = "%s.%s.%s" % (self.module, self.cl.__name__, self.name)
+            path = f"{self.module}.{self.cl.__name__}.{self.name}"
         else:
-            path = "%s.%s" % (self.module, self.name)
+            path = f"{self.module}.{self.name}"
 
         if prefix is not None:
-            path = "%s.%s" % (prefix, path)
+            path = f"{prefix}.{path}"
 
         if self.type in ["method", "staticmethod",
                          "property"] and class_in_bracket:
             link = ":%s:`%s <%s>` (%s)" % (
                 cor.get(self.type, self.type), self.name, path, self.cl.__name__)
         else:
-            link = ":%s:`%s <%s>`" % (
-                cor.get(self.type, self.type), self.name, path)
+            link = f":{cor.get(self.type, self.type)}:`{self.name} <{path}>`"
         return link
 
     @property
@@ -428,7 +427,7 @@ class IndexInformation:
         """
         usual
         """
-        return "%s -- %s" % (self.label, self.rst_link())
+        return f"{self.label} -- {self.rst_link()}"
 
     def set_rst_file(self, rstfile):
         """
@@ -455,9 +454,9 @@ class IndexInformation:
         if self.rstfile is not None:
             with open(self.rstfile, "r", encoding="utf8") as f:
                 content = f.read()
-            label = ".. _%s:" % self.label
+            label = f".. _{self.label}:"
             if label not in content:
-                content = "\n%s\n%s" % (label, content)
+                content = f"\n{label}\n{content}"
                 with open(self.rstfile, "w", encoding="utf8") as f:
                     f.write(content)
 
@@ -485,9 +484,9 @@ class IndexInformation:
         @return     rst link
         """
         if self.label.startswith("_"):
-            return ":ref:`%s <%s>`" % (self.name, self.label[1:])
+            return f":ref:`{self.name} <{self.label[1:]}>`"
         else:
-            return ":ref:`%s <%s>`" % (self.name, self.label)
+            return f":ref:`{self.name} <{self.label}>`"
 
 
 class RstFileHelp:
@@ -541,7 +540,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
     init_ = os.path.join(sdir, "__init__.py")
     if init_ != filename and not os.path.exists(init_):
         # no init
-        return "No __init__.py, unable to import %s" % (filename), fmod
+        return f"No __init__.py, unable to import {filename}", fmod
 
     # we remove every path ending by "src" except if it is found in PYTHONPATH
     pythonpath = os.environ.get("PYTHONPATH", None)
@@ -575,13 +574,13 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             search = li.rfind(cpxx)
             if search == -1:
                 raise ImportErrorHelpGen(  # pragma: no cover
-                    "Unable to guess extension from '{}'.".format(li))
+                    f"Unable to guess extension from '{li}'.")
         ext_rem = li[search:]
     if not ext_rem:
         raise ValueError(  # pragma: no cover
-            "Unable to guess file extension '{0}'".format(li))
+            f"Unable to guess file extension '{li}'")
     if ext_rem != ".py":
-        log_function("[import_module] found extension='{0}'".format(ext_rem))
+        log_function(f"[import_module] found extension='{ext_rem}'")
 
     # remove fmod from sys.modules
     if fmod:
@@ -671,8 +670,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                         filename, mo.__file__, "\n   - ".join(sys.path)))
 
         sys.path = memo
-        log_function("[import_module] import '{0}' successfully".format(
-            filename), mo.__file__)
+        log_function(f"[import_module] import '{filename}' successfully", mo.__file__)
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m
@@ -698,13 +696,13 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         log_function("      stack:\n", stack)
 
         message = ["-----", stack, "-----"]
-        message.append("      executable: '{0}'".format(sys.executable))
-        message.append("      version: '{0}'".format(sys.version_info))
-        message.append("      platform: '{0}'".format(sys.platform))
-        message.append("      ext_rem='{0}'".format(ext_rem))
-        message.append("      fi='{0}'".format(fi))
-        message.append("      li='{0}'".format(li))
-        message.append("      cpxx='{0}'".format(cpxx))
+        message.append(f"      executable: '{sys.executable}'")
+        message.append(f"      version: '{sys.version_info}'")
+        message.append(f"      platform: '{sys.platform}'")
+        message.append(f"      ext_rem='{ext_rem}'")
+        message.append(f"      fi='{fi}'")
+        message.append(f"      li='{li}'")
+        message.append(f"      cpxx='{cpxx}'")
         message.append("-----")
         for p in sys.path:
             message.append("      path: " + p)
@@ -714,7 +712,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                 m = sys.modules[p].__path__
             except AttributeError:
                 m = str(sys.modules[p])
-            message.append("      module: {0}={1}".format(p, m))
+            message.append(f"      module: {p}={m}")
 
         sys.path = memo
         for n, m in addback:
@@ -725,7 +723,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             raise ImportErrorHelpGen(
                 "frozen importlib._bootstrap is an issue:\n" + "\n".join(message)) from e
 
-        return "Unable(1) to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return f"Unable(1) to import {filename}\nError:\n{str(e)}", fmod
 
     except SystemError as e:  # pragma: no cover
         log_function("[warning] -- unable to import module (2) ", filename,
@@ -738,7 +736,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m
-        return "unable(2) to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return f"unable(2) to import {filename}\nError:\n{str(e)}", fmod
 
     except KeyError as e:  # pragma: no cover
         if first_try and "KeyError: 'pip._vendor.urllib3.contrib'" in str(e):
@@ -757,7 +755,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
             for n, m in addback:
                 if n not in sys.modules:
                     sys.modules[n] = m
-            return "unable(4) to import %s\nError:\n%s" % (filename, str(e)), fmod
+            return f"unable(4) to import {filename}\nError:\n{str(e)}", fmod
 
     except Exception as e:  # pragma: no cover
         log_function("[warning] -- unable to import module (3) ", filename,
@@ -770,7 +768,7 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m
-        return "unable(3) to import %s\nError:\n%s" % (filename, str(e)), fmod
+        return f"unable(3) to import {filename}\nError:\n{str(e)}", fmod
 
 
 def get_module_objects(mod):
@@ -968,9 +966,9 @@ def process_look_for_tag(tag, title, files):
         return "", a.lower(), a
     repl = "__!LI!NE!__"
     exp = re.compile(
-        "[.][.] %s[(](.*?);;(.*?)[)][.](.*?)[.][.] end%s[.]" % (tag, tag))
+        f"[.][.] {tag}[(](.*?);;(.*?)[)][.](.*?)[.][.] end{tag}[.]")
     exp2 = re.compile(
-        "[.][.] %s[(](.*?)[)][.](.*?)[.][.] end%s[.]" % (tag, tag))
+        f"[.][.] {tag}[(](.*?)[)][.](.*?)[.][.] end{tag}[.]")
     coll = []
     for file in files:
         if file.file is None:
@@ -992,7 +990,7 @@ def process_look_for_tag(tag, title, files):
         all2 = exp2.findall(content)
         if len(all2) > len(all):
             raise HelpGenException(  # pragma: no cover
-                "An issue was detected in file %r." % file.file)
+                f"An issue was detected in file {file.file!r}.")
 
         coll += [noneempty(a) +
                  (fix_image_page_for_root(c.replace(repl, "\n"), file), b)
@@ -1039,7 +1037,7 @@ def process_look_for_tag(tag, title, files):
                 continue
             lindex = make_label_index(a, pan)
             rows.append("")
-            rows.append(".. _lm-{0}:".format(lindex))
+            rows.append(f".. _lm-{lindex}:")
             rows.append("")
             rows.append(a)
             rows.append("+" * len(a))
@@ -1047,8 +1045,8 @@ def process_look_for_tag(tag, title, files):
             rows.append(remove_some_indent(b, backslash=True))
             rows.append("")
             spl = c.split("-")
-            d = "file {0}.py".format(spl[1])  # line, spl[2].lstrip("l"))
-            rows.append("see :ref:`%s <%s>`" % (d, c))
+            d = f"file {spl[1]}.py"  # line, spl[2].lstrip("l"))
+            rows.append(f"see :ref:`{d} <{c}>`")
             rows.append("")
 
         pagerows.append((page, "\n".join(rows)))
