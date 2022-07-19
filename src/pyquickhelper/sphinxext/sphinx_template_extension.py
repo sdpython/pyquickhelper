@@ -106,12 +106,12 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     except AttributeError as e:  # pragma: no cover
         ma = "\n".join(sorted(str(_) for _ in app.config))
         raise AttributeError(
-            "unable to find 'tpl_template' in configuration. Available:\n{0}".format(ma)) from e
+            f"unable to find 'tpl_template' in configuration. Available:\n{ma}") from e
 
     if template_name not in tpl_template:
         keys = "\n".join(sorted(tpl_template))  # pragma: no cover
         raise ValueError(  # pragma: no cover
-            "Unable to find template '{0}' in tpl_template. Found:\n{1}".format(template_name, keys))
+            f"Unable to find template '{template_name}' in tpl_template. Found:\n{keys}")
     tpl_content = tpl_template[template_name]
 
     code = "dict(" + context + ")"
@@ -119,7 +119,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
         val_context = eval(code)
     except Exception as e:  # pragma: no cover
         raise Exception(  # pragma: no cover
-            "Unable to compile '''{0}'''".format(code)) from e
+            f"Unable to compile '''{code}'''") from e
 
     if isinstance(tpl_content, str):
         res = evaluate_template(tpl_content, **val_context)

@@ -358,7 +358,7 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                     fLOG(prefix_log + eline)
             else:
                 fLOG(  # pragma: no cover
-                    prefix_log + "[run_cmd] stderr (log)\n%s" % err)
+                    prefix_log + f"[run_cmd] stderr (log)\n{err}")
 
         if change_path is not None:
             os.chdir(current)
@@ -411,9 +411,9 @@ def run_script(script, *args, **kwargs):
     Allows command line starting with ``-m``.
     """
     if not script.startswith('-m') and not os.path.exists(script):
-        raise PQHException("file %s not found" % script)
+        raise PQHException(f"file {script} not found")
     py = get_interpreter_path()
-    cmd = "%s %s" % (py, script)
+    cmd = f"{py} {script}"
     if len(args) > 0:
         typstr = str
         cmd += " " + " ".join([typstr(x) for x in args])

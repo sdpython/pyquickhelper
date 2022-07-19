@@ -64,7 +64,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
                                        p2):""".replace("                ", "")
 
         f = synchronize_folder
-        com = "{1}\n    '''\n{0}\n    '''\n    pass\n".format(f.__doc__, sig)
+        com = f"{sig}\n    '''\n{f.__doc__}\n    '''\n    pass\n"
         res = migrating_doxygen_doc(com, "docstring")
         doc = res[1]
         if "@param" in doc:
@@ -76,7 +76,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
                                        p2):""".replace("                ", "")
 
         f = synchronize_folder
-        com = "{1}\n    '''\n{0}\n    '''\n    pass\n".format(f.__doc__, sig)
+        com = f"{sig}\n    '''\n{f.__doc__}\n    '''\n    pass\n"
         res = migrating_doxygen_doc(com, "docstring")
         doc = res[1]
         if "@param" in doc:
@@ -87,7 +87,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
                                        p2):""".replace("                ", "")
 
         f = synchronize_folder
-        com = "{1}\n    '''\n{0}\n    '''\n    pass\n".format(f.__doc__, sig)
+        com = f"{sig}\n    '''\n{f.__doc__}\n    '''\n    pass\n"
         res = migrating_doxygen_doc(com, "docstring")
         doc = res[1]
         if "@param" in doc:

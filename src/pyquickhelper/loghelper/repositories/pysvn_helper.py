@@ -325,7 +325,7 @@ def get_repo_version(path=None, commandline=True, log=False):  # pragma: no cove
             if log:
                 fLOG("problem with file ", path, err)
             if log:
-                return "OUT\n{0}\n[svnerror]{1}\nCMD:\n{2}".format(out, err, cmd)
+                return f"OUT\n{out}\n[svnerror]{err}\nCMD:\n{cmd}"
             else:
                 raise Exception(err)
         lines = out.split("\n")

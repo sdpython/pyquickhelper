@@ -22,7 +22,7 @@ class PQPipError(Exception):
             Exception.__init__(self, args[0])  # pragma: no cover
         else:
             cmd, out, err = args
-            mes = "CMD:\n{0}\nOUT:\n{1}\n[piperror]\n{2}".format(cmd, out, err)
+            mes = f"CMD:\n{cmd}\nOUT:\n{out}\n[piperror]\n{err}"
             Exception.__init__(self, mes)
 
 
@@ -156,6 +156,5 @@ def get_package_info(name=None, start=0, end=-1):
     res = list(search_packages_info([name]))
     if len(res) != 1:
         raise PQPipError(  # pragma: no cover
-            "Unexpected number of results {0} for {1}".format(
-                len(res), name))
+            f"Unexpected number of results {len(res)} for {name}")
     return res[0]

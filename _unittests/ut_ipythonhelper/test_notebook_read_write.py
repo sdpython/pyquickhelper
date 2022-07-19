@@ -43,7 +43,7 @@ class TestNotebookReadWrite (unittest.TestCase):
                 a, b = cc
                 if a.strip(" \n") != b.strip(" \n"):
                     raise Exception(
-                        "difference at line {0}\n1: [{1}]-[{3}]\n2: [{2}]-[{4}]".format(i, a, b, type(a), type(b)))
+                        f"difference at line {i}\n1: [{a}]-[{type(a)}]\n2: [{b}]-[{type(b)}]")
             if len(l1) != len(l2):
                 raise Exception("different length")
 

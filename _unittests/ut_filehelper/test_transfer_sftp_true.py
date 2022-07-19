@@ -35,7 +35,7 @@ class TestTransferFTPTrue(ExtTestCase):
             if not is_travis_or_appveyor():
                 zoo = []
                 for k, v in sorted(os.environ.items()):
-                    zoo.append("{0}={1}".format(k, v))
+                    zoo.append(f"{k}={v}")
                 raise Exception("user password is empty, prefix='{0}', username='{1}'\n{2}".format(
                     prefix, get_user(), "\n".join(zoo)))
             return None

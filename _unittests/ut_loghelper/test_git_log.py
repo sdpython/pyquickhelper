@@ -33,7 +33,7 @@ class TestGitLog(unittest.TestCase):
         self.assertEqual(len(res[0]), 6)
         if "http" not in res[0][-1]:
             warnings.warn(
-                "[test_log_file_details_all] Not really expected: {0}".format(res[0]))
+                f"[test_log_file_details_all] Not really expected: {res[0]}")
 
     def test_file_detail_src(self):
         fLOG(

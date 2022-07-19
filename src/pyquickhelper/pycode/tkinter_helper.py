@@ -47,13 +47,13 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
                 else:
                     mes = ", ".join(os.listdir(rev))
                     raise FileNotFoundError(
-                        "Unable to find: {0},\nsubfolders: {1}".format(site, mes))
+                        f"Unable to find: {site},\nsubfolders: {mes}")
         else:
             site = os.path.join(rev, "..", "tcl")
             if not os.path.exists(site):
                 mes = ", ".join(os.listdir(os.path.join(rev, "..")))
                 raise FileNotFoundError(
-                    "unable to find: {0},\nsubfolders: {1}".format(site, mes))
+                    f"unable to find: {site},\nsubfolders: {mes}")
         return os.path.normpath(site)
 
     def look_for(where, prefix):  # pragma: no cover
@@ -110,8 +110,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         if "DISPLAY" not in os.environ:
             p = ":0"
             if fLOG:
-                fLOG("Change {0}: '{1}' --> '{2}'".format("DISPLAY",
-                                                          os.environ.get("DISPLAY", None), p))
+                fLOG(f"Change DISPLAY: '{os.environ.get('DISPLAY', None)}' --> '{p}'")
             os.environ["DISPLAY"] = p
     else:
         # if "DISPLAY" not in os.environ:

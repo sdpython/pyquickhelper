@@ -10,5 +10,5 @@ def onefunction(a, b: int = 4):
     :raises TypeError: if a and b have different types.
     """
     if type(a) != type(b):
-        raise TypeError("Different type {0} != {1}".format(a, b))
+        raise TypeError(f"Different type {a} != {b}")
     return a + b

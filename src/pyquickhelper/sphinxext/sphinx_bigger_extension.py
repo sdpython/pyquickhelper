@@ -63,7 +63,7 @@ def depart_bigger_node_html(self, node):
     It does only html for the time being.
     """
     self.body.append(
-        '<font size="{1}">{0}</font>'.format(cgiesc.escape(node["text"]), node["size"]))
+        f"<font size=\"{node['size']}\">{cgiesc.escape(node['text'])}</font>")
 
 
 def visit_bigger_node_rst(self, node):

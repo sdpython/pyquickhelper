@@ -25,7 +25,7 @@ def get_size(d, key):
         return None
     m = re.match("(\\d+)(|%|px)$", d[key])
     if not m:
-        raise ValueError("invalid size %r" % d[key])
+        raise ValueError(f"invalid size {d[key]!r}")
     return int(m.group(1)), m.group(2) or "px"
 
 
@@ -58,7 +58,7 @@ def visit_youtube_node(self, node):
         if (height is None) and (width is not None) and (width[1] == "%"):
             style = {
                 "padding-top": "%dpx" % CONTROL_HEIGHT,
-                "padding-bottom": "%f%%" % (width[0] * aspect[1] / aspect[0]),
+                "padding-bottom": f"{width[0] * aspect[1] / aspect[0]:f}%",
                 "width": "%d%s" % width,
                 "position": "relative",
             }
@@ -72,7 +72,7 @@ def visit_youtube_node(self, node):
                 "border": "0",
             }
             attrs = {
-                "src": "https://www.youtube.com/embed/%s" % node["id"],
+                "src": f"https://www.youtube.com/embed/{node['id']}",
                 "style": css(style),
             }
             self.body.append(self.starttag(node, "iframe", **attrs))
@@ -91,13 +91,13 @@ def visit_youtube_node(self, node):
                 "border": "0",
             }
             attrs = {
-                "src": "https://www.youtube.com/embed/%s" % node["id"],
+                "src": f"https://www.youtube.com/embed/{node['id']}",
                 "style": css(style),
             }
             self.body.append(self.starttag(node, "iframe", **attrs))
             self.body.append("</iframe>")
     else:
-        self.body.append("https://www.youtube.com/embed/%s" % node["id"])
+        self.body.append(f"https://www.youtube.com/embed/{node['id']}")
 
 
 def depart_youtube_node(self, node):
@@ -126,7 +126,7 @@ class YoutubeDirective(Directive):
             aspect = self.options.get("aspect")
             m = re.match("(\\d+):(\\d+)", aspect)
             if m is None:
-                raise ValueError("invalid aspect ratio %r" % aspect)
+                raise ValueError(f"invalid aspect ratio {aspect!r}")
             aspect = tuple(int(x) for x in m.groups())
         else:
             aspect = None
@@ -145,7 +145,7 @@ class YoutubeDirective(Directive):
                     lineno = self.lineno
                     docname = None if env is None else env.docname
                     logger.warning(
-                        "[youtube] unable to extract video id from '{0}' in docname '{1}' - line {2}.".format(idurl, docname, lineno))
+                        f"[youtube] unable to extract video id from '{idurl}' in docname '{docname}' - line {lineno}.")
                     uid = ""
         else:
             uid = self.arguments[0]

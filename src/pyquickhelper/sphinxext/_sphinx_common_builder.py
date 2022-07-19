@@ -110,8 +110,7 @@ class CommonSphinxWriterHelpers:
                     files = glob.glob(full)
                     if len(files) == 0:
                         raise FileNotFoundError(  # pragma: no cover
-                            "Unable to find any file matching pattern "
-                            "'{}'.".format(full))
+                            f"Unable to find any file matching pattern '{full}'.")
                     full = files[0]
 
                 if not os.path.exists(full):
@@ -120,7 +119,7 @@ class CommonSphinxWriterHelpers:
                         this, "sphinximages", "sphinxtrib", "missing.png")
                     logger = logging.getLogger("image")
                     logger.warning(
-                        "[image] unable to find image '{0}', replaced by '{1}'".format(full, repl))
+                        f"[image] unable to find image '{full}', replaced by '{repl}'")
                     full = repl
 
                 ext = os.path.splitext(full)[-1]
@@ -170,7 +169,7 @@ class CommonSphinxWriterHelpers:
                             shutil.copy(full, dest)
                         except (FileNotFoundError, OSError) as e:
                             raise FileNotFoundError(  # pragma: no cover
-                                "Unable to copy from '{0}' to '{1}'.".format(full, dest)) from e
+                                f"Unable to copy from '{full}' to '{dest}'.") from e
                         full = dest
                 else:
                     full = dest
@@ -223,12 +222,12 @@ class CommonSphinxWriterHelpers:
                 if re.match(r'^[0-9.]+$', atts[att_name]):
                     # Interpret unitless values as pixels.
                     atts[att_name] += 'px'
-                style.append('%s: %s;' % (att_name, atts[att_name]))
+                style.append(f'{att_name}: {atts[att_name]};')
 
         if style:
             atts['style'] = ' '.join(style)
 
         if 'align' in node:
-            atts['class'] = 'align-%s' % node['align']
+            atts['class'] = f"align-{node['align']}"
 
         return atts

@@ -85,7 +85,7 @@ def get_image_extension(uri):
         if ('?' + ext[1:]) in uri:
             return ext
     logger = logging.getLogger('image')
-    logger.warning("[image] unable to guess extension for '{0}'".format(uri))
+    logger.warning(f"[image] unable to guess extension for '{uri}'")
     return ''
 
 
@@ -147,7 +147,7 @@ class ImageDirective(Directive):
         # TODO: something is broken here, not parsed as expected
         description = nodes.paragraph()
         content = nodes.paragraph()
-        content += [nodes.Text("%s" % x) for x in self.content]
+        content += [nodes.Text(f"{x}") for x in self.content]
         self.state.nested_parse(content, 0, description)
 
         img = image_node()
@@ -160,7 +160,7 @@ class ImageDirective(Directive):
             self.arguments[0] = repl
             is_remote = self.is_remote(self.arguments[0])
             logger = logging.getLogger('image')
-            logger.warning("[image] {0}, replaced by '{1}'".format(e, repl))
+            logger.warning(f"[image] {e}, replaced by '{repl}'")
 
         if is_remote:
             img['remote'] = True
@@ -283,16 +283,16 @@ def download_images(app, env):
         ensuredir(dirn)
         if not os.path.isfile(dst):
 
-            logger.info('{} -> {} (downloading)'.format(src, dst))
+            logger.info(f'{src} -> {dst} (downloading)')
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs
                 try:
                     f.write(requests.get(src,
                                          **conf['requests_kwargs']).content)
                 except requests.ConnectionError:
-                    logger.info("Cannot download `{}`".format(src))
+                    logger.info(f"Cannot download `{src}`")
         else:
-            logger.info('{} -> {} (already in cache)'.format(src, dst))
+            logger.info(f'{src} -> {dst} (already in cache)')
 
 
 def configure_backend(app):
@@ -332,7 +332,7 @@ def configure_backend(app):
                 "local function"
                 return f(writer, node)
             return inner_wrapper
-        signature = '_{}_{}'.format(node.__name__, output_type)
+        signature = f'_{node.__name__}_{output_type}'
         return (backend_method(getattr(backend, 'visit' + signature, getattr(backend, 'visit_' + node.__name__ + '_fallback'))),
                 backend_method(getattr(backend, 'depart' + signature, getattr(backend, 'depart_' + node.__name__ + '_fallback'))))
 

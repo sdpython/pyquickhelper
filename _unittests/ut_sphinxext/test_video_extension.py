@@ -74,7 +74,7 @@ class TestVideoExtension(ExtTestCase):
 
         warns = log_capture_string.getvalue().strip("\n\r\t ")
         if len(warns) != 0 and 'Unable to find' not in warns:
-            raise Exception("warnings '{0}'".format(warns))
+            raise Exception(f"warnings '{warns}'")
 
         t1 = "this code shoud not appear"
         if t1 in html:
@@ -265,7 +265,7 @@ class TestVideoExtension(ExtTestCase):
 
         warns = log_capture_string.getvalue().strip("\n\r\t ")
         if len(warns) != 0 and 'Unable to find' not in warns:
-            raise Exception("warnings '{0}'".format(warns))
+            raise Exception(f"warnings '{warns}'")
 
         t1 = "this code shoud not appear"
         if t1 in html:

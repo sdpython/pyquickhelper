@@ -28,7 +28,7 @@ class CompletionTrieNode(object):
         """
         if not isinstance(value, str):
             raise TypeError(
-                "value must be str not '{0}' - type={1}".format(value, type(value)))
+                f"value must be str not '{value}' - type={type(value)}")
         self.value = value
         self.children = None
         self.weight = weight
@@ -51,7 +51,7 @@ class CompletionTrieNode(object):
         """
         usual
         """
-        return "[{2}:{0}:w={1}]".format(self.value, self.weight, "#" if self.leave else "-")
+        return f"[{'#' if self.leave else '-'}:{self.value}:w={self.weight}]"
 
     def _add(self, key, child):
         """
@@ -65,7 +65,7 @@ class CompletionTrieNode(object):
             self.children = {key: child}
             child.parent = self
         elif key in self.children:
-            raise KeyError("'{0}' already added".format(key))
+            raise KeyError(f"'{key}' already added")
         else:
             self.children[key] = child
             child.parent = self
@@ -190,13 +190,13 @@ class CompletionTrieNode(object):
         res = self.all_mks_completions() if use_precompute else self.all_completions()
         rows = []
         for node, sug in res:
-            rows.append("p='{0}'".format(node.value))
+            rows.append(f"p='{node.value}'")
             for i, s in enumerate(sug):
                 if isinstance(s, str):
-                    rows.append("  {0}-'{1}'".format(i + 1, s))
+                    rows.append(f"  {i + 1}-'{s}'")
                 else:
                     rows.append(
-                        "  {0}-w{1}-'{2}'".format(i + 1, s[0], s[1].value))
+                        f"  {i + 1}-w{s[0]}-'{s[1].value}'")
                 if maxn is not None and i > maxn:
                     break
         return "\n".join(rows)
@@ -221,7 +221,7 @@ class CompletionTrieNode(object):
                     w, word, disp = wword
                 else:
                     raise ValueError(
-                        "Unexpected number of values, it should be (weight, word) or (weight, word, dispplay string): {0}".format(wword))
+                        f"Unexpected number of values, it should be (weight, word) or (weight, word, dispplay string): {wword}")
             else:
                 w = 1.0
                 word = wword
@@ -245,7 +245,7 @@ class CompletionTrieNode(object):
             if new_node is None:
                 if node.leave:
                     raise ValueError(
-                        "Value '{0}' appears twice in the input list (not allowed).".format(word))
+                        f"Value '{word}' appears twice in the input list (not allowed).")
                 else:
                     new_node = node
             new_node.leave = True
@@ -268,7 +268,7 @@ class CompletionTrieNode(object):
                 return self
             else:
                 raise ValueError(
-                    "find '{0}' but node is not empty '{1}'".format(prefix, self.value))
+                    f"find '{prefix}' but node is not empty '{self.value}'")
         node = self
         for c in prefix:
             if node.children is not None and c in node.children:
@@ -343,7 +343,7 @@ class CompletionTrieNode(object):
         node = self.find(word)
         if node is None:
             raise NotImplementedError(
-                "this metric is not yet computed for a query outside the trie: '{0}'".format(word))
+                f"this metric is not yet computed for a query outside the trie: '{word}'")
         if not hasattr(node, "stat"):
             raise AttributeError("run precompute_stat and update_stat_dynamic")
         if not hasattr(node.stat, "mks"):
@@ -373,7 +373,7 @@ class CompletionTrieNode(object):
         node = self.find(word)
         if node is None:
             raise NotImplementedError(
-                "this metric is not yet computed for a query outside the trie: '{0}'".format(word))
+                f"this metric is not yet computed for a query outside the trie: '{word}'")
         if not hasattr(node, "stat"):
             raise AttributeError("run precompute_stat and update_stat_dynamic")
         if not hasattr(node.stat, "mks"):
@@ -406,7 +406,7 @@ class CompletionTrieNode(object):
         node = self.find(word)
         if node is None:
             raise NotImplementedError(
-                "this metric is not yet computed for a query outside the trie: '{0}'".format(word))
+                f"this metric is not yet computed for a query outside the trie: '{word}'")
         if not hasattr(node, "stat"):
             raise AttributeError("run precompute_stat and update_stat_dynamic")
         if not hasattr(node.stat, "mks2"):
@@ -636,7 +636,7 @@ class CompletionTrieNode(object):
             return a string with metric information
             """
             if hasattr(self, "mks0"):
-                return "MKS={0} *={1} l={2}".format(self.mks0, self.mks0_, len(self.completions))
+                return f"MKS={self.mks0} *={self.mks0_} l={len(self.completions)}"
             else:
                 return "-"
 
@@ -646,6 +646,6 @@ class CompletionTrieNode(object):
             """
             s0 = self.str_mks0()
             if hasattr(self, "mks"):
-                return s0 + " '={0} \"={3} *={1} i={2}".format(self.mks, self.mks_, self.mksi_, self.mks2)
+                return s0 + f" '={self.mks} \"={self.mks2} *={self.mks_} i={self.mksi_}"
             else:
                 return s0

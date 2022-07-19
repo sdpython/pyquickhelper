@@ -64,7 +64,7 @@ class TestJenkinsExt(ExtTestCase):
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
-                                       "%s/" % "pyquickhelper",
+                                       f"{'pyquickhelper'}/",
                                        upstreams=None,
                                        location=r"/home/username/jenkins/")
 
@@ -72,7 +72,7 @@ class TestJenkinsExt(ExtTestCase):
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
-                                       "%s/" % "pyquickhelper",
+                                       f"{'pyquickhelper'}/",
                                        upstreams=None,
                                        location=r"/home/username/jenkins/",
                                        scheduler="H H(13-14) * * *")
@@ -81,7 +81,7 @@ class TestJenkinsExt(ExtTestCase):
         try:
             conf = srv.create_job_template("pyquickhelper",
                                            git_repo=github +
-                                           "%s/" % "pyquickhelper",
+                                           f"{'pyquickhelper'}/",
                                            upstreams=["pyquickhelper"],
                                            location=r"/home/username/jenkins/",
                                            scheduler="H H(13-14) * * *")
@@ -91,7 +91,7 @@ class TestJenkinsExt(ExtTestCase):
 
         conf = srv.create_job_template("pyquickhelper",
                                        git_repo=github +
-                                       "%s/" % "pyquickhelper",
+                                       f"{'pyquickhelper'}/",
                                        upstreams=["pyquickhelper"],
                                        location=r"/home/username/jenkins/",
                                        scheduler=None)
@@ -209,17 +209,17 @@ class TestJenkinsExt(ExtTestCase):
 
             if "pymyinstall" in r[0].split("<--")[0] and "[" not in r[0]:
                 if "FAILURE" in conf:
-                    raise Exception("{0}\n----\n{1}".format(r[0], conf))
+                    raise Exception(f"{r[0]}\n----\n{conf}")
                 if "SUCCESS" not in conf:
                     raise Exception(conf)
 
             if "[UT]" in job:
                 if "-d 10" not in conf:
-                    raise Exception("{0}\n-----------\n{1}".format(job, conf))
+                    raise Exception(f"{job}\n-----------\n{conf}")
                 if "%1" in conf:
-                    raise Exception("{0}\n-----------\n{1}".format(job, conf))
+                    raise Exception(f"{job}\n-----------\n{conf}")
                 if " -d 10" not in conf:
-                    raise Exception("{0}\n-----------\n{1}".format(job, conf))
+                    raise Exception(f"{job}\n-----------\n{conf}")
 
             if i == 0:
                 if "conda update" not in conf:

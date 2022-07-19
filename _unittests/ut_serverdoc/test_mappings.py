@@ -25,7 +25,7 @@ class TestMappings(unittest.TestCase):
         fLOG(fold)
         res = get_jenkins_mappings(fold, loc="data2")
         if len(res) <= 0 and sys.version_info[0] != 2:
-            raise Exception("{0} - {1}".format(res, fold))
+            raise Exception(f"{res} - {fold}")
 
 
 if __name__ == "__main__":

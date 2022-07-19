@@ -125,7 +125,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                     if pyq_folder not in sys.path:
                         pos_remove = len(sys.path)
                         sys.path.append(pyq_folder)
-                        fLOG("ADD='{0}'".format(pyq_folder))
+                        fLOG(f"ADD='{pyq_folder}'")
 
                 try:
                     r = process_standard_options_for_setup(
@@ -147,7 +147,7 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                     content = "\n".join(lines).strip("\n\r\t ")
                     if len(content) > 0:
                         raise AssertionError(
-                            "Remaining style issues.\n{}".format(content)) from e
+                            f"Remaining style issues.\n{content}") from e
                 except TestWrappedException as e:
                     if "test_coverage_combine.py" in str(e):
                         goon = False
@@ -161,9 +161,9 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
                     if command == "unittests -e .*code_style.*" and pos_remove:
                         if sys.path[pos_remove] != pyq_folder:
                             raise Exception(
-                                "sys.path has changed at position {0}".format(pos_remove))
+                                f"sys.path has changed at position {pos_remove}")
                         del sys.path[pos_remove]
-                        fLOG("REMOVE='{0}'".format(pyq_folder))
+                        fLOG(f"REMOVE='{pyq_folder}'")
                 elif pos_remove:
                     del sys.path[pos_remove]
 
@@ -174,17 +174,17 @@ class TestUnitTestFullModuleTemplate(ExtTestCase):
 
                 if "unittests" in command:
                     if not r:
-                        raise Exception("{0}-{1}".format(r, command))
+                        raise Exception(f"{r}-{command}")
                     for line in log_lines:
                         fLOG("  ", line)
                     if len(log_lines) == 0:
                         raise Exception(
-                            "command1={0}\n--OUT--\n{1}\n--ERR--\n{2}".format(command, vout, verr))
+                            f"command1={command}\n--OUT--\n{vout}\n--ERR--\n{verr}")
                     if "-e" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                         raise Exception(vout)
                     if "-e" in command and "_ext" not in vout and "code_style" not in command:
                         raise Exception(
-                            "command3={0}\n--OUT--\n{1}".format(command, vout))
+                            f"command3={command}\n--OUT--\n{vout}")
                     if "LONG" in command and "running test   1, ut_module/test_convert_notebooks.py" in vout:
                         raise Exception(vout)
                 if rem:

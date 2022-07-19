@@ -28,7 +28,7 @@ class TestFileNodeTree(ExtTestCase):
         ftn = FileTreeNode(folder, log=True, log1=True,
                            filter=filter)
         if len(ftn) == 2:
-            raise Exception("%d" % len(ftn))
+            raise Exception(f"{len(ftn)}")
         nb = 0
         nrst = 0
         for f in ftn:
@@ -56,7 +56,7 @@ class TestFileNodeTree(ExtTestCase):
                         cont2 = replace_relative_import_fct(f.fullname)
                     except ValueError as e:
                         raise ValueError(
-                            "Unable to process '{}'.".format(f.fullname)) from e
+                            f"Unable to process '{f.fullname}'.") from e
                     lines = cont2.split("\n")
                     condition = "# replace # from ." in cont2
                     if not condition:

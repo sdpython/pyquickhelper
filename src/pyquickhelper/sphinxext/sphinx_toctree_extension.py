@@ -209,7 +209,7 @@ class CustomTocTreeCollector(TocTreeCollector):
                         an = "unkown-anchor"
                         logger = logging.getLogger("CustomTocTreeCollector")
                         logger.warning(
-                            "[CustomTocTreeCollector] no id for node '{0}'".format(sectionnode))
+                            f"[CustomTocTreeCollector] no id for node '{sectionnode}'")
                     else:
                         an = sectionnode['ids'][0]
                     anchorname = '#' + an

@@ -106,12 +106,11 @@ class CmdRef(BlocRef):
                     out = "--SCRIPT--{}\n--OUT--\n{}\n--ERR--\n{}\n--PATH--\n{}".format(
                         name, out, err, path)
                     logger = logging.getLogger("CmdRef")
-                    logger.warning("[CmdRef] cmd failed '{0}'".format(name))
+                    logger.warning(f"[CmdRef] cmd failed '{name}'")
                 elif out in (None, ''):
-                    out = "--SCRIPT--{}\n--EMPTY OUTPUT--\n--PATH--\n{}".format(
-                        name, path)
+                    out = f"--SCRIPT--{name}\n--EMPTY OUTPUT--\n--PATH--\n{path}"
                     logger = logging.getLogger("CmdRef")
-                    logger.warning("[CmdRef] cmd empty '{0}'".format(name))
+                    logger.warning(f"[CmdRef] cmd empty '{name}'")
                 content = "python " + name
                 cont += nodes.paragraph('<<<', '<<<')
                 pout = nodes.literal_block(content, content)
@@ -123,20 +122,20 @@ class CmdRef(BlocRef):
                 if ":" not in name:
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
-                        "[CmdRef] cmd '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
+                        f"[CmdRef] cmd '{name}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.")
                     if lineno is not None:
                         logger.warning(
-                            '   File "{0}", line {1}'.format(source, lineno))
+                            f'   File "{source}", line {lineno}')
 
                 # example: pyquickhelper.cli.pyq_sync_cli:pyq_sync
                 spl = name.strip("\r\n\t ").split(":")
                 if len(spl) != 2:  # pragma: no cover
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
-                        "[CmdRef] cmd(*= '{0}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.".format(name))
+                        f"[CmdRef] cmd(*= '{name}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.")
                     if lineno is not None:
                         logger.warning(
-                            '   File "{0}", line {1}'.format(source, lineno))
+                            f'   File "{source}", line {lineno}')
 
                 # rename the command line
                 if "=" in spl[0]:
@@ -150,16 +149,16 @@ class CmdRef(BlocRef):
                 fullname = fullname.strip()
                 name_cmd = name_cmd.strip()
 
-                fullname = "{0}.{1}".format(fullname, name_fct)
+                fullname = f"{fullname}.{name_fct}"
                 try:
                     obj, name = import_object(fullname, kind="function")
                 except ImportError:  # pragma: no cover
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
-                        "[CmdRef] unable to import '{0}'".format(fullname))
+                        f"[CmdRef] unable to import '{fullname}'")
                     if lineno is not None:
                         logger.warning(
-                            '   File "{0}", line {1}'.format(source, lineno))
+                            f'   File "{source}", line {lineno}')
                     obj = None
 
                 if obj is not None:
@@ -170,7 +169,7 @@ class CmdRef(BlocRef):
                         stio.write(" ".join(str(_) for _ in li) + "\n")
                     obj(args=['--help'], fLOG=local_print)
 
-                    content = "{0} --help".format(name_cmd)
+                    content = f"{name_cmd} --help"
                     pout = nodes.paragraph(content, content)
                     cont += pout
 
@@ -178,19 +177,17 @@ class CmdRef(BlocRef):
                     if len(content) == 0:  # pragma: no cover
                         logger = logging.getLogger("CmdRef")
                         logger.warning(
-                            "[CmdRef] empty output for '{0}'".format(fullname))
+                            f"[CmdRef] empty output for '{fullname}'")
                         if lineno is not None:
                             logger.warning(
-                                '   File "{0}", line {1}'.format(source, lineno))
-                        out = "--SCRIPT--{}\n--EMPTY OUTPUT--\n--PATH--\n{}".format(
-                            name, path)
+                                f'   File "{source}", line {lineno}')
+                        out = f"--SCRIPT--{name}\n--EMPTY OUTPUT--\n--PATH--\n{path}"
                         logger = logging.getLogger("CmdRef")
-                        logger.warning("[CmdRef] cmd empty '{0}'".format(name))
+                        logger.warning(f"[CmdRef] cmd empty '{name}'")
                     else:
                         start = 'usage: ' + name_fct
                         if content.startswith(start):
-                            content = "usage: {0}{1}".format(
-                                name_cmd, content[len(start):])
+                            content = f"usage: {name_cmd}{content[len(start):]}"
                     pout = nodes.literal_block(content, content)
                     cont += pout
 

@@ -212,7 +212,7 @@ def private_script_replacements(script, module, requirements, port, raise_except
     else:
         if raise_exception:
             raise NotImplementedError(
-                "not implemented yet for this platform %s" % sys.platform)
+                f"not implemented yet for this platform {sys.platform}")
         return None
 
 
@@ -434,7 +434,7 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
                     list_xml = f.read()
             if "<body>" not in list_xml:
                 raise ValueError(  # pragma: no cover
-                    "Wrong XML format:\n{0}".format(list_xml))
+                    f"Wrong XML format:\n{list_xml}")
             script = [("auto_rss_list.xml", list_xml)]
             script.append(("auto_rss_server.py", prefix_setup + """
                         from pyquickhelper.pycode.blog_helper import rss_update_run_server
@@ -462,7 +462,7 @@ def get_script_module(command, platform=sys.platform, blog_list=None,
                                      windows_docserver]))
     else:
         raise RuntimeError(  # pragma: no cover
-            "Unable to interpret command: %r" % command)
+            f"Unable to interpret command: {command!r}")
 
     # common post-processing
     for i, item in enumerate(script):
@@ -489,8 +489,8 @@ def get_pyproj_project(name, file_list):
     guid = uuid.uuid3(uuid.NAMESPACE_DNS, name)
     folders = list(_ for _ in sorted(set(os.path.dirname(f)
                                          for f in file_list)) if len(_) > 0)
-    sfold = "\n".join('    <Folder Include="%s\" />' % _ for _ in folders)
-    sfiles = "\n".join('    <Compile Include="%s\" />' % _ for _ in file_list)
+    sfold = "\n".join(f'    <Folder Include="{_}" />' for _ in folders)
+    sfiles = "\n".join(f'    <Compile Include="{_}" />' for _ in file_list)
 
     script = pyproj_template.replace("__GUID__", str(guid)) \
                             .replace("__NAME__", name) \

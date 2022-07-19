@@ -163,7 +163,7 @@ def py3to2_convert(script, unittest_modules):
             content = py3to2_future(content)
         except Convert3to2Exception as e:  # pragma: no cover
             raise Convert3to2Exception(
-                'unable to convert a file due to unicode issue.\n  File "{0}", line 1'.format(script)) from e
+                f'unable to convert a file due to unicode issue.\n  File "{script}", line 1') from e
 
     # some other modification
     content = content.replace("from queue import", "from Queue import")
@@ -195,7 +195,7 @@ def py3to2_future(content):
     @return                 new content
     """
     find = "from __future__ import unicode_literals"
-    if find in content and '"{0}"'.format(find) not in content:
+    if find in content and f'"{find}"' not in content:
         # the second condition avoid to raise this
         # exception when parsing this file
         # this case should only happen for this file
@@ -226,7 +226,7 @@ def py3to2_future(content):
         position += 1
 
     if position < len(lines):
-        lines[position] = "{0}\n{1}".format(find, lines[position])
+        lines[position] = f"{find}\n{lines[position]}"
     return "\n".join(lines)
 
 
@@ -270,11 +270,11 @@ def py3to2_imported_local_modules(content, unittest_modules):
         else:
             alias = modname
 
-        s1 = '"{0}"'.format(modname)
-        s2 = "'{0}'".format(modname)
-        s3 = "import {0}".format(modname)
-        s4 = '"{0}"'.format(modname.upper())
-        s4_rep = '"{0}27"'.format(modname.upper())
+        s1 = f'"{modname}"'
+        s2 = f"'{modname}'"
+        s3 = f"import {modname}"
+        s4 = f'"{modname.upper()}"'
+        s4_rep = f'"{modname.upper()}27"'
 
         if (s1 in content or s2 in content or s4 in content) and s3 in content:
             for i, line in enumerate(lines):
@@ -282,11 +282,11 @@ def py3to2_imported_local_modules(content, unittest_modules):
                     continue
                 if s1 in line:
                     line = line.replace(
-                        s1, '"..", "{0}", "dist_module27"'.format(alias))
+                        s1, f'"..", "{alias}", "dist_module27"')
                     lines[i] = line
                 elif s2 in line:
                     line = line.replace(  # pragma: no cover
-                        s2, "'..', '{0}', 'dist_module27'".format(alias))
+                        s2, f"'..', '{alias}', 'dist_module27'")
                     lines[i] = line  # pragma: no cover
                 elif s4 in line:
                     line = line.replace(s4, s4_rep)

@@ -37,7 +37,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                     encoding = "utf-8"
                 except Exception:
                     raise Exception(
-                        "unable to load file {} due to unicode errors".format(filename)) from e
+                        f"unable to load file {filename} due to unicode errors") from e
             initial_content = "".join(lines)
         else:
             try:
@@ -53,12 +53,12 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                     encoding = None
                 except Exception:
                     raise Exception(
-                        "unable to load file {} due to unicode errors".format(filename)) from e
+                        f"unable to load file {filename} due to unicode errors") from e
             initial_content = "".join(lines)
 
     if filename is not None and len(lines) == 0 and not filename.endswith("__init__.py"):
         raise ValueError(  # pragma: no cover
-            "File '{0}' is empty, encoding='{1}'.".format(filename, encoding))
+            f"File '{filename}' is empty, encoding='{encoding}'.")
 
     if filename is not None and ext in (".py", ".pyx", ".pxd"):
         if encoding is not None and len(lines) > 0 and "#-*-coding:utf-8-*-" in lines[0].replace(" ", ""):
@@ -163,8 +163,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
 
     if not os.path.exists(filename):
         raise FileNotFoundError(  # pragma: no cover
-            "Issue when applying autopep8 with filename: '{0}'.".format(
-                filename))
+            f"Issue when applying autopep8 with filename: '{filename}'.")
     return diff
 
 
@@ -194,7 +193,7 @@ def remove_extra_spaces_folder(
     """
     # delayed import to speed up import of .pycode
     from ..filehelper.synchelper import explore_folder
-    neg_pattern = "|".join("[/\\\\]{0}[/\\\\]".format(_) for _ in ["build", "build2", "build3",
+    neg_pattern = "|".join(f"[/\\\\]{_}[/\\\\]" for _ in ["build", "build2", "build3",
                                                                    "dist", "_venv", "_todo", "dist_module27", "_virtualenv"])
     files = explore_folder(folder, neg_pattern=neg_pattern, fullname=True)[1]
     mod = []

@@ -127,8 +127,7 @@ def get_estimation_time(file):
         li = f.readlines()
         f.close()
     except Exception as e:  # pragma: no cover
-        warnings.warn("Issue with '{0}'\n{1}\n{2}".format(
-            file, type(e), e), UserWarning)
+        warnings.warn(f"Issue with '{file}'\n{type(e)}\n{e}", UserWarning)
         return 10
     try:
         s = ''.join(li)
@@ -197,7 +196,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
             for d in di:
                 if len(d) >= 6 and d[:5] == "_test":
                     raise RuntimeError(  # pragma: no cover
-                        "a function _test is still deactivated %s in %s" % (d, c))
+                        f"a function _test is still deactivated {d} in {c}")
                 if len(d) < 5 or d[:4] != "test":
                     continue
                 # method d.c
@@ -208,7 +207,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                     exec(cp, globals(), loc)
                 except Exception as e:  # pragma: no cover
                     raise Exception(
-                        "Unable to execute code '{0}'".format(code)) from e
+                        f"Unable to execute code '{code}'") from e
                 t = loc["t"]
                 testsuite.addTest(t)
 
@@ -290,7 +289,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         full_src = os.path.abspath('src')
         if not os.path.exists(full_src):
             raise FileNotFoundError(
-                "Unable to interpret path %r - %r." % ('src', full_src))
+                f"Unable to interpret path {'src'!r} - {full_src!r}.")
         os.environ['PYTHONPATH'] = full_src
     if skip_list is None:
         skip_list = set()
@@ -306,7 +305,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         for path in paths:
             if os.path.exists(path):
                 raise FileExistsError(  # pragma: no cover
-                    "This path should not exist '{}'.".format(path))
+                    f"This path should not exist '{path}'.")
 
     def short_name(el):
         cut = os.path.split(el)
@@ -314,11 +313,11 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         return cut
 
     # sort the test by increasing expected time
-    fLOG("[main_run_test] path_test %r" % path_test)
+    fLOG(f"[main_run_test] path_test {path_test!r}")
     li = get_test_file("test*", folder=path_test, fLOG=fLOG, root=path_test)
     if len(li) == 0:
         raise FileNotFoundError(  # pragma: no cover
-            "No test files in %r." % path_test)
+            f"No test files in {path_test!r}.")
     est = [get_estimation_time(el) for el in li]
     co = [(e, short_name(el), el) for e, el in zip(est, li)]
     co.sort()
@@ -340,12 +339,12 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     # check existing
     if len(co) == 0:
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find any test files in '{0}'.".format(path_test))
+            f"Unable to find any test files in '{path_test}'.")
 
     if skip != -1:
-        fLOG("[main_run_test] found %d test files skipping." % len(co))
+        fLOG(f"[main_run_test] found {len(co)} test files skipping.")
     else:
-        fLOG("[main_run_test] found %d test files." % len(co))
+        fLOG(f"[main_run_test] found {len(co)} test files.")
 
     # extract the test classes
     cco = []
@@ -382,7 +381,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
     # displays
     memout.write("[main_run_test] ---- JENKINS BEGIN UNIT TESTS ----")
     memout.write(
-        "[main_run_test] ---- BEGIN UNIT TEST for '{0}'".format(path_test))
+        f"[main_run_test] ---- BEGIN UNIT TEST for '{path_test}'")
 
     # display all tests
     for i, s in enumerate(suite):
@@ -514,7 +513,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     sw = str(slw)
                     if sw not in warndone:
                         # we display only one time the same warning
-                        fullstderr.write("w{0}: {1}\n".format(i, sw))
+                        fullstderr.write(f"w{i}: {sw}\n")
                         warndone.add(sw)
             serr = newstdr.getvalue()
             if serr.strip(" \n\r\t"):
@@ -536,9 +535,9 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     fullstderr.write("[main_run_test] +WARN:\n")
                     for w, _ in list_warn:
                         fullstderr.write(
-                            "[in:{2}] w{0}: {1}\n".format(i, str(w), cut))
+                            f"[in:{cut}] w{i}: {str(w)}\n")
                 if val.strip(" \n\r\t"):
-                    fullstderr.write("[in:{0}] ERRv:\n".format(cut))
+                    fullstderr.write(f"[in:{cut}] ERRv:\n")
                     fullstderr.write(val)
 
         memout.write("\n")
@@ -576,7 +575,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     for fi, lw in allwarn:
         if len(lw) > 0:
-            memout.write("[main_run_test] -WARN: {0}\n".format(fi))
+            memout.write(f"[main_run_test] -WARN: {fi}\n")
             wdone = {}
             for i, (w, s) in enumerate(lw):
                 sw = str(w)
@@ -584,7 +583,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                     continue
                 wdone[sw] = w
                 try:
-                    sw = "  w{0}: {1}\n".format(i, w)
+                    sw = f"  w{i}: {w}\n"
                 except UnicodeEncodeError:  # pragma: no cover
                     sw = "  w{0}: Unable to convert a warnings of type {1} into a string (1)".format(
                         i, type(w))

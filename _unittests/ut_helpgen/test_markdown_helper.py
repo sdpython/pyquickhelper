@@ -39,7 +39,7 @@ class TestHelperMarkdown(unittest.TestCase):
         if "<p>.. _l-README:</p>" not in str(r):
             m = [ord(c) for c in content]
             m = ",".join(str(_) for _ in m[:20])
-            raise Exception("IN\n{0}\nOUT:{1}".format(m, str(r)))
+            raise Exception(f"IN\n{m}\nOUT:{str(r)}")
 
         ht = rst2html(content)
         # fLOG(ht)
@@ -64,7 +64,7 @@ class TestHelperMarkdown(unittest.TestCase):
         if "<p>.. _l-README:</p>" not in str(r):
             m = [ord(c) for c in content]
             m = ",".join(str(_) for _ in m[:20])
-            raise Exception("IN\n{0}\nOUT:{1}".format(m, str(r)))
+            raise Exception(f"IN\n{m}\nOUT:{str(r)}")
 
         ht = rst2html(content)
         # fLOG(ht)

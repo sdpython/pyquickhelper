@@ -44,7 +44,7 @@ def images2pdf(images, output, fLOG=None):
 
     if fLOG is not None:  # pragma: no cover
         for i, img in enumerate(all_images):
-            fLOG("[images2pdf] {}/{} '{}'".format(i + 1, len(all_images), img))
+            fLOG(f"[images2pdf] {i + 1}/{len(all_images)} '{img}'")
 
     if isinstance(output, str):
         st = open(output, 'wb')
@@ -56,7 +56,7 @@ def images2pdf(images, output, fLOG=None):
     for img in all_images:
         if isinstance(img, str) and not os.path.exists(img):
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to find image %r." % img)
+                f"Unable to find image {img!r}.")
 
     try:
         convert(all_images, outputstream=st, with_pdfrw=False)

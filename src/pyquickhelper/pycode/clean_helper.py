@@ -92,7 +92,7 @@ def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
         from .code_helper import remove_extra_spaces_and_pep8
         clean_file = remove_extra_spaces_and_pep8
     else:
-        raise ValueError("Unknown cleaning '{0}'.".format(op))
+        raise ValueError(f"Unknown cleaning '{op}'.")
 
     if posreg and isinstance(posreg, str):
         posreg = re.compile(posreg)
@@ -109,6 +109,6 @@ def clean_files(folder=".", posreg='.*[.]((py)|(rst))$',
                 if negreg is None or not negreg.search(fn):
                     r = clean_file(full)
                     if r and fLOG:
-                        fLOG("[clean_files] processed '{0}'".format(fn))
+                        fLOG(f"[clean_files] processed '{fn}'")
                         res.append(rel)
     return res

@@ -125,13 +125,13 @@ def sharenet_role(role, rawtext, text, lineno, inliner,
                 size = i
             except ValueError:  # pragma: no cover
                 msg = inliner.reporter.error(
-                    "unable to interpret {0} from {1}".format(v, rawtext), line=lineno)
+                    f"unable to interpret {v} from {rawtext}", line=lineno)
                 prb = inliner.problematic(rawtext, rawtext, msg)
                 return [prb], [msg]
 
     if len(networks) == 0:
         msg = inliner.reporter.error(  # pragma: no cover
-            "no specified network from {0}".format(rawtext), line=lineno)
+            f"no specified network from {rawtext}", line=lineno)
         prb = inliner.problematic(rawtext, rawtext, msg)  # pragma: no cover
         return [prb], [msg]  # pragma: no cover
 
@@ -234,9 +234,8 @@ def visit_sharenet_node_rst(self, node):
     specify a different function for each.
     """
     inside = "-".join(node['networks'])
-    inside = "{0}-{1}-{2}".format(inside,
-                                  node["size"], "head" if node['inhead'] else "body")
-    self.add_text(":sharenet:`{0}`".format(inside))
+    inside = f"{inside}-{node['size']}-{'head' if node['inhead'] else 'body'}"
+    self.add_text(f":sharenet:`{inside}`")
 
 
 def depart_sharenet_node_rst(self, node):

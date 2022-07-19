@@ -39,4 +39,4 @@ def isnan(s):
         import numpy
         return numpy.isnan(s)
     raise TypeError(  # pragma: no cover
-        "wrong type before calling numpy.isnan: {0}".format(type(s)))
+        f"wrong type before calling numpy.isnan: {type(s)}")

@@ -150,19 +150,19 @@ class BokehPlotDirective(Directive):
             except Exception as e:  # pragma: no cover
                 raise SphinxError(f"{env.docname}: {e!r}")
 
-        js_name = "bokeh-plot-%s-external-%s.js" % (uuid4().hex, docname)
+        js_name = f"bokeh-plot-{uuid4().hex}-external-{docname}.js"
 
         try:
             (script, js, js_path, source) = _process_script(
                 source, path, env, js_name)
         except Exception as e:  # pragma: no cover
             raise RuntimeError(
-                "Sphinx bokeh-plot exception: \n\n%s\n\n Failed on:\n\n %s" % (e, source))
+                f"Sphinx bokeh-plot exception: \n\n{e}\n\n Failed on:\n\n {source}")
         env.bokeh_plot_files[js_name] = (
             script, js, js_path, source, dirname(env.docname))
 
         # use the source file name to construct a friendly target_id
-        target_id = "%s.%s" % (env.docname, basename(js_path))
+        target_id = f"{env.docname}.{basename(js_path)}"
         target = nodes.target('', '', ids=[target_id])
         result = [target]
 
@@ -230,7 +230,7 @@ def build_finished(app, exception):
             copyfile(file, target)
         except OSError as e:
             raise SphinxError(
-                'cannot copy local file %r, reason: %s' % (file, e))
+                f'cannot copy local file {file!r}, reason: {e}')
 
 
 def setup(app):

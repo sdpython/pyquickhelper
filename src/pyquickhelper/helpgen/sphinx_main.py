@@ -335,11 +335,11 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         root_package = root
     if not os.path.exists(root_package):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find source root from '{}'.".format(root))
-    fLOG("[generate_help_sphinx] root='{0}'".format(root))
-    fLOG("[generate_help_sphinx] root_package='{0}'".format(root_package))
-    fLOG("[generate_help_sphinx] root_source='{0}'".format(root_source))
-    fLOG("[generate_help_sphinx] root_sphinxdoc='{0}'".format(root_sphinxdoc))
+            f"Unable to find source root from '{root}'.")
+    fLOG(f"[generate_help_sphinx] root='{root}'")
+    fLOG(f"[generate_help_sphinx] root_package='{root_package}'")
+    fLOG(f"[generate_help_sphinx] root_source='{root_source}'")
+    fLOG(f"[generate_help_sphinx] root_sphinxdoc='{root_sphinxdoc}'")
     conf_paths = [root_source, root_package]
     if extra_paths:
         conf_paths.extend(extra_paths)
@@ -360,7 +360,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         if module_conf is None:
             raise ImportError(
-                "Unable to import '{0}' which defines the help generation".format(confb))
+                f"Unable to import '{confb}' which defines the help generation")
         if 'ERROR' in module_conf:
             msg = "\n".join(["paths:"] + conf_paths + [
                 "-----------------------",
@@ -388,7 +388,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         lay, build, override, newconf = lay_build_override_newconf(t3)
         if newconf is None:
             continue
-        fLOG("[generate_help_sphinx] newconf: '{}' - {}".format(newconf, t3))
+        fLOG(f"[generate_help_sphinx] newconf: '{newconf}' - {t3}")
         # we need to import this file to guess the template directory and
         # add missing templates
         folds = os.path.join(root_sphinxdoc, newconf)
@@ -517,9 +517,9 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     if nblinks is not None and len(nblinks) > 0:
         fLOG("[generate_help_sphinx] NBLINKS - BEGIN")
         for i, (k, v) in enumerate(sorted(nblinks.items())):
-            fLOG("     {0}/{1} - '{2}': '{3}'".format(i + 1, len(nblinks), k, v))
+            fLOG(f"     {i + 1}/{len(nblinks)} - '{k}': '{v}'")
         fLOG("[generate_help_sphinx] NBLINKS - END")
-    fLOG("[generate_help_sphinx] nbneg_pattern='{0}'".format(nbneg_pattern))
+    fLOG(f"[generate_help_sphinx] nbneg_pattern='{nbneg_pattern}'")
 
     # add to PATH
     sep = ";" if sys.platform.startswith("win") else ":"
@@ -551,7 +551,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     for html_static_path in html_static_paths:
         found = install_javascript_tools(
             root_sphinxdoc, dest=html_static_path, fLOG=fLOG)
-        fLOG("[generate_help_sphinx] [javascript]: '{0}'".format(found))
+        fLOG(f"[generate_help_sphinx] [javascript]: '{found}'")
 
     ############################
     # we copy the extended styles (notebook, snippets)
@@ -576,7 +576,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ##############
     fLOG("---- JENKINS BEGIN DOCUMENTATION COPY FILES ----")
     optional_dirs = []
-    mapped_function = [(".*[.]%s$" % ext.strip("."), None)
+    mapped_function = [(f".*[.]{ext.strip('.')}$", None)
                        for ext in extra_ext]
 
     ###################################
@@ -593,20 +593,19 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     datetime_rows = [("prepare", datetime.now())]
     try:
         dest_doc = os.path.join(root, "_doc", "sphinxdoc", "source")
-        fLOG("[generate_help_sphinx] module_name='{}'".format(module_name))
-        fLOG("[generate_help_sphinx] project_var_name='{}'".format(project_var_name))
-        fLOG("[generate_help_sphinx] root='{}' root_package='{}'"
-             "".format(root, root_package))
-        fLOG("[generate_help_sphinx] dest_doc='{}'".format(dest_doc))
+        fLOG(f"[generate_help_sphinx] module_name='{module_name}'")
+        fLOG(f"[generate_help_sphinx] project_var_name='{project_var_name}'")
+        fLOG(f"[generate_help_sphinx] root='{root}' root_package='{root_package}'")
+        fLOG(f"[generate_help_sphinx] dest_doc='{dest_doc}'")
         subfolders = []
         if root_package.endswith("src"):
             subfolders.append(("src/" + module_name, module_name))
         else:
             subfolders.append((module_name, module_name))
-        fLOG("[generate_help_sphinx] subfolders={0}".format(subfolders))
+        fLOG(f"[generate_help_sphinx] subfolders={subfolders}")
         prepare_file_for_sphinx_help_generation(
             {}, root, dest_doc, subfolders=subfolders, silent=True,
-            rootrep=("_doc.sphinxdoc.source.%s." % (module_name,), ""),
+            rootrep=(f"_doc.sphinxdoc.source.{module_name}.", ""),
             optional_dirs=optional_dirs, mapped_function=mapped_function,
             replace_relative_import=False, module_name=module_name,
             copy_add_ext=copy_add_ext, use_sys=use_sys, fexclude=fexclude,
@@ -662,13 +661,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     notebook_doc = os.path.abspath(
         os.path.join(root, "_doc", "sphinxdoc", "source", "notebooks"))
     if os.path.exists(notebook_dir):
-        fLOG("     look into '{0}'".format(notebook_dir))
-        fLOG("     -pattern  '{0}'".format(nbneg_pattern))
+        fLOG(f"     look into '{notebook_dir}'")
+        fLOG(f"     -pattern  '{nbneg_pattern}'")
         notebooks = explore_folder(notebook_dir, pattern=".*[.]ipynb", neg_pattern=nbneg_pattern,
                                    fullname=True, fLOG=fLOG)[1]
         notebooks = [_ for _ in notebooks if (
             "checkpoint" not in _ and "/build/" not in _.replace("\\", "/"))]
-        fLOG("     found {0} notebooks".format(len(notebooks)))
+        fLOG(f"     found {len(notebooks)} notebooks")
         if len(notebooks) > 0:
             fLOG("[generate_help_sphinx] **** notebooks", nbformats)
             build = os.path.join(root, "build", "notebooks")
@@ -716,7 +715,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                             os.makedirs(d)
                         shutil.copy(img, d)
     else:
-        fLOG("---- no folder '{0}'".format(notebook_dir))
+        fLOG(f"---- no folder '{notebook_dir}'")
 
     fLOG("[generate_help_sphinx] end notebooks")
     fLOG("---- JENKINS END DOCUMENTATION NOTEBOOKS ----")
@@ -800,7 +799,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     remove_folder(os.path.join(build, fold))
                 remove_folder(build)
 
-        over_ = ["{0}={1}".format(k, v) for k, v in override.items()]
+        over_ = [f"{k}={v}" for k, v in override.items()]
         over = []
         for o in over_:
             over.append("-D")
@@ -808,8 +807,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
         sconf = [] if newconf is None else ["-c", newconf]
 
-        cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", "{0}".format(lay),
-               "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}".format(build, lay)]
+        cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", f"{lay}",
+               "-d", f"{build}/doctrees"] + over + sconf + ["source", f"{build}/{lay}"]
         if lay in ('latex', 'pdf', 'elatex'):
             cmd.extend(["-D", "imgmath_image_format=png"])
         cmds.append((cmd, build, lay))
@@ -819,15 +818,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         if add_htmlhelp and lay == "html":  # pragma: no cover
             # we cannot execute htmlhelp in the same folder
             # as it changes the encoding
-            cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", "{0}help".format(lay),
-                   "-d", "{0}/doctrees".format(build)] + over + sconf + ["source", "{0}/{1}html".format(build, lay)]
+            cmd = ["sphinx-build", "-j%d" % parallel, "-v", "-T", "-b", f"{lay}help",
+                   "-d", f"{build}/doctrees"] + over + sconf + ["source", f"{build}/{lay}html"]
             cmd.extend(["-D", "imgmath_image_format=png"])
             cmds.append((cmd, build, "add_htmlhelp"))
             fLOG("[generate_help_sphinx] run:", cmd)
             lays.append(lay)
             hhp = os.path.join(build, lay + "help", module_name + "_doc.hhp")
             cmdp = '"C:\\Program Files (x86)\\HTML Help Workshop\\hhc.exe" ' + \
-                '"%s"' % hhp
+                f'"{hhp}"'
             cmds_post.append(cmdp)
 
     # cmd = "make {0}".format(lay)
@@ -878,18 +877,18 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 doesrem = False
             if doesrem:
                 fLOG(
-                    "[generate_help_sphinx] remove '{0}' from sys.modules".format(ex))
+                    f"[generate_help_sphinx] remove '{ex}' from sys.modules")
                 del sys.modules[ex]
 
         fLOG(
             "##################################################################################################")
-        fLOG("[generate_help_sphinx] direct_call={0}".format(direct_call))
-        fLOG("[generate_help_sphinx] cmd='''{0}'''".format(cmd))
+        fLOG(f"[generate_help_sphinx] direct_call={direct_call}")
+        fLOG(f"[generate_help_sphinx] cmd='''{cmd}'''")
         if isinstance(cmd, list):
-            fLOG("[generate_help_sphinx] cmd='''{0}'''".format(" ".join(cmd)))
-        fLOG("[generate_help_sphinx] kind='{0}'".format(kind))
-        fLOG("[generate_help_sphinx] build='{0}'".format(build))
-        fLOG("[generate_help_sphinx] direct_call={0}".format(direct_call))
+            fLOG(f"[generate_help_sphinx] cmd='''{' '.join(cmd)}'''")
+        fLOG(f"[generate_help_sphinx] kind='{kind}'")
+        fLOG(f"[generate_help_sphinx] build='{build}'")
+        fLOG(f"[generate_help_sphinx] direct_call={direct_call}")
 
         # direct call
         with python_path_append(root_source):
@@ -928,8 +927,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
                 out = "\n".join(lines)
 
-        fLOG("[generate_help_sphinx] end cmd len(out)={0} len(err)={1}".format(
-            len(out), len(err)))
+        fLOG(f"[generate_help_sphinx] end cmd len(out)={len(out)} len(err)={len(err)}")
 
         if len(err) > 0 or len(out) > 0:
             if ((len(err) > 0 and "Exception occurred:" in err) or
@@ -985,8 +983,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we should not need that
     for build_path in build_paths:
         if not os.path.exists(build_path):
-            fLOG("[generate_help_sphinx]    build_path not found '{0}'".format(
-                build_path))
+            fLOG(f"[generate_help_sphinx]    build_path not found '{build_path}'")
             continue
         dest = os.path.join(build_path, "_static", style_figure_notebook[0])
         if not os.path.exists(dest):  # pragma: no cover
@@ -1014,15 +1011,13 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     tocopy = [os.path.join(docpath, "source", "blog", "rss.xml")]
     for toco in tocopy:
         if os.path.exists(toco):
-            fLOG("[generate_help_sphinx] copy '{}'".format(
-                os.path.split(toco)[-1]))
+            fLOG(f"[generate_help_sphinx] copy '{os.path.split(toco)[-1]}'")
             for build_path in build_paths:
                 dest = os.path.join(build_path, "_downloads")
                 if os.path.exists(dest):
                     shutil.copy(toco, dest)
         else:
-            fLOG("[generate_help_sphinx] not found '{}'".format(
-                os.path.split(toco)[-1]))
+            fLOG(f"[generate_help_sphinx] not found '{os.path.split(toco)[-1]}'")
 
     fLOG("---- JENKINS END COPY RSS.XML ----")
 
@@ -1166,10 +1161,9 @@ def _process_sphinx_in_private_cmd(list_args, fLOG):
         if c[0] == '"' or c[-1] == '"' or ' ' not in c:
             res.append(c)
         else:
-            res.append('"{0}"'.format(c))
+            res.append(f'"{c}"')
     sargs = " ".join(res)
-    cmd = '"{0}" "{1}" {2}'.format(
-        sys.executable.replace("w.exe", ".exe"), this, sargs)
+    cmd = f"\"{sys.executable.replace('w.exe', '.exe')}\" \"{this}\" {sargs}"
     fLOG("    ", cmd)
     fLOG("[generate_help_sphinx] _process_sphinx_in_private_cmd BEGIN")
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG,
@@ -1199,18 +1193,18 @@ def _check_sphinx_configuration(conf, fLOG):
                 'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.' + add)
         if len(sphinx_gallery_conf["examples_dirs"]) > 0:
             fLOG(
-                "[sphinx-gallery] {0} discovered".format(len(sphinx_gallery_conf["examples_dirs"])))
+                f"[sphinx-gallery] {len(sphinx_gallery_conf['examples_dirs'])} discovered")
             for a, b in zip(sphinx_gallery_conf["examples_dirs"],
                             sphinx_gallery_conf["gallery_dirs"]):
-                fLOG("[sphinx-gallery]    src  '{0}'".format(a))
-                fLOG("[sphinx-gallery]    dest '{0}'".format(b))
+                fLOG(f"[sphinx-gallery]    src  '{a}'")
+                fLOG(f"[sphinx-gallery]    dest '{b}'")
                 clean_folders.append(a)
     for cl in clean_folders:
-        fLOG("[sphinx-gallery] clean '{0}'".format(cl))
+        fLOG(f"[sphinx-gallery] clean '{cl}'")
         for temp in os.listdir(cl):  # pragma: no cover
             if temp.startswith("temp_"):
                 aaa = os.path.join(cl, temp)
-                fLOG("[sphinx-gallery] remove '{0}'".format(cl))
+                fLOG(f"[sphinx-gallery] remove '{cl}'")
                 remove_folder(aaa)
 
 
@@ -1242,7 +1236,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
     with python_path_append(folds):
         if fLOG:
             fLOG(
-                "[_import_conf_extract_parameter] import from '{0}'".format(folds))
+                f"[_import_conf_extract_parameter] import from '{folds}'")
         try:
             module_conf = execute_script_get_local_variables(
                 "from conf import *", folder=folds)
@@ -1259,7 +1253,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
 
     if module_conf is None:
         raise ImportError(  # pragma: no cover
-            "Unable to import '{0}' which defines the help generation".format(newconf))
+            f"Unable to import '{newconf}' which defines the help generation")
     thenewconf = dictionary_as_class(module_conf)
     if fLOG:
         fLOG("[_import_conf_extract_parameter] import:", thenewconf.drop(

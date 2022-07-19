@@ -53,7 +53,7 @@ class StaticWidget(object):
         if divclass is None:
             self.divargs = ""
         else:
-            self.divargs = 'class:"{0}"'.format(divclass)
+            self.divargs = f'class:"{divclass}"'
 
     def __repr__(self):
         """
@@ -147,14 +147,12 @@ class RangeWidget(StaticWidget):
         style = ""
 
         if self.width is not None:
-            style += "width:{0}px".format(self.width)
+            style += f"width:{self.width}px"
 
         output = self.slider_html.format(name=self.name, range=self.datarange,
                                          default=self.default, style=style)
         if self.show_range:
-            output = "{0} {1} {2}".format(self.datarange[0],
-                                          output,
-                                          self.datarange[1])
+            output = f"{self.datarange[0]} {output} {self.datarange[1]}"
         return output
 
 
@@ -295,7 +293,7 @@ class RadioWidget(StaticWidget):
         """
         return HTML string
         """
-        preface = '<b>{name}:</b> '.format(name=self.name)
+        preface = f'<b>{self.name}:</b> '
         return preface + self.delimiter.join(
-            ["{0}: {1}".format(label, self._single_radio(value))
+            [f"{label}: {self._single_radio(value)}"
              for (label, value) in zip(self.labels, self._values)])

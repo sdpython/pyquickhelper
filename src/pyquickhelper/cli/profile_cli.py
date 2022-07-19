@@ -48,7 +48,7 @@ def profile_stat(file_stat, output=None, calls=True, verbose=False,
         sort_key = SortKey.TIME
     else:
         raise ValueError(
-            "Unexpected value for sort_key=%r." % sort_key)
+            f"Unexpected value for sort_key={sort_key!r}.")
 
     def clean_text(text):
         for pref in prefixes:
@@ -81,7 +81,7 @@ def profile_stat(file_stat, output=None, calls=True, verbose=False,
                 res = text
             else:
                 raise ValueError(
-                    "Unexpected file extension %r." % output)
+                    f"Unexpected file extension {output!r}.")
     else:
         st = io.StringIO()
         stats = Stats(file_stat, stream=st)
@@ -107,5 +107,5 @@ def profile_stat(file_stat, output=None, calls=True, verbose=False,
                 res = text
             else:
                 raise ValueError(
-                    "Unexpected file extension %r." % output)
+                    f"Unexpected file extension {output!r}.")
     return res

@@ -108,7 +108,7 @@ class TestPandasHelper_df2(ExtTestCase):
         df = pandas.read_csv(
             mara, names=["city", "year", "time", "seconds"], sep="\t")
         df['city'] = df.city.apply(
-            lambda v: ':ref:`{0}`'.format(v))  # pylint: disable=W0108
+            lambda v: f':ref:`{v}`')  # pylint: disable=W0108
         conv = df2rst(df, split_row="city",
                       split_col_common=["city", "year"],
                       split_col_subsets=[['time'], ['seconds']])
@@ -121,7 +121,7 @@ class TestPandasHelper_df2(ExtTestCase):
         df = pandas.read_csv(
             mara, names=["city", "year", "time", "seconds"], sep="\t")
         df['city'] = df.city.apply(
-            lambda v: ':ref:`{0}`'.format(v))  # pylint: disable=W0108
+            lambda v: f':ref:`{v}`')  # pylint: disable=W0108
         conv = df2rst(df, split_row=lambda index: df.loc[index, "city"].split("`")[1],
                       split_col_common=["city", "year"],
                       split_col_subsets=[['time'], ['seconds']])

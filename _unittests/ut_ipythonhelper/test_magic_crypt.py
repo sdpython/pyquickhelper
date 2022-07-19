@@ -27,7 +27,7 @@ class TestMagicCrypt(unittest.TestCase):
 
         mg = MagicCrypt()
 
-        cmd = "this dest %s" % password
+        cmd = f"this dest {password}"
         fLOG("**", cmd)
         if os.path.exists(dest):
             raise Exception(dest)
@@ -38,7 +38,7 @@ class TestMagicCrypt(unittest.TestCase):
 
         dest2 = os.path.join(temp, "__file__.py")
 
-        cmd = "dest dest2 %s" % password
+        cmd = f"dest dest2 {password}"
         fLOG("**", cmd)
         assert not os.path.exists(dest2)
         mg.add_context({"dest": dest, "dest2": dest2})

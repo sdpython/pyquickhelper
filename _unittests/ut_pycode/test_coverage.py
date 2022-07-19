@@ -23,7 +23,7 @@ class TestCoverage(ExtTestCase):
             cmd = publish_coverage_on_codecov(cov, None)
             self.assertNotEmpty(cmd)
         except GitException as e:
-            warnings.warn("Not tested due to '{0}'".format(e))
+            warnings.warn(f"Not tested due to '{e}'")
 
 
 if __name__ == "__main__":

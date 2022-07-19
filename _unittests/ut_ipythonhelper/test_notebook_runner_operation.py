@@ -32,9 +32,9 @@ class TestNotebookRunnerOperation (unittest.TestCase):
         n3a = len(add)
         n3 = len(nb1)
         if n1 + n2 != n3:
-            raise Exception("{0} + {1} != {2}".format(n1, n2, n3))
+            raise Exception(f"{n1} + {n2} != {n3}")
         if n3a != n3:
-            raise Exception("{0} != {1}".format(n3a, n3))
+            raise Exception(f"{n3a} != {n3}")
 
         fLOG(n1, n2, n3, n3a)
         outfile = os.path.join(temp, "merge_nb.ipynb")

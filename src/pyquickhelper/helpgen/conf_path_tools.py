@@ -37,11 +37,10 @@ def find_graphviz_dot(exc=True):
     """
     if sys.platform.startswith("win"):  # pragma: no cover
         version = list(range(34, 60))
-        version.extend(["{}.1".format(v) for v in version])
+        version.extend([f"{v}.1" for v in version])
         for v in version:
             graphviz_dot = (
-                "C:\\Program Files (x86)\\Graphviz2.{0}\\bin\\dot.exe"
-                "".format(v))
+                f"C:\\Program Files (x86)\\Graphviz2.{v}\\bin\\dot.exe")
             if os.path.exists(graphviz_dot):
                 return graphviz_dot
         extra = ['build/update_modules/Graphviz/bin']

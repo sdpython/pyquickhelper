@@ -73,7 +73,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
         sep = text.split('<')
         if len(sep) != 2:
             msg = inliner.reporter.error(
-                "Unable to interpret '{0}' for downloadlink".format(text))
+                f"Unable to interpret '{text}' for downloadlink")
             prb = inliner.problematic(rawtext, rawtext, msg)
             return [prb], [msg]
         name = sep[0].strip()
@@ -90,7 +90,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
         spl = link.split('::')
         if len(spl) != 2:
             msg = inliner.reporter.error(
-                "Unable to interpret '{0}' for downloadlink".format(text))
+                f"Unable to interpret '{text}' for downloadlink")
             prb = inliner.problematic(rawtext, rawtext, msg)
             return [prb], [msg]
         out, src = spl
@@ -99,7 +99,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
         out, src = ext.strip('.'), link
 
     if "::" in src:
-        raise RuntimeError("Value '{0}' is unexpected.".format(src))
+        raise RuntimeError(f"Value '{src}' is unexpected.")
 
     name = name.strip()
     node = downloadlink_node(text=anchor, raw=text)
@@ -110,7 +110,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
     node['anchor'] = anchor
 
     logger = logging.getLogger("downloadlink")
-    logger.info("[downloadlink] node '{0}'".format(str(node)))
+    logger.info(f"[downloadlink] node '{str(node)}'")
 
     return [node], []
 
@@ -123,7 +123,7 @@ def visit_downloadlink_node_html(self, node):
         raise nodes.SkipNode
 
     logger = logging.getLogger("downloadlink")
-    logger.info("[downloadlink] HTML '{0}'".format(str(node)))
+    logger.info(f"[downloadlink] HTML '{str(node)}'")
 
     atts = {'class': 'reference'}
 
@@ -179,7 +179,7 @@ def depart_downloadlink_node_text(self, node):
     """
     if self.output_format in ('rst', 'md', "latex", "elatex"):
         raise RuntimeError(
-            "format should not be '{0}'".format(self.output_format))
+            f"format should not be '{self.output_format}'")
 
 
 def visit_downloadlink_node_rst(self, node):
@@ -187,7 +187,7 @@ def visit_downloadlink_node_rst(self, node):
     Converts node *downloadlink* into :epkg:`rst`.
     """
     logger = logging.getLogger("downloadlink")
-    logger.info("[downloadlink] RST '{0}'".format(str(node)))
+    logger.info(f"[downloadlink] RST '{str(node)}'")
 
     if node['format']:
         self.add_text(":downloadlink:`{0} <{1}::{2}>`".format(
@@ -209,7 +209,7 @@ def visit_downloadlink_node_md(self, node):
     """
     Converts node *downloadlink* into :epkg:`md`.
     """
-    self.add_text("[{0}]({1})".format(node["anchor"], node["filename"]))
+    self.add_text(f"[{node['anchor']}]({node['filename']})")
     raise nodes.SkipNode
 
 
@@ -255,7 +255,7 @@ class DownloadLinkFileCollector(EnvironmentCollector):
                 app.env.docname, rel_filename)
         if nb > 0:
             logger = logging.getLogger("downloadlink")
-            logger.info("[downloadlink] processed {0}".format(nb))
+            logger.info(f"[downloadlink] processed {nb}")
 
 
 def copy_download_files(app, exc):
@@ -292,12 +292,12 @@ def copy_download_files(app, exc):
                 try:
                     copyfile(name, dest)
                     logger.info(
-                        "[downloadlink] copy '{0}' to '{1}'".format(name, dest))
+                        f"[downloadlink] copy '{name}' to '{dest}'")
                 except FileNotFoundError:
                     mes = "Builder format '{0}'-'{3}', unable to copy file '{1}' into {2}'".format(
                         builder.format, name, dest, builder.__class__.__name__)
                     logger.warning(
-                        "[downloadlink] cannot copy '{0}' to '{1}'".format(name, dest))
+                        f"[downloadlink] cannot copy '{name}' to '{dest}'")
 
 
 def setup(app):

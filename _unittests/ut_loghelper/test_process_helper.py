@@ -20,9 +20,9 @@ class TestProcessHelper(unittest.TestCase):
         clog = CustomLog(temp)
         proc, _ = run_cmd(cmd, wait=False, fLOG=clog)
         self.assertTrue(_ is None)
-        clog('proc={} pid={}'.format(proc, proc.pid))
+        clog(f'proc={proc} pid={proc.pid}')
         ki = reap_children(fLOG=clog, subset={proc.pid})
-        clog('ki={0}'.format(ki))
+        clog(f'ki={ki}')
         if ki is None and not is_travis_or_appveyor() and __name__ != '__main__':
             warnings.warn(
                 "reap_children could not be fully tested ki is None.")

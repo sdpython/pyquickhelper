@@ -35,7 +35,7 @@ class TestCoverageHelper(ExtTestCase):
             if not os.path.exists(cov):
                 raise FileNotFoundError(cov)
             if not os.path.isfile(cov):
-                raise Exception("'{0}' is not a file".format(cov))
+                raise Exception(f"'{cov}' is not a file")
         # self.assertRaise(lambda: coverage_combine(covs, temp, source=source + "r", process=process,
         #                                          remove_unexpected_root=True),
         #                 RuntimeError)

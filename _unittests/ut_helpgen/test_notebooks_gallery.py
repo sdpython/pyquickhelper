@@ -15,7 +15,7 @@ from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 class TestNotebookGallery(ExtTestCase):
 
     def a_test_notebook_gallery(self, layout):
-        temp = get_temp_folder(__file__, "temp_gallery_{0}".format(layout))
+        temp = get_temp_folder(__file__, f"temp_gallery_{layout}")
         fold = os.path.normpath(os.path.join(
             temp, "..", "data_gallery", "notebooks"))
         self.assertTrue(os.path.exists(fold))

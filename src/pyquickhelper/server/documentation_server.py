@@ -381,11 +381,11 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             elif value == "http://":  # pragma: no cover
                 self.send_response(200)
                 self.send_headers("debug.html")
-                url = cpath.path.replace("/%s/" % project, "")
+                url = cpath.path.replace(f"/{project}/", "")
                 try:
                     content = get_url_content(url)
                 except Exception as e:
-                    content = "<html><body>ERROR (2): %s</body></html>" % e
+                    content = f"<html><body>ERROR (2): {e}</body></html>"
                 self.feed(content, False, params={})
 
             else:
@@ -394,7 +394,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                     # than the mapped ones, just in that the browser does not
                     # remove them
                     self.send_error(404)
-                    self.feed("Requested resource %s unavailable" % link)
+                    self.feed(f"Requested resource {link} unavailable")
                 else:
                     # we do not expect the documentation to point to the root
                     # it must be relative paths
@@ -417,7 +417,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                             self.LOG("** w,unable to get file for key:", spath)
                             self.send_error(404)
                             self.feed(
-                                "Requested resource %s unavailable" % localpath)
+                                f"Requested resource {localpath} unavailable")
                         else:
                             ext = os.path.splitext(localpath)[-1].lower()
                             if ext in [
@@ -439,7 +439,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                         if len(err) > 0:
                             self.send_error(404)
                             self.feed(
-                                "Requested resource %s unavailable" % localpath)
+                                f"Requested resource {localpath} unavailable")
                         else:
                             self.send_headers(localpath)
                             self.feed(out)

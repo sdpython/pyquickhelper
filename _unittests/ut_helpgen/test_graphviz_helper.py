@@ -35,7 +35,7 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
             plot_graphviz(dot, ax=ax)
         except FileNotFoundError as e:
             if "No such file or directory: 'dot'" in str(e):
-                warnings.warn("graphviz not installed: %r." % e)
+                warnings.warn(f"graphviz not installed: {e!r}.")
                 return
         plt.close('all')
 
@@ -62,7 +62,7 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
             plot_graphviz(dot, ax=ax, temp_dot=dotf, temp_img=img)
         except FileNotFoundError as e:
             if "No such file or directory: 'dot'" in str(e):
-                warnings.warn("graphviz not installed: %r." % e)
+                warnings.warn(f"graphviz not installed: {e!r}.")
                 return
         plt.close('all')
         self.assertExists(dotf)

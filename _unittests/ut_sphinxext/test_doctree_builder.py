@@ -343,7 +343,7 @@ class TestDocTreeBuilder(ExtTestCase):
                             extlinks={'issue': ('http://%s', '_issue_')})
         except Exception as e:
             raise Exception(
-                "Issue with '{0}' and '{1}'".format(img1, img2)) from e
+                f"Issue with '{img1}' and '{img2}'") from e
 
         text = text.replace("\r", "")
         self.assertIn('data/image/im.png', text)

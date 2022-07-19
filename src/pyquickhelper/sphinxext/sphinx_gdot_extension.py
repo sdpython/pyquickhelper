@@ -142,8 +142,7 @@ class GDotDirective(Directive):
             if docname is None or 'HERE' not in info:
                 url = GDotDirective._default_url
                 logger = logging.getLogger("gdot")
-                logger.warning("[gdot] docname is none, falling back to "
-                               "'{}'".format(url))
+                logger.warning(f"[gdot] docname is none, falling back to '{url}'")
             else:
                 spl = docname.split("/")
                 sp = ['..'] * (len(spl) - 1) + ['_static', 'viz.js']
@@ -167,7 +166,7 @@ class GDotDirective(Directive):
             stdout, stderr, _ = run_python_script(content, process=process)
             if stderr:
                 raise RuntimeError(
-                    "A graph cannot be draw due to {}".format(stderr))
+                    f"A graph cannot be draw due to {stderr}")
             content = stdout
             if script:
                 spl = content.split(script)
@@ -249,7 +248,7 @@ def visit_gdot_node_html(self, node):
     if node['format'].lower() in ('?', 'svg'):
         return visit_gdot_node_html_svg(self, node)
     raise RuntimeError(
-        "Unexpected format for graphviz '{}'.".format(node['format']))
+        f"Unexpected format for graphviz '{node['format']}'.")
 
 
 def depart_gdot_node_html(self, node):
@@ -284,7 +283,7 @@ def copy_js_files(app):
             if "IMPOSSIBLE:TOFIND" not in srcdir:
                 if not os.path.exists(srcdir):
                     raise FileNotFoundError(
-                        "Source file is wrong '{}'.".format(srcdir))
+                        f"Source file is wrong '{srcdir}'.")
 
                 if dest is not None:
                     destf = os.path.join(os.path.abspath(srcdir), dest)
@@ -293,7 +292,7 @@ def copy_js_files(app):
                         try:
                             shutil.copy(path, dest)
                             logger.info(
-                                "[gdot] copy '{}' to '{}'.".format(path, dest))
+                                f"[gdot] copy '{path}' to '{dest}'.")
                         except PermissionError as e:  # pragma: no cover
                             logger.warning("[gdot] permission error: {}, "
                                            "unable to use local viz.js.".format(e))

@@ -97,7 +97,7 @@ class TestEpkgExtension(unittest.TestCase):
 
         t1 = "`"
         if t1 in html:
-            raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
+            raise Exception(f"\n**{spl}**\n----\n{html}")
 
         t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
@@ -147,7 +147,7 @@ class TestEpkgExtension(unittest.TestCase):
 
         t1 = "`"
         if t1 in html:
-            raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
+            raise Exception(f"\n**{spl}**\n----\n{html}")
 
         t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
@@ -198,7 +198,7 @@ class TestEpkgExtension(unittest.TestCase):
 
         t1 = "`"
         if t1 in html:
-            raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
+            raise Exception(f"\n**{spl}**\n----\n{html}")
 
         t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:
@@ -245,7 +245,7 @@ class TestEpkgExtension(unittest.TestCase):
 
         t1 = "`"
         if t1 in html:
-            raise Exception("\n**{0}**\n----\n{1}".format(spl, html))
+            raise Exception(f"\n**{spl}**\n----\n{html}")
 
         t1 = 'href="http://www.7-zip.org/"'
         if t1 not in html:

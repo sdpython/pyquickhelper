@@ -134,12 +134,12 @@ class BlocRef(BaseAdmonition):
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
-            legend = "{0}:{1}".format(docname, lineno)
+            legend = f"{docname}:{lineno}"
         else:
             legend = ''
 
         if not self.options.get('class'):
-            self.options['class'] = ['admonition-%s' % name_desc]
+            self.options['class'] = [f'admonition-{name_desc}']
 
         # body
         (blocref,) = super(BlocRef, self).run()
@@ -150,7 +150,7 @@ class BlocRef(BaseAdmonition):
         lid = self.options.get('lid', self.options.get('label', None))
         if lid:
             container = nodes.container()
-            tnl = [".. _{0}:".format(lid), ""]
+            tnl = [f".. _{lid}:", ""]
             content = StringList(tnl)
             self.state.nested_parse(content, self.content_offset, container)
         else:
@@ -161,8 +161,7 @@ class BlocRef(BaseAdmonition):
         if len(breftag) == 0:
             raise ValueError("tag is empty")  # pragma: no cover
         if env is not None:
-            mid = int(env.new_serialno('index%s-%s' %
-                                       (name_desc, breftag))) + 1
+            mid = int(env.new_serialno(f'index{name_desc}-{breftag}')) + 1
         else:
             mid = -1
 
@@ -245,7 +244,7 @@ def process_blocrefs_generic(app, doctree, bloc_name, class_node):
     must have already been run, e.g. substitutions
     """
     env = app.builder.env
-    attr = '%s_all_%ss' % (bloc_name, bloc_name)
+    attr = f'{bloc_name}_all_{bloc_name}s'
     if not hasattr(env, attr):
         setattr(env, attr, [])
     attr_list = getattr(env, attr)
@@ -356,7 +355,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
     # check this is something to process
     env = app.builder.env
-    attr_name = '%s_all_%ss' % (class_name, class_name)
+    attr_name = f'{class_name}_all_{class_name}s'
     if not hasattr(env, attr_name):
         setattr(env, attr_name, [])
     bloc_list_env = getattr(env, attr_name)
@@ -364,7 +363,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
         return
 
     # content
-    incconf = '%s_include_%ss' % (class_name, class_name)
+    incconf = f'{class_name}_include_{class_name}s'
     if app.config[incconf] and not app.config[incconf]:
         for node in doctree.traverse(class_node):
             node.parent.remove(node)
@@ -424,7 +423,7 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
 
             nbbref += 1
 
-            para = nodes.paragraph(classes=['%s-source' % class_name])
+            para = nodes.paragraph(classes=[f'{class_name}-source'])
 
             # Create a target?
             try:
@@ -441,15 +440,14 @@ def process_blocref_nodes_generic(app, doctree, fromdocname, class_name,
                 logger.warning(
                     "Unable to find key 'refid' in %r (e=%r)", targ, e)
                 continue
-            int_ids = ['index%s-%s' %
-                       (targ_refid, env.new_serialno(targ_refid))]
+            int_ids = [f'index{targ_refid}-{env.new_serialno(targ_refid)}']
             int_targetnode = nodes.target(
                 blocref_info['breftitle'], '', ids=int_ids)
             para += int_targetnode
 
             # rest of the content
-            if app.config['%s_link_only' % class_name]:
-                description = _('<<%s>>' % orig_entry)
+            if app.config[f'{class_name}_link_only']:
+                description = _(f'<<{orig_entry}>>')
             else:
                 description = (
                     _(brefmes) %

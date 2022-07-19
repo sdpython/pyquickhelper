@@ -124,7 +124,7 @@ class SetupCommandLab(_SetupCommand):
         folder = os.path.join(location, "_doc", "notebooks")
         if not os.path.exists(folder):
             folder = location
-        cmd = ["jupyter-lab", "--notebook-dir=%s" % folder,
+        cmd = ["jupyter-lab", f"--notebook-dir={folder}",
                "--NotebookApp.token=", "--NotebookApp.password="]
         run_cmd(" ".join(cmd), wait=True, fLOG=print, communicate=False)
 
@@ -185,7 +185,7 @@ class SetupCommandNotebook(_SetupCommand):
         folder = os.path.join(location, "_doc", "notebooks")
         if not os.path.exists(folder):
             folder = location
-        cmd = ["jupyter-notebook", "--notebook-dir=%s" % folder,
+        cmd = ["jupyter-notebook", f"--notebook-dir={folder}",
                "--NotebookApp.token=", "--NotebookApp.password="]
         run_cmd(" ".join(cmd), wait=True, fLOG=print, communicate=False)
 
@@ -242,13 +242,13 @@ class SetupCommandUnitTests(_SetupCommand):
             parameters['covtoken'] = self.covtoken
         if self.covtoken is not None:
             parameters['covtoken'] = (
-                self.covtoken, "'%s' in outfile" % self.covcond)
+                self.covtoken, f"'{self.covcond}' in outfile")
         if self.d is not None:
-            parameters['argv'].extend(['-d', '%s' % self.d])
+            parameters['argv'].extend(['-d', f'{self.d}'])
         if self.e is not None:
-            parameters['argv'].extend(['-e', '"%s"' % self.e])
+            parameters['argv'].extend(['-e', f'"{self.e}"'])
         if self.g is not None:
-            parameters['argv'].extend(['-g', '"%s"' % self.g])
+            parameters['argv'].extend(['-g', f'"{self.g}"'])
         process_standard_options_for_setup(**parameters)
 
 
@@ -334,8 +334,7 @@ class SetupCommandValidateUrls(_SetupCommand):
         else:
             verbose = True
         for issue in validate_urls_in_folder(folder=folder, verbose=verbose):
-            print("ERROR url=%r in %r error=%r" %
-                  (issue[1], issue[0], issue[2]))
+            print(f"ERROR url={issue[1]!r} in {issue[0]!r} error={issue[2]!r}")
 
 
 class SetupCommandVersion(_SetupCommand):
@@ -355,13 +354,13 @@ class SetupCommandVersion(_SetupCommand):
         from pyquickhelper.pycode import process_standard_options_for_setup
         parameters = self.get_parameters()
         parameters['argv'] = ['write_version']
-        print("project_var_name=%r" % parameters['project_var_name'])
-        print("file_or_folder=%r" % parameters['file_or_folder'])
-        print("module_name=%r" % parameters['module_name'])
+        print(f"project_var_name={parameters['project_var_name']!r}")
+        print(f"file_or_folder={parameters['file_or_folder']!r}")
+        print(f"module_name={parameters['module_name']!r}")
         if 'github_owner' in parameters:
-            print("github_owner=%r" % parameters['github_owner'])
+            print(f"github_owner={parameters['github_owner']!r}")
         process_standard_options_for_setup(**parameters)
         if os.path.exists("version.txt"):
             with open("version.txt", "r") as f:
                 content = f.read().strip(" \r\n")
-            print("version=%s" % content)
+            print(f"version={content}")

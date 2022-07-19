@@ -64,7 +64,7 @@ class GitLabAPI:
         """
         import requests
         data = {"login": user, "password": password}
-        url = "{0}/Session".format(self.api_url)
+        url = f"{self.api_url}/Session"
         request = requests.post(url, data=data, verify=self.verify_ssl,
                                 headers={"connection": "close"})
         if request.status_code == 201:
@@ -93,4 +93,4 @@ class GitLabAPI:
             return json.loads(request.content.decode("utf-8"))
         else:
             raise GitLabException(
-                "unable to retreive the list of projects: {0}".format(request), request)
+                f"unable to retreive the list of projects: {request}", request)

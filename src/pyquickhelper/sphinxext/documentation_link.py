@@ -21,11 +21,11 @@ def python_link_doc(m, o=None, format="rst"):
     """
     if format == "raw":
         if o is None:
-            return m, "https://docs.python.org/3/library/{0}.html".format(m)
-        return ("{0}.{1}".format(m, o),
+            return m, f"https://docs.python.org/3/library/{m}.html"
+        return (f"{m}.{o}",
                 "https://docs.python.org/3/library/{0}.html#{0}.{1}".format(m, o))
     if format == "rst":
         name, url = python_link_doc(m, o, format="raw")
-        return "`{0} <{1}>`_".format(name, url)
+        return f"`{name} <{url}>`_"
     raise ValueError(  # pragma: no cover
-        "Unexpected format '{0}'".format(format))
+        f"Unexpected format '{format}'")

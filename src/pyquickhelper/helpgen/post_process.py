@@ -58,12 +58,12 @@ def update_notebook_link(text, format, nblinks, fLOG):
             if format == 'python':
                 url = url[7:]
             else:  # pragma: no cover
-                snb = "\n".join("'{0}': '{1}'".format(k, v)
+                snb = "\n".join(f"'{k}': '{v}'"
                                 for k, v in sorted(nblinks.items()))
                 extension = (
                     "You shoud add links into variable 'nblinks' "
                     "into documentation configuration file.")
-                extension += "\nnblinks={0}".format(nblinks)
+                extension += f"\nnblinks={nblinks}"
                 raise HelpGenException(
                     "Unable to find a replacement for '{0}' format='{1}' in \n{2}\n{3}".format(
                         url, format, snb, extension))
@@ -76,9 +76,9 @@ def update_notebook_link(text, format, nblinks, fLOG):
             anc, url = le.groups()
             url = get_url_from_nblinks(nblinks, url, format)
             if "://" in url:
-                new_url = "`{0} <{1}>`_".format(anc, url)
+                new_url = f"`{anc} <{url}>`_"
             else:
-                new_url = ":ref:`{0} <{1}>`".format(anc, url)
+                new_url = f":ref:`{anc} <{url}>`"
             if fLOG:
                 fLOG("      [update_notebook_link]1 add in ",
                      format, ":", new_url)
@@ -89,7 +89,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
         def rephtml(le):
             anc, url = le.groups()
             url = get_url_from_nblinks(nblinks, url, format)
-            new_url = "<a href=\"{0}.html\">{1}</a>".format(anc, url)
+            new_url = f"<a href=\"{anc}.html\">{url}</a>"
             if fLOG:
                 fLOG("      [update_notebook_link]2 add in ",
                      format, ":", new_url)
@@ -101,7 +101,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             anc, url = le.groups()
             url = get_url_from_nblinks(nblinks, "find://" + url, format)
             if not url.startswith("http"):
-                mes = "\n".join("{0}: '{1}'".format(k, v)
+                mes = "\n".join(f"{k}: '{v}'"
                                 for k, v in sorted(nblinks.items()))
                 extension = "You should add this link into the documentation " \
                             "configuration file in variable 'nblinks'."
@@ -109,7 +109,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
                     "A reference was not found: '{0}' - '{1}' "
                     "format={2}, nblinks=\n{3}\n{4}".format(
                         anc, url, format, mes, extension))
-            new_url = "[{0}]({1})".format(anc, url)
+            new_url = f"[{anc}]({url})"
             if fLOG:
                 fLOG("      [update_notebook_link]3 add in ",
                      format, ":", new_url)
@@ -122,7 +122,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
             url = get_url_from_nblinks(nblinks, url, format)
             if not url.endswith(".html") and not url.endswith(".js") and not url.endswith(".css"):
                 url += ".html"
-            new_url = "\\href{{{0}}}{{{1}}}".format(url, anc)
+            new_url = f"\\href{{{url}}}{{{anc}}}"
             if fLOG:
                 fLOG("      [update_notebook_link]4 add in ",
                      format, ":", new_url)
@@ -133,7 +133,7 @@ def update_notebook_link(text, format, nblinks, fLOG):
         # {\sphinxcrossref{\DUrole{std,std-ref}{Classes}}}}
     else:
         raise NotImplementedError(  # pragma: no cover
-            "Unsupported format '{0}'\n{1}".format(format, text))
+            f"Unsupported format '{format}'\n{text}")
     return new_text
 
 
@@ -151,7 +151,7 @@ def _notebook_replacements(nbtext, notebook_replacements, fLOG=None):
     for k, v in notebook_replacements:
         if k in nbtext:
             fLOG(
-                "[_notebook_replacements] replace '{0}' -> '{1}'".format(k, v))
+                f"[_notebook_replacements] replace '{k}' -> '{v}'")
             nbtext = nbtext.replace(k, v)
     if '"nbformat": 4,' in nbtext:  # pragma: no cover
         rep = ['"nbformat_minor": 0', '"nbformat_minor": 1',
@@ -181,7 +181,7 @@ def post_process_latex_output(root, doall, latex_book=False, exc=True,
     if os.path.isfile(root):
         file = root
         if fLOG:
-            fLOG("[post_process_latex_output] clean %r" % file)
+            fLOG(f"[post_process_latex_output] clean {file!r}")
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         with open(file + ".tex1~", "w", encoding="utf8") as f:
@@ -228,7 +228,7 @@ def post_process_python_output(root, doall, exc=True, nblinks=None, fLOG=None, n
     if os.path.isfile(root):
         file = root
         if fLOG:
-            fLOG("[post_process_python_output] clean %r" % file)
+            fLOG(f"[post_process_python_output] clean {file!r}")
         with open(file, "r", encoding="utf8") as f:
             content = f.read()
         content = post_process_python(
@@ -272,7 +272,7 @@ def post_process_latex_output_any(file, custom_latex_processing, nblinks=None,
                 file, "\n".join(os.listdir(os.path.dirname(file)))))
     with open(file, "r", encoding="utf8") as f:
         content = f.read()
-    with open(file + ".tex3.u{0}~".format(1 if remove_unicode else 0), "w", encoding="utf8") as f:
+    with open(file + f".tex3.u{1 if remove_unicode else 0}~", "w", encoding="utf8") as f:
         f.write(content)
     content = post_process_latex(content, True, info=file, nblinks=nblinks, file=file,
                                  remove_unicode=remove_unicode, fLOG=fLOG,
@@ -306,7 +306,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     and checks that audio is only included in :epkg:`HTML`.
     """
     if fLOG:
-        fLOG("[post_process_rst_output] clean %r" % file)
+        fLOG(f"[post_process_rst_output] clean {file!r}")
 
     name = os.path.split(file)[1]
     noext = os.path.splitext(name)[0]
@@ -344,9 +344,9 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                 if b in codeb:
                     # we remove line number for the notebooks
                     if "notebook" not in file:
-                        lines[pos] = "{0}\n    :linenos:\n\n".format(codeb[-1])
+                        lines[pos] = f"{codeb[-1]}\n    :linenos:\n\n"
                     else:
-                        lines[pos] = "{0}\n\n".format(codeb[-1])
+                        lines[pos] = f"{codeb[-1]}\n\n"
                 inbloc = True
                 memopos = pos
         else:
@@ -384,7 +384,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             img = imgreg.findall(lines[pos])
             if len(img) == 0:
                 raise HelpGenException(  # pragma: no cover
-                    "Unable to extract image name in '{0}'".format(lines[pos]))
+                    f"Unable to extract image name in '{lines[pos]}'")
             nameimg = img[0]
             short = nameimg.replace("%5C", "/")
             short = os.path.split(short)[-1]
@@ -400,7 +400,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
             while len(lines[pos2]) != li:
                 pos2 -= 1
             sep = "" if lines[pos2].endswith("\n") else "\n"
-            lines[pos2] = "{0}{2}{1}".format(lines[pos], lines[pos2], sep)
+            lines[pos2] = f"{lines[pos]}{sep}{lines[pos2]}"
             for p in range(pos2 + 1, pos):
                 if lines[p] == "\n":  # pragma: no cover
                     lines[p] = ""
@@ -408,7 +408,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
 
     pos += 1
     if pos >= len(lines):
-        mes = "Unable to find a title in notebook '{0}'".format(file)
+        mes = f"Unable to find a title in notebook '{file}'"
         if exc:
             raise HelpGenException(mes)  # pragma: no cover
         warnings.warn(mes, UserWarning)
@@ -416,25 +416,24 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
     # label
     labelname = name.replace(" ", "").replace("_", "").replace(
         ":", "").replace(".", "").replace(",", "")
-    label = "\n.. _{0}:\n\n".format(labelname)
+    label = f"\n.. _{labelname}:\n\n"
     lines.insert(0, label)
 
     # links
-    links = ['**Links:** :download:`notebook <{0}.ipynb>`'.format(noext)]
+    links = [f'**Links:** :download:`notebook <{noext}.ipynb>`']
     if html:
-        links.append(':downloadlink:`html <{0}2html.html>`'.format(noext))
+        links.append(f':downloadlink:`html <{noext}2html.html>`')
     if pdf:
-        links.append(':download:`PDF <{0}.pdf>`'.format(noext))
+        links.append(f':download:`PDF <{noext}.pdf>`')
     if python:
-        links.append(':download:`python <{0}.py>`'.format(noext))
+        links.append(f':download:`python <{noext}.py>`')
     if slides:
-        links.append(':downloadlink:`slides <{0}.slides.html>`'.format(noext))
+        links.append(f':downloadlink:`slides <{noext}.slides.html>`')
 
     if github:  # pragma: no cover
         if notebook is None:
             raise ValueError(
-                "Cannot add a link on github, notebook is None for "
-                "file='{0}'".format(file))
+                f"Cannot add a link on github, notebook is None for file='{file}'")
         docname = notebook
         folder = docname
         git = os.path.join(folder, ".git")
@@ -471,8 +470,7 @@ def post_process_rst_output(file, html, pdf, python, slides, is_notebook=False,
                 "--TRIED--\n%r" % (path, folder, "\n".join(map(str, tried))))
         links.append(
             ":githublink:`GitHub|{0}|*`".format(path.replace("\\", "/").lstrip("/")))
-    lines[pos] = "{0}\n\n.. only:: html\n\n    {1}\n\n".format(
-        lines[pos], ", ".join(links))
+    lines[pos] = f"{lines[pos]}\n\n.. only:: html\n\n    {', '.join(links)}\n\n"
 
     # we remove the
     # <div
@@ -569,7 +567,7 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
     if not os.path.exists(file):
         raise FileNotFoundError(file)  # pragma: no cover
     if fLOG:
-        fLOG("[post_process_html_output] clean %r" % file)
+        fLOG(f"[post_process_html_output] clean {file!r}")
     with open(file, "r", encoding="utf8") as f:
         text = f.read()
 
@@ -601,14 +599,14 @@ def post_process_html_output(file, pdf, python, slides, exc=True,
     for line in lines:
         if "https://cdnjs.cloudflare.com/ajax/libs/require.js" in line:
             if fLOG:
-                fLOG("[post_process_html_output] js: skip %r" % line)
+                fLOG(f"[post_process_html_output] js: skip {line!r}")
             continue
         new_lines.append(line)
     text = "\n".join(new_lines)
     for k, v in repl.items():
         if k in text:
             if fLOG:  # pragma: no cover
-                fLOG("[post_process_html_output] js: replace %r -> %r" % (k, v))
+                fLOG(f"[post_process_html_output] js: replace {k!r} -> {v!r}")
             text = text.replace(k, v)
 
     with open(file, "w", encoding="utf8") as f:
@@ -638,7 +636,7 @@ def post_process_slides_output(file, pdf, python, slides, exc=True,
         if not os.path.exists(file):
             raise FileNotFoundError(file)  # pragma: no cover
         if fLOG:
-            fLOG("[post_process_slides_output] clean %r" % file)
+            fLOG(f"[post_process_slides_output] clean {file!r}")
         # fold, name = os.path.split(file)
         with open(file, "r", encoding="utf8") as f:
             text = f.read()
@@ -853,7 +851,7 @@ def post_process_latex(st, doall, info=None, latex_book=False, exc=True,
             "\\usepackage{hyperref}\\usepackage{amssymb}\\usepackage{latexsym}\\usepackage{amsfonts}\\usepackage{ulem}\\usepackage{textcomp}")
     else:
         raise HelpGenException(  # pragma: no cover
-            "unable to add new instructions usepackage in file {0}".format(info))
+            f"unable to add new instructions usepackage in file {info}")
 
     # SVG does not work unless it is converted (nbconvert should handle that
     # case)

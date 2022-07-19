@@ -73,15 +73,14 @@ def replace_relative_import_fct(fullname, content=None):
             break
     if root is None:
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to package root for '{}'.".format(fullname))
+            f"Unable to package root for '{fullname}'.")
 
     lines = content.split("\n")
     name = "([a-zA-Z_][a-zA-Z_0-9]*)"
     namedot = "([a-zA-Z_][a-zA-Z_0-9.]*)"
     names = name + "(, " + name + ")*"
     end = "( .*)?$"
-    regi = re.compile("{0}{1}{2}{3}{4}".format("^( *)from ([.]{1,3})",
-                                               namedot, " import ", names, end))
+    regi = re.compile(f"^( *)from ([.]{{1,3}}){namedot} import {names}{end}")
 
     for i in range(0, len(lines)):
         line = lines[i]
@@ -99,8 +98,7 @@ def replace_relative_import_fct(fullname, content=None):
                 packname = ".".join(fullsplit[root:root + level])
                 if rel:
                     packname += '.' + rel
-                line = "{space}from {packname} import {name0}{names}{end}".format(
-                    space=space, packname=packname, name0=name0, names=names, end=end)
+                line = f"{space}from {packname} import {name0}{names}{end}"
                 lines[i] = line
             else:
                 raise ValueError(  # pragma: no cover
@@ -151,7 +149,7 @@ def _private_process_one_file(
                     content = g.read()
             except UnicodeDecodeError as e:
                 raise UnicodeDecodeError(e.encoding, e.object, e.start, e.end,
-                                         "Unable to read '{0}' due to '{1}'".format(fullname, e.reason)) from e
+                                         f"Unable to read '{fullname}' due to '{e.reason}'") from e
 
         lines = [_.strip(" \t\n\r") for _ in content.split("\n")]
         lines = [_ for _ in lines if len(_) > 0]
@@ -292,12 +290,12 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
     def_ext = ['py', 'pyd', 'cpp', 'h', 'dll', 'so', 'yml', 'o', 'def', 'gif',
                'exe', 'data', 'config', 'css', 'js', 'png', 'map', 'sass',
                'csv', 'tpl', 'jpg', 'jpeg', 'hpp', 'cc', 'tmpl']
-    deffilter = "|".join("(.+[.]{0}$)".format(_) for _ in def_ext)
+    deffilter = "|".join(f"(.+[.]{_}$)" for _ in def_ext)
     if copy_add_ext is not None:
-        res = ["(.+[.]%s$)" % e for e in copy_add_ext]
+        res = [f"(.+[.]{e}$)" for e in copy_add_ext]
         deffilter += "|" + "|".join(res)
 
-    fLOG("[copy_source_files] copy filter '{0}'".format(deffilter))
+    fLOG(f"[copy_source_files] copy filter '{deffilter}'")
 
     if addfilter is not None and len(addfilter) > 0:
         if filter is None or len(filter) == 0:
@@ -331,7 +329,7 @@ def copy_source_files(input, output, fmod=lambda v, filename: v,
         dd = os.path.split(to)[0]
         if not os.path.exists(dd):
             fLOG("[copy_source_files] create ", dd,
-                 "softfile={0} fexclude={1}".format(softfile, fexclude))
+                 f"softfile={softfile} fexclude={fexclude}")
             os.makedirs(dd)
         fLOG("[copy_source_files] copy ", file.fullname, " to ", to)
 
@@ -548,7 +546,7 @@ def apply_modification_template(rootm, store_obj, template, fullname, rootrep,
         raise HelpGenException(mes.format(  # pragma: no cover
             fullnamenoext, filenoext, pythonname, rootm, rootrep, fullname, keepf, not_expected))
 
-    ttitle = "module ``{0}``".format(fullnamenoext)
+    ttitle = f"module ``{fullnamenoext}``"
     rep = {
         "__FULLNAME_UNDERLINED__": ttitle + "\n" + ("=" * len(ttitle)) + "\n",
         "__FILENAMENOEXT__": filenoext,
@@ -767,10 +765,10 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
                 continue
             types[_.type] = types.get(_.type, 0) + 1
 
-    fLOG("[produces_indexes] store_obj: extraction of types: {}".format(types))
+    fLOG(f"[produces_indexes] store_obj: extraction of types: {types}")
     res = {}
     for k in types:
-        fLOG("[produces_indexes] type: [{}] - rst".format(k))
+        fLOG(f"[produces_indexes] type: [{k}] - rst")
         values = []
         for t, so in store_obj.items():
             if not isinstance(so, list):
@@ -783,7 +781,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
                     continue
                 oclname = o.classname.__name__ if o.classname is not None else ""
                 rlink = o.rst_link(class_in_bracket=False)
-                fLOG("[produces_indexes]   + '{}': {}".format(o.name, rlink))
+                fLOG(f"[produces_indexes]   + '{o.name}': {rlink}")
                 values.append([o.name, rlink, oclname, o.truncdoc])
 
         values.sort()
@@ -809,7 +807,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
             tbl.iloc[0, 1] = t + (" " * (3 * maxi - s))
             sph = df2rst(tbl)
             res[k] = sph
-        fLOG("[produces_indexes] type: [{}] - shape: {}".format(k, tbl.shape))
+        fLOG(f"[produces_indexes] type: [{k}] - shape: {tbl.shape}")
 
     # we process indexes
 
@@ -820,12 +818,12 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
             continue
         types[v.type] = types.get(v.type, 0) + 1
 
-    fLOG("[produces_indexes] extraction of types: {}".format(types))
+    fLOG(f"[produces_indexes] extraction of types: {types}")
 
     for k in types:
         if k in res:
             raise HelpGenException(  # pragma: no cover
-                "you should not index anything related to classes, functions or method (conflict: %s)" % k)
+                f"you should not index anything related to classes, functions or method (conflict: {k})")
         values = []
         for t, o in indexes.items():
             if fexclude_index(o):
@@ -853,7 +851,7 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
 
     keys = list(res.keys())
     for k in keys:
-        fLOG("[produces_indexes] index name '{}'".format(k))
+        fLOG(f"[produces_indexes] index name '{k}'")
         label = correspondances.get(k, k)
         title = titles.get(k, k)
         under = "=" * len(title)
@@ -865,10 +863,9 @@ def produces_indexes(store_obj, indexes, fexclude_index, titles=None,
             "USERNAME", os.environ.get("USER", "````````````"))
         if not_expected != "jenkins" and not_expected in title:
             raise HelpGenException(  # pragma: no cover
-                "The title is probably wrong (2), found '{0}' in '{1}'".format(not_expected, title))
+                f"The title is probably wrong (2), found '{not_expected}' in '{title}'")
 
-        res[k] = "\n.. _%s:\n\n%s\n%s\n\n%s\n\n%s" % (
-            label, title, under, content, res[k])
+        res[k] = f"\n.. _{label}:\n\n{title}\n{under}\n\n{content}\n\n{res[k]}"
 
     return res
 
@@ -890,15 +887,15 @@ def filecontent_to_rst(filename, content):
         "USERNAME", os.environ.get("USER", "````````````"))
     if not_expected != "jenkins" and not_expected in file:
         raise HelpGenException(  # pragma: no cover
-            "The title is probably wrong (1): '{0}' found in '{1}'".format(not_expected, file))
+            f"The title is probably wrong (1): '{not_expected}' found in '{file}'")
 
-    rows = ["", ".. _f-%s:" % file, "", "", full, "",
+    rows = ["", f".. _f-{file}:", "", "", full, "",
             # "fullpath: ``%s``" % filename,
             "", ""]
     if ".. RSTFORMAT." in content:
-        rows.append(".. include:: %s " % file)
+        rows.append(f".. include:: {file} ")
     else:
-        rows.append(".. literalinclude:: %s " % file)
+        rows.append(f".. literalinclude:: {file} ")
     rows.append("")
 
     nospl = content.replace("\n", "_!_!:!_")
@@ -944,7 +941,7 @@ def filecontent_to_rst(filename, content):
             rstr = re.sub(
                 ":param +([a-zA-Z_][[a-zA-Z_0-9]*) *:", r"* **\1**:", rstr)
             content = content.replace(
-                ".. literalinclude::", "\n%s\n\n.. literalinclude::" % rstr)
+                ".. literalinclude::", f"\n{rstr}\n\n.. literalinclude::")
 
         return content, summary
 
@@ -1040,9 +1037,9 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
         raise ValueError(  # pragma: no cover
             "module_name cannot be None")
 
-    fLOG("[prepare_file_for_sphinx_help_generation] output='{}'".format(output))
+    fLOG(f"[prepare_file_for_sphinx_help_generation] output='{output}'")
     rootm = os.path.abspath(output)
-    fLOG("[prepare_file_for_sphinx_help_generation] input='{}'".format(input))
+    fLOG(f"[prepare_file_for_sphinx_help_generation] input='{input}'")
 
     actions = []
     rsts = []
@@ -1057,10 +1054,10 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
             dst = (output + "/" + sub[1]).replace("//", "/")
         if os.path.split(src)[-1][0] == '_':
             raise RuntimeError(  # pragma: no cover
-                "Subfolder %r cannot start with '_'." % src)
+                f"Subfolder {src!r} cannot start with '_'.")
         if os.path.split(dst)[-1][0] == '_':
             raise RuntimeError(  # pragma: no cover
-                "Destination %r cannot start with '_'." % dst)
+                f"Destination {dst!r} cannot start with '_'.")
 
         if os.path.isfile(src):
             fLOG("  [p] ", src)
@@ -1079,12 +1076,12 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                       fLOG=fLOG)
                 rsts += rstadd
         else:
-            fLOG("[prepare_file_for_sphinx_help_generation] processing '{}'".format(src))
+            fLOG(f"[prepare_file_for_sphinx_help_generation] processing '{src}'")
 
             actions_t = copy_source_files(src, dst, fmod_copy, silent=silent,
                                           softfile=softfile, fexclude=fexclude,
                                           addfilter="|".join(
-                                              ['(%s)' % _[0] for _ in mapped_function]),
+                                              [f'({_[0]})' for _ in mapped_function]),
                                           replace_relative_import=replace_relative_import,
                                           copy_add_ext=copy_add_ext,
                                           use_sys=use_sys, fLOG=fLOG)
@@ -1117,7 +1114,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
 
         copy_source_files(fold, dest, silent=silent, filter=filt,
                           softfile=softfile, fexclude=fexclude,
-                          addfilter="|".join(['(%s)' % _[0]
+                          addfilter="|".join([f'({_[0]})'
                                               for _ in mapped_function]),
                           replace_relative_import=replace_relative_import,
                           copy_add_ext=copy_add_ext, fLOG=fLOG)
@@ -1207,7 +1204,7 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
         falli.write("    :maxdepth: 2\n")
         falli.write("\n")
         for k in sorted(allfiles):
-            falli.write("    %s\n" % k)
+            falli.write(f"    {k}\n")
         falli.write("\n")
     rsts.append(RstFileHelp(None, all_index, None))
 
@@ -1267,7 +1264,7 @@ def process_copy_images(folder_source, folder_images):
                 with open(fn, "r") as f:
                     content = f.read()
             except Exception:
-                raise Exception("Issue with file '{0}'".format(fn)) from e
+                raise Exception(f"Issue with file '{fn}'") from e
 
         lines = content.split("\n")
         for line in lines:
@@ -1333,7 +1330,7 @@ def fix_incomplete_references(folder_source, store_obj, issues=None, fLOG=fLOG):
                 key = None
                 obj = None
                 for cand in cor.get(typ, [typ]):
-                    k = "%s;%s" % (cand, nam)
+                    k = f"{cand};{nam}"
                     if k in store_obj:
                         if isinstance(store_obj[k], list):
                             se = [
@@ -1554,7 +1551,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
 
         if debug:
             fLOG(  # pragma: no cover
-                "-- indent=%s openi=%s row=%s" % (indent, openi, row))
+                f"-- indent={indent} openi={openi} row={row}")
 
         if "__sphinx__skip__" in row:
             if not silent:
@@ -1594,13 +1591,13 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
             if strow.startswith("@warning"):
                 pos = rows[i].find("@warning")
                 sp = " " * pos
-                rows[i] = rows[i].replace("@warning", "\n%s.. warning:: " % sp)
+                rows[i] = rows[i].replace("@warning", f"\n{sp}.. warning:: ")
                 indent = True
 
             elif strow.startswith("@todo"):
                 pos = rows[i].find("@todo")
                 sp = " " * pos
-                rows[i] = rows[i].replace("@todo", "\n%s.. todo:: " % sp)
+                rows[i] = rows[i].replace("@todo", f"\n{sp}.. todo:: ")
                 indent = True
 
             elif strow.startswith("@ingroup"):
@@ -1615,7 +1612,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 spl = strow.split()
                 img = spl[-1]
                 if img.startswith("http://"):
-                    rows[i] = "\n%s.. fancybox:: " % sp + img + "\n\n"
+                    rows[i] = f"\n{sp}.. fancybox:: " + img + "\n\n"
                 else:
 
                     if img.startswith("images") or img.startswith("~"):
@@ -1629,8 +1626,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                         ref = ""
 
                     sp = " " * row.index("@image")
-                    rows[i] = "\n%s.. image:: %s%s\n%s    :align: center\n" % (
-                        sp, ref, img, sp)
+                    rows[i] = f"\n{sp}.. image:: {ref}{img}\n{sp}    :align: center\n"
 
             elif strow.startswith("@code"):
                 pos = rows[i].find("@code")
@@ -1640,7 +1636,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                     prev -= 1
                 rows[i] = ""
                 if rows[prev].strip("\n").endswith("."):
-                    rows[prev] += "\n\n%s::\n" % sp
+                    rows[prev] += f"\n\n{sp}::\n"
                 else:
                     rows[prev] += (":" if rows[prev].endswith(":") else "::")
                 indent = True
@@ -1661,7 +1657,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 rep = look.groups()[0]
                 sp = look.groups()[1]
                 name = look.groups()[2]
-                to = ":param%s%s:" % (sp, name)
+                to = f":param{sp}{name}:"
                 rows[i] = row.replace(rep, to)
 
                 # it requires an empty line before if the previous line does
@@ -1674,7 +1670,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 rep = lexxce.groups()[0]
                 sp = lexxce.groups()[1]
                 name = lexxce.groups()[2]
-                to = ":raises%s%s:" % (sp, name)
+                to = f":raises{sp}{name}:"
                 rows[i] = row.replace(rep, to)
 
                 # it requires an empty line before if the previous line does
@@ -1783,7 +1779,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
                 rep = refl.groups()[0]
                 ty = {"cl": "class", "me": "meth", "at": "attr",
                       "fn": "func", "te": "term", "md": "mod"}[ty]
-                to = "%s:%s:`%s`" % (see, ty, name)
+                to = f"{see}:{ty}:`{name}`"
                 rows[i] = rows[i].replace(rep, to)
                 refl = refe.search(rows[i])
 
@@ -1819,8 +1815,7 @@ def _private_migrating_doxygen_doc(rows, index_first_line, filename,
     link = [_ for _ in rows if ":githublink:" in _]
     if len(link) == 0:
         rows.append("")
-        rows.append("{1}:githublink:`%|py|{0}`".format(
-            index_first_line, " " * min_indent))
+        rows.append(f"{' ' * min_indent}:githublink:`%|py|{index_first_line}`")
 
     # clean rows
     clean_rows = []

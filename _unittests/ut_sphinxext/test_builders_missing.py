@@ -107,7 +107,7 @@ class TestBuildersMissing(ExtTestCase):
                             pass
                         else:
                             raise Exception(
-                                "Unable to run '{0}'".format(k)) from e
+                                f"Unable to run '{k}'") from e
             if hasattr(inst, 'depart_table'):
                 inst.depart_table(element)
 

@@ -66,9 +66,9 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
             "filename cannot be empty.")
     if not os.path.exists(filename):
         raise FileNotFoundError(  # pragma: no cover
-            "filename %r cannot be found." % filename)
+            f"filename {filename!r} cannot be found.")
     filename = os.path.abspath(filename)
-    temp = get_temp_folder(filename, "temp_nb_{0}".format(name))
+    temp = get_temp_folder(filename, f"temp_nb_{name}")
     doc = os.path.normpath(os.path.join(
         temp, "..", "..", "..", "_doc", "notebooks", folder))
     if not os.path.exists(doc):
@@ -87,8 +87,7 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
             if not os.path.exists(dest_dir):
                 os.mkdir(dest_dir)  # pragma: no cover
             src_file = os.path.join(doc, name_)
-            fLOG("[a_test_notebook_runner] copy '{0}' to '{1}'.".format(
-                src_file, dest_dir))
+            fLOG(f"[a_test_notebook_runner] copy '{src_file}' to '{dest_dir}'.")
             shutil.copy(src_file, dest_dir)
 
     if 'pyquickhelper' in this_module_name:

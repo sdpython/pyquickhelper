@@ -32,11 +32,11 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
     alls = reg.findall(page)
     if len(alls) == 0:
         raise RuntimeError(  # pragma: no cover
-            "Unable to find a link on a .zip file on page:\n%s" % page)
+            f"Unable to find a link on a .zip file on page:\n{page}")
 
     filename = alls[0].split("/")[-1]
     filel = location.replace("releases", "").rstrip(
-        '/') + "/archive/{0}".format(filename)
+        '/') + f"/archive/{filename}"
     outfile = os.path.join(temp_folder, "reveal.js." + filename)
     fLOG("download ", filel, "to", outfile)
     local = download(filel, temp_folder, fLOG=fLOG)
@@ -47,12 +47,12 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
     sub = [_ for _ in os.listdir(unzip_to) if "reveal" in _]
     if len(sub) != 1:
         raise FileNotFoundError(  # pragma: no cover
-            "Several version exists or none of them:\n{0}".format(", ".join(sub)))
+            f"Several version exists or none of them:\n{', '.join(sub)}")
     sub = sub[0]
     master = os.path.join(unzip_to, sub)
     if not os.path.exists(master):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find %r." % master)
+            f"Unable to find {master!r}.")
     new_master = os.path.join(unzip_to, "reveal.js")
     os.rename(master, new_master)
 
@@ -102,7 +102,7 @@ def download_requirejs(to=".", fLOG=print,
             dirname, "static", "components", "requirejs", "require.js")
         if not os.path.exists(location):
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to find requirejs in '{0}'".format(location))
+                f"Unable to find requirejs in '{location}'")
         shutil.copy(location, to)
         return [os.path.join(to, "require.js")]
     else:
@@ -112,14 +112,14 @@ def download_requirejs(to=".", fLOG=print,
         except ReadUrlException:  # pragma: no cover
             if fLOG:
                 fLOG(
-                    "[download_requirejs] unable to read '{0}'".format(location))
+                    f"[download_requirejs] unable to read '{location}'")
             return download_requirejs(to=to, fLOG=fLOG, location=None, clean=clean)
 
         reg = re.compile("href=\\\"(.*?minified/require[.]js)\\\"")
         alls = reg.findall(page)
         if len(alls) == 0:
             raise RuntimeError(  # pragma: no cover
-                "Unable to find a link on require.js file on page %r." % page)
+                f"Unable to find a link on require.js file on page {page!r}.")
 
         filename = alls[0]
 

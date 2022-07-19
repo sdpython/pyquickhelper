@@ -45,6 +45,6 @@ def enumerate_pypi_versions_date(name, url='https://pypi.org/pypi'):
                     dt = datetime(* tuple(r['upload_time'].timetuple())[:6])
                 except AttributeError as e:  # pragma: no cover
                     raise AttributeError(
-                        "Unable to parse '{0}'".format(r['upload_time'])) from e
+                        f"Unable to parse '{r['upload_time']}'") from e
             yield dt, ver, r['size']
             break

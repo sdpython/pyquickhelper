@@ -43,7 +43,7 @@ class TestCodeHelper(unittest.TestCase):
         fLOG("removed", d)
         assert d > 0
         if d >= 300:
-            raise Exception("d={0}".format(d))
+            raise Exception(f"d={d}")
         if __name__ == "__main__":
             create_visual_diff_through_html_files(filename, dest,
                                                   page=os.path.join(

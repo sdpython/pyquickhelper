@@ -79,7 +79,7 @@ def execute_script(code, folder=None, filename="_temp_custom_run_script_.py", ch
         with open(name, "w", encoding="utf-8") as f:
             f.write(new_code)
         if sys.platform.startswith("win"):
-            cmdl = '{0} -u "{1}"'.format(sys.executable, name)
+            cmdl = f'{sys.executable} -u "{name}"'
         else:
             cmdl = [sys.executable, '-u', name]
         proc = subprocess.Popen(cmdl, stdout=subprocess.PIPE,
@@ -123,7 +123,7 @@ def execute_script_get_local_variables(script, folder=None,
             res = p.map(execute_script, [content])
         if len(res) != 1:
             raise RuntimeError(  # pragma: no cover
-                "Something went wrong with content\n{}".format(content))
+                f"Something went wrong with content\n{content}")
         return res[0]
     return execute_script(content, folder, filename, check=check)
 
@@ -141,7 +141,7 @@ def dictionary_as_class(dico):
             for k, v in dico.items():
                 if not isinstance(k, str):
                     raise TypeError(  # pragma: no cover
-                        "Key '{}' must be a string.".format(k))
+                        f"Key '{k}' must be a string.")
                 setattr(self, k, v)
 
         def __str__(self):

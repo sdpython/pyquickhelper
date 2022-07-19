@@ -198,6 +198,6 @@ class MagicCommandParser(argparse.ArgumentParser):
                 return res
             except Exception as e:  # pragma: no cover
                 fLOG(
-                    "Unable to interpret {} due to {}.".format(typstr(value), e))
+                    f"Unable to interpret {typstr(value)} due to {e}.")
                 return value
         return value

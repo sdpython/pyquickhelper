@@ -49,7 +49,7 @@ def setup_environment_for_help(fLOG=fLOG):
         inkscape = os.path.join(prog, "Inkscape")
         if not os.path.exists(inkscape):
             raise FileNotFoundError(
-                "Inkscape is not installed, expected at: {0}".format(inkscape))
+                f"Inkscape is not installed, expected at: {inkscape}")
         path = os.environ["PATH"]
         if inkscape not in path:
             fLOG("SETUP: add path to %path%", inkscape)
@@ -230,7 +230,7 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
         author, nbch, date, comment = row[:4]
         last = row[-1]
         if last.startswith("http"):
-            nbch = "`%s <%s>`_" % (typstr(nbch), last)
+            nbch = f"`{typstr(nbch)} <{last}>`_"
 
         if filter_commit(comment):
             if modify_commit is not None:
@@ -242,14 +242,14 @@ def generate_changes_repo(chan, source, exception_if_empty=True,
                 ds = date
             if isinstance(nbch, int):
                 values.append(
-                    ["%d" % n, "%04d" % nbch, "%s" % ds, author, comment.strip("*")])
+                    ["%d" % n, "%04d" % nbch, f"{ds}", author, comment.strip("*")])
             else:
                 values.append(
-                    ["%d" % n, "%s" % nbch, "%s" % ds, author, comment.strip("*")])
+                    ["%d" % n, f"{nbch}", f"{ds}", author, comment.strip("*")])
 
     if len(values) == 0 and exception_if_empty:
         raise HelpGenException(
-            "Logs were not empty but there was no comment starting with '*' from '{0}'\n".format(source) +
+            f"Logs were not empty but there was no comment starting with '*' from '{source}'\n" +
             "\n".join([typstr(_) for _ in logs]))
 
     if len(values) > 0:
@@ -349,11 +349,11 @@ def compile_latex_output_final(root, latex_path, doall, afile=None, latex_book=F
                         fLOG("WARNINGS: Latex compilation had warnings:", c)
                     else:
                         raise OSError(
-                            "Unable to execute\n{0}".format(c)) from e
+                            f"Unable to execute\n{c}") from e
 
                 if len(err) > 0 and "Output written on " not in out:
                     raise HelpGenException(
-                        "CMD:\n{0}\n[sphinxerror]-6\n{1}\n---OUT:---\n{2}".format(c, err, out))
+                        f"CMD:\n{c}\n[sphinxerror]-6\n{err}\n---OUT:---\n{out}")
 
                 # second compilation
                 fLOG("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -452,7 +452,7 @@ def format_history(src, dest, format="basic"):
                 rel = lines[i - 1].rstrip("\r\t\n ")
                 if "." in rel:
                     del new_lines[-1]
-                    res = "* :release:`{0}`".format(rel)
+                    res = f"* :release:`{rel}`"
                     res = res.replace("(", "<").replace(")", ">")
                     if new_lines[-1].startswith("==="):
                         new_lines.append("")
@@ -471,13 +471,13 @@ def format_history(src, dest, format="basic"):
                         tag = "support"
                     else:
                         raise ValueError(
-                            "Line {0}, unable to infer tag from '{1}'".format(i, line))
+                            f"Line {i}, unable to infer tag from '{line}'")
                 else:
                     nline = line.lstrip("* ")
                     if nline.startswith("`"):
                         if tag is None:
                             tag = 'issue'
-                        res = "* :{0}:{1}".format(tag, nline)
+                        res = f"* :{tag}:{nline}"
                         if new_lines[-1].startswith("==="):
                             new_lines.append("")
                         new_lines.append(res)
@@ -486,8 +486,7 @@ def format_history(src, dest, format="basic"):
                             tag = 'issue'
                         spl = nline.split(':')
                         nb, doc = spl[0], ':'.join(spl[1:])
-                        res = "* :{0}:`{1}`: {2}".format(
-                            tag, nb.strip("#"), doc.strip(' '))
+                        res = f"* :{tag}:`{nb.strip('#')}`: {doc.strip(' ')}"
                         if new_lines[-1].startswith("==="):
                             new_lines.append("")
                         new_lines.append(res)
@@ -507,13 +506,12 @@ def format_history(src, dest, format="basic"):
                     issue = gr[5]
                 desc = gr[6].strip()
                 date = gr[7].strip()
-                new_line = "{0}:issue:`{1}`: {2} ({3})".format(
-                    gr[0], issue, desc, date)
+                new_line = f"{gr[0]}:issue:`{issue}`: {desc} ({date})"
                 new_lines.append(new_line)
             else:
                 new_lines.append(line.strip("\n\r"))
     else:
-        raise ValueError("Unexpected value for format '{0}'".format(format))
+        raise ValueError(f"Unexpected value for format '{format}'")
 
     with open(dest, "w", encoding="utf-8") as f:
         f.write("\n".join(new_lines))

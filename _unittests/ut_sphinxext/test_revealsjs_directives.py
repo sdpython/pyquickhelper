@@ -313,9 +313,9 @@ class TestVisitRevealjs(unittest.TestCase):
                 ids = kwargs.pop('ids')
                 if ids:
                     kwargs.update({'id': " ".join(ids)})
-                attrs = ["{0}='{1}'".format(k, v) for k, v in kwargs.items()]
+                attrs = [f"{k}='{v}'" for k, v in kwargs.items()]
                 attrs.sort()
-                return "<{0} {1}>".format(tag, " ".join(attrs))
+                return f"<{tag} {' '.join(attrs)}>"
 
             def set_first_last(self, node):
                 self.first_last = True
@@ -409,9 +409,9 @@ class TestVisitRvCode(unittest.TestCase):
 
             def starttag(self, node, tag):
                 try:
-                    return "<{0}>".format(tag)
+                    return f"<{tag}>"
                 except ValueError:
-                    return "<%s>" % tag
+                    return f"<{tag}>"
 
         return DummySelf(DummyBody())
 
@@ -481,7 +481,7 @@ class TestVisitRvSmall(unittest.TestCase):
                 self.first_last = False
 
             def starttag(self, node, tag):
-                return "<{0}>".format(tag)
+                return f"<{tag}>"
 
             def set_first_last(self, node):
                 self.first_last = True
@@ -552,7 +552,7 @@ class TestVisitRvNote(unittest.TestCase):
 
             def starttag(self, node, tag, **kwargs):
                 class_name = kwargs.pop('class')
-                return '<{0} class="{1}">'.format(tag, class_name)
+                return f'<{tag} class="{class_name}">'
 
             def set_first_last(self, node):
                 self.first_last = True

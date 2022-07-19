@@ -55,7 +55,7 @@ def writes(nb, **kwargs):
         return versions[nb.nbformat].writes_json(nb, **kwargs)
     except AttributeError as e:  # pragma: no cover
         raise NotebookException(
-            "probably wrong error: {0}".format(nb.nbformat)) from e
+            f"probably wrong error: {nb.nbformat}") from e
 
 
 def upgrade_notebook(filename, encoding="utf-8"):
@@ -77,7 +77,7 @@ def upgrade_notebook(filename, encoding="utf-8"):
         else:
             lc = list(content)
         raise ValueError(
-            "Unable to read content type '{0}' in '{2}' ---- {1}".format(type(content), lc, filename)) from e
+            f"Unable to read content type '{type(content)}' in '{filename}' ---- {lc}") from e
 
     if not hasattr(nb, "nbformat") or nb.nbformat >= 4:
         return False
@@ -85,7 +85,7 @@ def upgrade_notebook(filename, encoding="utf-8"):
     try:
         upgrade(nb, from_version=nb.nbformat)
     except ValueError as e:  # pragma: no cover
-        raise ValueError("Unable to convert '{0}'.".format(filename)) from e
+        raise ValueError(f"Unable to convert '{filename}'.") from e
 
     s = writes(nb)
     if isinstance(s, bytes):
@@ -260,7 +260,7 @@ def install_notebook_extension(path=None, overwrite=False, symlink=False,
     sys.stderr = cerr
     if len(err) != 0:
         raise NotebookException(
-            "unable to install exception from: {0}\nOUT:\n{1}\n[nberror]\n{2}".format(path, out, err))
+            f"unable to install exception from: {path}\nOUT:\n{out}\n[nberror]\n{err}")
     return out
 
 
@@ -319,7 +319,7 @@ def get_installed_notebook_extension(user=False, prefix=None,
         user=user, prefix=prefix, nbextensions_dir=nbextensions_dir)
     if not os.path.exists(path):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find %r." % path)
+            f"Unable to find {path!r}.")
 
     res = []
     for file in explore_folder_iterfile(path):
@@ -435,12 +435,11 @@ def remove_kernel(kernel_name, kernel_spec_manager=None):
         fold = kernels[kernel_name]
         if not os.path.exists(fold):
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to remove folder %r." % fold)
+                f"Unable to remove folder {fold!r}.")
         remove_folder(fold)
     else:
         raise NotebookException(  # pragma: no cover
-            "Unable to find kernel '{0}' in {1}".format(
-                kernel_name, ", ".join(kernels.keys())))
+            f"Unable to find kernel '{kernel_name}' in {', '.join(kernels.keys())}")
 
 
 def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, rule=int):
@@ -483,7 +482,7 @@ def remove_execution_number(infile, outfile=None, encoding="utf-8", indent=2, ru
                     adict[key] = cellno
                 else:
                     raise ValueError(  # pragma: no cover
-                        "Rule '{0}' does not apply on {1}={2}".format(rule, key, adict[key]))
+                        f"Rule '{rule}' does not apply on {key}={adict[key]}")
             elif key == "outputs":
                 if isinstance(adict[key], dict):
                     fixup(adict[key], k, v, cellno=cellno, outputs=outputs)

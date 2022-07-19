@@ -11,5 +11,4 @@ def find_custom_latex_processing(name):
     associated to name.
     """
     raise ValueError(  # pragma: no cover
-        "Unable to find any post processing function associated "
-        "to '{0}'".format(name))
+        f"Unable to find any post processing function associated to '{name}'")
