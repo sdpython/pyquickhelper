@@ -138,7 +138,7 @@ def visit_video_node(self, node):
             os.makedirs(relpath)
         shutil.copy(node['abspath'], relpath)
         logger = getLogger("video")
-        logger.info("[video] copy %r to %r", node[uri], relpath)
+        logger.info("[video] copy %r to %r", node['uri'], relpath)
 
 
 def _clean_value(val):
