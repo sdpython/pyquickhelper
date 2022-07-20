@@ -110,7 +110,8 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
         if "DISPLAY" not in os.environ:
             p = ":0"
             if fLOG:
-                fLOG(f"Change DISPLAY: '{os.environ.get('DISPLAY', None)}' --> '{p}'")
+                fLOG(
+                    f"Change DISPLAY: '{os.environ.get('DISPLAY', None)}' --> '{p}'")
             os.environ["DISPLAY"] = p
     else:
         # if "DISPLAY" not in os.environ:

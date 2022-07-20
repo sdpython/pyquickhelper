@@ -44,7 +44,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             LaTeXTranslator.__init__(self, document, builder, theme=theme)
         except TypeError:
             # Sphinx<5
-            LaTeXTranslator.__init__(self, document, builder)  # pylint: disable=E1120
+            LaTeXTranslator.__init__(
+                self, document, builder)  # pylint: disable=E1120
 
         newlines = builder.config.text_newlines
         if newlines == 'windows':

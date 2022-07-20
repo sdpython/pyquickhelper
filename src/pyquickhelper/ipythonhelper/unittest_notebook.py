@@ -87,7 +87,8 @@ def test_notebook_execution_coverage(filename, name, folder, this_module_name,
             if not os.path.exists(dest_dir):
                 os.mkdir(dest_dir)  # pragma: no cover
             src_file = os.path.join(doc, name_)
-            fLOG(f"[a_test_notebook_runner] copy '{src_file}' to '{dest_dir}'.")
+            fLOG(
+                f"[a_test_notebook_runner] copy '{src_file}' to '{dest_dir}'.")
             shutil.copy(src_file, dest_dir)
 
     if 'pyquickhelper' in this_module_name:

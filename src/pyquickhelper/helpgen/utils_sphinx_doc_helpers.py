@@ -670,7 +670,8 @@ def import_module(rootm, filename, log_function, additional_sys_path=None,
                         filename, mo.__file__, "\n   - ".join(sys.path)))
 
         sys.path = memo
-        log_function(f"[import_module] import '{filename}' successfully", mo.__file__)
+        log_function(
+            f"[import_module] import '{filename}' successfully", mo.__file__)
         for n, m in addback:
             if n not in sys.modules:
                 sys.modules[n] = m

@@ -244,7 +244,7 @@ class MockSphinxApp:
                 if exc:
                     raise
                 logger = logging.getLogger("MockSphinxApp")
-                logger.warning(f'[MockSphinxApp] {e}')
+                logger.warning('[MockSphinxApp] %s', e)
 
     def disconnect_env_collector(self, clname):
         """

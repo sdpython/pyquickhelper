@@ -1424,7 +1424,8 @@ class JenkinsExt(jenkins.Jenkins):
                 done[name] = (aj, name, var)
                 loc = None if location is None else os.path.join(
                     location, name)
-                self.fLOG(f"[jenkins] adding i={len(created)}: '{name}' var='{var}'")
+                self.fLOG(
+                    f"[jenkins] adding i={len(created)}: '{name}' var='{var}'")
                 created.append((job, name, loc, job, aj))
 
         indexes["order"] = order

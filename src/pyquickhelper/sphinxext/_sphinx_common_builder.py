@@ -118,8 +118,8 @@ class CommonSphinxWriterHelpers:
                     repl = os.path.join(
                         this, "sphinximages", "sphinxtrib", "missing.png")
                     logger = logging.getLogger("image")
-                    logger.warning(
-                        f"[image] unable to find image '{full}', replaced by '{repl}'")
+                    logger.warning("[image] unable to find image %r, replaced by %r.",
+                                   full, repl)
                     full = repl
 
                 ext = os.path.splitext(full)[-1]

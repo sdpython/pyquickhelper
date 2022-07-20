@@ -595,7 +595,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
         dest_doc = os.path.join(root, "_doc", "sphinxdoc", "source")
         fLOG(f"[generate_help_sphinx] module_name='{module_name}'")
         fLOG(f"[generate_help_sphinx] project_var_name='{project_var_name}'")
-        fLOG(f"[generate_help_sphinx] root='{root}' root_package='{root_package}'")
+        fLOG(
+            f"[generate_help_sphinx] root='{root}' root_package='{root_package}'")
         fLOG(f"[generate_help_sphinx] dest_doc='{dest_doc}'")
         subfolders = []
         if root_package.endswith("src"):
@@ -927,7 +928,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     _ for _ in lines if "toctree contains reference to document 'blog/" not in _]
                 out = "\n".join(lines)
 
-        fLOG(f"[generate_help_sphinx] end cmd len(out)={len(out)} len(err)={len(err)}")
+        fLOG(
+            f"[generate_help_sphinx] end cmd len(out)={len(out)} len(err)={len(err)}")
 
         if len(err) > 0 or len(out) > 0:
             if ((len(err) > 0 and "Exception occurred:" in err) or
@@ -983,7 +985,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # we should not need that
     for build_path in build_paths:
         if not os.path.exists(build_path):
-            fLOG(f"[generate_help_sphinx]    build_path not found '{build_path}'")
+            fLOG(
+                f"[generate_help_sphinx]    build_path not found '{build_path}'")
             continue
         dest = os.path.join(build_path, "_static", style_figure_notebook[0])
         if not os.path.exists(dest):  # pragma: no cover
@@ -1017,7 +1020,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                 if os.path.exists(dest):
                     shutil.copy(toco, dest)
         else:
-            fLOG(f"[generate_help_sphinx] not found '{os.path.split(toco)[-1]}'")
+            fLOG(
+                f"[generate_help_sphinx] not found '{os.path.split(toco)[-1]}'")
 
     fLOG("---- JENKINS END COPY RSS.XML ----")
 

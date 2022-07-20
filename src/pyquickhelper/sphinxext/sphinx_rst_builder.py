@@ -844,7 +844,8 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             else:
                 self.log_unknown(type(node), node)
         elif 'internal' not in node and 'name' in node.attributes:
-            self.add_text(f"`{node['name']} <{clean_refuri(node['refuri'])}>`_")
+            self.add_text(
+                f"`{node['name']} <{clean_refuri(node['refuri'])}>`_")
         elif 'internal' not in node and 'names' in node.attributes:
             anchor = node['names'][0] if len(
                 node['names']) > 0 else node['refuri']

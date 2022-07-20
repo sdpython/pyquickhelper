@@ -145,7 +145,6 @@ class CustomTocTreeCollector(TocTreeCollector):
     def enable(self, app):
         # It needs to disable TocTreeCollector.
         app.disconnect_env_collector("TocTreeCollector", exc=False)
-        assert self.listener_ids is None
         self.listener_ids = {
             'doctree-read': app.connect('doctree-read', self.process_doc),
             'env-merge-info': app.connect('env-merge-info', self.merge_other),

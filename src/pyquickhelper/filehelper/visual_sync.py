@@ -224,9 +224,9 @@ def create_visual_diff_through_html(string1, string2, notebook=False, context_si
 
         vars = [f"var tview={1 if inline_view else 0};",
                 f"var csize='{'' if context_size is None else context_size}';",
-            "var bt = '{0}';".format(
-            string1.replace("\n", "\\n").replace("'", "\\'")),
-            "var nt = '{0}';".format(string2.replace("\n", "\\n").replace("'", "\\'"))]
+                "var bt = '{0}';".format(
+                    string1.replace("\n", "\\n").replace("'", "\\'")),
+                "var nt = '{0}';".format(string2.replace("\n", "\\n").replace("'", "\\'"))]
         vars = "\n".join(vars)
 
         data = js_page_nb.replace("__ID__", did) \

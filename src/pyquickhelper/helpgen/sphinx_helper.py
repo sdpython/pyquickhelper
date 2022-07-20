@@ -95,7 +95,8 @@ def post_process_html_nb_output_static_file(build, fLOG=noLOG):
         for k, v in repl.items():
             if k in content:
                 if fLOG:
-                    fLOG(f"[post_process_html_output] js: replace {k!r} -> {v!r}")
+                    fLOG(
+                        f"[post_process_html_output] js: replace {k!r} -> {v!r}")
                 content = content.replace(k, v)
                 modif = True
 

@@ -262,14 +262,16 @@ class BenchMark:
         def cache_():
             "local function"
             if self._cache_file is not None and os.path.exists(self._cache_file):
-                self.fLOG(f"[BenchMark.run] retrieve cache '{self._cache_file}'")
+                self.fLOG(
+                    f"[BenchMark.run] retrieve cache '{self._cache_file}'")
                 with open(self._cache_file, "rb") as f:
                     cached.update(self._pickle.load(f))
                 self.fLOG("[BenchMark.run] number of cached run: {0}".format(
                     len(cached["params_list"])))
             else:
                 if self._cache_file is not None:
-                    self.fLOG(f"[BenchMark.run] cache not found '{self._cache_file}'")
+                    self.fLOG(
+                        f"[BenchMark.run] cache not found '{self._cache_file}'")
                 cached.update(dict(metrics=[], appendix=[], params_list=[]))
             self.uncache(cached)
 

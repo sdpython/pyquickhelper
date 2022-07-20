@@ -34,14 +34,16 @@ def repeat_execution(fct, every_second=1, stop_after_second=5,
         if exc:
             r = fct()
             if verbose > 0 and fLOG is not None:
-                fLOG(f"[repeat_execution] iter={iter} time={current} end={end}")
+                fLOG(
+                    f"[repeat_execution] iter={iter} time={current} end={end}")
             if stop_after_second is not None:
                 res.append(r)
         else:
             try:
                 r = fct()
                 if verbose > 0 and fLOG is not None:
-                    fLOG(f"[repeat_execution] iter={iter} time={current} end={end}")
+                    fLOG(
+                        f"[repeat_execution] iter={iter} time={current} end={end}")
                 if stop_after_second is not None:
                     res.append(r)
             except Exception as e:

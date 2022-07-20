@@ -85,7 +85,7 @@ def get_image_extension(uri):
         if ('?' + ext[1:]) in uri:
             return ext
     logger = logging.getLogger('image')
-    logger.warning(f"[image] unable to guess extension for '{uri}'")
+    logger.warning("[image] unable to guess extension for %r.", uri)
     return ''
 
 
@@ -160,7 +160,7 @@ class ImageDirective(Directive):
             self.arguments[0] = repl
             is_remote = self.is_remote(self.arguments[0])
             logger = logging.getLogger('image')
-            logger.warning(f"[image] {e}, replaced by '{repl}'")
+            logger.warning("[image] %r, replaced by %r", e, repl)
 
         if is_remote:
             img['remote'] = True
@@ -283,16 +283,16 @@ def download_images(app, env):
         ensuredir(dirn)
         if not os.path.isfile(dst):
 
-            logger.info(f'{src} -> {dst} (downloading)')
+            logger.info('%r -> %r (downloading)', src, dst)
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs
                 try:
                     f.write(requests.get(src,
                                          **conf['requests_kwargs']).content)
                 except requests.ConnectionError:
-                    logger.info(f"Cannot download `{src}`")
+                    logger.info("Cannot download %r", src)
         else:
-            logger.info(f'{src} -> {dst} (already in cache)')
+            logger.info('%r -> %r (already in cache)', src, dst)
 
 
 def configure_backend(app):

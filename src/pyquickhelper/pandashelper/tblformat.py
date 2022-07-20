@@ -436,7 +436,7 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
 
     rows = [f"<table{clta}>"]
     rows.append(f"<tr{cltr}><th{clth}>" + ("</th><th%s>" %
-                                                   clth).join(self.columns) + "</th></tr>")
+                                           clth).join(self.columns) + "</th></tr>")
     septd = f"</td><td{cltd}>"
     strtd = f"<tr{cltr}><td{cltd}>"
 

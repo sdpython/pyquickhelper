@@ -28,7 +28,8 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         r = NbImage("completion.png")
         self.assertTrue(r is not None)
         self.assertRaise(lambda: NbImage("_completion.png"), FileNotFoundError)
-        self.assertRaise(lambda: _NbImage("_completion.png"), FileNotFoundError)
+        self.assertRaise(lambda: _NbImage(
+            "_completion.png"), FileNotFoundError)
         r = _NbImage("completion.png")
         self.assertTrue(r is not None)
 

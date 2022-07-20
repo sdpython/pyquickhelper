@@ -68,7 +68,7 @@ class CollapseDirective(Directive):
             if '/' not in legend:
                 logger = logging.getLogger("sphinx")
                 logger.warning(
-                    f"[CollapseDirective] unable to interpret parameter legend '{legend}'")
+                    "[CollapseDirective] unable to interpret parameter legend %r.", legend)
                 legend = None
             spl = legend.split('/')
             hide = spl[0].strip()

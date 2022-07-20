@@ -1076,7 +1076,8 @@ def prepare_file_for_sphinx_help_generation(store_obj, input, output,
                                       fLOG=fLOG)
                 rsts += rstadd
         else:
-            fLOG(f"[prepare_file_for_sphinx_help_generation] processing '{src}'")
+            fLOG(
+                f"[prepare_file_for_sphinx_help_generation] processing '{src}'")
 
             actions_t = copy_source_files(src, dst, fmod_copy, silent=silent,
                                           softfile=softfile, fexclude=fexclude,

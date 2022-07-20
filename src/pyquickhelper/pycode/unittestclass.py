@@ -751,7 +751,8 @@ def assert_almost_equal_detailed(expected, value, **kwargs):
                 assert_almost_equal(r1, r2, **kwargs)
             except AssertionError as ee:
                 rows.append('----------------------')
-                rows.append(f"ISSUE WITH ROW {i}/{expected.shape[0]}:0 {str(ee)}")
+                rows.append(
+                    f"ISSUE WITH ROW {i}/{expected.shape[0]}:0 {str(ee)}")
                 if len(rows) > 10:
                     break  # pragma: no cover
         raise AssertionError("\n".join(rows))

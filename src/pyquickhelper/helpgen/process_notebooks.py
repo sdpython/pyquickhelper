@@ -870,7 +870,8 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
     if custom_snippet is not None and os.path.exists(custom_snippet):
         # reading a custom snippet
         if fLOG:
-            fLOG(f"[build_thumbail_in_gallery] custom snippet '{custom_snippet}'")
+            fLOG(
+                f"[build_thumbail_in_gallery] custom snippet '{custom_snippet}'")
         try:
             from PIL import Image
         except ImportError:  # pragma: no cover

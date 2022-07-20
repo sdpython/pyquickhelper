@@ -142,7 +142,7 @@ class GDotDirective(Directive):
             if docname is None or 'HERE' not in info:
                 url = GDotDirective._default_url
                 logger = logging.getLogger("gdot")
-                logger.warning(f"[gdot] docname is none, falling back to '{url}'")
+                logger.warning("[gdot] docname is none, falling back to %r.", url)
             else:
                 spl = docname.split("/")
                 sp = ['..'] * (len(spl) - 1) + ['_static', 'viz.js']
