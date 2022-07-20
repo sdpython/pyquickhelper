@@ -41,7 +41,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
                 f"Unexpected type for builder {type(builder)}")
         try:
             # Sphinx>=5
-            LaTeXTranslator.__init__(self, document, builder, theme=theme)
+            LaTeXTranslator.__init__(  # pylint: disable=E1120
+                self, document, builder, theme=theme)  # pylint: disable=E1120
         except TypeError:
             # Sphinx<5
             LaTeXTranslator.__init__(  # pylint: disable=E1120
