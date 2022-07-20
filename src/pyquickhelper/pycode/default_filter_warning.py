@@ -14,7 +14,7 @@ def default_filter_warning(w):  # pragma: no cover
 
     Interesting fields: ``w.message``, ``w.category``, ``w.filename``, ``w.lineno``.
     """
-    if "RemovedInSphinx40Warning" in str(w):
+    if "RemovedInSphinx" in str(w):
         return False
 
     class UnusedException(Exception):
@@ -152,6 +152,8 @@ def default_filter_warning(w):  # pragma: no cover
         elif "markdown_mistune.py" in w.filename:
             if "cgi.escape is deprecated, use html.escape instead" in str(w.message):
                 return False
+        if "There is no current event loop" in str(w):
+            return False
     elif isinstance(w.message, ImportWarning):
         if "_bootstrap.py" in w.filename:
             if "can't resolve package from __spec__" in str(w.message):
