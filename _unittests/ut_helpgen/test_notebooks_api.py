@@ -7,6 +7,7 @@ import sys
 import os
 import unittest
 import shutil
+import warnings
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
 from pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
