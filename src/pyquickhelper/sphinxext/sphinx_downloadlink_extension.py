@@ -123,7 +123,7 @@ def visit_downloadlink_node_html(self, node):
         raise nodes.SkipNode
 
     logger = logging.getLogger("downloadlink")
-    logger.info("[downloadlink] HTML % s, node)
+    logger.info("[downloadlink] HTML %s", node)
 
     atts = {'class': 'reference'}
 
