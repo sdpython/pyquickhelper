@@ -145,7 +145,8 @@ class YoutubeDirective(Directive):
                     lineno = self.lineno
                     docname = None if env is None else env.docname
                     logger.warning(
-                        f"[youtube] unable to extract video id from '{idurl}' in docname '{docname}' - line {lineno}.")
+                        "[youtube] unable to extract video id from %r in docname %r - line %r.",
+                        idurl, docname, lineno)
                     uid = ""
         else:
             uid = self.arguments[0]

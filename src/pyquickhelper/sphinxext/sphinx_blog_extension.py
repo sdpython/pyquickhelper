@@ -173,7 +173,7 @@ class BlogPostDirective(Directive):
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
-                f"[blogpost] unable to parse '{title}' - {e}")
+                "[blogpost] unable to parse %r - %s", title, e)
             raise e
 
         # final

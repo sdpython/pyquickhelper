@@ -165,8 +165,7 @@ class AutoSignatureDirective(Directive):
             if logging_function:
                 logging_function(mes)  # pragma: no cover
             if lineno is not None:
-                logger.warning(
-                    f'   File "{source}", line {lineno}')
+                logger.warning('   File "%s", line %r', source, lineno)
             obj = None
             kind = None
         if opt_syspath:
@@ -175,8 +174,8 @@ class AutoSignatureDirective(Directive):
         if opt_members is not None and kind != "class":  # pragma: no cover
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] option members is specified but '{0}' "
-                "is not a class (kind='{1}').".format(object_name, kind))
+                "[autosignature] option members is specified but %r "
+                "is not a class (kind=%r).", object_name, kind)
             obj = None
 
         # build node
@@ -187,8 +186,8 @@ class AutoSignatureDirective(Directive):
         if opt_path == 'import':
             if obj is None:
                 logger = logging.getLogger("autosignature")
-                logger.warning(
-                    f"[autosignature] object '{object_name}' cannot be imported.")
+                logger.warning("[autosignature] object %r cannot be imported.",
+                               object_name)
                 anchor = object_name
             elif kind == "staticmethod":
                 cl, fu = object_name.split(".")[-2:]
@@ -205,8 +204,8 @@ class AutoSignatureDirective(Directive):
         else:  # pragma: no cover
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] options path is '{0}', it should be in "
-                "(import, name, full) for object '{1}'.".format(opt_path, object_name))
+                "[autosignature] options path is %r, it should be in "
+                "(import, name, full) for object %r.", opt_path, object_name)
             anchor = object_name
 
         if obj is None:
@@ -334,7 +333,7 @@ class AutoSignatureDirective(Directive):
                 logger = logging.getLogger("autosignature")
                 logger.warning(
                     "[autosignature](2) unable to get signature of "
-                    "'{0}.{1} - {2}'.".format(object_name, name, str(e).replace("\n", "\\n")))
+                    "'%s.%s - %s'.", object_name, name, str(e).replace("\n", "\\n"))
                 signature = None
             except ValueError:  # pragma: no cover
                 signature = None
@@ -355,8 +354,8 @@ class AutoSignatureDirective(Directive):
                 doc = value.__doc__
                 if doc is None:  # pragma: no cover
                     logger = logging.getLogger("autosignature")
-                    logger.warning(
-                        f"[autosignature] docstring empty for '{object_name}.{name}'.")
+                    logger.warning("[autosignature] docstring empty for '%s.%s'.",
+                                   object_name, name)
                 else:
                     docstring = self.build_summary(doc)
                     lines = "\n".join(

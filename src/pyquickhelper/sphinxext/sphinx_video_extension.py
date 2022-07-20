@@ -71,7 +71,8 @@ class VideoDirective(Directive):
         if '://' in filename:
             logger = getLogger("video")
             logger.warning(
-                f"[video] url detected '{filename}' in docname '{docname}' - line {self.lineno}.")
+                "[video] url detected %r in docname %r - line %r.",
+                filename, docname, self.lineno)
             is_url = True
         else:
             is_url = False
@@ -100,7 +101,8 @@ class VideoDirective(Directive):
             if abspath is None:
                 logger = getLogger("video")
                 logger.warning(
-                    f"[video] Unable to find '{filename}' in docname '{docname}' - line {self.lineno} - srcdir='{srcdir}'.")
+                    "[video] Unable to find %r in docname %r - line %r - srcdir=%r.",
+                    filename, docname, self.lineno, srcdir)
         else:
             abspath = None
             relpath = None
@@ -136,7 +138,7 @@ def visit_video_node(self, node):
             os.makedirs(relpath)
         shutil.copy(node['abspath'], relpath)
         logger = getLogger("video")
-        logger.info(f"[video] copy '{node['uri']}' to '{relpath}'")
+        logger.info("[video] copy %r to %r", node['uri'], relpath)
 
 
 def _clean_value(val):

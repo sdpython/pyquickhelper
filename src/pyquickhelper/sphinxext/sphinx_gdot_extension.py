@@ -134,7 +134,7 @@ class GDotDirective(Directive):
                 url = GDotDirective._default_url
                 logger = logging.getLogger("gdot")
                 logger.warning("[gdot] jyquickhelper not installed, falling back to "
-                               "'{}'".format(url))
+                               "%r", url)
 
         info = get_env_state_info(self)
         docname = info['docname']
@@ -142,7 +142,8 @@ class GDotDirective(Directive):
             if docname is None or 'HERE' not in info:
                 url = GDotDirective._default_url
                 logger = logging.getLogger("gdot")
-                logger.warning("[gdot] docname is none, falling back to %r.", url)
+                logger.warning(
+                    "[gdot] docname is none, falling back to %r.", url)
             else:
                 spl = docname.split("/")
                 sp = ['..'] * (len(spl) - 1) + ['_static', 'viz.js']
@@ -291,27 +292,26 @@ def copy_js_files(app):
                         dest = os.path.join(destf, 'viz.js')
                         try:
                             shutil.copy(path, dest)
-                            logger.info(
-                                f"[gdot] copy '{path}' to '{dest}'.")
+                            logger.info("[gdot] copy %r to %r.", path, dest)
                         except PermissionError as e:  # pragma: no cover
-                            logger.warning("[gdot] permission error: {}, "
-                                           "unable to use local viz.js.".format(e))
+                            logger.warning("[gdot] permission error: %e, "
+                                           "unable to use local viz.js.", e)
 
                         if not os.path.exists(dest):
-                            logger.warning("[gdot] unable to copy='{}', "
-                                           "unable to use local viz.js.".format(dest))
+                            logger.warning("[gdot] unable to copy=%r, "
+                                           "unable to use local viz.js.", dest)
                     else:
-                        logger.warning("[gdot] destination folder='{}' does not exists, "
-                                       "unable to use local viz.js.".format(destf))
+                        logger.warning("[gdot] destination folder=%r does not exists, "
+                                       "unable to use local viz.js.", destf)
                 else:
-                    logger.warning("[gdot] unable to locate html_static_path='{}', "
-                                   "unable to use local viz.js.".format(app.config.html_static_path))
+                    logger.warning("[gdot] unable to locate html_static_path=%r, "
+                                   "unable to use local viz.js.", app.config.html_static_path)
         else:
-            logger.warning("[gdot] jyquickhelper needs to be update, unable to find '{}'.".format(
-                path))
+            logger.warning(
+                "[gdot] jyquickhelper needs to be update, unable to find %r.", path)
     else:
         logger.warning("[gdot] jyquickhelper not installed, falling back to "
-                       "'{}'".format(GDotDirective._default_url))
+                       "%r", GDotDirective._default_url)
 
 
 def setup(app):

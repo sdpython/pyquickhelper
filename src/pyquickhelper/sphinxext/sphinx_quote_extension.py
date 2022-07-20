@@ -231,7 +231,7 @@ class QuoteNode(BaseAdmonition):
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
-                f"[blogpost] unable to parse '{author}' - '{book or manga}' - {e}")
+                "[blogpost] unable to parse %r - %r - %r", author, book or manga, e)
             raise e
 
         node['tag'] = tag

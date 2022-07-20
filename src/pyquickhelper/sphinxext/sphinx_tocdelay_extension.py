@@ -192,12 +192,10 @@ def transform_tocdelay(app, doctree, fromdocname):
 
     for node in post_list:
         if node["tdprocessed"] == 0:
-            logger.warning("[tocdelay] no first loop was ever processed: 'tdprocessed'={0} , File '{1}', line {2}".format(
-                node["tdprocessed"], node["tddocname"], node["tdlineno"]))
+            logger.warning("[tocdelay] no first loop was ever processed: 'tdprocessed'=%s , File %r, line %s",
+                           node["tdprocessed"], node["tddocname"], node["tdlineno"])
             continue
         if node["tdprocessed"] > 1:
-            # logger.warning("[tocdelay] already processed: 'tdprocessed'={0} , File '{1}', line {2}".format(
-            #     node["tdprocessed"], node["tddocname"], node["tdlineno"]))
             continue
 
         docs = node["tddocuments"]
@@ -214,8 +212,8 @@ def transform_tocdelay(app, doctree, fromdocname):
         dirdocname = os.path.dirname(nodedocname)
         clname, toctitle, tocid, tocdoc = node["tdrule"]
 
-        logger.info("[tocdelay] transform_tocdelay '{0}' from '{1}'".format(
-            nodedocname, fromdocname))
+        logger.info("[tocdelay] transform_tocdelay %r from %r",
+                    nodedocname, fromdocname)
         node["tdprocessed"] += 1
 
         for name, subname, extitle in docs:
@@ -228,8 +226,8 @@ def transform_tocdelay(app, doctree, fromdocname):
             subname = f"{dirdocname}/{name}"
             doc_doctree = env.get_doctree(subname)
             if doc_doctree is None:
-                logger.info("[tocdelay] ERROR (4): No doctree found for '{0}' from '{1}'".format(
-                    subname, nodedocname))
+                logger.info("[tocdelay] ERROR (4): No doctree found for %r from %r",
+                            subname, nodedocname)
 
             # It finds a node sharing the same name.
             diginto = []
@@ -238,7 +236,7 @@ def transform_tocdelay(app, doctree, fromdocname):
                     diginto.append(n)
             if len(diginto) == 0:
                 logger.info(
-                    f"[tocdelay] ERROR (3): No node '{clname}' found for '{subname}'")
+                    "[tocdelay] ERROR (3): No node %r found for %r", clname, subname)
                 continue
 
             # It takes the first one available.
@@ -251,19 +249,19 @@ def transform_tocdelay(app, doctree, fromdocname):
                 found = list(
                     sorted(set(map(lambda x: x.__class__.__name__, diginto))))
                 ext = diginto[0].attributes if len(diginto) > 0 else ""
-                logger.warning("[tocdelay] ERROR (2): Unable to find node '{0}' in {1} [{2}]".format(
-                    subname, ", ".join(map(str, found)), ext))
+                logger.warning("[tocdelay] ERROR (2): Unable to find node %r in %s [%r]",
+                               subname, ", ".join(map(str, found)), ext)
                 continue
 
             rootnode = subnode
 
             if tocid not in rootnode.attributes:
                 logger.warning(
-                    f"[tocdelay] ERROR (7): Unable to find 'tocid' in '{rootnode}'")
+                    "[tocdelay] ERROR (7): Unable to find 'tocid' in %r", rootnode)
                 continue
             if tocdoc not in rootnode.attributes:
                 logger.warning(
-                    f"[tocdelay] ERROR (8): Unable to find 'tocdoc' in '{rootnode}'")
+                    "[tocdelay] ERROR (8): Unable to find 'tocdoc' in %r", rootnode)
                 continue
             refid = rootnode[tocid]
             refdoc = rootnode[tocdoc]
@@ -271,18 +269,18 @@ def transform_tocdelay(app, doctree, fromdocname):
             subnode = list(rootnode.traverse(nodes.title))
             if not subnode:
                 logger.warning(
-                    f"[tocdelay] ERROR (5): Unable to find a title in '{subname}'")
+                    "[tocdelay] ERROR (5): Unable to find a title in %r", subname)
                 continue
             subnode = subnode[0]
 
             try:
                 refuri = app.builder.get_relative_uri(nodedocname, refdoc)
-                logger.info(
-                    f"[tocdelay] add link for '{refid}' - '{refdoc}' from '{nodedocname}'")
+                logger.info("[tocdelay] add link for %r - %r from %r",
+                            refid, refdoc, nodedocname)
             except NoUri:
                 docn = list(sorted(app.builder.docnames))
-                logger.info("[tocdelay] ERROR (9): unable to find a link for '{0}' - '{1}' from '{2}` -- {3} - {4}".format(
-                    refid, refdoc, nodedocname, type(app.builder), docn))
+                logger.info("[tocdelay] ERROR (9): unable to find a link for %r - %r from %r -- %s - %s",
+                            refid, refdoc, nodedocname, type(app.builder), docn)
                 refuri = ''
 
             use_title = extitle or subnode.astext()
@@ -300,11 +298,10 @@ def transform_tocdelay(app, doctree, fromdocname):
 def _print_loop_on_children(node, indent="", msg="-"):
     logger = logging.getLogger("tocdelay")
     if hasattr(node, "children"):
-        logger.info(
-            f"[tocdelay] '{type(node)}' - {msg} - {node}")
+        logger.info("[tocdelay] %r - %s - %s", type(node), msg, node)
         for child in node.children:
-            logger.info("[tocdelay]       {0}{1} - '{2}'".format(indent, type(child),
-                                                                 child.astext().replace("\n", " #EOL# ")))
+            logger.info("[tocdelay]       %s%s - %r",
+                        indent, type(child), child.astext().replace("\n", " #EOL# "))
             _print_loop_on_children(child, indent + "    ")
 
 

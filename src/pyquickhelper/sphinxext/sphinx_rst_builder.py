@@ -92,7 +92,7 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("RstBuilder")
-        logger.warning(f"[rst] {type}({node}) unsupported formatting")
+        logger.warning("[rst] %s(%s) unsupported formatting", type, node)
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width
@@ -1101,8 +1101,8 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             # due to jupyter_sphinx
             return
         logger = logging.getLogger("RstBuilder")
-        logger.warning("[rst] unknown visit node: '{0}' - '{1}'".format(
-            node.__class__.__name__, node))
+        logger.warning("[rst] unknown visit node: '%r - %r",
+                       node.__class__.__name__, node)
 
     def unknown_departure(self, node):
         classname = node.__class__.__name__
@@ -1114,8 +1114,8 @@ class RstTranslator(TextTranslator, CommonSphinxWriterHelpers):
             # due to jupyter_sphinx
             return
         logger = logging.getLogger("RstBuilder")
-        logger.warning("[rst] unknown depart node: '{0}' - '{1}'".format(
-            node.__class__.__name__, node))
+        logger.warning("[rst] unknown depart node: %r - %r",
+                       node.__class__.__name__, node)
 
 
 class _BodyPlaceholder:
@@ -1129,10 +1129,10 @@ class _BodyPlaceholder:
             if len(el) > 50:
                 el = el[:50] + "..."
             self.logger.warning(
-                f"[rst] body.append was called with string {el!r}.")
+                "[rst] body.append was called with string %r", el)
         else:
             self.logger.warning(
-                f"[rst] body.append was called with type {type(element)!r}.")
+                "[rst] body.append was called with type %", type(element))
         self.lines.append(element)
 
 

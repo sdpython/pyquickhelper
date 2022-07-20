@@ -106,11 +106,11 @@ class CmdRef(BlocRef):
                     out = "--SCRIPT--{}\n--OUT--\n{}\n--ERR--\n{}\n--PATH--\n{}".format(
                         name, out, err, path)
                     logger = logging.getLogger("CmdRef")
-                    logger.warning(f"[CmdRef] cmd failed '{name}'")
+                    logger.warning("[CmdRef] cmd failed %r", name)
                 elif out in (None, ''):
                     out = f"--SCRIPT--{name}\n--EMPTY OUTPUT--\n--PATH--\n{path}"
                     logger = logging.getLogger("CmdRef")
-                    logger.warning(f"[CmdRef] cmd empty '{name}'")
+                    logger.warning("[CmdRef] cmd empty %r", name)
                 content = "python " + name
                 cont += nodes.paragraph('<<<', '<<<')
                 pout = nodes.literal_block(content, content)
@@ -122,20 +122,22 @@ class CmdRef(BlocRef):
                 if ":" not in name:
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
-                        f"[CmdRef] cmd '{name}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.")
+                        "[CmdRef] cmd %r should contain ':': "
+                        "<full_function_name>:<cmd_name> as specified in the setup.",
+                        name)
                     if lineno is not None:
-                        logger.warning(
-                            f'   File "{source}", line {lineno}')
+                        logger.warning('   File "%s", line %r', source, lineno)
 
                 # example: pyquickhelper.cli.pyq_sync_cli:pyq_sync
                 spl = name.strip("\r\n\t ").split(":")
                 if len(spl) != 2:  # pragma: no cover
                     logger = logging.getLogger("CmdRef")
                     logger.warning(
-                        f"[CmdRef] cmd(*= '{name}' should contain ':': <full_function_name>:<cmd_name> as specified in the setup.")
+                        "[CmdRef] cmd(*= %r should contain ':': "
+                        "<full_function_name>:<cmd_name> as specified in the setup.",
+                        name)
                     if lineno is not None:
-                        logger.warning(
-                            f'   File "{source}", line {lineno}')
+                        logger.warning('   File "%s", line %r', source, lineno)
 
                 # rename the command line
                 if "=" in spl[0]:
@@ -154,11 +156,9 @@ class CmdRef(BlocRef):
                     obj, name = import_object(fullname, kind="function")
                 except ImportError:  # pragma: no cover
                     logger = logging.getLogger("CmdRef")
-                    logger.warning(
-                        f"[CmdRef] unable to import '{fullname}'")
+                    logger.warning("[CmdRef] unable to import %r", fullname)
                     if lineno is not None:
-                        logger.warning(
-                            f'   File "{source}", line {lineno}')
+                        logger.warning('   File "%s", line %r', source, lineno)
                     obj = None
 
                 if obj is not None:
@@ -177,13 +177,13 @@ class CmdRef(BlocRef):
                     if len(content) == 0:  # pragma: no cover
                         logger = logging.getLogger("CmdRef")
                         logger.warning(
-                            f"[CmdRef] empty output for '{fullname}'")
+                            "[CmdRef] empty output for %r", fullname)
                         if lineno is not None:
                             logger.warning(
-                                f'   File "{source}", line {lineno}')
+                                '   File "%s", line %r', source, lineno)
                         out = f"--SCRIPT--{name}\n--EMPTY OUTPUT--\n--PATH--\n{path}"
                         logger = logging.getLogger("CmdRef")
-                        logger.warning(f"[CmdRef] cmd empty '{name}'")
+                        logger.warning("[CmdRef] cmd empty %r", name)
                     else:
                         start = 'usage: ' + name_fct
                         if content.startswith(start):

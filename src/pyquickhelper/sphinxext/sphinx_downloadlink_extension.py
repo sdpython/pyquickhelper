@@ -110,7 +110,7 @@ def process_downloadlink_role(role, rawtext, text, lineno, inliner, options=None
     node['anchor'] = anchor
 
     logger = logging.getLogger("downloadlink")
-    logger.info(f"[downloadlink] node '{str(node)}'")
+    logger.info("[downloadlink] node %s", node)
 
     return [node], []
 
@@ -123,7 +123,7 @@ def visit_downloadlink_node_html(self, node):
         raise nodes.SkipNode
 
     logger = logging.getLogger("downloadlink")
-    logger.info(f"[downloadlink] HTML '{str(node)}'")
+    logger.info("[downloadlink] HTML %s", node)
 
     atts = {'class': 'reference'}
 
@@ -187,7 +187,7 @@ def visit_downloadlink_node_rst(self, node):
     Converts node *downloadlink* into :epkg:`rst`.
     """
     logger = logging.getLogger("downloadlink")
-    logger.info(f"[downloadlink] RST '{str(node)}'")
+    logger.info("[downloadlink] RST %s", node)
 
     if node['format']:
         self.add_text(":downloadlink:`{0} <{1}::{2}>`".format(
@@ -255,7 +255,7 @@ class DownloadLinkFileCollector(EnvironmentCollector):
                 app.env.docname, rel_filename)
         if nb > 0:
             logger = logging.getLogger("downloadlink")
-            logger.info(f"[downloadlink] processed {nb}")
+            logger.info("[downloadlink] processed %r", nb)
 
 
 def copy_download_files(app, exc):
@@ -291,13 +291,12 @@ def copy_download_files(app, exc):
                 name = os.path.join(builder.srcdir, src)
                 try:
                     copyfile(name, dest)
-                    logger.info(
-                        f"[downloadlink] copy '{name}' to '{dest}'")
+                    logger.info("[downloadlink] copy %r to %r", name, dest)
                 except FileNotFoundError:
                     mes = "Builder format '{0}'-'{3}', unable to copy file '{1}' into {2}'".format(
                         builder.format, name, dest, builder.__class__.__name__)
                     logger.warning(
-                        f"[downloadlink] cannot copy '{name}' to '{dest}'")
+                        "[downloadlink] cannot copy %r to %r", name, dest)
 
 
 def setup(app):

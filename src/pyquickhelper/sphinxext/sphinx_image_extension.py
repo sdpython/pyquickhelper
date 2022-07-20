@@ -79,8 +79,8 @@ class SimpleImageDirective(Directive):
         if '://' in filename:
             logger = getLogger("simpleimage")  # pragma: no cover
             logger.warning(  # pragma: no cover
-                "[simpleimage] url detected '{0}' in docname '{1}' - line {2}"
-                ".".format(filename, docname, self.lineno))
+                "[simpleimage] url detected %r in docname %r - line %r"
+                ".", filename, docname, self.lineno)
             is_url = True
         else:
             is_url = False
@@ -89,15 +89,16 @@ class SimpleImageDirective(Directive):
         if convert:
             logger = getLogger("simpleimage")  # pragma: no cover
             logger.warning(  # pragma: no cover
-                "[simpleimage] convert into '{3}' not implemented for '{0}' in "
-                "docname '{1}' - line {2}.".format(
-                    filename, docname, self.lineno, convert))
+                "[simpleimage] convert into %r not implemented for %r in "
+                "docname %r - line %r.",
+                convert, filename, docname, self.lineno)
 
         download = self.options.get('download', None)
         if convert:
             logger = getLogger("simpleimage")
             logger.warning(  # pragma: no cover
-                f"[simpleimage] download not implemented for '{filename}' in docname '{docname}' - line {self.lineno}.")
+                "[simpleimage] download not implemented for %r in docname %r - line %r.",
+                filename, docname, self.lineno)
 
         if not is_url:
             env.images_mapping.add_file('', filename)
@@ -123,8 +124,8 @@ class SimpleImageDirective(Directive):
             if abspath is None:
                 logger = getLogger("simpleimage")  # pragma: no cover
                 logger.warning(  # pragma: no cover
-                    "[simpleimage] Unable to find '{0}' in docname '{1}' - line {2} - srcdir='{3}'.".format(
-                        filename, docname, self.lineno, srcdir))
+                    "[simpleimage] Unable to find %r in docname %r - line %r - srcdir=%r.",
+                    filename, docname, self.lineno, srcdir)
         else:
             abspath = None
             relpath = None

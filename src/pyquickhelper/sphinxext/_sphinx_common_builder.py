@@ -148,8 +148,8 @@ class CommonSphinxWriterHelpers:
                             except InternetException as e:  # pragma: no cover
                                 logger = logging.getLogger("image")
                                 logger.warning(
-                                    "[image] unable to get content for url '{0}' due to '{1}'"
-                                    "".format(atts['src'], e))
+                                    "[image] unable to get content for url %r due to %r",
+                                    atts['src'], e)
                                 this = os.path.abspath(
                                     os.path.dirname(__file__))
                                 full = os.path.join(
