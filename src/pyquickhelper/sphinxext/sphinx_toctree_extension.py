@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 @file
-@brief Overwrites `toctree <https://www.sphinx-doc.org/en/master/markup/toctree.html#directive-toctree>`_
+#directive-toctree>`_
+@brief Overwrites `toctree <https://www.sphinx-doc.org/en/master/markup/toctree.html
 directive to get catch exceptions when a document is processed inline.
 """
 from docutils.parsers.rst import directives
@@ -65,8 +66,8 @@ class CustomTocTree(TocTree):
             else:
                 logger = logging.getLogger("CustomTocTreeCollector")
                 logger.warning(
-                    "[CustomTocTreeCollector] unable to remove document '{0}' from {1}".format(
-                        env.docname, ", ".join(all_docnames)))
+                    "[CustomTocTreeCollector] unable to remove document %r from %s",
+                    env.docname, ", ".join(all_docnames))
 
         for entry in self.content:
             if not entry:
@@ -208,7 +209,7 @@ class CustomTocTreeCollector(TocTreeCollector):
                         an = "unkown-anchor"
                         logger = logging.getLogger("CustomTocTreeCollector")
                         logger.warning(
-                            f"[CustomTocTreeCollector] no id for node '{sectionnode}'")
+                            "[CustomTocTreeCollector] no id for node %r", sectionnode)
                     else:
                         an = sectionnode['ids'][0]
                     anchorname = '#' + an

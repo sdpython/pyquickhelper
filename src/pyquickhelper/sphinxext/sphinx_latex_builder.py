@@ -44,8 +44,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             LaTeXTranslator.__init__(self, document, builder, theme=theme)
         except TypeError:
             # Sphinx<5
-            LaTeXTranslator.__init__(
-                self, document, builder)  # pylint: disable=E1120
+            LaTeXTranslator.__init__(  # pylint: disable=E1120
+                self, document, builder)
 
         newlines = builder.config.text_newlines
         if newlines == 'windows':
@@ -182,8 +182,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
 
     def unknown_visit(self, node):
         logger = logging.getLogger("MdBuilder")
-        logger.warning("[latex] unknown visit node: '{0}' - '{1}'".format(
-            node.__class__.__name__, node))
+        logger.warning("[latex] unknown visit node: %r - %r",
+                       node.__class__.__name__, node)
 
 
 class EnhancedLaTeXWriter(LaTeXWriter):
@@ -289,8 +289,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
             doctree.settings.docname = docname
             doctree.settings.docclass = docclass
             docwriter.write(doctree, destination)
-            self.logger.info(
-                f"[EnhancedLaTeXBuilder] done in '{targetname}'")
+            self.logger.info("[EnhancedLaTeXBuilder] done in %r", targetname)
 
 
 def setup(app):

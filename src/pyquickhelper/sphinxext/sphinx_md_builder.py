@@ -82,7 +82,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("MdBuilder")
-        logger.warning(f"{type}({node}) unsupported formatting")
+        logger.warning("%s(%r) unsupported formatting", type, node)
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width
@@ -979,8 +979,8 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
 
     def unknown_visit(self, node):
         logger = logging.getLogger("MdBuilder")
-        logger.warning("[md] unknown visit node: '{0}' - '{1}'".format(
-            node.__class__.__name__, node))
+        logger.warning("[md] unknown visit node: %r - %r",
+                       node.__class__.__name__, node)
 
 
 class MdBuilder(Builder):

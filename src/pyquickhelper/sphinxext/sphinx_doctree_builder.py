@@ -48,8 +48,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("DocTreeBuilder")
-        logger.warning(
-            f"[doctree] {type}({node}) unsupported formatting")
+        logger.warning("[doctree] %s(%s) unsupported formatting", type, node)
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width

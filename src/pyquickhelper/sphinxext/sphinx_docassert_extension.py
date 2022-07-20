@@ -15,7 +15,8 @@ def check_typed_make_field(self, types, domain, items, env=None, parameters=None
                            function_name=None, docname=None, kind=None):
     """
     Overwrites function
-    `make_field <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docfields.py#L197>`_.
+    #L197>`_.
+    `make_field <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/util/docfields.py
     Processes one argument of a function.
 
     @param      self            from original function
@@ -54,13 +55,13 @@ def check_typed_make_field(self, types, domain, items, env=None, parameters=None
         "local function"
         if fieldarg not in check_params:
             if function_name is not None:
-                logger.warning("[docassert] '{0}' has no parameter '{1}' (in '{2}').".format(
-                    function_name, fieldarg, docname))
+                logger.warning("[docassert] %r has no parameter %r (in %r).",
+                               function_name, fieldarg, docname)
         else:
             check_params[fieldarg] += 1
             if check_params[fieldarg] > 1:
-                logger.warning("[docassert] '{1}' of '{0}' is duplicated (in '{2}').".format(
-                    function_name, fieldarg, docname))
+                logger.warning("[docassert] %r of %r is duplicated (in %r).",
+                               fieldarg, function_name, docname)
 
     if isinstance(items, list):
         for fieldarg, content in items:
@@ -74,8 +75,8 @@ def check_typed_make_field(self, types, domain, items, env=None, parameters=None
                     # Behavior should be improved.
                     pass
                 else:
-                    logger.warning("[docassert] '{0}' has undocumented parameters '{1}' (in '{2}').".format(
-                        function_name, ", ".join(nodoc), docname))
+                    logger.warning("[docassert] %r has undocumented parameters %r (in %r).",
+                                   function_name, ", ".join(nodoc), docname)
     else:
         # Documentation related to the return.
         pass
@@ -208,8 +209,8 @@ class OverrideDocFieldTransformer:
                 else:
                     reasons = "unknown"
                 logger = logging.getLogger("docassert")
-                logger.warning(
-                    f"[docassert] unable to import object '{docs}', reasons:\n{reasons}")
+                logger.warning("[docassert] unable to import object %r, reasons:\n%s",
+                               docs, reasons)
                 myfunc = None
 
             if myfunc is None:
@@ -222,7 +223,7 @@ class OverrideDocFieldTransformer:
                 except (TypeError, ValueError):
                     logger = logging.getLogger("docassert")
                     logger.warning(
-                        f"[docassert] unable to get signature of '{docs}'.")
+                        "[docassert] unable to get signature of %r.", docs)
                     signature = None
                     parameters = None
 
@@ -253,7 +254,7 @@ class OverrideDocFieldTransformer:
             env = other_self.directive.state.document.settings.env
         except AttributeError as e:
             logger = logging.getLogger("docassert")
-            logger.warning(f"[docassert] {e}")
+            logger.warning("[docassert] %s", e)
             env = None
 
         docname = fieldbody.parent.source.split(':docstring')[0]
@@ -262,7 +263,7 @@ class OverrideDocFieldTransformer:
             if isinstance(entry, nodes.field):
                 logger = logging.getLogger("docassert")
                 logger.warning(
-                    f"[docassert] unable to check [nodes.field] {entry}")
+                    "[docassert] unable to check [nodes.field] %s", entry)
             else:
                 fieldtype, content = entry
                 fieldtypes = types.get(fieldtype.name, {})

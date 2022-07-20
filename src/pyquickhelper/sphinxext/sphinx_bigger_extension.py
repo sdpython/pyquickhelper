@@ -117,8 +117,8 @@ def depart_bigger_node(self, node):
     depart bigger_node for format other than html
     """
     logger = getLogger("bigger")
-    logger.warning("[depart_bigger_node] output only available for HTML not for '{0}'".format(
-        type(self)))
+    logger.warning(
+        "[depart_bigger_node] output only available for HTML not for %r", type(self))
 
 
 def setup(app):

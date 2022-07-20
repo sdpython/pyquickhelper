@@ -1240,7 +1240,7 @@ class _CustomSphinx(Sphinx):
                     self.env.setup(self)
                 self.info('done')
             except Exception as err:
-                self.info(f'failed: {err}')
+                self.info('failed: %r', err)
                 self._init_env(freshenv=True)
         elif self.env is None:  # pragma: no cover
             self.env = _CustomBuildEnvironment(self)
@@ -1382,17 +1382,14 @@ class _CustomSphinx(Sphinx):
             def run(self):
                 """Run the plot directive."""
                 logger = getLogger("MockSphinxApp")
-                logger.info(
-                    f'[MockSphinxApp] PlotDirective: {self.content}')
+                logger.info('[MockSphinxApp] PlotDirective: %r', self.content)
                 try:
                     res = old_run(self)
-                    logger.info(
-                        '[MockSphinxApp] PlotDirective ok')
+                    logger.info('[MockSphinxApp] PlotDirective ok')
                     return res
                 except OSError as e:  # pragma: no cover
                     logger = getLogger("MockSphinxApp")
-                    logger.info(
-                        f'[MockSphinxApp] PlotDirective failed: {e}')
+                    logger.info('[MockSphinxApp] PlotDirective failed: %s', e)
                 return []
 
             obj.run = run
