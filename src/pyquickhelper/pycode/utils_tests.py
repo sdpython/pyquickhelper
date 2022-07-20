@@ -462,13 +462,10 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     err = res.get("err", "")
     if len(err) > 0:  # pragma: no cover
         # Remove most of the Sphinx warnings (sphinx < 1.8)
-        lines = err.split("\n")
-        lines = [
-            _ for _ in lines if _ and (
-                "is already registered, it will be overridden" not in _ and
-                "has to be local relative or absolute path to image" not in _)]
-        err = "\n".join(lines)
-    if len(err) > 0:
+        fLOG("[main_wrapper_tests] EXCEPTION BEGIN")
+        fLOG(err)
+        fLOG("[main_wrapper_tests] EXCEPTION END")
+    if len(err) > 10000:
         raise TestWrappedException(err)  # pragma: no cover
 
     datetime_end = datetime.now()
