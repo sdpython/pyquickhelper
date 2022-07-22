@@ -5,8 +5,15 @@
 History
 =======
 
-current - 2022-06-03 - 0.00Mb
+current - 2022-07-22 - 0.00Mb
 =============================
+
+* #371: Improves logging calls (2022-07-20)
+* #370: Uses f strings (2022-07-19)
+* #369: Removes lint R0201 (2022-06-03)
+
+1.11.3731 - 2022-06-02 - 2.20Mb
+===============================
 
 * #368: Fixes class SqlLite3FileStore where multiple thread open a sqlite3 co… (2022-06-02)
 * #367: Extends quote sphinx extension (2022-04-25)
@@ -102,22 +109,10 @@ current - 2022-06-03 - 0.00Mb
 * #313: Update reveal.js (2020-09-05)
 * #311: Bump node-sass from 3.13.1 to 4.14.1 in /src/pyquickhelper/sphinxext/revealjs/templates/revealjs/static (2020-09-05)
 * #309: Add option linenos to extension runpython (2020-07-17)
-
-1.9.3418 - 2020-07-09 - 2.06Mb
-==============================
-
 * #307: Add a function to plot a graph on a matplotlib (2020-07-07)
 * #306: Remove numpydoc added by default, it fails with other extensions (2020-06-28)
 * #305: docassert does not work on numpydoc (2020-06-23)
-
-1.9.3396 - 2020-06-08 - 2.06Mb
-==============================
-
 * #304: Implements a simpler version of ignore_warnings (2020-06-07)
-
-1.9.3393 - 2020-06-03 - 2.06Mb
-==============================
-
 * #303: Add parameter squeeze to assertEqualArray (2020-06-03)
 * #302: Implements method assertLogging in ExtTestCase (2020-05-10)
 * #301: Implements method assertWarning in ExtTestCase (2020-05-10)
