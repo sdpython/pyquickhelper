@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/python:3.10.1
+      - image: cimg/python:3.10.5
     
     working_directory: ~/repo
     
@@ -48,8 +48,6 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
             pip install -r requirements.txt
             pip install tkinterquickhelper pyensae --no-deps
             pip install scipy scikit-learn blockdiag nbconvert
@@ -63,29 +61,15 @@ jobs:
       - run:
           name: run tests
           command: |
-            . venv/bin/activate
             export PYTHONPATH=src
             python setup.py unittests
 
       - run:
           name: wheel
           command: |
-            . venv/bin/activate
             python setup.py bdist_wheel
             mkdir -p test-reports/dist
             cp dist/*.whl test-reports/dist
-
-#      - run:
-#          name: documentation
-#          command: |
-#            . venv/bin/activate
-#            python setup.py build_sphinx
-#            
-#      - run:
-#          name: copy documentation
-#          command: |
-#            mkdir -p test-reports/doc
-#            zip -r -9  test-reports/doc/documentation_html.zip _doc/sphinxdoc/build/html
             
       - store_artifacts:
           path: test-reports
