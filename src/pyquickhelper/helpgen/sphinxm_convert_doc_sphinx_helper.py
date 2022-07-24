@@ -131,12 +131,12 @@ class _AdditionalVisitDepart:
         doctree = self.output_format in ('doctree', 'doctree.txt')
         if not(rst or html or latex or md or doctree):
             raise ValueError(  # pragma: no cover
-                "Unknown output format '{0}'.".format(self.output_format))
+                f"Unknown output format '{self.output_format}'.")
         try:
             ev = eval(expr)
         except Exception:  # pragma: no cover
             raise ValueError(
-                "Unable to interpret expression '{0}'".format(expr))
+                f"Unable to interpret expression '{expr}'")
         return ev
 
     def visit_only(self, node):
@@ -258,7 +258,7 @@ class LatexTranslatorWithCustomDirectives(_AdditionalVisitDepart, EnhancedLaTeXT
             builder, document = document, builder
         if not hasattr(builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {} - {}".format(type(builder), type(document)))
+                f"Builder has no config: {type(builder)} - {type(document)}")
         EnhancedLaTeXTranslator.__init__(
             self, document, builder, *args, **kwds)
         _AdditionalVisitDepart.__init__(self, 'md')
@@ -433,17 +433,22 @@ class LatexWriterWithCustomDirectives(_WriterWithCustomDirectives, EnhancedLaTeX
             self, EnhancedLaTeXWriter, LatexTranslatorWithCustomDirectives, app)
         if not hasattr(self.builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {}".format(type(self.builder)))
+                f"Builder has no config: {type(self.builder)}")
 
     def translate(self):
         if not hasattr(self.builder, "config"):
             raise TypeError(  # pragma: no cover
-                "Builder has no config: {}".format(type(self.builder)))
+                f"Builder has no config: {type(self.builder)}")
         # The instruction
         # visitor = self.builder.create_translator(self.document, self.builder)
         # automatically adds methods visit_ and depart_ for translator
         # based on the list of registered extensions. Might be worth using it.
-        visitor = self.translator_class(self.document, self.builder)
+        theme = self.builder.themes.get('manual')
+        if theme is None:
+            raise RuntimeError(  # pragma: no cover
+                "theme cannot be None.")
+        visitor = self.translator_class(
+            self.document, self.builder, theme=theme)
         self.document.walkabout(visitor)
         self.output = visitor.body
 
@@ -455,7 +460,7 @@ class _MemoryBuilder:
     :epkg:`builderapi`.
     """
 
-    def _init(self, base_class, app):
+    def _init(self, base_class, app, env=None):
         """
         Constructs the builder.
         Most of the parameter are static members of the class and cannot
@@ -463,6 +468,7 @@ class _MemoryBuilder:
 
         :param base_class: base builder class
         :param app: :epkg:`Sphinx application`
+        :param env: Environment
         """
         if "IMPOSSIBLE:TOFIND" in app.srcdir:
             import sphinx.util.osutil
@@ -470,7 +476,7 @@ class _MemoryBuilder:
             sphinx.util.osutil.ensuredir = custom_ensuredir
             sphinx.builders.ensuredir = custom_ensuredir
 
-        base_class.__init__(self, app=app)
+        base_class.__init__(self, app=app, env=env)
         self.built_pages = {}
         self.base_class = base_class
 
@@ -558,15 +564,15 @@ class _MemoryBuilder:
             return self.config.master_doc + '-#' + docname
         else:
             docs = ", ".join(  # pragma: no cover
-                sorted("'{0}'".format(_) for _ in self.env.all_docs))
+                sorted(f"'{_}'" for _ in self.env.all_docs))
             raise ValueError(  # pragma: no cover
-                "docname='{0}' should be in 'self.env.all_docs' which contains:\n{1}".format(docname, docs))
+                f"docname='{docname}' should be in 'self.env.all_docs' which contains:\n{docs}")
 
     def get_outfilename(self, pagename):
         """
         Overwrites *get_target_uri* to control file names.
         """
-        return "{0}/{1}.m.html".format(self.outdir, pagename).replace("\\", "/")
+        return f"{self.outdir}/{pagename}.m.html".replace("\\", "/")
 
     def handle_page(self, pagename, addctx, templatename='page.html',
                     outfilename=None, event_arg=None):
@@ -606,8 +612,8 @@ class _MemoryBuilder:
                 if value is not None:
                     attrs.append('%s="%s"' % (key, htmlescape(    # pylint: disable=W1505
                         value, True)))  # pylint: disable=W1505
-            attrs.append('href="%s"' % pathto(css.filename, resource=True))
-            return '<link %s />' % ' '.join(attrs)
+            attrs.append(f'href="{pathto(css.filename, resource=True)}"')
+            return f"<link {' '.join(attrs)} />"
         ctx['css_tag'] = css_tag
 
         def hasdoc(name):
@@ -665,7 +671,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, CustomSingleFileHTMLBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -673,7 +679,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, CustomSingleFileHTMLBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, CustomSingleFileHTMLBuilder, app)
+        _MemoryBuilder._init(self, CustomSingleFileHTMLBuilder, app, env=env)
 
 
 class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
@@ -697,7 +703,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -705,7 +711,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, RstBuilder, app)
+        _MemoryBuilder._init(self, RstBuilder, app, env=env)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -739,7 +745,7 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -747,7 +753,7 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, MdBuilder, app)
+        _MemoryBuilder._init(self, MdBuilder, app, env=env)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -780,7 +786,7 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Constructs the builder.
         Most of the parameter are static members of the class and cannot
@@ -788,7 +794,7 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, DocTreeBuilder, app)
+        _MemoryBuilder._init(self, DocTreeBuilder, app, env=env)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -822,7 +828,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Constructs the builder.
         Most of the parameter are static members of the class and cannot
@@ -830,7 +836,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app)
+        _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app, env=env)
 
     def write_stylesheet(self):
         from sphinx.highlighting import PygmentsBridge
@@ -855,7 +861,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
     def _get_filename(self, targetname, encoding='utf-8', overwrite_if_changed=True):
         if not isinstance(targetname, str):
             raise TypeError(  # pragma: no cover
-                "targetname must be a string: {0}".format(targetname))
+                f"targetname must be a string: {targetname}")
         destination = MemoryLatexBuilder.EnhancedStringIO()
         self.built_pages[targetname] = destination
         return destination
@@ -1028,8 +1034,7 @@ class _CustomSphinx(Sphinx):
 
         # say hello to the world
         from sphinx import __display_version__
-        self.info('Running Sphinx v%s' %
-                  __display_version__)  # pragma: no cover
+        self.info(f'Running Sphinx v{__display_version__}')  # pragma: no cover
 
         # notice for parallel build on macOS and py38+
         if sys.version_info > (3, 8) and platform.system() == 'Darwin' and parallel > 1:
@@ -1043,13 +1048,7 @@ class _CustomSphinx(Sphinx):
 
         # delayed import to speed up time
         from sphinx.application import builtin_extensions
-        try:
-            from sphinx.application import CONFIG_FILENAME, Config, Tags
-            sphinx_version = 2  # pragma: no cover
-        except ImportError:
-            # Sphinx 3.0.0
-            from sphinx.config import CONFIG_FILENAME, Config, Tags
-            sphinx_version = 3
+        from sphinx.config import CONFIG_FILENAME, Config, Tags
 
         # read config
         self.tags = Tags(tags)
@@ -1076,11 +1075,6 @@ class _CustomSphinx(Sphinx):
         self.sphinx__display_version__ = __display_version__
 
         # create the environment
-        if sphinx_version == 2:  # pragma: no cover
-            with warnings.catch_warnings():
-                warnings.simplefilter(
-                    "ignore", (DeprecationWarning, PendingDeprecationWarning, ImportWarning))
-                self.config.check_unicode()
         self.config.pre_init_values()
 
         # set up translation infrastructure
@@ -1152,7 +1146,7 @@ class _CustomSphinx(Sphinx):
 
         # the config file itself can be an extension
         if self.config.setup:
-            prefix = 'while setting up extension %s:' % "conf.py"
+            prefix = f"while setting up extension {'conf.py'}:"
             if prefixed_warnings is not None:
                 with prefixed_warnings(prefix):
                     if callable(self.config.setup):
@@ -1218,7 +1212,7 @@ class _CustomSphinx(Sphinx):
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
-                "self.env is not _CustomBuildEnvironment: '{0}' buildername='{1}'".format(type(self.env), buildername))
+                f"self.env is not _CustomBuildEnvironment: '{type(self.env)}' buildername='{buildername}'")
 
         # addition
         self._extended_init_()
@@ -1247,7 +1241,7 @@ class _CustomSphinx(Sphinx):
                     self.env.setup(self)
                 self.info('done')
             except Exception as err:
-                self.info('failed: %s' % err)
+                self.info('failed: %r', err)
                 self._init_env(freshenv=True)
         elif self.env is None:  # pragma: no cover
             self.env = _CustomBuildEnvironment(self)
@@ -1265,7 +1259,7 @@ class _CustomSphinx(Sphinx):
             raise ValueError(  # pragma: no cover
                 "Builder name cannot be None")
 
-        return self.registry.create_builder(self, name)
+        return self.registry.create_builder(self, name, env=self.env)
 
     def _extended_init_(self):
         """
@@ -1309,7 +1303,7 @@ class _CustomSphinx(Sphinx):
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
-                "self.env is not _CustomBuildEnvironment: '{0}'".format(type(self.env)))
+                f"self.env is not _CustomBuildEnvironment: '{type(self.env)}'")
         if not isinstance(self.builder.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
                 "self.builder.env is not _CustomBuildEnvironment: '{0}'".format(
@@ -1356,12 +1350,7 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('builder', builder))
         if builder.name not in self.registry.builders:
             self.debug('[_CustomSphinx]  adding builder: %r', builder)
-            try:
-                # Sphinx >= 1.8
-                self.registry.add_builder(builder, override=override)
-            except TypeError:  # pragma: no cover
-                # Sphinx < 1.8
-                self.registry.add_builder(builder)
+            self.registry.add_builder(builder, override=override)
         else:
             self.debug('[_CustomSphinx]  already added builder: %r', builder)
 
@@ -1380,11 +1369,11 @@ class _CustomSphinx(Sphinx):
                 self.registry.load_extension(self, extname)
         except Exception as e:  # pragma: no cover
             raise ExtensionError(
-                "Unable to setup extension '{0}'".format(extname)) from e
+                f"Unable to setup extension '{extname}'") from e
         finally:
             logger.logger = disa
 
-    def add_directive(self, name, obj, content=None, arguments=None,  # pylint: disable=W0221
+    def add_directive(self, name, obj, content=None, arguments=None,  # pylint: disable=W0221,W0237
                       override=True, **options):
         self._added_objects.append(('directive', name))
         if name == 'plot' and obj.__name__ == 'PlotDirective':
@@ -1394,63 +1383,35 @@ class _CustomSphinx(Sphinx):
             def run(self):
                 """Run the plot directive."""
                 logger = getLogger("MockSphinxApp")
-                logger.info(
-                    '[MockSphinxApp] PlotDirective: {}'.format(self.content))
+                logger.info('[MockSphinxApp] PlotDirective: %r', self.content)
                 try:
                     res = old_run(self)
-                    logger.info(
-                        '[MockSphinxApp] PlotDirective ok')
+                    logger.info('[MockSphinxApp] PlotDirective ok')
                     return res
                 except OSError as e:  # pragma: no cover
                     logger = getLogger("MockSphinxApp")
-                    logger.info(
-                        '[MockSphinxApp] PlotDirective failed: {}'.format(e))
+                    logger.info('[MockSphinxApp] PlotDirective failed: %s', e)
                 return []
 
             obj.run = run
 
-        try:
-            # Sphinx >= 1.8
-            Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
-                                 arguments=arguments,
-                                 override=override, **options)
-        except TypeError:
-            # Sphinx >= 3.0.0
-            Sphinx.add_directive(self, name, obj, override=override, **options)
-        except ExtensionError:  # pragma: no cover
-            # Sphinx < 1.8
-            Sphinx.add_directive(self, name, obj, content=content,  # pylint: disable=E1123
-                                 arguments=arguments, **options)
+        Sphinx.add_directive(self, name, obj, override=override, **options)
 
     def add_domain(self, domain, override=True):
         self._added_objects.append(('domain', domain))
-        try:
-            # Sphinx >= 1.8
-            Sphinx.add_domain(self, domain, override=override)
-        except TypeError:  # pragma: no cover
-            # Sphinx < 1.8
-            Sphinx.add_domain(self, domain)
+        Sphinx.add_domain(self, domain, override=override)
         # For some reason, the directives are missing from the main catalog
         # in docutils.
         for k, v in domain.directives.items():
-            self.add_directive("{0}:{1}".format(domain.name, k), v)
+            self.add_directive(f"{domain.name}:{k}", v)
             if domain.name in ('py', 'std', 'rst'):
                 # We add the directive without the domain name as a prefix.
                 self.add_directive(k, v)
         for k, v in domain.roles.items():
-            self.add_role("{0}:{1}".format(domain.name, k), v)
+            self.add_role(f"{domain.name}:{k}", v)
             if domain.name in ('py', 'std', 'rst'):
                 # We add the role without the domain name as a prefix.
                 self.add_role(k, v)
-
-    def override_domain(self, domain):
-        self._added_objects.append(('domain-over', domain))
-        try:
-            Sphinx.override_domain(self, domain)
-        except AttributeError:  # pragma: no cover
-            # Sphinx==3.0.0
-            raise AttributeError(
-                "override_domain not available in sphinx==3.0.0")
 
     def add_role(self, name, role, override=True):
         self._added_objects.append(('role', name))
@@ -1511,17 +1472,11 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('config_value', name))
         Sphinx.add_config_value(self, name, default, rebuild, types_)
 
-    def add_directive_to_domain(self, domain, name, obj, has_content=None,  # pylint: disable=W0221
+    def add_directive_to_domain(self, domain, name, obj, has_content=None,  # pylint: disable=W0221,W0237
                                 argument_spec=None, override=False, **option_spec):
         self._added_objects.append(('directive_to_domain', domain, name))
-        try:
-            Sphinx.add_directive_to_domain(self, domain, name, obj,  # pylint: disable=E1123
-                                           has_content=has_content, argument_spec=argument_spec,
-                                           override=override, **option_spec)
-        except TypeError:  # pragma: no cover
-            # Sphinx==3.0.0
-            Sphinx.add_directive_to_domain(self, domain, name, obj,
-                                           override=override, **option_spec)
+        Sphinx.add_directive_to_domain(self, domain, name, obj,
+                                       override=override, **option_spec)
 
     def add_role_to_domain(self, domain, name, role, override=False):
         self._added_objects.append(('roles_to_domain', domain, name))
