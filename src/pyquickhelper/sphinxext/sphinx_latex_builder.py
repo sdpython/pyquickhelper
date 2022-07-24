@@ -29,17 +29,29 @@ class CustomizedSphinxFileOutput(SphinxFileOutput):
         return res
 
 
+class DummySphinxTheme:
+    """
+    Dummy theme for sphinx.
+    """
+
+    def __init__(self):
+        self.toplevel_sectioning = "section"
+    
+
+
 class EnhancedLaTeXTranslator(LaTeXTranslator):
     """
     Overwrites `LaTeXTranslator <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/latex.py#L451>`_
     and modifies a few functions.
     """
 
-    def __init__(self, document, builder):
+    def __init__(self, document, builder, theme=None):
         if not hasattr(builder, 'config'):
             raise TypeError(
                 "Unexpected type for builder {0}".format(type(builder)))
-        LaTeXTranslator.__init__(self, document, builder)
+        if theme is None:
+            theme = DummySphinxTheme()
+        LaTeXTranslator.__init__(self, document, builder, theme=theme)
 
         newlines = builder.config.text_newlines
         if newlines == 'windows':

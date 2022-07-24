@@ -999,6 +999,7 @@ class _CustomSphinx(Sphinx):
         self.project = None
         self.registry = SphinxComponentRegistry()
         self.post_transforms = []
+        self.pdb = False
 
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"

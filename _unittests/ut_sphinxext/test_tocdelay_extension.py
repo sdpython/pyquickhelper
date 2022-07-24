@@ -9,7 +9,7 @@ import unittest
 import warnings
 from docutils.parsers.rst import directives
 from sphinx.errors import ExtensionError
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.helpgen import rst2html, rst2rst_folder
 from pyquickhelper.sphinxext import TocDelayDirective
 
@@ -19,6 +19,7 @@ class TestTocDelayExtension(unittest.TestCase):
     def test_post_parse(self):
         directives.register_directive("tocdelay", TocDelayDirective)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_regex(self):
         s = "2016-06-11 - Make a reference to a blog post <2016/2016-06-11_blogpost_with_label>"
         reg = TocDelayDirective.regex_title
@@ -28,6 +29,7 @@ class TestTocDelayExtension(unittest.TestCase):
                          ("2016-06-11 - Make a reference to a blog post",
                           "2016/2016-06-11_blogpost_with_label"))
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_tocdelay1(self):
         content = """
                     .. tocdelay::
@@ -41,6 +43,7 @@ class TestTocDelayExtension(unittest.TestCase):
         except ValueError as e:
             self.assertIn("No found document", str(e))
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_tocdelay2(self):
         path = os.path.abspath(os.path.dirname(__file__))
         path = os.path.join(path, "data", "blog")
@@ -58,6 +61,7 @@ class TestTocDelayExtension(unittest.TestCase):
             self.assertIn(
                 "event 'doctree-resolved' threw an exception", str(e))
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_tocdelay3(self):
         temp = get_temp_folder(__file__, "temp_tocdelay3")
         path = os.path.abspath(os.path.dirname(__file__))
