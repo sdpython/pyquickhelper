@@ -59,10 +59,10 @@ def add_missing_files(root, conf, blog_list, fLOG):
     # moduletoc.html
     mt = os.path.join(loc, "moduletoc.html")
     if fLOG:
-        fLOG("[add_missing_files] create '{}'".format(mt))
+        fLOG(f"[add_missing_files] create '{mt}'")
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
-        f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc0"]))
+        f.write(f"\n<h3>{TITLES[language]['toc0']}</h3>")
         f.write("\n<ul>")
         f.write(link.format("{{ pathto('',1) }}/blog/main_0000.html", "Blog"))
         f.write(link.format("{{ pathto('',1) }}/genindex.html", "Index"))
@@ -80,7 +80,7 @@ def add_missing_files(root, conf, blog_list, fLOG):
         f.write(
             '\n<h3><a href="{{ pathto(master_doc) }}">%s</a></h3>\n' % TITLES[language]["toc"])
         f.write('{{ toctree() }}')
-        f.write("\n<h3>{0}</h3>".format(TITLES[language]["toc1"]))
+        f.write(f"\n<h3>{TITLES[language]['toc1']}</h3>")
         f.write("\n<ul>")
         f.write(
             link.format("{{ pathto('',1) }}/i_faq.html", TITLES[language]["FAQ"]))
@@ -96,7 +96,7 @@ def add_missing_files(root, conf, blog_list, fLOG):
     # blogtoc.html
     mt = os.path.join(loc, "blogtoc.html")
     if fLOG:
-        fLOG("[add_missing_files] create '{}'".format(mt))
+        fLOG(f"[add_missing_files] create '{mt}'")
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         f.write("""<a href="{{ pathto('',1) }}/genindex.html">Index</a>\n""")
@@ -115,7 +115,7 @@ def add_missing_files(root, conf, blog_list, fLOG):
     theme = conf.theme
     mt = os.path.join(loc, "searchbox.html")
     if fLOG:
-        fLOG("[add_missing_files] create '{}'".format(mt))
+        fLOG(f"[add_missing_files] create '{mt}'")
     tocs.append(mt)
     with open(mt, "w", encoding="utf8") as f:
         if theme == "sphinx_rtd_theme":
@@ -172,7 +172,7 @@ def add_missing_files(root, conf, blog_list, fLOG):
             sr = os.path.join(themes, mis)
             if os.path.exists(sr):
                 if fLOG:
-                    fLOG("[add_missing_files] create '{}'".format(mt))
+                    fLOG(f"[add_missing_files] create '{mt}'")
                 shutil.copy(sr, loc)
     return tocs
 

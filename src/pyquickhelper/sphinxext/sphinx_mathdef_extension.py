@@ -85,7 +85,7 @@ class MathDef(BaseAdmonition):
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
-            legend = "{0}:{1}".format(docname, lineno)
+            legend = f"{docname}:{lineno}"
         else:
             legend = ''
 
@@ -111,7 +111,7 @@ class MathDef(BaseAdmonition):
         lid = self.options.get('lid', self.options.get('label', None))
         if lid:
             container = nodes.container()
-            tnl = [".. _{0}:".format(lid), ""]
+            tnl = [f".. _{lid}:", ""]
             content = StringList(tnl)
             self.state.nested_parse(content, self.content_offset, container)
         else:
@@ -122,7 +122,7 @@ class MathDef(BaseAdmonition):
         if len(mathtag) == 0:
             raise ValueError("tag is empty")  # pragma: no cover
         if env is not None:
-            mid = int(env.new_serialno('indexmathe-u-%s' % mathtag)) + 1
+            mid = int(env.new_serialno(f'indexmathe-u-{mathtag}')) + 1
         else:
             mid = -1
 
@@ -134,12 +134,12 @@ class MathDef(BaseAdmonition):
                 number=number, first_letter=first_letter)
         except ValueError as e:  # pragma: no cover
             raise Exception(
-                "Unable to interpret format '{0}'.".format(number_format)) from e
+                f"Unable to interpret format '{number_format}'.") from e
 
         # title
         title = self.options.get('title', "").strip()
         if len(title) > 0:
-            title = "{0} {1} : {2}".format(mathtag, label_number, title)
+            title = f"{mathtag} {label_number} : {title}"
         else:
             raise ValueError("title is empty")  # pragma: no cover
 
@@ -261,7 +261,7 @@ class MathDefList(Directive):
         contents = self.options.get(
             'contents', False) in (True, "True", "true", 1, "1", "", None, "None")
         if env is not None:
-            targetid = 'indexmathelist-%s' % env.new_serialno('indexmathelist')
+            targetid = f"indexmathelist-{env.new_serialno('indexmathelist')}"
             targetnode = nodes.target('', '', ids=[targetid])
             n = mathdeflist('')
             n["mathtag"] = tag
@@ -326,7 +326,7 @@ def process_mathdef_nodes(app, doctree, fromdocname):
             nbmath += 1
             para = nodes.paragraph(classes=['mathdef-source'])
             if app.config['mathdef_link_only']:
-                description = _('<<%s>>' % orig_entry)
+                description = _(f'<<{orig_entry}>>')
             else:
                 description = (
                     _(mathmes) %

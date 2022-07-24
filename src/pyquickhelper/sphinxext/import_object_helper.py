@@ -38,15 +38,14 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
     if kind not in ("method", "property", "staticmethod"):
         modname = ".".join(spl[:-1])
         code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, name)
-        codeobj = compile(code, 'conf{0}.py'.format(kind), 'exec')
+        codeobj = compile(code, f'conf{kind}.py', 'exec')
         if fLOG:
-            fLOG("[import_object] modname='{0}' code='{1}'".format(
-                modname, code))
+            fLOG(f"[import_object] modname='{modname}' code='{code}'")
     else:
         modname = ".".join(spl[:-2])
         classname = spl[-2]
         code = 'from {0} import {1}\nmyfunc = {1}'.format(modname, classname)
-        codeobj = compile(code, 'conf{0}2.py'.format(kind), 'exec')
+        codeobj = compile(code, f'conf{kind}2.py', 'exec')
         if fLOG:
             fLOG("[import_object] modname='{0}' code='{1}' classname='{2}'".format(
                 modname, code, classname))
@@ -60,66 +59,66 @@ def import_object(docname, kind, use_init=True, fLOG=None) -> Tuple[object, str]
             mes = "Unable to compile and execute '{0}' due to \n{1}\ngiven:\n{2}".format(
                 code.replace('\n', '\\n'), e, docname)
             if fLOG:
-                fLOG("[import_object] failed due to {0}".format(e))
+                fLOG(f"[import_object] failed due to {e}")
             raise RuntimeError(mes) from e
 
     myfunc = context["myfunc"]
     if fLOG:
         fLOG(
-            "[import_object] imported '{0}' --> '{1}'".format(docname, str(myfunc)))
+            f"[import_object] imported '{docname}' --> '{str(myfunc)}'")
     if kind == "function":
         if not inspect.isfunction(myfunc) and 'built-in function' not in str(myfunc) and \
                 'built-in method' not in str(myfunc):
             # inspect.isfunction fails for C functions.
-            raise TypeError("'{0}' is not a function".format(docname))
+            raise TypeError(f"'{docname}' is not a function")
         name = spl[-1]
     elif kind == "property":
         if not inspect.isclass(myfunc):
-            raise TypeError("'{0}' is not a class".format(docname))
+            raise TypeError(f"'{docname}' is not a class")
         myfunc = getattr(myfunc, spl[-1])
         if inspect.isfunction(myfunc) or inspect.ismethod(myfunc):
             raise TypeError(
-                "'{0}' is not a property - {1}".format(docname, myfunc))
+                f"'{docname}' is not a property - {myfunc}")
         if (hasattr(_Types.prop, '__class__') and
                 myfunc.__class__ is not _Types.prop.__class__):  # pylint: disable=E1101
             raise TypeError(
-                "'{0}' is not a property(*) - {1}".format(docname, myfunc))
+                f"'{docname}' is not a property(*) - {myfunc}")
         if not isinstance(myfunc, property):
             raise TypeError(
-                "'{0}' is not a static property(**) - {1}".format(docname, myfunc))
+                f"'{docname}' is not a static property(**) - {myfunc}")
         name = spl[-1]
     elif kind == "method":
         if not inspect.isclass(myfunc):
-            raise TypeError("'{0}' is not a class".format(docname))
+            raise TypeError(f"'{docname}' is not a class")
         myfunc = getattr(myfunc, spl[-1])
         if not inspect.isfunction(myfunc) and not inspect.ismethod(myfunc) and not name.endswith('__'):
             raise TypeError(
-                "'{0}' is not a method - {1}".format(docname, myfunc))
+                f"'{docname}' is not a method - {myfunc}")
         if isinstance(myfunc, staticmethod):
             raise TypeError(
-                "'{0}' is not a method(*) - {1}".format(docname, myfunc))
+                f"'{docname}' is not a method(*) - {myfunc}")
         if hasattr(myfunc, "__code__") and sys.version_info >= (3, 4):
             if len(myfunc.__code__.co_varnames) == 0:
                 raise TypeError(
-                    "'{0}' is not a method(**) - {1}".format(docname, myfunc))
+                    f"'{docname}' is not a method(**) - {myfunc}")
             if myfunc.__code__.co_varnames[0] != 'self':
                 raise TypeError(
-                    "'{0}' is not a method(***) - {1}".format(docname, myfunc))
+                    f"'{docname}' is not a method(***) - {myfunc}")
         name = spl[-1]
     elif kind == "staticmethod":
         if not inspect.isclass(myfunc):
-            raise TypeError("'{0}' is not a class".format(docname))
+            raise TypeError(f"'{docname}' is not a class")
         myfunc = getattr(myfunc, spl[-1])
         if not inspect.isfunction(myfunc) and not inspect.ismethod(myfunc):
             raise TypeError(
-                "'{0}' is not a static method - {1}".format(docname, myfunc))
+                f"'{docname}' is not a static method - {myfunc}")
         if myfunc.__class__ is not _Types.stat.__class__:
             raise TypeError(
-                "'{0}' is not a static method(*) - {1}".format(docname, myfunc))
+                f"'{docname}' is not a static method(*) - {myfunc}")
         name = spl[-1]
     elif kind == "class":
         if not inspect.isclass(myfunc):
-            raise TypeError("'{0}' is not a class".format(docname))
+            raise TypeError(f"'{docname}' is not a class")
         name = spl[-1]
         myfunc = myfunc.__init__ if use_init else myfunc
     else:
@@ -150,7 +149,7 @@ def import_any_object(docname, use_init=True, fLOG=None) -> Tuple[object, str, s
                 docname, kind, use_init=use_init, fLOG=fLOG)
             if fLOG:
                 fLOG(
-                    "[import_any_object] ok '{0}' for '{1}' - use_unit={2}".format(kind, docname, use_init))
+                    f"[import_any_object] ok '{kind}' for '{docname}' - use_unit={use_init}")
                 fLOG("[import_any_object] __doc__={0} __name__={1} __module__={2}".format(
                     hasattr(myfunc, '__doc__'), hasattr(myfunc, '__name__'),
                     hasattr(myfunc, '__module__')))
@@ -162,12 +161,12 @@ def import_any_object(docname, use_init=True, fLOG=None) -> Tuple[object, str, s
             excs.append((kind, e))
             if fLOG:
                 fLOG(
-                    "[import_any_object] not '{0}' for '{1}' (use_unit={2})".format(kind, docname, use_init))
+                    f"[import_any_object] not '{kind}' for '{docname}' (use_unit={use_init})")
 
-    sec = " ### ".join("{0}-{1}-{2}".format(k, type(e), e).replace("\n", " ")
+    sec = " ### ".join(f"{k}-{type(e)}-{e}".replace("\n", " ")
                        for k, e in excs)
     raise ImportError(
-        "Unable to import '{0}'. Exceptions met: {1}".format(docname, sec))
+        f"Unable to import '{docname}'. Exceptions met: {sec}")
 
 
 def import_path(obj, class_name=None, err_msg=None, fLOG=None):
@@ -195,7 +194,7 @@ def import_path(obj, class_name=None, err_msg=None, fLOG=None):
         _ = obj.__module__
     except AttributeError:
         # This is a method.
-        raise TypeError("obj is a method or a property ({0})".format(obj))
+        raise TypeError(f"obj is a method or a property ({obj})")
 
     if class_name is None:
         name = obj.__name__
@@ -205,8 +204,8 @@ def import_path(obj, class_name=None, err_msg=None, fLOG=None):
     found = None
     for i in range(1, len(elements) + 1):
         path = '.'.join(elements[:i])
-        code = 'from {0} import {1}'.format(path, name)
-        codeobj = compile(code, 'import_path_{0}.py'.format(name), 'exec')
+        code = f'from {path} import {name}'
+        codeobj = compile(code, f'import_path_{name}.py', 'exec')
         with warnings.catch_warnings():
             warnings.simplefilter("ignore")
             context = {}
@@ -214,11 +213,11 @@ def import_path(obj, class_name=None, err_msg=None, fLOG=None):
                 exec(codeobj, context, context)
                 found = path
                 if fLOG:
-                    fLOG("[import_path] succeeds: '{0}'".format(code))
+                    fLOG(f"[import_path] succeeds: '{code}'")
                 break
             except Exception:
                 if fLOG:
-                    fLOG("[import_path] fails: '{0}'".format(code))
+                    fLOG(f"[import_path] fails: '{code}'")
                 continue
 
     if found is None:

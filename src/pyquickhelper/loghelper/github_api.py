@@ -14,7 +14,7 @@ class GitHubApiException(Exception):
         """
         Merges everything into a string.
         """
-        msg = ['%s=%r' % (k, v) for k, v in sorted(kwargs.items())]
+        msg = [f'{k}={v!r}' for k, v in sorted(kwargs.items())]
         if msg:
             msg = "\n" + "\n".join(msg)
         Exception.__init__(
@@ -52,12 +52,10 @@ def call_github_api(owner, repo, ask, auth=None, headers=None):
     GitHub limits the number of requets per hour:
     `Rate Limiting <https://developer.github.com/v3/#rate-limiting>`_.
     """
-    url = 'https://api.github.com/repos/{0}/{1}/{2}'.format(
-        owner, repo, ask.strip('/'))
+    url = f"https://api.github.com/repos/{owner}/{repo}/{ask.strip('/')}"
     if '...' in url:
         raise ValueError(  # pragma: no cover
-            "Unexpected url=%r, owner=%r, auth=%r, repo=%r." % (
-                url, owner, auth, repo))
+            f"Unexpected url={url!r}, owner={owner!r}, auth={auth!r}, repo={repo!r}.")
     response = requests.get(url, auth=auth, headers=headers)
     if response.status_code != 200:
         raise GitHubApiException(  # pragma: no cover

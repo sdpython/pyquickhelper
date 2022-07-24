@@ -30,7 +30,7 @@ class TransferAPI_FileInfo:
         """
         usual
         """
-        mes = "[%s,#%d,%s]" % (self.name, len(self.pieces), self.last_update)
+        mes = f"[{self.name},#{len(self.pieces)},{self.last_update}]"
         return mes
 
     def add_piece(self, piece):
@@ -128,7 +128,7 @@ class TransferAPI:
         """
         rows = []
         for k, v in sorted(mapping.items()):
-            r = "{0}\t{1}".format(k, v.to_json())
+            r = f"{k}\t{v.to_json()}"
             rows.append(r)
         return "\n".join(rows).encode()
 

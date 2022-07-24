@@ -71,7 +71,8 @@ class VideoDirective(Directive):
         if '://' in filename:
             logger = getLogger("video")
             logger.warning(
-                "[video] url detected '{0}' in docname '{1}' - line {2}.".format(filename, docname, self.lineno))
+                "[video] url detected %r in docname %r - line %r.",
+                filename, docname, self.lineno)
             is_url = True
         else:
             is_url = False
@@ -100,7 +101,8 @@ class VideoDirective(Directive):
             if abspath is None:
                 logger = getLogger("video")
                 logger.warning(
-                    "[video] Unable to find '{0}' in docname '{1}' - line {2} - srcdir='{3}'.".format(filename, docname, self.lineno, srcdir))
+                    "[video] Unable to find %r in docname %r - line %r - srcdir=%r.",
+                    filename, docname, self.lineno, srcdir)
         else:
             abspath = None
             relpath = None
@@ -136,7 +138,7 @@ def visit_video_node(self, node):
             os.makedirs(relpath)
         shutil.copy(node['abspath'], relpath)
         logger = getLogger("video")
-        logger.info("[video] copy '{0}' to '{1}'".format(node['uri'], relpath))
+        logger.info("[video] copy %r to %r", node['uri'], relpath)
 
 
 def _clean_value(val):
@@ -158,12 +160,12 @@ def depart_video_node_html(self, node):
         height = _clean_value(node["height"])
         found = node["abspath"] is not None or node["is_url"]
         if not found:
-            body = "<b>unable to find '{0}'</b>".format(filename)
+            body = f"<b>unable to find '{filename}'</b>"
             self.body.append(body)
         else:
             body = '<video{0}{1} controls><source src="{2}" type="video/{3}">Your browser does not support the video tag.</video>'
-            width = ' width="{0}"'.format(width) if width else ""
-            height = ' height="{0}"'.format(height) if height else ""
+            width = f' width="{width}"' if width else ""
+            height = f' height="{height}"' if height else ""
             body = body.format(width, height, filename,
                                os.path.splitext(filename)[-1].strip('.'))
             self.body.append(body)
@@ -186,12 +188,12 @@ def depart_video_node_text(self, node):
         height = _clean_value(node["height"])
         found = node["abspath"] is not None or node["is_url"]
         if not found:
-            body = "unable to find '{0}'".format(filename)
+            body = f"unable to find '{filename}'"
             self.body.append(body)
         else:
             body = '\nvideo {0}{1}: {2}\n'
-            width = ' width="{0}"'.format(width) if width else ""
-            height = ' height="{0}"'.format(height) if height else ""
+            width = f' width="{width}"' if width else ""
+            height = f' height="{height}"' if height else ""
             body = body.format(width, height, filename,
                                os.path.splitext(filename)[-1].strip('.'))
             self.add_text(body)
@@ -210,7 +212,7 @@ def depart_video_node_latex(self, node):
         full = os.path.join(node["relpath"], node['uri'])
         found = node['abspath'] is not None or node["is_url"]
         if not found:
-            body = "\\textbf{{unable to find '{0}'}}".format(full)
+            body = f"\\textbf{{unable to find '{full}'}}"
             self.body.append(body)
         else:
             def format_dim(s):
@@ -218,7 +220,7 @@ def depart_video_node_latex(self, node):
                 if s == "auto" or s is None:
                     return "{}"
                 else:
-                    return "{{{0}pt}}".format(s)
+                    return f"{{{s}pt}}"
             body = '{3}\\includemovie[poster,autoplay,externalviewer,inline=false]{0}{1}{{{2}}}\n'
             width = format_dim(width)
             height = format_dim(height)
@@ -241,16 +243,16 @@ def depart_video_node_rst(self, node):
         height = _clean_value(node["height"])
         found = node["abspath"] is not None or node["is_url"]
         if not found:
-            body = ".. video:: {0} [not found]".format(filename)
+            body = f".. video:: {filename} [not found]"
             self.add_text(body + self.nl)
         else:
-            body = ".. video:: {0}".format(filename)
+            body = f".. video:: {filename}"
             self.new_state(0)
             self.add_text(body + self.nl)
             if width:
-                self.add_text('    :width: {0}'.format(width) + self.nl)
+                self.add_text(f'    :width: {width}' + self.nl)
             if height:
-                self.add_text('    :height: {0}'.format(height) + self.nl)
+                self.add_text(f'    :height: {height}' + self.nl)
             self.end_state(wrap=False)
 
 

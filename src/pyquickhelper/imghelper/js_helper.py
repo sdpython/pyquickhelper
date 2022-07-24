@@ -94,7 +94,7 @@ def nodejs_version():
     out, err = run_cmd('node -v', wait=True)
     if len(err) > 0:
         raise NodeJsException(  # pragma: no cover
-            "Unable to find node\n{0}".format(err))
+            f"Unable to find node\n{err}")
     return out
 
 
@@ -108,7 +108,7 @@ def run_js_with_nodejs(script, path_dependencies=None, fLOG=noLOG):
     @return                         output of the script
     """
     script_clean = script.replace("\"", "\\\"").replace("\n", " ")
-    cmd = 'node -e "{0}"'.format(script_clean)
+    cmd = f'node -e "{script_clean}"'
     out, err = run_cmd(cmd, change_path=path_dependencies,
                        fLOG=fLOG, wait=True)
     if len(err) > 0:
@@ -151,14 +151,14 @@ def require(module_name, cache_folder='.', suffix='_pyq', update=False, fLOG=noL
         from js2py import translate_js
 
         py_name = module_name.replace('-', '_')
-        module_filename = '%s.py' % py_name
+        module_filename = f'{py_name}.py'
         full_name = os.path.join(cache_folder, module_filename)
 
         var_name = py_name.rpartition('/')[-1]
         in_file_name = os.path.join(
-            cache_folder, "require_{0}_in{1}.js".format(module_name, suffix))
+            cache_folder, f"require_{module_name}_in{suffix}.js")
         out_file_name = os.path.join(
-            cache_folder, "require_{0}_out{1}.js".format(module_name, suffix))
+            cache_folder, f"require_{module_name}_out{suffix}.js")
 
         code = ADD_TO_GLOBALS_FUNC
         code += """

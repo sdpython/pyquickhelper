@@ -23,7 +23,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
     def __init__(self, document, builder):
         if not hasattr(builder, 'config'):
             raise TypeError(  # pragma: no cover
-                "Unexpected type for builder {0}".format(type(builder)))
+                f"Unexpected type for builder {type(builder)}")
         nodes.NodeVisitor.__init__(self, document)
         self.builder = builder
 
@@ -48,8 +48,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
 
     def log_unknown(self, type, node):
         logger = logging.getLogger("DocTreeBuilder")
-        logger.warning(
-            "[doctree] %s(%s) unsupported formatting" % (type, node))
+        logger.warning("[doctree] %s(%s) unsupported formatting", type, node)
 
     def wrap(self, text, width=STDINDENT):
         self.wrapper.width = width
@@ -114,15 +113,15 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
         if isinstance(obj, str):
             return "'{0}'".format(obj.replace("'", "\\'"))
         elif isinstance(obj, nodes.Node):
-            return "<node={0}[...]>".format(obj.__class__.__name__)
+            return f"<node={obj.__class__.__name__}[...]>"
         else:
             return str(obj)
 
     def unknown_visit(self, node):
         self.new_state(0)
-        self.add_text("<{0}".format(node.__class__.__name__))
+        self.add_text(f"<{node.__class__.__name__}")
         if hasattr(node, 'attributes') and node.attributes:
-            res = ['{0}={1}'.format(k, self._format_obj(v))
+            res = [f'{k}={self._format_obj(v)}'
                    for k, v in sorted(node.attributes.items())
                    if v not in (None, [], '')]
             if res:
@@ -139,7 +138,7 @@ class DocTreeTranslator(nodes.NodeVisitor, CommonSphinxWriterHelpers):
 
     def unknown_departure(self, node):
         self.end_state(wrap=self.dowrap)
-        self.add_text("</{0}>".format(node.__class__.__name__))
+        self.add_text(f"</{node.__class__.__name__}>")
         self.end_state()
 
 
@@ -224,7 +223,7 @@ class DocTreeBuilder(Builder):
         """
         Overwrites *get_target_uri* to control file names.
         """
-        return "{0}/{1}.doctree.txt".format(self.outdir, pagename).replace("\\", "/")
+        return f"{self.outdir}/{pagename}.doctree.txt".replace("\\", "/")
 
     def write_doc(self, docname, doctree):
         destination = StringOutput(encoding='utf-8')

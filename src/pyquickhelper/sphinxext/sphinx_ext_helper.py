@@ -25,15 +25,15 @@ def info_blocref(app, doctree, fromdocname, class_name,
     @param      class_node          class node (@see cl blocref_node)
     @param      class_node_list     class node list (@see cl blocreflist)
     """
-    incconf = '%s_include_%ss' % (class_name, class_name)
+    incconf = f'{class_name}_include_{class_name}s'
     rows2 = []
     for node in doctree.traverse(class_node_list):
         breftag = node.get("breftag", None)
-        rows2.append("tag={0} do={1}".format(breftag, app.config[incconf]))
+        rows2.append(f"tag={breftag} do={app.config[incconf]}")
     if len(rows2) == 0:
         return False
 
-    attr_name = '%s_all_%ss' % (class_name, class_name)
+    attr_name = f'{class_name}_all_{class_name}s'
     env = app.builder.env
     if hasattr(env, attr_name):
         bloc_list_env = getattr(env, attr_name)
@@ -41,15 +41,15 @@ def info_blocref(app, doctree, fromdocname, class_name,
         bloc_list_env = []
 
     rows = ["  [info_blocref]",
-            "len(bloc_list_env)={0}".format(len(bloc_list_env)), ]
+            f"len(bloc_list_env)={len(bloc_list_env)}", ]
     rows.extend(rows2)
-    rows.extend(["fromdocname='{0}'".format(fromdocname),
-                 "entry_name='{0}'".format(entry_name),
-                 "class_name='{0}'".format(class_name),
-                 "class_node='{0}'".format(class_node),
-                 "class_node_list='{0}'".format(class_node_list),
-                 "doctree='{0}'".format(type(doctree)),
-                 "#doctree={0}".format(len(doctree))])
+    rows.extend([f"fromdocname='{fromdocname}'",
+                 f"entry_name='{entry_name}'",
+                 f"class_name='{class_name}'",
+                 f"class_node='{class_node}'",
+                 f"class_node_list='{class_node_list}'",
+                 f"doctree='{type(doctree)}'",
+                 f"#doctree={len(doctree)}"])
     message = " ".join(rows)
     logger = logging.getLogger("info_blocref")
     logger.info(message)

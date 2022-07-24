@@ -271,11 +271,11 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         in 12 minutes (for an update).
     """
 
-    fLOG("[synchronize_folder] from '{0}'".format(p1))
-    fLOG("[synchronize_folder] to   '{0}'".format(p2))
+    fLOG(f"[synchronize_folder] from '{p1}'")
+    fLOG(f"[synchronize_folder] to   '{p2}'")
 
     if create_dest and not os.path.exists(p2):
-        fLOG("[synchronize_folder] md   '{0}'".format(p2))
+        fLOG(f"[synchronize_folder] md   '{p2}'")
         os.makedirs(p2)
 
     if file_date is not None and not os.path.exists(file_date):
@@ -318,7 +318,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
     f1 = p1
     f2 = p2
 
-    fLOG("[synchronize_folder]   exploring f1='{0}'".format(f1))
+    fLOG(f"[synchronize_folder]   exploring f1='{f1}'")
     node1 = FileTreeNode(
         f1, filter=pr_filter, repository=repo1, log=True, log1=log1)
     fLOG("[synchronize_folder]   number of found files (p1)",
@@ -328,7 +328,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
         status = FilesStatus(file_date, fLOG=fLOG)
         res = list(status.difference(node1, u4=True, nlog=log1n))
     else:
-        fLOG("[synchronize_folder]   exploring f2='{0}'".format(f2))
+        fLOG(f"[synchronize_folder]   exploring f2='{f2}'")
         node2 = FileTreeNode(
             f2, filter=pr_filter, repository=repo2, log=True, log1=log1)
         fLOG("[synchronize_folder]     number of found files (p2)",
@@ -349,7 +349,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                 op not in ("==", '<', '<=', '<+') and \
                 (n1 is None or not n1.isdir()):
             fLOG(
-                "[synchronize_folder] ... {0}/{1} (current: '{2}' :: {3})".format(nbcur, len(res), file, op))
+                f"[synchronize_folder] ... {nbcur}/{len(res)} (current: '{file}' :: {op})")
             nbprint += 1
         if filter_copy is not None and not filter_copy(file):
             continue
@@ -362,7 +362,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                 report[op] += 1
                 if modif % 50 == 0:
                     fLOG(
-                        "[synchronize_folder] Processed {0}/{1} (current: '{2}')".format(nbcur, len(res), file))
+                        f"[synchronize_folder] Processed {nbcur}/{len(res)} (current: '{file}')")
                     status.save_dates()
         else:
 
@@ -446,8 +446,8 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
 
     report = [(k, v) for k, v in sorted(report.items()) if v > 0]
     if len(report):
-        msg = ["{}={}".format(k, v) for k, v in report]
-        fLOG("[synchronize_folder] END: {}".format(msg))
+        msg = [f"{k}={v}" for k, v in report]
+        fLOG(f"[synchronize_folder] END: {msg}")
     else:
         fLOG("[synchronize_folder] END: no copy")
 
@@ -478,7 +478,7 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
             except PermissionError as e:  # pragma: no cover
                 if raise_exception:
                     raise PermissionError(
-                        "unable to remove file {0}".format(t)) from e
+                        f"unable to remove file {t}") from e
                 remove_also_top = False
                 continue
             res.append((t, "file"))
@@ -489,7 +489,7 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
             except OSError as e:
                 if raise_exception:
                     raise OSError(
-                        "unable to remove folder {0}".format(t)) from e
+                        f"unable to remove folder {t}") from e
                 remove_also_top = False  # pragma: no cover
                 continue  # pragma: no cover
             res.append((t, "dir"))

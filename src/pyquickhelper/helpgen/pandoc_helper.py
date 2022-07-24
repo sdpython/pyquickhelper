@@ -16,13 +16,11 @@ def call_pandoc(params, fLOG=noLOG):
     @return             out, err
     """
     pandoc = os.path.join(find_pandoc_path(), "pandoc")
-    cmd = '"{0}" {1}'.format(pandoc, params)
+    cmd = f'"{pandoc}" {params}'
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     if err is not None and "Cannot decode byte" in err:
         raise RuntimeError(  # pragma: no cover
-            "Issue with pandoc:\n{0}\n"
-            "--OUT--\n{1}\n--ERR--\n{2}".format(
-                cmd, out, err))
+            f"Issue with pandoc:\n{cmd}\n--OUT--\n{out}\n--ERR--\n{err}")
     return out, err
 
 
@@ -51,7 +49,7 @@ def latex2rst(input, output, encoding="utf-8", fLOG=noLOG, temp_file=None):
         input = temp_file
     else:
         temp_file = None
-    cmd = '-s -t rst --toc "{0}" -o "{1}"'.format(input, output)
+    cmd = f'-s -t rst --toc "{input}" -o "{output}"'
     out, err = call_pandoc(cmd, fLOG=fLOG)
     if temp_file is not None:
         os.remove(temp_file)

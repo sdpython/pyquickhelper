@@ -44,8 +44,7 @@ def enumerate_extract_signature(doc, max_args=20):
     el = "((?P<p%d>[*a-zA-Z_][*a-zA-Z_0-9]*) *(?P<a%d>: *[a-zA-Z_][\\[\\]0-9a-zA-Z_.]+)? *(?P<d%d>= *[^ ]+?)?)"
     els = [el % (i, i, i) for i in range(0, max_args)]
     par = els[0] + "?" + "".join(["( *, *" + e + ")?" for e in els[1:]])
-    exp = "(?P<name>[a-zA-Z_][0-9a-zA-Z_]*) *[(] *(?P<sig>{0}) *[)]".format(
-        par)
+    exp = f"(?P<name>[a-zA-Z_][0-9a-zA-Z_]*) *[(] *(?P<sig>{par}) *[)]"
     reg = re.compile(exp)
     for func in reg.finditer(doc.replace("\n", " ")):
         yield func
@@ -72,8 +71,8 @@ def enumerate_cleaned_signature(doc, max_args=20):
             if d is None:
                 args.append(p)
             else:
-                args.append("%s%s" % (p, d))
-        yield "{0}({1})".format(name, ", ".join(args))
+                args.append(f"{p}{d}")
+        yield f"{name}({', '.join(args)})"
 
 
 class AutoSignatureDirective(Directive):
@@ -160,15 +159,13 @@ class AutoSignatureDirective(Directive):
             obj, _, kind = import_any_object(
                 object_name, use_init=False, fLOG=logging_function)
         except ImportError as e:
-            mes = "[autosignature] unable to import '{0}' due to '{1}'".format(
-                object_name, e)
+            mes = f"[autosignature] unable to import '{object_name}' due to '{e}'"
             logger = logging.getLogger("autosignature")
             logger.warning(mes)
             if logging_function:
                 logging_function(mes)  # pragma: no cover
             if lineno is not None:
-                logger.warning(
-                    '   File "{0}", line {1}'.format(source, lineno))
+                logger.warning('   File "%s", line %r', source, lineno)
             obj = None
             kind = None
         if opt_syspath:
@@ -177,8 +174,8 @@ class AutoSignatureDirective(Directive):
         if opt_members is not None and kind != "class":  # pragma: no cover
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] option members is specified but '{0}' "
-                "is not a class (kind='{1}').".format(object_name, kind))
+                "[autosignature] option members is specified but %r "
+                "is not a class (kind=%r).", object_name, kind)
             obj = None
 
         # build node
@@ -189,18 +186,17 @@ class AutoSignatureDirective(Directive):
         if opt_path == 'import':
             if obj is None:
                 logger = logging.getLogger("autosignature")
-                logger.warning(
-                    "[autosignature] object '{0}' cannot be imported.".format(object_name))
+                logger.warning("[autosignature] object %r cannot be imported.",
+                               object_name)
                 anchor = object_name
             elif kind == "staticmethod":
                 cl, fu = object_name.split(".")[-2:]
                 pimp = import_path(obj, class_name=cl, fLOG=logging_function)
-                anchor = '{0}.{1}.{2}'.format(pimp, cl, fu)
+                anchor = f'{pimp}.{cl}.{fu}'
             else:
                 pimp = import_path(
-                    obj, err_msg="object name: '{0}'".format(object_name))
-                anchor = '{0}.{1}'.format(
-                    pimp, object_name.rsplit('.', maxsplit=1)[-1])
+                    obj, err_msg=f"object name: '{object_name}'")
+                anchor = f"{pimp}.{object_name.rsplit('.', maxsplit=1)[-1]}"
         elif opt_path == 'full':
             anchor = object_name
         elif opt_path == 'name':
@@ -208,15 +204,15 @@ class AutoSignatureDirective(Directive):
         else:  # pragma: no cover
             logger = logging.getLogger("autosignature")
             logger.warning(
-                "[autosignature] options path is '{0}', it should be in "
-                "(import, name, full) for object '{1}'.".format(opt_path, object_name))
+                "[autosignature] options path is %r, it should be in "
+                "(import, name, full) for object %r.", opt_path, object_name)
             anchor = object_name
 
         if obj is None:
             if opt_link:
-                text = "\n:py:func:`{0} <{1}>`\n\n".format(anchor, object_name)
+                text = f"\n:py:func:`{anchor} <{object_name}>`\n\n"
             else:
-                text = "\n``{0}``\n\n".format(anchor)  # pragma: no cover
+                text = f"\n``{anchor}``\n\n"  # pragma: no cover
         else:
             obj_sig = obj.__init__ if kind == "class" else obj
             try:
@@ -259,9 +255,9 @@ class AutoSignatureDirective(Directive):
                         signature = inspect._signature_fromstr(
                             inspect.Signature, obj_sig, list(sigs)[0])
                         parameters = signature.parameters
-                    except TypeError as e:
+                    except TypeError as ee:
                         mes = "[autosignature](3) unable to get signature of '{0}' - {1}.".format(
-                            object_name, str(e).replace("\n", "\\n"))
+                            object_name, str(ee).replace("\n", "\\n"))
                         logger = logging.getLogger("autosignature")
                         logger.warning(mes)
                         if logging_function:
@@ -274,22 +270,19 @@ class AutoSignatureDirective(Directive):
                        'property': 'meth'}[kind]
             if signature is None:
                 if opt_link:  # pragma: no cover
-                    text = "\n:py:{2}:`{0} <{1}>`\n\n".format(
-                        anchor, object_name, domkind)
+                    text = f"\n:py:{domkind}:`{anchor} <{object_name}>`\n\n"
                 else:  # pragma: no cover
-                    text = "\n``{0} {1}``\n\n".format(kind, object_name)
+                    text = f"\n``{kind} {object_name}``\n\n"
             else:
                 signature = self.build_parameters_list(
                     parameters, opt_annotation)
-                text = "\n:py:{3}:`{0} <{1}>` ({2})\n\n".format(
-                    anchor, object_name, signature, domkind)
+                text = f"\n:py:{domkind}:`{anchor} <{object_name}>` ({signature})\n\n"
 
         if obj is not None and opt_summary:
             # Documentation.
             doc = obj.__doc__  # if kind != "class" else obj.__class__.__doc__
             if doc is None:  # pragma: no cover
-                mes = "[autosignature] docstring empty for '{0}'.".format(
-                    object_name)
+                mes = f"[autosignature] docstring empty for '{object_name}'."
                 logger = logging.getLogger("autosignature")
                 logger.warning(mes)
                 if logging_function:
@@ -297,7 +290,7 @@ class AutoSignatureDirective(Directive):
             else:
                 if "type(object_or_name, bases, dict)" in doc:
                     raise TypeError(  # pragma: no cover
-                        "issue with {0}\n{1}".format(obj, doc))
+                        f"issue with {obj}\n{doc}")
                 docstring = self.build_summary(doc)
                 text += docstring + "\n\n"
 
@@ -340,7 +333,7 @@ class AutoSignatureDirective(Directive):
                 logger = logging.getLogger("autosignature")
                 logger.warning(
                     "[autosignature](2) unable to get signature of "
-                    "'{0}.{1} - {2}'.".format(object_name, name, str(e).replace("\n", "\\n")))
+                    "'%s.%s - %s'.", object_name, name, str(e).replace("\n", "\\n"))
                 signature = None
             except ValueError:  # pragma: no cover
                 signature = None
@@ -361,8 +354,8 @@ class AutoSignatureDirective(Directive):
                 doc = value.__doc__
                 if doc is None:  # pragma: no cover
                     logger = logging.getLogger("autosignature")
-                    logger.warning(
-                        "[autosignature] docstring empty for '{0}.{1}'.".format(object_name, name))
+                    logger.warning("[autosignature] docstring empty for '%s.%s'.",
+                                   object_name, name)
                 else:
                     docstring = self.build_summary(doc)
                     lines = "\n".join(
@@ -419,16 +412,16 @@ class AutoSignatureDirective(Directive):
         for name, value in parameters.items():
             if len(pieces) > 0:
                 pieces.append(", ")
-            pieces.append("*{0}*".format(name))
+            pieces.append(f"*{name}*")
             if annotation and value.annotation is not inspect._empty:
-                pieces.append(":{0}".format(value.annotation))
+                pieces.append(f":{value.annotation}")
             if value.default is not inspect._empty:
                 pieces.append(" = ")
                 if isinstance(value.default, str):
                     de = "'{0}'".format(value.default.replace("'", "\\'"))
                 else:
                     de = str(value.default)
-                pieces.append("`{0}`".format(de))
+                pieces.append(f"`{de}`")
         return "".join(pieces)
 
     @staticmethod

@@ -45,19 +45,19 @@ def plot_graphviz(dot, ax=None, temp_dot=None, temp_img=None, dpi=300,
             os.remove(temp_dot)
         if clean_img and os.path.exists(temp_img):
             os.remove(temp_img)
-        raise RuntimeError(
+        raise RuntimeError(  # pragma: no cover
             "Unable to run command line"
             "\n---CMD---\n{}\n---OUT---\n{}"
             "\n---ERR---\n{}".format(
                 cmd, out, err))
     if ax is None:
-        import matplotlib.pyplot as plt
-        ax = plt.gca()
-        image = plt.imread(temp_img)
+        import matplotlib.pyplot as plt  # pragma: no cover
+        ax = plt.gca()  # pragma: no cover
+        image = plt.imread(temp_img)  # pragma: no cover
     elif isinstance(ax, str) and ax == 'new':
-        import matplotlib.pyplot as plt
-        _, ax = plt.subplots(1, 1)
-        image = plt.imread(temp_img)
+        import matplotlib.pyplot as plt  # pragma: no cover
+        _, ax = plt.subplots(1, 1)  # pragma: no cover
+        image = plt.imread(temp_img)  # pragma: no cover
     else:
         import matplotlib.pyplot as plt
         image = plt.imread(temp_img)

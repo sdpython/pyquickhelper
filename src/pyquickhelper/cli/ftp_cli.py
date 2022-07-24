@@ -55,32 +55,32 @@ def ftp_upload(files, dest, host, user, pwd, ftps=False, fLOG=print):
     if user.startswith("keyring,"):
         spl = user[len("keyring,"):].split(',')
         if len(spl) != 2:
-            raise ValueError("Unable to get user '{}'.".format(user))
+            raise ValueError(f"Unable to get user '{user}'.")
         import keyring
         user = keyring.get_password(spl[0], spl[1])
         if user is None:
-            raise ValueError("No stored user for '{}'.".format(user))
+            raise ValueError(f"No stored user for '{user}'.")
 
     if pwd.startswith("keyring,"):
         spl = pwd[len("keyring,"):].split(',')
         if len(spl) != 2:
-            raise ValueError("Unable to get user '{}'.".format(pwd))
+            raise ValueError(f"Unable to get user '{pwd}'.")
         import keyring
         pwd = keyring.get_password(spl[0], spl[1])
         if pwd is None:
-            raise ValueError("No stored user for '{}'.".format(pwd))
+            raise ValueError(f"No stored user for '{pwd}'.")
 
     ftps = 'SFTP' if ftps in ('1', 'True', 'true', 1, True) else 'FTP'
     ftp = TransferFTP(host, user, pwd, ftps=ftps, fLOG=fLOG)
 
     for file in files:
         if not os.path.exists(file):
-            raise FileNotFoundError("Unable to find '{}'.".format(file))
+            raise FileNotFoundError(f"Unable to find '{file}'.")
         if fLOG:
-            fLOG("[ftp_upload] transfer '{}'".format(file))
+            fLOG(f"[ftp_upload] transfer '{file}'")
         r = ftp.transfer(file, dest, file.split('/')[-1])
     try:
         ftp.close()
     except Exception as e:
-        fLOG("[ftp_upload] closing failed due to {}.".format(e))
+        fLOG(f"[ftp_upload] closing failed due to {e}.")
     return r

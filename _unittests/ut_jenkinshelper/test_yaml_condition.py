@@ -27,7 +27,7 @@ class TestYamlCondition(ExtTestCase):
                        project_name="pyquickhelper",
                        root_path="ROOT")
         vers = "%d%d" % sys.version_info[:2]
-        context["Python%s" % vers] = os.path.dirname(sys.executable)
+        context[f"Python{vers}"] = os.path.dirname(sys.executable)
         res = list(enumerate_processed_yml(
             yml, context=context, platform="linux"))
         found = 0

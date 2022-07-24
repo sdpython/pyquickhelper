@@ -51,15 +51,15 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
     report = os.path.normpath(report)
     if not os.path.exists(report):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find '{}'.".format(report))
+            f"Unable to find '{report}'.")
 
     proj = os.path.normpath(os.path.join(
         os.path.dirname(report), "..", "..", "..", ".."))
 
     src = SourceRepository(commandline=commandline)
     last = src.get_last_commit_hash(proj)
-    cmd = ["--token={0}".format(token), "--file={0}".format(report),
-           "--commit={0}".format(last), "--root={0} -X gcov".format(proj)]
+    cmd = [f"--token={token}", f"--file={report}",
+           f"--commit={last}", f"--root={proj} -X gcov"]
     if token is not None:  # pragma: no cover
         import codecov
         new_out = StringIO()
@@ -71,7 +71,7 @@ def publish_coverage_on_codecov(path, token, commandline=True, fLOG=None):
         err = new_err.getvalue()
         if err:
             raise RuntimeError(  # pragma: no cover
-                "Unable to run:\nCMD:\n{0}\nOUT:\n{1}\n[pyqerror]\n{2}".format(cmd, out, err))
+                f"Unable to run:\nCMD:\n{cmd}\nOUT:\n{out}\n[pyqerror]\n{err}")
         return out, err
     return cmd
 
@@ -174,26 +174,26 @@ def coverage_combine(data_files, output_path, source, process=None):
         ex = "\n-\n".join(shorten(_) for _ in ex)
         ex2 = "\n-\n".join(shorten(_) for _ in ex2)
         rows = ['-----------------',
-                "destcov='{0}'".format(destcov),
-                "outfile='{0}'".format(outfile),
-                "source='{0}'".format(source),
-                "cov.source={0}".format(get_source(cov)),
-                "dests='{0}'".format(';'.join(dests)),
-                "inter={0}".format(inter)]
+                f"destcov='{destcov}'",
+                f"outfile='{outfile}'",
+                f"source='{source}'",
+                f"cov.source={get_source(cov)}",
+                f"dests='{';'.join(dests)}'",
+                f"inter={inter}"]
         for ii, info in enumerate(infos):
-            rows.append('----------------- {}/{}'.format(ii, len(infos)))
+            rows.append(f'----------------- {ii}/{len(infos)}')
             for k, v in sorted(info.items()):
-                rows.append("{}='{}'".format(k, v))
+                rows.append(f"{k}='{v}'")
         rows.append('-----------------')
         if cov is not None and _attr_(cov, '_data', 'data')._lines is not None:
             rows.append("##### LINES")
             end = min(5, len(_attr_(cov, '_data', 'data')._lines))
             for k, v in list(sorted(_attr_(cov, '_data', 'data')._lines.items()))[:end]:
-                rows.append('   {0}:{1}'.format(k, v))
+                rows.append(f'   {k}:{v}')
             rows.append("----- RUNS")
             end = min(5, len(_attr_(cov, '_data', 'data')._runs))
             for k in _attr_(cov, '_data', 'data')._runs[:end]:
-                rows.append('   {0}'.format(k))
+                rows.append(f'   {k}')
             rows.append("----- END")
 
         mes = "{5}. In '{0}'.\n{1}\n{2}\n---AFTER---\n{3}\n---BEGIN---\n{4}"
@@ -213,7 +213,7 @@ def coverage_combine(data_files, output_path, source, process=None):
     cov._init()
     cov.get_data()
     if get_source(cov) is None or len(get_source(cov)) == 0:
-        raise_exc(FileNotFoundError("Probably unable to find '{0}'".format(source)),
+        raise_exc(FileNotFoundError(f"Probably unable to find '{source}'"),
                   "", [], [], "", destcov, source, [], [], cov, [])
 
     inter = []
@@ -260,7 +260,7 @@ def coverage_combine(data_files, output_path, source, process=None):
             name = row[1].replace('/', begin)
             if not name.startswith(root_source):
                 name = root_source + begin + name
-            s = "UPDATE file SET path='{}' WHERE id={};".format(name, row[0])
+            s = f"UPDATE file SET path='{name}' WHERE id={row[0]};"
             sql.append(s)
 
         keep_infos['root_common'] = find_longest_common_root(names, begin)
@@ -272,7 +272,7 @@ def coverage_combine(data_files, output_path, source, process=None):
         conn.close()
 
     # We modify the root in every coverage file.
-    dests = [os.path.join(output_path, '.coverage{0}'.format(i))
+    dests = [os.path.join(output_path, f'.coverage{i}')
              for i in range(len(data_files))]
     infos = []
     for fi, de in zip(data_files, dests):
@@ -324,8 +324,7 @@ def coverage_combine(data_files, output_path, source, process=None):
         else:
             msg = pprint.pformat(infos)
             raise RuntimeError(  # pragma: no cover
-                "Unable to process report in '{0}'.\n----\n{1}".format(
-                    output_path, msg)) from e
+                f"Unable to process report in '{output_path}'.\n----\n{msg}") from e
 
     if report:
         outfile = os.path.join(output_path, "coverage_report.xml")

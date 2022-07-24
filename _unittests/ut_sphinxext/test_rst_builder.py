@@ -370,7 +370,7 @@ class TestRstBuilder(ExtTestCase):
                             directives=tives, rst_image_dest=temp)
         except Exception as e:
             raise Exception(
-                "Issue with '{0}' and '{1}'".format(img1, img2)) from e
+                f"Issue with '{img1}' and '{img2}'") from e
 
         text = text.replace("\r", "")
         self.assertNotIn('unknown option: "download"', text)

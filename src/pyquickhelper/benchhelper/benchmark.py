@@ -184,7 +184,7 @@ class BenchMark:
                 for k in {"title", "alt", "width", "height"}:
                     if k not in attr and hasattr(self, k):
                         attr[k if k != "title" else "alt"] = getattr(self, k)
-                merge = " ".join('{0}="{1}"'.format(k, v)
+                merge = " ".join(f'{k}="{v}"'
                                  for k, v in attr.items())
                 if self.root is not None:
                     filename = get_relative_path(
@@ -192,7 +192,7 @@ class BenchMark:
                 else:
                     filename = self.filename
                 filename = filename.replace("\\", "/")
-                return '<img src="{0}" {1}/>'.format(filename, merge)
+                return f'<img src="{filename}" {merge}/>'
             else:
                 raise NotImplementedError(
                     "only files are allowed")  # pragma: no cover
@@ -210,7 +210,7 @@ class BenchMark:
                 else:
                     filename = self.filename
                 filename = filename.replace("\\", "/")
-                return '.. image:: {0}'.format(filename)
+                return f'.. image:: {filename}'
             else:
                 raise NotImplementedError(
                     "only files are allowed")  # pragma: no cover
@@ -262,16 +262,16 @@ class BenchMark:
         def cache_():
             "local function"
             if self._cache_file is not None and os.path.exists(self._cache_file):
-                self.fLOG("[BenchMark.run] retrieve cache '{0}'".format(
-                    self._cache_file))
+                self.fLOG(
+                    f"[BenchMark.run] retrieve cache '{self._cache_file}'")
                 with open(self._cache_file, "rb") as f:
                     cached.update(self._pickle.load(f))
                 self.fLOG("[BenchMark.run] number of cached run: {0}".format(
                     len(cached["params_list"])))
             else:
                 if self._cache_file is not None:
-                    self.fLOG("[BenchMark.run] cache not found '{0}'".format(
-                        self._cache_file))
+                    self.fLOG(
+                        f"[BenchMark.run] cache not found '{self._cache_file}'")
                 cached.update(dict(metrics=[], appendix=[], params_list=[]))
             self.uncache(cached)
 
@@ -282,10 +282,10 @@ class BenchMark:
             self._metrics = []
             self._appendix = []
 
-            self.fLOG("[BenchMark.run] init {0} do".format(self.Name))
+            self.fLOG(f"[BenchMark.run] init {self.Name} do")
             self.init()
-            self.fLOG("[BenchMark.run] init {0} done".format(self.Name))
-            self.fLOG("[BenchMark.run] start {0}".format(self.Name))
+            self.fLOG(f"[BenchMark.run] init {self.Name} done")
+            self.fLOG(f"[BenchMark.run] start {self.Name}")
 
             for i in pgbar:
                 di = params_list[i]
@@ -306,14 +306,14 @@ class BenchMark:
                         if not os.path.exists(look):
                             can = False
                             self.fLOG(
-                                "[BenchMark.run] file '{0}' was not found --> run again.".format(look))
+                                f"[BenchMark.run] file '{look}' was not found --> run again.")
                     if can:
                         self._metrics.append(cached["metrics"][i])
                         self._appendix.append(cached["appendix"][i])
                         self.fLOG(
-                            "[BenchMark.run] retrieved cached {0}/{1}: {2}".format(i + 1, len(params_list), di))
+                            f"[BenchMark.run] retrieved cached {i + 1}/{len(params_list)}: {di}")
                         self.fLOG(
-                            "[BenchMark.run] file '{0}' was found.".format(look))
+                            f"[BenchMark.run] file '{look}' was found.")
                         nb_cached += 1
                         continue
 
@@ -321,7 +321,7 @@ class BenchMark:
 
                 # no cache
                 self.fLOG(
-                    "[BenchMark.run] {0}/{1}: {2}".format(i + 1, len(params_list), di))
+                    f"[BenchMark.run] {i + 1}/{len(params_list)}: {di}")
                 dt = datetime.now()
                 cl = perf_counter()
                 tu = self.bench(**di)
@@ -374,11 +374,11 @@ class BenchMark:
                     app["_i"] = i
                     self._appendix.append(app)
                     self.fLOG(
-                        "[BenchMark.run] {0}/{1} end {2}".format(i + 1, len(params_list), met))
+                        f"[BenchMark.run] {i + 1}/{len(params_list)} end {met}")
 
         def graph_():
             "local function"
-            self.fLOG("[BenchMark.run] graph {0} do".format(self.Name))
+            self.fLOG(f"[BenchMark.run] graph {self.Name} do")
             self._graphs = self.graphs(self._path_to_images)
             if self._graphs is None or not isinstance(self._graphs, list):
                 raise TypeError(  # pragma: no cover
@@ -387,12 +387,11 @@ class BenchMark:
                 if not isinstance(tu, self.LocalGraph):
                     raise TypeError(  # pragma: no cover
                         "Method graphs should return a list of LocalGraph.")
-            self.fLOG("[BenchMark.run] graph {0} done".format(self.Name))
-            self.fLOG("[BenchMark.run] Received {0} graphs.".format(
-                len(self._graphs)))
-            self.fLOG("[BenchMark.run] end {0} do".format(self.Name))
+            self.fLOG(f"[BenchMark.run] graph {self.Name} done")
+            self.fLOG(f"[BenchMark.run] Received {len(self._graphs)} graphs.")
+            self.fLOG(f"[BenchMark.run] end {self.Name} do")
             self.end()
-            self.fLOG("[BenchMark.run] end {0} done".format(self.Name))
+            self.fLOG(f"[BenchMark.run] end {self.Name} done")
             meta["time_end"] = datetime.now()
             meta["nb_cached"] = nb_cached
 
@@ -400,19 +399,17 @@ class BenchMark:
         def final_():
             "local function"
             if self._cache_file is not None:
-                self.fLOG("[BenchMark.run] save cache '{0}'".format(
-                    self._cache_file))
+                self.fLOG(f"[BenchMark.run] save cache '{self._cache_file}'")
                 cached = dict(metrics=self._metrics,
                               appendix=self._appendix, params_list=params_list)
                 with open(self._cache_file, "wb") as f:
                     self._pickle.dump(cached, f)
                 for di in self._metrics:
-                    look = "{0}.{1}.clean_cache".format(
-                        self._cache_file, di["_btry"])
+                    look = f"{self._cache_file}.{di['_btry']}.clean_cache"
                     with open(look, "w") as f:
                         f.write(
                             "Remove this file if you want to force a new run.")
-                    self.fLOG("[BenchMark.run] wrote '{0}'.".format(look))
+                    self.fLOG(f"[BenchMark.run] wrote '{look}'.")
 
                 self.fLOG("[BenchMark.run] done.")
 
@@ -489,13 +486,13 @@ class BenchMark:
             if format == "html":
                 if "_btry" in df.columns:
                     df["_btry"] = df.apply(
-                        lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
+                        lambda row: f"<a href=\"#{row['_i']}\">{row['_btry']}</a>", axis=1)
                 df["_i"] = df["_i"].apply(
                     lambda s: '<a href="#{0}">{0}</a>'.format(s))
             elif format == "rst":
                 if "_btry" in df.columns:
                     df["_btry"] = df.apply(
-                        lambda row: ':ref:`{1} <l-{2}-{0}>`'.format(row["_i"], row["_btry"], self.Name), axis=1)
+                        lambda row: f":ref:`{row['_btry']} <l-{self.Name}-{row['_i']}>`", axis=1)
                 df["_i"] = df["_i"].apply(
                     lambda s: ':ref:`{0} <l-{1}-{0}>`'.format(s, self.Name))
             else:
@@ -526,13 +523,13 @@ class BenchMark:
             if format == "html":
                 if "_btry" in df.columns:
                     df["_btry"] = df.apply(
-                        lambda row: '<a href="#{0}">{1}</a>'.format(row["_i"], row["_btry"]), axis=1)
+                        lambda row: f"<a href=\"#{row['_i']}\">{row['_btry']}</a>", axis=1)
                 df["_i"] = df["_i"].apply(
                     lambda s: '<a href="#{0}">{0}</a>'.format(s))
             elif format == "rst":
                 if "_btry" in df.columns:
                     df["_btry"] = df.apply(
-                        lambda row: ':ref:`{1} <l-{2}-{0}>`'.format(row["_i"], row["_btry"], self.Name), axis=1)
+                        lambda row: f":ref:`{row['_btry']} <l-{self.Name}-{row['_i']}>`", axis=1)
                 df["_i"] = df["_i"].apply(
                     lambda s: ':ref:`{0} <l-{1}-{0}>'.format(s, self.Name))
             else:

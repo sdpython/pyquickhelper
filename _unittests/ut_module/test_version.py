@@ -31,7 +31,7 @@ class TestVersion (unittest.TestCase):
 
         f = reg.findall(c)
         if len(f) != 1:
-            raise Exception("not only one version: {}".format(f))
+            raise Exception(f"not only one version: {f}")
         self.assertEqual(f[0].split('.')[:2], __version__.split('.')[:2])
 
 

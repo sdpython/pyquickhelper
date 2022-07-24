@@ -11,6 +11,7 @@ from sphinx.locale import _
 from docutils.parsers.rst.directives.admonitions import BaseAdmonition
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
+from ..texthelper.texts_language import TITLES
 
 
 class quote_node(nodes.admonition):
@@ -26,7 +27,8 @@ class QuoteNode(BaseAdmonition):
     It takes the following options:
 
     * *author*
-    * *book*
+    * *book* or *manga* or *film* or *show* or *disc* or
+      *comic* or *child* or *ado*
     * *year*
     * *pages*
     * *tag*
@@ -34,6 +36,7 @@ class QuoteNode(BaseAdmonition):
     * *lid* or *label*
     * *index*, additional index words beside the title and the author
     * *date*, if the text was written or declared at specific date
+    * *title1*, by default, the author comes first, if True, the title is
 
     Example::
 
@@ -58,6 +61,13 @@ class QuoteNode(BaseAdmonition):
     option_spec = {
         'author': directives.unchanged,
         'book': directives.unchanged,
+        'manga': directives.unchanged,
+        'disc': directives.unchanged,
+        'ado': directives.unchanged,
+        'child': directives.unchanged,
+        'comic': directives.unchanged,
+        'show': directives.unchanged,
+        'film': directives.unchanged,
         'year': directives.unchanged,
         'pages': directives.unchanged,
         'tag': directives.unchanged,
@@ -67,6 +77,7 @@ class QuoteNode(BaseAdmonition):
         'class': directives.class_option,
         'index': directives.unchanged,
         'date': directives.unchanged,
+        'title1': directives.unchanged,
     }
 
     def run(self):
@@ -78,6 +89,8 @@ class QuoteNode(BaseAdmonition):
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
+        language_code = self.state.document.settings.language_code if hasattr(
+            self.state.document.settings, "language_code") else "en"
 
         if not self.options.get('class'):
             self.options['class'] = ['admonition-quote']
@@ -100,11 +113,20 @@ class QuoteNode(BaseAdmonition):
         # book
         author = __(self.options.get('author', "").strip())
         book = __(self.options.get('book', "").strip())
+        manga = __(self.options.get('manga', "").strip())
+        comic = __(self.options.get('comic', "").strip())
+        ado = __(self.options.get('ado', "").strip())
+        child = __(self.options.get('child', "").strip())
+        disc = __(self.options.get('disc', "").strip())
+        film = __(self.options.get('film', "").strip())
+        show = __(self.options.get('show', "").strip())
         pages = __(self.options.get('pages', "").strip())
         year = __(self.options.get('year', "").strip())
         source = __(self.options.get('source', "").strip())
         index = __(self.options.get('index', "").strip())
         date = __(self.options.get('date', "").strip())
+        title1 = __(self.options.get('title1', "").strip()
+                    ) in ('1', 1, 'True', True, 'true')
 
         indexes = []
         if index:
@@ -113,25 +135,88 @@ class QuoteNode(BaseAdmonition):
         # add a label
         lid = self.options.get('lid', self.options.get('label', None))
         if lid:
-            tnl = ['', ".. _{0}:".format(lid), ""]
+            tnl = ['', f".. _{lid}:", ""]
         else:
             tnl = []  # pragma: no cover
 
+        if title1:
+            if ado:
+                tnl.append(f"**{ado}**")
+            if child:
+                tnl.append(f"**{child}**")
+            if comic:
+                tnl.append(f"**{comic}**")
+            if disc:
+                tnl.append(f"**{disc}**")
+            if book:
+                tnl.append(f"**{book}**")
+            if manga:
+                tnl.append(f"**{manga}**")
+            if show:
+                tnl.append(f"**{show}**")
+            if film:
+                tnl.append(f"**{film}**")
+            if author:
+                tnl.append(f"*{author}*, ")
+        else:
+            if author:
+                tnl.append(f"**{author}**, ")
+            if ado:
+                tnl.append(f"*{ado}*")
+            if child:
+                tnl.append(f"*{child}*")
+            if comic:
+                tnl.append(f"*{comic}*")
+            if disc:
+                tnl.append(f"*{disc}*")
+            if book:
+                tnl.append(f"*{book}*")
+            if manga:
+                tnl.append(f"*{manga}*")
+            if show:
+                tnl.append(f"*{show}*")
+            if film:
+                tnl.append(f"*{film}*")
+
         if author:
-            tnl.append("**{0}**, ".format(author))
             indexes.append(author)
+            indexes.append(TITLES[language_code]['author'] + "; " + author)
+        if ado:
+            indexes.append(ado)
+            indexes.append(TITLES[language_code]['ado'] + "; " + ado)
+        if child:
+            indexes.append(child)
+            indexes.append(TITLES[language_code]['child'] + "; " + child)
+        if comic:
+            indexes.append(comic)
+            indexes.append(TITLES[language_code]['comic'] + "; " + comic)
+        if disc:
+            indexes.append(disc)
+            indexes.append(TITLES[language_code]['disc'] + "; " + disc)
         if book:
-            tnl.append("*{0}*".format(book))
             indexes.append(book)
+            indexes.append(TITLES[language_code]['book'] + "; " + book)
+        if manga:
+            indexes.append(manga)
+            indexes.append(TITLES[language_code]['manga'] + "; " + manga)
+        if show:
+            indexes.append(show)
+            indexes.append(TITLES[language_code]['show'] + "; " + show)
+        if film:
+            indexes.append(film)
+            indexes.append(TITLES[language_code]['film'] + "; " + film)
+
         if pages:
-            tnl.append(", {0}".format(pages))
+            tnl.append(f", {pages}")
         if date:
-            tnl.append(" ({0})".format(date))
+            tnl.append(f" ({date})")
+        if year:
+            tnl.append(f" ({year})")
         if source:
             if source.startswith("http"):
-                tnl.append(", `source <{0}>`_".format(source))
+                tnl.append(f", `source <{source}>`_")
             else:
-                tnl.append(", {0}".format(source))
+                tnl.append(f", {source}")
         tnl.append('')
         tnl.append(".. index:: " + ", ".join(indexes))
         tnl.append('')
@@ -146,7 +231,7 @@ class QuoteNode(BaseAdmonition):
             from sphinx.util import logging
             logger = logging.getLogger("blogpost")
             logger.warning(
-                "[blogpost] unable to parse '{0}' - '{1}' - {2}".format(author, book, e))
+                "[blogpost] unable to parse %r - %r - %r", author, book or manga, e)
             raise e
 
         node['tag'] = tag
@@ -156,6 +241,13 @@ class QuoteNode(BaseAdmonition):
         node['label'] = lid
         node['source'] = source
         node['book'] = book
+        node['manga'] = manga
+        node['disc'] = disc
+        node['comic'] = comic
+        node['ado'] = ado
+        node['child'] = child
+        node['film'] = film
+        node['show'] = show
         node['index'] = index
         node['content'] = '\n'.join(self.content)
         node['classes'] += ["quote"]
@@ -189,7 +281,7 @@ def visit_quote_node_rst(self, node):
             continue
         if v:
             self.new_state(4)
-            self.add_text(":{0}: {1}".format(k, v))
+            self.add_text(f":{k}: {v}")
             self.end_state(wrap=False, end=None)
     self.add_text(self.nl)
     self.new_state(4)

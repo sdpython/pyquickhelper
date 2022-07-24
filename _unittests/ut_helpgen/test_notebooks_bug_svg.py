@@ -44,7 +44,7 @@ class TestNoteBooksBugSvg(ExtTestCase):
         setup_environment_for_help()
         obj = SVG2PDFPreprocessor()
         self.assertIn('inkscape', obj.inkscape)
-        cmd = '%s --version' % obj.inkscape
+        cmd = f'{obj.inkscape} --version'
         out, err = run_cmd(cmd, wait=True, shell=False)
         self.assertIn('inkscape', out.lower())
         vers = obj.inkscape_version

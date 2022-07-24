@@ -66,7 +66,8 @@ def get_env_state_info(self):
         if "IMPOSSIBLE:TOFIND" not in here:
             res['HERE'] = here
 
-    for k in res:  # pylint: disable=C0206
+    keys = list(res.keys())
+    for k in keys:  # pylint: disable=C0206
         if isinstance(res[k], str):
             res[k] = res[k].replace("\\", "/")
         elif isinstance(res[k], tuple):

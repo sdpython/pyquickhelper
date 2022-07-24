@@ -72,9 +72,9 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
                 exc.append(eee)
                 opt = None
         if not opt:
-            lines = "\n".join("## {0} ##".format(str(e)) for e in exc)
+            lines = "\n".join(f"## {str(e)} ##" for e in exc)
             raise AttributeError(
-                "settings does not have a key githublink_options, app does not have a member config.\n{0}".format(lines))
+                f"settings does not have a key githublink_options, app does not have a member config.\n{lines}")
     except AttributeError:
         # it just means the role will be ignored
         return None
@@ -82,10 +82,9 @@ def make_link_node(rawtext, app, path, anchor, lineno, options, settings):
         user = opt["user"]
         project = opt["project"]
         ll = 'x' if '.cpython' in path else ''
-        ref = "https://github.com/{0}/{1}/blob/master/{2}{3}".format(
-            user, project, path, ll)
+        ref = f"https://github.com/{user}/{project}/blob/master/{path}{ll}"
         if lineno:
-            ref += "#L{0}".format(lineno)
+            ref += f"#L{lineno}"
     else:
         ref, anchor = opt["processor"](path, lineno)
     if anchor == "%" and 'anchor' in opt:
@@ -153,7 +152,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
             lineno = int(no) if no != "*" else None
         elif len(spl) != 2:
             raise ValueError(  # pragma: no cover
-                "Unable to interpret '{0}'.".format(text))
+                f"Unable to interpret '{text}'.")
         else:
             text, ext = spl
             ext = "." + ext
@@ -165,7 +164,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
         spl = ext.split("-")
         if len(spl) != 2:
             raise ValueError(  # pragma: no cover
-                "Unable to interpret extension in '{0}'".format(text0))
+                f"Unable to interpret extension in '{text0}'")
         ext, doc = spl
     else:
         doc = "src"
@@ -195,7 +194,7 @@ def githublink_role(role, rawtext, text, lineno, inliner,
             path = os.path.join('_doc', 'sphinxdoc', 'source', docname)
         else:
             raise ValueError(  # pragma: no cover
-                "Unable to interpret subfolder in '{0}'.".format(text0))
+                f"Unable to interpret subfolder in '{text0}'.")
 
     # Path with extension.
     if ext is not None:

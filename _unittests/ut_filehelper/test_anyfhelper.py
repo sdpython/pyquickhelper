@@ -67,12 +67,12 @@ class TestAnyFHelper(unittest.TestCase):
         self.assertEqual(source, "Sb")
         content1 = content1.replace(b'\r', b'')
         if content4 != content1:
-            raise Exception("\n{0}\n{1}".format(content4, content1))
+            raise Exception(f"\n{content4}\n{content1}")
 
         content4, source = read_content_ufs(
             BytesIO(content0.encode("utf-8")), add_source=True, asbytes=True)
         if content4 != content1:
-            raise Exception("\n{0}\n{1}".format(content4, content1))
+            raise Exception(f"\n{content4}\n{content1}")
         self.assertEqual(source, "SBb")
 
 

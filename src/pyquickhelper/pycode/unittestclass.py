@@ -62,7 +62,7 @@ class ExtTestCase(unittest.TestCase):
         Returns ``s`` or ``'s'`` depending on the type.
         """
         if hasattr(s, "replace"):
-            return "'{0}'".format(s)
+            return f"'{s}'"
         return s
 
     def assertNotEmpty(self, x):
@@ -82,7 +82,7 @@ class ExtTestCase(unittest.TestCase):
                 disp = "\n" + '\n'.join(map(str, x[:end]))
             else:
                 disp = ""
-            raise AssertionError("x is not empty{0}".format(disp))
+            raise AssertionError(f"x is not empty{disp}")
 
     def assertGreater(self, x, y, strict=False):  # pylint: disable=W0221,W0237
         """
@@ -107,7 +107,7 @@ class ExtTestCase(unittest.TestCase):
         Checks that *name* exists.
         """
         if not os.path.exists(name):
-            raise FileNotFoundError("Unable to find '{0}'.".format(name))
+            raise FileNotFoundError(f"Unable to find '{name}'.")
 
     def assertNotExists(self, name):
         """
@@ -115,7 +115,7 @@ class ExtTestCase(unittest.TestCase):
         """
         if os.path.exists(name):
             raise FileNotFoundError(  # pragma: no cover
-                "Able to find '{0}'.".format(name))
+                f"Able to find '{name}'.")
 
     def assertEqualDataFrame(self, d1, d2, **kwargs):
         """
@@ -163,7 +163,7 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError("a is None")
         import numpy
         if any(map(numpy.isnan, a.ravel())):
-            raise AssertionError("a has nan:\n{}".format(a))
+            raise AssertionError(f"a has nan:\n{a}")
 
     def assertEqualSparseArray(self, d1, d2, **kwargs):
         if type(d1) != type(d2):  # pylint: disable=C0123
@@ -188,8 +188,7 @@ class ExtTestCase(unittest.TestCase):
             self.assertEqualArray(d1.indptr, d2.indptr)
             return
         raise NotImplementedError(  # pragma: no cover
-            "Comparison not implemented for types {} and {}.".format(
-                type(d1), type(d2)))
+            f"Comparison not implemented for types {type(d1)} and {type(d2)}.")
 
     def assertNotEqualArray(self, d1, d2, squeeze=False, **kwargs):
         """
@@ -217,25 +216,25 @@ class ExtTestCase(unittest.TestCase):
         """
         from numpy import number
         if not isinstance(d1, (int, float, decimal.Decimal, number)):
-            raise TypeError('d1 is not a number but {0}'.format(type(d1)))
+            raise TypeError(f'd1 is not a number but {type(d1)}')
         if not isinstance(d2, (int, float, decimal.Decimal, number)):
-            raise TypeError('d2 is not a number but {0}'.format(type(d2)))
+            raise TypeError(f'd2 is not a number but {type(d2)}')
         diff = abs(float(d1 - d2))
         mi = float(min(abs(d1), abs(d2)))
         tol = kwargs.get('precision', None)
         if tol is None:
             if diff != 0:
-                raise AssertionError("d1 != d2: {0} != {1}".format(d1, d2))
+                raise AssertionError(f"d1 != d2: {d1} != {d2}")
         else:
             if mi == 0:
                 if diff > tol:  # pragma: no cover
                     raise AssertionError(
-                        "d1 != d2: {0} != {1} +/- {2}".format(d1, d2, tol))
+                        f"d1 != d2: {d1} != {d2} +/- {tol}")
             else:
                 rel = diff / mi
                 if rel > tol:
                     raise AssertionError(  # pragma: no cover
-                        "d1 != d2: {0} != {1} +/- {2}".format(d1, d2, tol))
+                        f"d1 != d2: {d1} != {d2} +/- {tol}")
 
     def assertRaise(self, fct, exc=None, msg=None):
         """
@@ -263,7 +262,7 @@ class ExtTestCase(unittest.TestCase):
                 "Function '{0}' does not raise exception '{1}' but '{2}' of type "
                 "'{3}'.".format(fct, exc, e, type(e)))
         raise AssertionError(  # pragma: no cover
-            "Function '{0}' does not raise exception.".format(fct))
+            f"Function '{fct}' does not raise exception.")
 
     def capture(self, fct):
         """
@@ -287,7 +286,7 @@ class ExtTestCase(unittest.TestCase):
             if len(whole) > len(sub) * 2:
                 whole = whole[:len(sub) * 2]  # pragma: no cover
             raise AssertionError(
-                "'{1}' does not start with '{0}'".format(sub, whole))
+                f"'{whole}' does not start with '{sub}'")
 
     def assertNotStartsWith(self, sub, whole):
         """
@@ -297,7 +296,7 @@ class ExtTestCase(unittest.TestCase):
             if len(whole) > len(sub) * 2:
                 whole = whole[:len(sub) * 2]  # pragma: no cover
             raise AssertionError(
-                "'{1}' starts with '{0}'".format(sub, whole))
+                f"'{whole}' starts with '{sub}'")
 
     def assertEndsWith(self, sub, whole):
         """
@@ -307,7 +306,7 @@ class ExtTestCase(unittest.TestCase):
             if len(whole) > len(sub) * 2:
                 whole = whole[-len(sub) * 2:]  # pragma: no cover
             raise AssertionError(
-                "'{1}' does not end with '{0}'".format(sub, whole))
+                f"'{whole}' does not end with '{sub}'")
 
     def assertNotEndsWith(self, sub, whole):
         """
@@ -317,7 +316,7 @@ class ExtTestCase(unittest.TestCase):
             if len(whole) > len(sub) * 2:
                 whole = whole[-len(sub) * 2:]
             raise AssertionError(
-                "'{1}' ends with '{0}'".format(sub, whole))
+                f"'{whole}' ends with '{sub}'")
 
     def assertEqual(self, a, b):  # pylint: disable=W0221
         """
@@ -343,8 +342,7 @@ class ExtTestCase(unittest.TestCase):
                     self.assertEqualArray(a, b)
                     return
             raise AssertionError(  # pragma: no cover
-                "Unable to check equality for types {0} and {1}".format(
-                    type(a), type(b))) from e
+                f"Unable to check equality for types {type(a)} and {type(b)}") from e
 
     def assertNotEqual(self, a, b):  # pylint: disable=W0221
         """
@@ -384,33 +382,33 @@ class ExtTestCase(unittest.TestCase):
             try:
                 self.assertLesser(d, precision)
             except AssertionError:
-                raise AssertionError("{} != {} (p={})".format(a, b, precision))
+                raise AssertionError(f"{a} != {b} (p={precision})")
         else:
             r = float(abs(a - b)) / mi
             try:
                 self.assertLesser(r, precision)
             except AssertionError:
-                raise AssertionError("{} != {} (p={})".format(a, b, precision))
+                raise AssertionError(f"{a} != {b} (p={precision})")
 
     def assertCallable(self, fct):
         """
         Checks that *fct* is callable.
         """
         if not callable(fct):
-            raise AssertionError("fct is not callable: {0}".format(type(fct)))
+            raise AssertionError(f"fct is not callable: {type(fct)}")
 
     def assertEqualDict(self, a, b):
         """
         Checks that ``a == b``.
         """
         if not isinstance(a, dict):
-            raise TypeError('a is not dict but {0}'.format(type(a)))
+            raise TypeError(f'a is not dict but {type(a)}')
         if not isinstance(b, dict):
-            raise TypeError('b is not dict but {0}'.format(type(b)))
+            raise TypeError(f'b is not dict but {type(b)}')
         rows = []
         for key in sorted(b):
             if key not in a:
-                rows.append("** Added key '{0}' in b".format(key))
+                rows.append(f"** Added key '{key}' in b")
             else:
                 if a[key] != b[key]:
                     rows.append(
@@ -418,7 +416,7 @@ class ExtTestCase(unittest.TestCase):
                             key, id(a[key]), id(b[key]), a[key], b[key]))
         for key in sorted(a):
             if key not in b:
-                rows.append("** Removed key '{0}' in a".format(key))
+                rows.append(f"** Removed key '{key}' in a")
         if len(rows) > 0:
             raise AssertionError(
                 "Dictionaries are different\n{0}".format('\n'.join(rows)))
@@ -492,8 +490,7 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError(msg or "'text' is None")  # pragma: no cover
         if sub not in ensemble:
             raise AssertionError(  # pragma: no cover
-                msg or "Unable to find '{}' in\n{}".format(
-                    sub, pprint.pformat(ensemble)))
+                msg or f"Unable to find '{sub}' in\n{pprint.pformat(ensemble)}")
 
     def assertWarning(self, fct):
         """
@@ -556,7 +553,7 @@ class ExtTestCase(unittest.TestCase):
             logger.addHandler(chc)
         if not logger.hasHandlers():
             raise AssertionError(  # pragma: no cover
-                "Logger %r has no handlers." % logger_name)
+                f"Logger {logger_name!r} has no handlers.")
 
         prop = logger.propagate
         logger.propagate = False
@@ -663,8 +660,7 @@ def skipif_vless(version, msg):
     """
     if sys.version_info[:3] >= version:
         return lambda x: x
-    msg = 'Python {} < {}: {}'.format(
-        sys.version_info[:3], version, msg)  # pragma: no cover
+    msg = f'Python {sys.version_info[:3]} < {version}: {msg}'  # pragma: no cover
     return unittest.skip(msg)  # pragma: no cover
 
 
@@ -682,11 +678,10 @@ def unittest_require_at_least(mod, version, msg=""):
     v = getattr(mod, '__version__', None)
     if v is None:
         raise RuntimeError(  # pragma: no cover
-            "Module '{}' has no version.".format(mod))
+            f"Module '{mod}' has no version.")
     if compare_module_version(v, version) >= 0:
         return lambda x: x
-    msg = "Module '{}'  is older than '{}' (= '{}'). {}".format(
-        mod, version, v, msg)
+    msg = f"Module '{mod}'  is older than '{version}' (= '{v}'). {msg}"
     return unittest.skip(msg)
 
 
@@ -699,7 +694,7 @@ def ignore_warnings(warns):
     def wrapper(fct):
         if warns is None:
             raise AssertionError(  # pragma: no cover
-                "warns cannot be None for '{}'.".format(fct))
+                f"warns cannot be None for '{fct}'.")
 
         def call_f(self):
             with warnings.catch_warnings():
@@ -724,13 +719,13 @@ def testlog(logtype="print"):
     elif logtype == 'print':
         logfct = print
     else:
-        raise ValueError("Unexpected logtype %r." % logtype)
+        raise ValueError(f"Unexpected logtype {logtype!r}.")
 
     def wrapper(fct):
         def call_f(self):
-            logfct('START %r' % fct.__name__)
+            logfct(f'START {fct.__name__!r}')
             fct(self)
-            logfct('DONE- %r' % fct.__name__)
+            logfct(f'DONE- {fct.__name__!r}')
         return call_f
     return wrapper
 
@@ -754,10 +749,10 @@ def assert_almost_equal_detailed(expected, value, **kwargs):
         for i, (r1, r2) in enumerate(zip(expected, value)):
             try:
                 assert_almost_equal(r1, r2, **kwargs)
-            except AssertionError as e:
+            except AssertionError as ee:
                 rows.append('----------------------')
-                rows.append("ISSUE WITH ROW {}/{}:0 {}".format(
-                    i, expected.shape[0], str(e)))
+                rows.append(
+                    f"ISSUE WITH ROW {i}/{expected.shape[0]}:0 {str(ee)}")
                 if len(rows) > 10:
                     break  # pragma: no cover
         raise AssertionError("\n".join(rows))

@@ -19,7 +19,7 @@ class SetupCommandDisplay(Command):
     def finalize_options(self):
         valid = (None, '__dict__')
         if self.disp not in valid:
-            raise ValueError("Option disp must be in {}.".format(valid))
+            raise ValueError(f"Option disp must be in {valid}.")
 
     def run(self):
         module_name = self.distribution.packages[0]

@@ -26,7 +26,7 @@ class TestParserFromFunction(unittest.TestCase):
             :param creal: one real
             :return: concatenation
             """
-            return "'{0}' - '{1}' - '{2}'".format(anint, bstring, creal)
+            return f"'{anint}' - '{bstring}' - '{creal}'"
 
         self.assertEqual(fpars(0, "e", 0.5), "'0' - 'e' - '0.5'")
         pars = create_cli_parser(fpars)
@@ -56,7 +56,7 @@ class TestParserFromFunction(unittest.TestCase):
             :param creal: one real
             :return: concatenation
             """
-            fLOG("## '{0}' - '{1}' - '{2}' ##".format(anint, bstring, creal))
+            fLOG(f"## '{anint}' - '{bstring}' - '{creal}' ##")
 
         rows = []
 

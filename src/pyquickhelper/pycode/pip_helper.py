@@ -22,7 +22,7 @@ class PQPipError(Exception):
             Exception.__init__(self, args[0])  # pragma: no cover
         else:
             cmd, out, err = args
-            mes = "CMD:\n{0}\nOUT:\n{1}\n[piperror]\n{2}".format(cmd, out, err)
+            mes = f"CMD:\n{cmd}\nOUT:\n{out}\n[piperror]\n{err}"
             Exception.__init__(self, mes)
 
 
@@ -73,12 +73,13 @@ def get_installed_distributions(local_only=True, skip=None,
     .. versionadded:: 1.5
     """
     if use_cmd:
-        raise NotImplementedError("use_cmd should be False")
+        raise NotImplementedError(  # pragma: no cover
+            "use_cmd should be False.")
     if skip is None:
         try:
             from pip._internal.utils.compat import stdlib_pkgs
             skip = stdlib_pkgs
-        except ImportError:
+        except ImportError:  # pragma: no cover
             pass
     try:
         from pip._internal.metadata import get_default_environment
@@ -89,7 +90,7 @@ def get_installed_distributions(local_only=True, skip=None,
                             editables_only=editables_only,
                             user_only=user_only)))
 
-    except ImportError:
+    except ImportError:  # pragma: no cover
         from pip._internal.utils.misc import get_installed_distributions as getd
         return list(map(Distribution, getd(
             local_only=local_only, skip=skip,
@@ -155,6 +156,5 @@ def get_package_info(name=None, start=0, end=-1):
     res = list(search_packages_info([name]))
     if len(res) != 1:
         raise PQPipError(  # pragma: no cover
-            "Unexpected number of results {0} for {1}".format(
-                len(res), name))
+            f"Unexpected number of results {len(res)} for {name}")
     return res[0]

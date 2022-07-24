@@ -6,7 +6,6 @@
 import sys
 import os
 import unittest
-
 from pyquickhelper.pycode import ExtTestCase, skipif_vless, skipif_azure, skipif_appveyor
 from pyquickhelper.helpgen.utils_sphinx_config import NbImage
 from pyquickhelper.helpgen.post_process import remove_character_under32
@@ -18,12 +17,20 @@ from pyquickhelper.helpgen.sphinx_main import _import_conf_extract_parameter
 from pyquickhelper.helpgen.sphinx_helper import everything_but_python
 from pyquickhelper.helpgen.rst_converters import correct_indentation
 from pyquickhelper.helpgen.sphinxm_mock_app import MockSphinxApp
+from pyquickhelper.helpgen.utils_sphinx_config import _NbImage, getsitepackages
+from pyquickhelper.helpgen.sphinx_main_verification import SphinxVerificationException
+from pyquickhelper.helpgen.helpgen_exceptions import HelpGenException
 
 
 class TestMissingFunctionsHelpgen(ExtTestCase):
 
     def test_nb_image(self):
         r = NbImage("completion.png")
+        self.assertTrue(r is not None)
+        self.assertRaise(lambda: NbImage("_completion.png"), FileNotFoundError)
+        self.assertRaise(lambda: _NbImage(
+            "_completion.png"), FileNotFoundError)
+        r = _NbImage("completion.png")
         self.assertTrue(r is not None)
 
     def test_remove_character_under32(self):
@@ -92,6 +99,16 @@ class TestMissingFunctionsHelpgen(ExtTestCase):
         new_text = correct_indentation(text)
         ded = text.replace("            ", "")
         self.assertEqual(ded.strip(" \n\r"), new_text.strip(" \n\r"))
+
+    def test_getsitepackages(self):
+        res = getsitepackages()
+        self.assertIsInstance(res, list)
+
+    def test_SphinxVerificationException(self):
+        exc = SphinxVerificationException([])
+        self.assertNotEmpty(exc)
+        exc = HelpGenException('msg')
+        self.assertNotEmpty(exc)
 
 
 if __name__ == "__main__":

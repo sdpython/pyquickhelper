@@ -44,8 +44,7 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
                 else:
                     if text is None:
                         raise FileNotFoundError(  # pragma: no cover
-                            "Empty file '{0}' in '{1}'".format(
-                                name, filepath_or_buffer))
+                            f"Empty file '{name}' in '{filepath_or_buffer}'")
                     text = text.decode(
                         encoding=params.get('encoding', 'ascii'))
                     st = StringIO(text)

@@ -73,7 +73,7 @@ class TestGraphChanges (unittest.TestCase):
         try:
             exec(obj, globals(), locals())
         except Exception as e:
-            raise Exception("unable to run code:\n{0}".format(code)) from e
+            raise Exception(f"unable to run code:\n{code}") from e
 
 
 if __name__ == "__main__":

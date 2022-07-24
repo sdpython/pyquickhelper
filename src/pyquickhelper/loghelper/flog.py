@@ -291,7 +291,7 @@ def fLOGFormat(sep, *args, **kwargs):
     for k, v in kwargs.items():
         if k in ("OutputPrint", '_pp') and v:
             continue
-        message = st + "%s = %s%s" % (typstr(k), typstr(v), sep)
+        message = st + f"{typstr(k)} = {typstr(v)}{sep}"
         messages.append(message)
     return sep.join(messages)
 
@@ -559,15 +559,14 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
             if todo > 0 and zip7:  # pragma: no cover
                 dest = os.path.realpath(path_unzip)
                 cmd = '"' + _zip7_path + \
-                    '\\7z.exe" x -y -r -o"%s" "%s"' % (dest,
-                                                       os.path.realpath(filename))
+                    f'\\7z.exe" x -y -r -o"{dest}" "{os.path.realpath(filename)}"'
                 out, err = run_cmd(cmd, wait=True)
                 if len(err) > 0:
                     raise PQHException(
-                        "command {0} failed\n{1}".format(cmd, err))
+                        f"command {cmd} failed\n{err}")
                 if "Error" in out:
                     raise PQHException(
-                        "command {0} failed\n{1}".format(cmd, out))
+                        f"command {cmd} failed\n{out}")
             else:
                 dest = path_unzip
 
@@ -707,17 +706,17 @@ def _check_url_file(url, path_download, outfile, fLOG=noLOG):
             if (len(url) > 4 and
                     url[-4].lower() in [".txt", ".csv", ".tsv", ".log", '.tmpl']):
                 fLOG(  # pragma: no cover
-                    "[loghelper.flog] creating text file '{0}'".format(dest))
+                    f"[loghelper.flog] creating text file '{dest}'")
                 formatopen = "w"  # pragma: no cover
             else:
                 fLOG(
-                    "[loghelper.flog] creating binary file '{0}'".format(dest))
+                    f"[loghelper.flog] creating binary file '{dest}'")
                 formatopen = "wb"
 
             if os.path.exists(nyet):  # pragma: no cover
                 size = os.stat(dest).st_size
                 fLOG("[loghelper.flog] resume downloading (stop at",
-                     size, ") from '{0}'".format(url))
+                     size, f") from '{url}'")
                 request = urllib_request.Request(url)
                 request.add_header("Range", "bytes=%d-" % size)
                 fu = urllib_request.urlopen(request)
@@ -814,7 +813,7 @@ def removedirs(folder, silent=False, use_command_line=False):
         else:
             out, err = run_cmd("rm -Rf " + folder, wait=True)
         if len(err) > 0:  # pragma: no cover
-            raise Exception("Unable to remove '{0}'\n{1}".format(folder, err))
+            raise Exception(f"Unable to remove '{folder}'\n{err}")
         return out
 
     file, rep = [], []
@@ -1019,7 +1018,7 @@ def IsEmptyString(s):
     if isinstance(s, str):
         return len(s) == 0
     raise PQHException(  # pragma: no cover
-        "the type is unexpected {0}".format(type(s)))
+        f"the type is unexpected {type(s)}")
 
 
 def load_content_file_with_encoding(filename):

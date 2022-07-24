@@ -63,7 +63,7 @@ def depart_bigger_node_html(self, node):
     It does only html for the time being.
     """
     self.body.append(
-        '<font size="{1}">{0}</font>'.format(cgiesc.escape(node["text"]), node["size"]))
+        f"<font size=\"{node['size']}\">{cgiesc.escape(node['text'])}</font>")
 
 
 def visit_bigger_node_rst(self, node):
@@ -117,8 +117,8 @@ def depart_bigger_node(self, node):
     depart bigger_node for format other than html
     """
     logger = getLogger("bigger")
-    logger.warning("[depart_bigger_node] output only available for HTML not for '{0}'".format(
-        type(self)))
+    logger.warning(
+        "[depart_bigger_node] output only available for HTML not for %r", type(self))
 
 
 def setup(app):

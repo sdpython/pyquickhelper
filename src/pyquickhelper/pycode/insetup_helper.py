@@ -37,7 +37,7 @@ def run_build_ext(setup_file):
     exe = sys.executable
     setup = os.path.normpath(os.path.join(os.path.abspath(
         os.path.dirname(setup_file)), "setup.py"))
-    cmd = "{0} -u {1} build_ext --inplace".format(exe, setup)
+    cmd = f"{exe} -u {setup} build_ext --inplace"
     chd = os.path.abspath(os.path.dirname(setup_file))
     out, err = run_cmd(cmd, wait=True, change_path=chd)
     err0 = _filter_out_warning(err)

@@ -42,7 +42,7 @@ class SourceRepository:
                     self.module = GIT
                 except Exception as e:
                     raise Exception(
-                        "Unable to guess source repository type for location '{0}'. Error: '{1}'.".format(location, e))
+                        f"Unable to guess source repository type for location '{location}'. Error: '{e}'.")
             else:
                 self.module = SVN
         else:

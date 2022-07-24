@@ -40,7 +40,7 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
             if not os.path.exists(file):
                 continue
             if fLOG:
-                fLOG("[zip_files] '{0}'".format(file))
+                fLOG(f"[zip_files] '{file}'")
             st = os.stat(file)
             atime = datetime.datetime.fromtimestamp(st.st_atime)
             mtime = datetime.datetime.fromtimestamp(st.st_mtime)
@@ -50,7 +50,7 @@ def zip_files(filename, file_set, root=None, fLOG=noLOG):
                     new_mtime += (4 * 3600)  # new modification time
 
                 fLOG(
-                    "[zip_files] changing time timestamp for file '{0}'".format(file))
+                    f"[zip_files] changing time timestamp for file '{file}'")
                 os.utime(file, (st.st_atime, new_mtime))
 
             arcname = os.path.relpath(file, root) if root else None
@@ -84,22 +84,22 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
     except zipfile.BadZipFile as e:  # pragma: no cover
         if isinstance(zipf, BytesIO):
             raise e
-        raise IOError("Unable to read file '{0}'".format(zipf)) from e
+        raise IOError(f"Unable to read file '{zipf}'") from e
 
     files = []
     with zipfile.ZipFile(zipf, "r") as file:
         for info in file.infolist():
             if fLOG:
-                fLOG("[unzip_files] unzip '{0}'".format(info.filename))
+                fLOG(f"[unzip_files] unzip '{info.filename}'")
             if where_to is None:
                 try:
                     content = file.read(info.filename)
                 except zipfile.BadZipFile as e:  # pragma: no cover
                     if fail_if_error:
                         raise zipfile.BadZipFile(
-                            "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
+                            f"Unable to extract '{info.filename}' due to {e}") from e
                     warnings.warn(
-                        "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
+                        f"Unable to extract '{info.filename}' due to {e}", UserWarning)
                     continue
                 files.append((info.filename, content))
             else:
@@ -117,9 +117,9 @@ def unzip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True,
                     except zipfile.BadZipFile as e:  # pragma: no cover
                         if fail_if_error:
                             raise zipfile.BadZipFile(
-                                "Unable to extract '{0}' due to {1}".format(info.filename, e)) from e
+                                f"Unable to extract '{info.filename}' due to {e}") from e
                         warnings.warn(
-                            "Unable to extract '{0}' due to {1}".format(info.filename, e), UserWarning)
+                            f"Unable to extract '{info.filename}' due to {e}", UserWarning)
                         continue
                     # check encoding to avoid characters not allowed in paths
                     if not os.path.exists(tos):
@@ -225,7 +225,7 @@ def ungzip_files(filename, where_to=None, fLOG=noLOG, fvalid=None, remove_space=
                 return unzip_files(content, where_to=where_to, fLOG=fLOG)
             except Exception as e:  # pragma: no cover
                 raise IOError(
-                    "Unable to unzip file '{0}'".format(filename)) from e
+                    f"Unable to unzip file '{filename}'") from e
         elif where_to is not None:
             filename = os.path.split(filename)[-1].replace(".gz", "")
             filename = os.path.join(where_to, filename)
@@ -274,7 +274,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     if sys.platform.startswith("win"):  # pragma: no cover
         exe = r"C:\Program Files\7-Zip\7z.exe"
         if not os.path.exists(exe):
-            raise FileNotFoundError("unable to find: {0}".format(exe))
+            raise FileNotFoundError(f"unable to find: {exe}")
     elif sys.platform.startswith("darwin"):
         exe = "7za"  # pragma: no cover
     else:
@@ -282,7 +282,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
 
     if os.path.exists(filename_7z):
         raise FileException(  # pragma: no cover
-            "'{0}' already exists".format(filename_7z))
+            f"'{filename_7z}' already exists")
 
     notxist = [fn for fn in file_set if not os.path.exists(fn)]
     if len(notxist) > 0:
@@ -293,8 +293,7 @@ def zip7_files(filename_7z, file_set, fLOG=noLOG, temp_folder="."):
     with open(flist, "w", encoding="utf8") as f:
         f.write("\n".join(file_set))
 
-    cmd = '"{0}" -m0=lzma -mfb=64 a "{1}" "@{2}"'.format(
-        exe, filename_7z, flist)
+    cmd = f'"{exe}" -m0=lzma -mfb=64 a "{filename_7z}" "@{flist}"'
     out, err = run_cmd(cmd, wait=True)
     if "Error:" in out or not os.path.exists(filename_7z):
         raise FileException(  # pragma: no cover
@@ -335,7 +334,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
         if sys.platform.startswith("win"):  # pragma: no cover
             exe = r"C:\Program Files\7-Zip\7z.exe"
             if not os.path.exists(exe):
-                raise FileNotFoundError("unable to find: {0}".format(exe))
+                raise FileNotFoundError(f"unable to find: {exe}")
 
             if where_to is None:
                 where_to = os.path.abspath(".")
@@ -344,11 +343,11 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
         else:
             exe = "7z"
 
-        cmd = '"{0}" x "{1}" -o{2}'.format(exe, zipf, where_to)
+        cmd = f'"{exe}" x "{zipf}" -o{where_to}'
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         if len(err) > 0 or "Error:" in out:
             raise FileException(  # pragma: no cover
-                "Unable to un-7zip file '{0}'\n--CMD--\n{3}\n--OUT--\n{1}\n--ERR--\n{2}".format(zipf, out, err, cmd))
+                f"Unable to un-7zip file '{zipf}'\n--CMD--\n{cmd}\n--OUT--\n{out}\n--ERR--\n{err}")
 
         return explore_folder(where_to)[1]
     else:
@@ -390,7 +389,7 @@ def un7zip_files(zipf, where_to=None, fLOG=noLOG, fvalid=None,
                             raise TypeError(
                                 "Cannot switch to command line unless zipf is a file.") from e
                         warnings.warn(
-                            "[un7zip_files] '{0}' --> Unavailable format. Use command line.".format(zipf), UserWarning)
+                            f"[un7zip_files] '{zipf}' --> Unavailable format. Use command line.", UserWarning)
                         return un7zip_files(file_zipf, where_to=where_to, fLOG=fLOG, fvalid=fvalid,
                                             remove_space=remove_space, cmd_line=True)
                     except Exception as e:  # pragma: no cover
@@ -458,17 +457,15 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
     if sys.platform.startswith("win"):  # pragma: no cover
         exe = r"C:\Program Files\7-Zip\7z.exe"
         if not os.path.exists(exe):
-            raise FileNotFoundError("unable to find: {0}".format(exe))
+            raise FileNotFoundError(f"unable to find: {exe}")
 
         if where_to is None:
             where_to = os.path.abspath(".")
-        cmd = '"{0}" x "{1}" "-o{2}"'.format(exe, zipf, where_to)
+        cmd = f'"{exe}" x "{zipf}" "-o{where_to}"'
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
         if len(err) > 0 or "Error:" in out:
             raise FileException(
-                "Unable to unrar file '{0}'\n"
-                "--OUT--\n{1}\n--ERR--\n{2}".format(
-                    zipf, out, err))
+                f"Unable to unrar file '{zipf}'\n--OUT--\n{out}\n--ERR--\n{err}")
 
         return explore_folder(where_to)[1]
     else:
@@ -476,11 +473,11 @@ def unrar_files(zipf, where_to=None, fLOG=noLOG, fvalid=None, remove_space=True)
 
         if where_to is None:
             where_to = os.path.abspath(".")
-        cmd = '"{0}" x "{1}"'.format(exe, zipf)
+        cmd = f'"{exe}" x "{zipf}"'
         out, err = run_cmd(cmd, wait=True, fLOG=fLOG, change_path=where_to)
         if len(err) > 0:
             raise FileException(  # pragma: no cover
-                "Unable to unrar file '{0}'\n--CMD--\n{3}\n--OUT--\n{1}\n--ERR--\n{2}".format(zipf, out, err, cmd))
+                f"Unable to unrar file '{zipf}'\n--CMD--\n{cmd}\n--OUT--\n{out}\n--ERR--\n{err}")
 
         return explore_folder(where_to)[1]
 

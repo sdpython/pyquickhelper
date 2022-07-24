@@ -23,42 +23,42 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     """
     Defines variables for :epkg:`Sphinx`.
 
-    @param      fileconf                location of the configuration file
-    @param      module_name             name of the module
-    @param      author                  author
-    @param      year                    year
-    @param      theme                   theme to use
-    @param      theme_path              theme path (sets ``html_theme_path``)
-    @param      ext_locals              context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
-    @param      add_extensions          additional extensions
-    @param      bootswatch_theme        for example, ``spacelab``, look at
-                                        `spacelab <https://bootswatch.com/spacelab/>`_
-    @param      bootswatch_navbar_links see `sphinx-bootstrap-theme <https://ryan-roemer.github.io/
-                                        sphinx-bootstrap-theme/README.html>`_
-    @param      description_latex       description latex
-    @param      use_mathjax             set up the documentation to use mathjax,
-                                        see `sphinx.ext.mathjax
-                                        <https://www.sphinx-doc.org/en/master/usage/extensions/math.html>`_,
-                                        default option is True
-    @param      use_lunrsearch          suggest autocompletion in sphinx,
-                                        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/
-                                        sphinxcontrib-lunrsearch>`_
-    @param      enable_disabled_parts   @see fn remove_undesired_part_for_documentation
-    @param      sharepost               add share button to share blog post on usual networks
-    @param      custom_style            custom style sheet
-    @param      extlinks                parameter `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
-                                        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
-    @param      github_user             git(hub) user
-    @param      github_repo             git(hub) project
-    @param      title                   if not None, use *title* instead of *module_name* as a title
-    @param      book                    the output is a book
-    @param      link_resolve            url where the documentation is published,
-                                        used for parameter *linkcode_resolve*
-    @param      nblayout                ``'classic'`` or ``'table'``, specifies the layout for
-                                        the notebook gallery
-    @param      doc_version             if not None, overwrites the current version
-    @param      branch                  default branch (`'master'` by default)
-    @param      callback_begin          function to call when the documentation is generated
+    :param fileconf: location of the configuration file
+    :param module_name: name of the module
+    :param author: author
+    :param year: year
+    :param theme: theme to use
+    :param theme_path: theme path (sets ``html_theme_path``)
+    :param ext_locals: context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
+    :param add_extensions: additional extensions
+    :param bootswatch_theme: for example, ``spacelab``, look at
+        `spacelab <https://bootswatch.com/spacelab/>`_
+    :param bootswatch_navbar_links: see `sphinx-bootstrap-theme <https://ryan-roemer.github.io/
+        sphinx-bootstrap-theme/README.html>`_
+    :param description_latex: description latex
+    :param use_mathjax: set up the documentation to use mathjax,
+        see `sphinx.ext.mathjax
+        <https://www.sphinx-doc.org/en/master/usage/extensions/math.html>`_,
+        default option is True
+    :param use_lunrsearch: suggest autocompletion in sphinx,
+        see `sphinxcontrib-lunrsearch <https://github.com/rmcgibbo/
+        sphinxcontrib-lunrsearch>`_
+    :param enable_disabled_parts: @see fn remove_undesired_part_for_documentation
+    :param sharepost: add share button to share blog post on usual networks
+    :param custom_style: custom style sheet
+    :param extlinks: parameter `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
+        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
+    :param github_user: git(hub) user
+    :param github_repo: git(hub) project
+    :param title: if not None, use *title* instead of *module_name* as a title
+    :param book: the output is a book
+    :param link_resolve: url where the documentation is published,
+        used for parameter *linkcode_resolve*
+    :param nblayout: ``'classic'`` or ``'table'``, specifies the layout for
+        the notebook gallery
+    :param doc_version: if not None, overwrites the current version
+    :param branch: default branch (`'master'` by default)
+    :param callback_begin: function to call when the documentation is generated
 
     If the parameter *custom_style* is not None, it will call ``app.add_css_file(custom_style)``
     in the setup.
@@ -187,32 +187,29 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     project = (project_var_name + ' documentation') if title is None else title
     copyright = str(year) + ", " + author
     release = (version if len(version.split('.')) < 3
-               else "%s.%s" % (version, first_line))
-    html_title = ("%s %s" % (project_var_name, release)
+               else f"{version}.{first_line}")
+    html_title = (f"{project_var_name} {release}"
                   ) if title is None else title
-    htmlhelp_basename = '%s_doc' % project_var_name
+    htmlhelp_basename = f'{project_var_name}_doc'
     enable_disabled_parts = enable_disabled_parts  # pylint: disable=W0127
-
-    html_show_copyright = False
-    html_show_sphinx = False
 
     # personnalization latex
     _proj = project_var_name.replace("_", "\\_")
     latex_book = book
     latex_use_parts = False
-    latex_documents = [('index', '%s_doc.tex' % project_var_name,
+    latex_documents = [('index', f'{project_var_name}_doc.tex',
                         _proj if title is None else title,
                         author, 'manual', True), ]
     latex_docclass = dict(manual='report', howto='report')
-    man_pages = [('index', '%s_doc' % project_var_name,
-                  ('%s Documentation' % _proj) if title is None else title,
+    man_pages = [('index', f'{project_var_name}_doc',
+                  f'{_proj} Documentation' if title is None else title,
                   [author], 1)]
     texinfo_documents = [
-        ('index', ('%s documentation' % _proj)
+        ('index', (f'{_proj} documentation')
          if title is None else title,
-         ('%s' % _proj) if title is None else title,
+         f'{_proj}' if title is None else title,
          author,
-         ('%s documentation' % _proj) if title is None else title,
+         f'{_proj} documentation' if title is None else title,
          description_latex, 'Miscellaneous')]
     latex_show_pagerefs = True
 
@@ -264,7 +261,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         jupyter_sphinx_thebelab_config = {  # pragma: no cover
             'requestKernel': True,
             'binderOptions': {
-                'repo': "sdpython/pyquickhelper/%s?filepath=_doc" % branch
+                'repo': f"sdpython/pyquickhelper/{branch}?filepath=_doc"
                 # 'repo': "{0}/{1}/master?filepath=_doc%2Fnotebooks".format(
                 #    github_user, module_name)
             }}
@@ -313,7 +310,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         try:
             import sphinx_gallery.gen_rst
         except ValueError as e:  # pragma: no cover
-            raise ValueError("Issue with sphinx-gallery.\n{0}".format(e))
+            raise ValueError(f"Issue with sphinx-gallery.\n{e}")
 
     extensions.extend([
         'sphinx.ext.autodoc', 'sphinx.ext.autosummary', 'sphinx.ext.coverage',
@@ -440,8 +437,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             if 'anchor' not in githublink_options and 'github' in extlinks['issue'][0].lower():
                 githublink_options["anchor"] = 'source on GitHub'
             if not github_repo and extlinks['issue'][0].startswith("https://github.com"):
-                github_repo = "https://github.com/{0}/{1}.git".format(
-                    user, project)
+                github_repo = f"https://github.com/{user}/{project}.git"
 
     # themes
     if html_theme == "bootstrap":  # pragma: no cover
@@ -511,7 +507,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         if not info['module']:
             return None
         filename = info['module'].replace('.', '/')
-        return "%s/%s.py" % (link_resolve, filename)
+        return f"{link_resolve}/{filename}.py"
 
     if link_resolve is not None:
         linkcode_resolve = linkcode_resolve_function
@@ -539,7 +535,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
         for res in readmes:
             if not has_sphinx_gallery:
                 raise ImportError(  # pragma: no cover
-                    "sphinx_gallery is not present for gallery '{0}'".format(exa))
+                    f"sphinx_gallery is not present for gallery '{exa}'")
             last = res.parts[-2]
             if last.startswith("temp_"):
                 continue  # pragma: no cover
@@ -560,11 +556,11 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             dest = os.path.join(dirname, last)
             if dest in gallery_dirs:
                 raise ValueError(  # pragma: no cover
-                    "Gallery '{0}' already exists (source='{1}', last={2}).".format(dest, nn, last))
+                    f"Gallery '{dest}' already exists (source='{nn}', last={last}).")
             gallery_dirs.append(dest)
         if len(examples_dirs) == 0:
             raise ValueError(  # pragma: no cover
-                "Unable to find any 'README.txt' in '{0}'.".format(exa))
+                f"Unable to find any 'README.txt' in '{exa}'.")
         reference_url = {k: v[0] for k, v in intersphinx_mapping.items()}
         example_dir = os.path.join(dirname, "gallery")
         if not os.path.exists(example_dir):
@@ -714,7 +710,7 @@ def custom_setup(app, author):
         app.connect("autodoc-skip-member", _skip)
     except ExtensionError as e:  # pragma: no cover
         # No event autodoc-skip-member.
-        warnings.warn("Sphinx extension error {0}".format(e), RuntimeError)
+        warnings.warn(f"Sphinx extension error {e}", RuntimeError)
     if 'author' not in app.config.values:
         app.add_config_value('author', author, True)
 
@@ -734,7 +730,7 @@ def custom_setup(app, author):
         if name == "image":
             name = "pyquickhelper.sphinxext.sphinximages.sphinxtrib.images"
         else:
-            name = 'pyquickhelper.sphinxext.sphinx_%s_extension' % name
+            name = f'pyquickhelper.sphinxext.sphinx_{name}_extension'
         app.extensions[name] = Extension(name, ext.__module__, **meta)
 
     try:

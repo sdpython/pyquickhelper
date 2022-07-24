@@ -69,7 +69,7 @@ def default_engines(platform=None):
                    WinPython37="ERROR")
     else:
         raise ValueError(  # pragma: no cover
-            "Unknown value for platform '{0}'.".format(platform))
+            f"Unknown value for platform '{platform}'.")
 
     return res
 

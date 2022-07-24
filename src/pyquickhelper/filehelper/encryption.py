@@ -118,7 +118,7 @@ def get_encryptor(key, algo="AES", chunksize=2 ** 24, **params):
         chunksize = chunksize  # pylint: disable=W0127
         if len(key) not in ksize:
             raise EncryptionError(
-                "len(key)=={0} should be of length {1}".format(len(key), str(ksize)))
+                f"len(key)=={len(key)} should be of length {str(ksize)}")
         if "out_stream" in params:
             iv = bytes([random.randint(0, 0xFF) for i in range(16)])
             params["out_stream"].write(struct.pack('<Q', params["in_size"]))

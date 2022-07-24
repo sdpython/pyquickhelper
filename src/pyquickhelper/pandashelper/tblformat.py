@@ -292,10 +292,10 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
 
         def boldify(x):
             try:
-                return "**{0}**".format(x)
+                return f"**{x}**"
             except Exception as e:  # pragma: no cover
                 raise Exception(
-                    "Unable to boldify type {0}".format(type(x))) from e
+                    f"Unable to boldify type {type(x)}") from e
 
         try:
             values = df[ind].apply(boldify)
@@ -317,7 +317,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 m = (length - len(s)) // 2
                 return " " * m + s + " " * (length - m - len(s))
             raise ValueError(  # pragma: no cover
-                "align should be 'l', 'r', 'c' not '{0}'".format(align))
+                f"align should be 'l', 'r', 'c' not '{align}'")
         return s
 
     def complete(cool):
@@ -355,7 +355,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             res = "    * -" + one
             return res
 
-        rows = [".. list-table:: {0}".format(title if title else "").strip()]
+        rows = [f".. list-table:: {title if title else ''}".strip()]
         if column_size is None:
             rows.append("    :widths: auto")
         else:
@@ -383,7 +383,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
                 for i in range(len(length)):
                     if not isinstance(column_size[i], int):
                         raise TypeError(  # pragma: no cover
-                            "column_size[{0}] is not an integer".format(i))
+                            f"column_size[{i}] is not an integer")
                     length[i] *= column_size[i]
             elif isinstance(column_size, dict):
                 for i, c in enumerate(df.columns):
@@ -400,14 +400,13 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
         length = [_ + ic for _ in length]
         line = ["-" * lc for lc in length]
         lineb = ["=" * lc for lc in length]
-        sline = "+%s+" % ("+".join(line))
-        slineb = "+%s+" % ("+".join(lineb))
+        sline = f"+{'+'.join(line)}+"
+        slineb = f"+{'+'.join(lineb)}+"
         res = [sline]
 
-        res.append("| %s |" % " | ".join(
-            map(complete, zip(length, df.columns))))
+        res.append(f"| {' | '.join(map(complete, zip(length, df.columns)))} |")
         res.append(slineb)
-        res.extend(["| %s |" % " | ".join(map(complete, zip(length, row)))
+        res.extend([f"| {' | '.join(map(complete, zip(length, row)))} |"
                     for row in df.values])
         if add_line:
             t = len(res)
@@ -430,16 +429,16 @@ def df2html(self, class_table=None, class_td=None, class_tr=None,
     :param class_th: adds a class to the tag ``th`` (None for none)
     :return: HTML
     """
-    clta = ' class="%s"' % class_table if class_table is not None else ""
-    cltr = ' class="%s"' % class_tr if class_tr is not None else ""
-    cltd = ' class="%s"' % class_td if class_td is not None else ""
-    clth = ' class="%s"' % class_th if class_th is not None else ""
+    clta = f' class="{class_table}"' if class_table is not None else ""
+    cltr = f' class="{class_tr}"' if class_tr is not None else ""
+    cltd = f' class="{class_td}"' if class_td is not None else ""
+    clth = f' class="{class_th}"' if class_th is not None else ""
 
-    rows = ["<table%s>" % clta]
-    rows.append(("<tr%s><th%s>" % (cltr, clth)) + ("</th><th%s>" %
-                                                   clth).join(self.columns) + "</th></tr>")
-    septd = "</td><td%s>" % cltd
-    strtd = "<tr%s><td%s>" % (cltr, cltd)
+    rows = [f"<table{clta}>"]
+    rows.append(f"<tr{cltr}><th{clth}>" + ("</th><th%s>" %
+                                           clth).join(self.columns) + "</th></tr>")
+    septd = f"</td><td{cltd}>"
+    strtd = f"<tr{cltr}><td{cltd}>"
 
     typstr = str
 

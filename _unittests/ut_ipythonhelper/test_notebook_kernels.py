@@ -46,12 +46,12 @@ class TestNotebookKernels(unittest.TestCase):
             loc = install_jupyter_kernel(kernel_name=kern)
         except PermissionError as e:
             warnings.warn(
-                "Unable to install a new kernel with this user: {0}".format(e))
+                f"Unable to install a new kernel with this user: {e}")
             return
         fLOG("i", loc)
         if kern not in loc:
             raise Exception(
-                "do not match '{0}' not in '{1}'".format(kern, loc))
+                f"do not match '{kern}' not in '{loc}'")
         self.assertTrue(os.path.exists(loc))
         res = get_notebook_kernel(kern)
         fLOG("i", res)

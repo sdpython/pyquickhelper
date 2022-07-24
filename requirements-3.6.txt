@@ -38,7 +38,7 @@ pycodestyle>=2.0.0
 pycryptodomex
 pydocstyle
 pyinstrument
-pylint>=2.14.0
+pylint
 pylzma
 pyquicksetup
 pysftp

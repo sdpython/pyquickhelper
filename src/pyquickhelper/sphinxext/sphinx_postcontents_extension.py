@@ -131,13 +131,12 @@ def _modify_postcontents(node, event):
     for _, subnode in traverse(parent):
         if isinstance(subnode, nodes.section):
             if len(subnode["ids"]) == 0:
-                subnode["ids"].append("postid-{}".format(id(subnode)))
+                subnode["ids"].append(f"postid-{id(subnode)}")
             nid = subnode["ids"][0]
             if nid in memo:
                 raise KeyError(  # pragma: no cover
-                    "node was already added '{0}'".format(nid))
-            logger.info("[{}]  {}section id '{}'".format(
-                event, "  " * level, nid))
+                    f"node was already added '{nid}'")
+            logger.info("[%r]  %ssection id %r", event, '  ' * level, nid)
             level += 1
             memo[nid] = subnode
             bli = nodes.bullet_list()
@@ -145,8 +144,8 @@ def _modify_postcontents(node, event):
             roots.append(bli)
             sections.append(subnode)
         elif isinstance(subnode, nodes.title):
-            logger.info("[{}]  {}title '{}'".format(
-                event, "  " * level, subnode.astext()))
+            logger.info("[%r]  %stitle %r", event,
+                        '  ' * level, subnode.astext())
             par = nodes.paragraph()
             ref = nodes.reference(refid=sections[-1]["ids"][0],
                                   reftitle=subnode.astext(),
@@ -161,8 +160,8 @@ def _modify_postcontents(node, event):
                 ids = None if len(parent["ids"]) == 0 else parent["ids"][0]
                 if ids in memo:
                     level -= 1
-                    logger.info("[{}]  {}end of section '{}'".format(
-                        event, "  " * level, parent["ids"]))
+                    logger.info("[%r]  %send of section %r",
+                                event, "  " * level, parent["ids"])
                     sections.pop()
                     roots.pop()
 
@@ -200,8 +199,8 @@ def transform_postcontents(app, doctree, fromdocname):
 
     for node in post_list:
         if node["pcprocessed"] != 1:
-            logger.warning("[postcontents] no first loop was ever processed: 'pcprocessed'={0} , File '{1}', line {2}".format(
-                node["pcprocessed"], node["pcdocname"], node["pclineno"]))
+            logger.warning("[postcontents] no first loop was ever processed: 'pcprocessed'=%s , File %r, line %r",
+                           node["pcprocessed"], node["pcdocname"], node["pclineno"])
             continue
         if len(node.children) > 0:
             # already processed

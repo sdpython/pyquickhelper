@@ -108,7 +108,7 @@ class TodoExt(BaseAdmonition):
         docname = None if env is None else env.docname
         if docname is not None:
             docname = docname.replace("\\", "/").split("/")[-1]
-            legend = "{0}:{1}".format(docname, lineno)
+            legend = f"{docname}:{lineno}"
         else:
             legend = ''
 
@@ -150,7 +150,7 @@ class TodoExt(BaseAdmonition):
                 fcost = float(cost)
             except ValueError:
                 raise ValueError(
-                    "unable to convert cost '{0}' into float".format(cost))
+                    f"unable to convert cost '{cost}' into float")
         else:
             fcost = 0.0
 
@@ -184,18 +184,18 @@ class TodoExt(BaseAdmonition):
         if len(todotag) > 0:
             infos.append(todotag)
         if len(prio) > 0:
-            infos.append('P=%s' % prio)
+            infos.append(f'P={prio}')
         if fcost > 0:
             if int(fcost) == fcost:
                 infos.append('C=%d' % int(fcost))
             else:
-                infos.append('C=%1.1f' % fcost)
+                infos.append(f'C={fcost:1.1f}')
         if todorelease:
-            infos.append('v{0}'.format(todorelease))
+            infos.append(f'v{todorelease}')
         if tododate:
             infos.append(tododate)
         if infos:
-            prefix += "({0})".format(" - ".join(infos))
+            prefix += f"({' - '.join(infos)})"
 
         # main node
         title = nodes.title(text=locale_(prefix + title))
@@ -214,7 +214,7 @@ class TodoExt(BaseAdmonition):
             todoext.clear()
 
         if env is not None:
-            targetid = 'indextodoe-%s' % env.new_serialno('indextodoe')
+            targetid = f"indextodoe-{env.new_serialno('indextodoe')}"
             targetnode = nodes.target(legend, '', ids=[targetid])
             set_source_info(self, targetnode)
             self.state.add_target(targetid, '', targetnode, lineno)
@@ -308,7 +308,7 @@ class TodoExtList(Directive):
         tag = self.options.get('tag', '').strip()
         tsort = self.options.get('sort', '').strip()
         if env is not None:
-            targetid = 'indextodoelist-%s' % env.new_serialno('indextodoelist')
+            targetid = f"indextodoelist-{env.new_serialno('indextodoelist')}"
             targetnode = nodes.target('', '', ids=[targetid])
             n = todoextlist('')
             n["todotag"] = tag
@@ -360,9 +360,9 @@ def process_todoext_nodes(app, doctree, fromdocname):
             tsort = 'source'
         if tsort not in allowed_tsort:
             raise ValueError(
-                "option sort must in {0}, '{1}' is not".format(allowed_tsort, tsort))
+                f"option sort must in {allowed_tsort}, '{tsort}' is not")
 
-        double_list = [(info.get('todo%s' % tsort, ''),
+        double_list = [(info.get(f'todo{tsort}', ''),
                         info.get('todotitle', ''), info)
                        for info in env.todoext_all_todosext]
         double_list.sort(key=lambda x: x[:2])
@@ -376,7 +376,7 @@ def process_todoext_nodes(app, doctree, fromdocname):
 
             para = nodes.paragraph(classes=['todoext-source'])
             if app.config['todoext_link_only']:
-                description = locale_('<<%s>>' % orig_entry)
+                description = locale_(f'<<{orig_entry}>>')
             else:
                 description = (
                     locale_(todomes) %
@@ -426,12 +426,12 @@ def process_todoext_nodes(app, doctree, fromdocname):
 
         if fcost > 0:  # pragma: no cover
             cost = nodes.paragraph()
-            lab = "{0} items, cost: {1}".format(nbtodo, fcost)
+            lab = f"{nbtodo} items, cost: {fcost}"
             cost += nodes.Text(lab)
             content.append(cost)
         else:
             cost = nodes.paragraph()
-            lab = "{0} items".format(nbtodo)
+            lab = f"{nbtodo} items"
             cost += nodes.Text(lab)
             content.append(cost)
 

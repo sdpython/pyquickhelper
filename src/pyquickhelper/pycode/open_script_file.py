@@ -18,7 +18,7 @@ def detect_encoding(filename):
     elif isinstance(filename, bytes):
         enc = filename
     else:
-        raise TypeError("Unexpected type %r." % type(filename))
+        raise TypeError(f"Unexpected type {type(filename)!r}.")
     s = enc.decode("ascii", errors="ignore")
     s = s.replace(" ", "").replace("\r", "")
     d = "#-*-coding:"

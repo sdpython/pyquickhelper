@@ -74,11 +74,11 @@ class TestYamlExe(unittest.TestCase):
             obj, variables=context))
         for r, var in res:
             conv = convert_sequence_into_batch_file(r, variables=var)
-            if ("%s " % command) not in conv:
-                raise Exception("{0}\n--\n{1}".format(command, conv))
+            if (f"{command} ") not in conv:
+                raise Exception(f"{command}\n--\n{conv}")
             fLOG("####", conv)
             ext = "bat" if command == "dir" else "sh"
-            name = os.path.join(temp, "yml.%s" % ext)
+            name = os.path.join(temp, f"yml.{ext}")
             with open(name, "w") as f:
                 f.write(conv)
             if is_travis_or_appveyor() == "__travis":
@@ -93,18 +93,18 @@ class TestYamlExe(unittest.TestCase):
                     out, err = run_cmd(cmd, wait=True)
                 except PermissionError as e:
                     raise Exception(
-                        "Unable to execute '{0}' which contains\n{1}".format(name, conv)) from e
+                        f"Unable to execute '{name}' which contains\n{conv}") from e
                 fLOG("###")
                 fLOG(out)
                 if "BEFORE_SCRIPT" not in out:
                     raise Exception(
-                        "{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                        f"{out}\nERR\n{err}\n#########\n{conv}")
                 if "AFTER_SCRIPT" not in out:
                     raise Exception(
-                        "{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                        f"{out}\nERR\n{err}\n#########\n{conv}")
                 if "SCRIPT" not in out:
                     raise Exception(
-                        "{0}\nERR\n{2}\n#########\n{1}".format(out, conv, err))
+                        f"{out}\nERR\n{err}\n#########\n{conv}")
 
 
 if __name__ == "__main__":

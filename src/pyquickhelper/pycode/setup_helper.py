@@ -249,7 +249,7 @@ def process_standard_options_for_setup(
     if module_name is not None and (
             len(module_name) == 0 or module_name[0] == '_'):
         raise RuntimeError(  # pragma: no cover
-            "module cannot be empty or start with '_': %r." % module_name)
+            f"module cannot be empty or start with '_': {module_name!r}.")
     if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
@@ -273,7 +273,7 @@ def process_standard_options_for_setup(
     folder = file_or_folder if os.path.isdir(
         file_or_folder) else os.path.dirname(file_or_folder)
     unit_test_folder = os.path.join(folder, "_unittests")
-    fLOG("unittest_modules={0}".format(unittest_modules))
+    fLOG(f"unittest_modules={unittest_modules}")
 
     if unittest_modules is None:
         unittest_modules_py3to2 = None
@@ -475,7 +475,7 @@ def process_standard_options_for_setup(
         binto = os.path.join(folder, "bin")
         if not os.path.exists(binto):
             os.mkdir(binto)
-        with open(os.path.join(folder, "bin", "auto_unittest_setup_help.%s" % get_script_extension()), "w") as f:
+        with open(os.path.join(folder, "bin", f"auto_unittest_setup_help.{get_script_extension()}"), "w") as f:
             f.write(script)
 
         for c in ("build_script", "clean_space",
@@ -488,7 +488,7 @@ def process_standard_options_for_setup(
                 c, project_var_name, requirements=requirements, port=port, platform=sys.platform,
                 default_engine_paths=default_engine_paths, additional_local_path=additional_local_path)
             cn = c.replace(" ", "_")
-            with open(os.path.join(folder, "bin", "auto_setup_%s.%s" % (cn, get_script_extension())), "w") as f:
+            with open(os.path.join(folder, "bin", f"auto_setup_{cn}.{get_script_extension()}"), "w") as f:
                 f.write(sc)
 
         # script running for a developper
@@ -517,7 +517,7 @@ def process_standard_options_for_setup(
                 with open(os.path.join(folder_setup, "auto_setup_dep.py"), "w") as f:
                     f.write(sc)
             else:
-                with open(os.path.join(folder, "bin", "auto_cmd_%s.%s" % (c, get_script_extension())), "w") as f:
+                with open(os.path.join(folder, "bin", f"auto_cmd_{c}.{get_script_extension()}"), "w") as f:
                     f.write(sc)
 
         # script for anybody
@@ -543,7 +543,7 @@ def process_standard_options_for_setup(
     elif "local_pypi" in argv:  # pragma: no cover
         # delayed import
         from ..filehelper import get_url_content_timeout
-        url = "http://localhost:{0}/".format(port)
+        url = f"http://localhost:{port}/"
         content = get_url_content_timeout(url, timeout=5)
         if content is None or len(content) == 0:
             raise Exception("test failed for url: " + url)
@@ -627,7 +627,7 @@ def write_version_for_setup(file_or_folder, exc=False, module_name=None):
         return None
     if version in ["0", 0, None]:
         raise Exception(  # pragma: no cover
-            "issue with version {0}".format(version))
+            f"issue with version {version}")
 
     # write version number
     if version is not None:
@@ -913,8 +913,7 @@ def process_standard_options_for_setup_help(argv):
     if "--help-commands" in argv:
         print("Commands processed by pyquickhelper:")
         for k, v in sorted(commands.items()):
-            print("  {0}{1}{2}".format(
-                k, " " * (len("copy27            ") - len(k)), v))
+            print(f"  {k}{' ' * (len('copy27            ') - len(k))}{v}")
         print()
     elif "--help" in argv:
         docu = 0
@@ -932,11 +931,10 @@ def process_standard_options_for_setup_help(argv):
             for k, v in sorted(commands.items()):
                 if k in argv:
                     docu += 1
-                    print("  setup.py {0}{1}{2}".format(
-                        k, " " * (20 - len(k)), v))
+                    print(f"  setup.py {k}{' ' * (20 - len(k))}{v}")
                     if k == "unittests":
                         print(
-                            "\n      {0} [-d seconds] [-f file] [-e regex] [-g regex]\n\n      {1}".format(k, v))
+                            f"\n      {k} [-d seconds] [-f file] [-e regex] [-g regex]\n\n      {v}")
                         print(
                             "      -d seconds     run all unit tests for which predicted duration is below a given threshold.")
                         print(
@@ -949,7 +947,7 @@ def process_standard_options_for_setup_help(argv):
                     elif k == "local_jenkins":  # pragma: no cover
                         print()
                         print(
-                            "      {0} user password [location] [server]".format(k))
+                            f"      {k} user password [location] [server]")
                         print("      default location is /var/lib/jenkins/workspace")
                         print("      default server is http://localhost:8080/")
                         print()
@@ -992,7 +990,7 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
     if command is not None:
         if command not in default_set:
             raise ValueError(  # pragma: no cover
-                "command {0} is not available in {1}".format(command, default_set))
+                f"command {command} is not available in {default_set}")
         commands = {command}
     else:
         commands = default_set
@@ -1014,7 +1012,7 @@ def write_module_scripts(folder, platform=sys.platform, blog_list=None,
                 res.append(name)
             else:  # pragma: no cover
                 name = os.path.join(
-                    folder, "bin", "auto_run_%s.%s" % (c, get_script_extension()))
+                    folder, "bin", f"auto_run_{c}.{get_script_extension()}")
                 with open(name, "w") as f:
                     f.write(item)
                 res.append(name)
@@ -1089,7 +1087,7 @@ def build_history_from_setup(dest, owner, module, existing_history=None,
             "owner must be specified.")
     if "/" in owner:
         raise ValueError(  # pragma: no cover
-            "owner %r cannot contain '/'." % owner)
+            f"owner {owner!r} cannot contain '/'.")
     if fLOG is None:  # pragma: no cover
         from ..loghelper.flog import noLOG
         fLOG = noLOG
@@ -1142,7 +1140,7 @@ def modifies_init_file(folder, version, module_name=None):
             vs[-1] = nv
             return '.'.join(vs)
         raise ValueError(  # pragma: no cover
-            "Unable to process '{}' with new version '{}'.".format(v, nv))
+            f"Unable to process '{v}' with new version '{nv}'.")
 
     filename = None
     if os.path.exists(folder):
@@ -1172,16 +1170,16 @@ def modifies_init_file(folder, version, module_name=None):
                 filename = os.path.join(folder, module_name, '__init__.py')
             else:
                 raise FileNotFoundError(  # pragma: no cover
-                    "Unable to find '__init__.py' in '{}' (module_name is None).".format(folder))
+                    f"Unable to find '__init__.py' in '{folder}' (module_name is None).")
         if not os.path.exists(filename):
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to find '__init__.py' in '{}' (got '{}').".format(folder, filename))
+                f"Unable to find '__init__.py' in '{folder}' (got '{filename}').")
         with open(filename, 'r', encoding='utf-8') as f:
             content = f.read()
     elif '__version__' in folder:
         content = folder
     else:
-        raise ValueError("Unable to process '{}'.".format(folder))
+        raise ValueError(f"Unable to process '{folder}'.")
 
     reg = re.compile("(__version__ = ['\\\"]([0-9.]+)['\\\"])")
     lines = content.split('\n')
@@ -1192,7 +1190,7 @@ def modifies_init_file(folder, version, module_name=None):
             find = reg.findall(line)
             if len(find) != 1:
                 raise ValueError(  # pragma: no cover
-                    "Unable to find __version__ in '{}'".format(line))
+                    f"Unable to find __version__ in '{line}'")
             v = find[0][1]
             nv = _update_version(v, str(version))
             newline = line.replace(v, nv)
@@ -1202,7 +1200,7 @@ def modifies_init_file(folder, version, module_name=None):
             modif.append(line)
     if len(rep) == 0:
         raise ValueError(  # pragma: no cover
-            "Unable to find '__version__' in \n{}".format(content))
+            f"Unable to find '__version__' in \n{content}")
 
     content = '\n'.join(modif)
     if filename is not None:

@@ -41,11 +41,10 @@ class AutoCompletion:
         """
         if member in self.__dict__:
             raise NameError(  # pragma: no cover
-                "Unable to add member {0} because it already exists".format(
-                    member))
+                f"Unable to add member {member} because it already exists")
         if member.startswith("_"):
             raise NameError(  # pragma: no cover
-                "A member cannot start by _: {0}".format(member))
+                f"A member cannot start by _: {member}")
         if isinstance(value, AutoCompletion):
             self.__dict__[member] = value
             return value
@@ -115,7 +114,7 @@ class AutoCompletionFile(AutoCompletion):
         """
         if not os.path.exists(value):
             raise FileNotFoundError(  # pragma: no cover
-                "{0} does not exists".format(value))
+                f"{value} does not exists")
         AutoCompletion.__init__(self, os.path.normpath(os.path.abspath(value)))
         self._populate()
 

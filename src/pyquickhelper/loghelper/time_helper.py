@@ -34,16 +34,16 @@ def repeat_execution(fct, every_second=1, stop_after_second=5,
         if exc:
             r = fct()
             if verbose > 0 and fLOG is not None:
-                fLOG("[repeat_execution] iter={} time={} end={}".format(
-                    iter, current, end))
+                fLOG(
+                    f"[repeat_execution] iter={iter} time={current} end={end}")
             if stop_after_second is not None:
                 res.append(r)
         else:
             try:
                 r = fct()
                 if verbose > 0 and fLOG is not None:
-                    fLOG("[repeat_execution] iter={} time={} end={}".format(
-                        iter, current, end))
+                    fLOG(
+                        f"[repeat_execution] iter={iter} time={current} end={end}")
                 if stop_after_second is not None:
                     res.append(r)
             except Exception as e:
@@ -80,7 +80,7 @@ def repeat_script_execution(script, every_second=1, stop_after_second=5,
     """
     if not os.path.exists(script):
         raise FileNotFoundError(  # pragma: no cover
-            "Unable to find '{}'.".format(script))
+            f"Unable to find '{script}'.")
 
     iter = [0]
 
@@ -88,11 +88,11 @@ def repeat_script_execution(script, every_second=1, stop_after_second=5,
         out, err = run_script(script, wait=True)
         if out and outfile:
             with open(outfile, "a", encoding="utf-8") as f:
-                f.write('[repeat_script_execution] iter={}\n'.format(iter[0]))
+                f.write(f'[repeat_script_execution] iter={iter[0]}\n')
                 f.write(out)
         if err and errfile:
             with open(errfile, "a", encoding="utf-8") as f:  # pragma: no cover
-                f.write('[repeat_script_execution] iter={}\n'.format(iter[0]))
+                f.write(f'[repeat_script_execution] iter={iter[0]}\n')
                 f.write(err)
         iter[0] += 1
         return out

@@ -49,4 +49,4 @@ class MockTransferFTP(TransferFTP):
             args[1](s)
             return len(s)
         raise RuntimeError(  # pragma: no cover
-            "command='{0}'\nargs={1}".format(command, args))
+            f"command='{command}'\nargs={args}")

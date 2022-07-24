@@ -1,4 +1,4 @@
-# coding: latin-1
+# coding: utf-8
 """
 @brief      test log(time=1s)
 """
@@ -112,7 +112,7 @@ class TestFolder (unittest.TestCase):
             if a not in ac:
                 fLOG("a", a)
                 fLOG(ac[0], ac)
-                raise Exception("a not in ac a=%s, ac=%s" % (a, str(ac)))
+                raise Exception(f"a not in ac a={a}, ac={str(ac)}")
             assert a in ac
 
 

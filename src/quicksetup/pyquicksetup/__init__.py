@@ -68,7 +68,7 @@ def read_version(setup_file, name, default_value=None, subfolder=None):
     if not os.path.exists(TOP_DIR):
         if version_str is None:
             raise FileNotFoundError(
-                "Unable to find folder %r." % TOP_DIR)
+                f"Unable to find folder {TOP_DIR!r}.")
     else:
         if subfolder is None:
             init = os.path.join(TOP_DIR, name, '__init__.py')
@@ -106,11 +106,11 @@ def read_readme(setup_file, name="README.rst"):
     TOP_DIR = os.path.abspath(os.path.dirname(setup_file))
     if not os.path.exists(TOP_DIR):
         raise FileNotFoundError(
-            "Unable to find folder %r." % TOP_DIR)
+            f"Unable to find folder {TOP_DIR!r}.")
     readme = os.path.join(TOP_DIR, name)
     if not os.path.exists(readme):
         raise FileNotFoundError(
-            "Unable to find file %r." % TOP_DIR)
+            f"Unable to find file {TOP_DIR!r}.")
     with open(readme, "r", encoding="utf-8") as f:
         content = f.read()
     return _clean_readme(content)

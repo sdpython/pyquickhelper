@@ -33,7 +33,7 @@ class TestDoxygen2rst (unittest.TestCase):
         for e in eq:
             if e.lstrip() == e:
                 raise ValueError(
-                    "no indentation: -{}-\nCONTENT\n{}".format(e, rst))
+                    f"no indentation: -{e}-\nCONTENT\n{rst}")
 
     def test_process_var_tag(self):
         fLOG(
@@ -101,7 +101,7 @@ class TestDoxygen2rst (unittest.TestCase):
         for e in eq:
             if e.lstrip() == e:
                 raise ValueError(
-                    "no indentation: -{}-\nCONTENT\n{}".format(e, rst))
+                    f"no indentation: -{e}-\nCONTENT\n{rst}")
 
 
 if __name__ == "__main__":

@@ -32,7 +32,7 @@ def enumerate_pypi_versions_date(name, url='https://pypi.org/pypi'):
     for i, ver in enumerate(available):
         try:
             res = pypi.release_urls(name, ver)
-        except xmlrpc_client.Fault as e:
+        except xmlrpc_client.Fault as e:  # pragma: no cover
             raise RuntimeError(
                 "Unable to retrieve url for package '{}-{}': tentative {}/{}."
                 "".format(name, ver, i + 1, len(available))) from e
@@ -43,8 +43,8 @@ def enumerate_pypi_versions_date(name, url='https://pypi.org/pypi'):
             else:
                 try:
                     dt = datetime(* tuple(r['upload_time'].timetuple())[:6])
-                except AttributeError as e:
+                except AttributeError as e:  # pragma: no cover
                     raise AttributeError(
-                        "Unable to parse '{0}'".format(r['upload_time'])) from e
+                        f"Unable to parse '{r['upload_time']}'") from e
             yield dt, ver, r['size']
             break

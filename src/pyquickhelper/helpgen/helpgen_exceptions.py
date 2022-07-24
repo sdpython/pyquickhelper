@@ -21,7 +21,7 @@ class HelpGenException(Exception):
         if file is None:
             Exception.__init__(self, message)
         else:
-            mes = '{0}\n  File "{1}", line 1'.format(message, file)
+            mes = f'{message}\n  File "{file}", line 1'
             Exception.__init__(self, mes)
 
 

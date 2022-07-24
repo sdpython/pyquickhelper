@@ -119,7 +119,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
         if isinstance(value, tuple):
             if len(value) == 0:  # pragma: no cover
                 msg = inliner.reporter.error(
-                    "Empty values for module '{0}' in epkg_dictionary.".format(modname))
+                    f"Empty values for module '{modname}' in epkg_dictionary.")
                 prb = inliner.problematic(rawtext, rawtext, msg)
                 return [prb], [msg]
             value = value[0]
@@ -168,7 +168,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             else:
                 anchor = ".".join(spl)
 
-    extref = "`{0} <{1}>`__".format(anchor, url)
+    extref = f"`{anchor} <{url}>`__"
     node = epkg_node(rawtext=rawtext)
     node['classes'] += ["epkg"]
 

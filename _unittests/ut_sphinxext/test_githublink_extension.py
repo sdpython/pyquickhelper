@@ -147,7 +147,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
             content = content.replace('u"', '"')
 
         def processor(path, lineno):
-            return "[{0}:{1}]".format(path, lineno), "my_sources"
+            return f"[{path}:{lineno}]", "my_sources"
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,

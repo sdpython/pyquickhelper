@@ -48,10 +48,17 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
     def __init__(self, document, builder, theme=None):
         if not hasattr(builder, 'config'):
             raise TypeError(
-                "Unexpected type for builder {0}".format(type(builder)))
+                f"Unexpected type for builder {type(builder)}")
         if theme is None:
             theme = DummySphinxTheme()
-        LaTeXTranslator.__init__(self, document, builder, theme=theme)
+        try:
+            # Sphinx>=5
+            LaTeXTranslator.__init__(  # pylint: disable=E1120
+                self, document, builder, theme=theme)  # pylint: disable=E1120
+        except TypeError:
+            # Sphinx<5
+            LaTeXTranslator.__init__(  # pylint: disable=E1120
+                self, document, builder)
 
         newlines = builder.config.text_newlines
         if newlines == 'windows':
@@ -85,8 +92,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             else:
                 return get_nested_level(node.parent)
 
-        enum = "enum%s" % toRoman(get_nested_level(node)).lower()
-        enumnext = "enum%s" % toRoman(get_nested_level(node) + 1).lower()
+        enum = f"enum{toRoman(get_nested_level(node)).lower()}"
+        enumnext = f"enum{toRoman(get_nested_level(node) + 1).lower()}"
         style = ENUMERATE_LIST_STYLE.get(get_enumtype(node))
 
         self.body.append('\\begin{enumerate}\n')
@@ -114,7 +121,7 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
             ev = eval(expr)
         except Exception:
             raise ValueError(
-                "Unable to interpret expression '{0}'".format(expr))
+                f"Unable to interpret expression '{expr}'")
         return ev
 
     def visit_only(self, node):
@@ -188,8 +195,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
 
     def unknown_visit(self, node):
         logger = logging.getLogger("MdBuilder")
-        logger.warning("[latex] unknown visit node: '{0}' - '{1}'".format(
-            node.__class__.__name__, node))
+        logger.warning("[latex] unknown visit node: %r - %r",
+                       node.__class__.__name__, node)
 
 
 class EnhancedLaTeXWriter(LaTeXWriter):
@@ -200,11 +207,16 @@ class EnhancedLaTeXWriter(LaTeXWriter):
 
     def __init__(self, builder):
         if not hasattr(builder, "config"):
-            raise TypeError("Builder has no config: {}".format(type(builder)))
+            raise TypeError(f"Builder has no config: {type(builder)}")
         LaTeXWriter.__init__(self, builder)
 
     def translate(self):
-        visitor = self.builder.create_translator(self.document, self.builder)
+        theme = self.builder.themes.get('manual')
+        if theme is None:
+            raise RuntimeError(  # pragma: no cover
+                "theme cannot be None.")
+        visitor = self.builder.create_translator(
+            self.document, self.builder, theme)
         self.document.walkabout(visitor)
         self.output = visitor.astext()
 
@@ -244,7 +256,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
         """
         Overwrites *get_target_uri* to control file names.
         """
-        return "{0}/{1}.tex".format(self.outdir, pagename).replace("\\", "/")
+        return f"{self.outdir}/{pagename}.tex".replace("\\", "/")
 
     def _get_filename(self, targetname, encoding='utf-8', overwrite_if_changed=True):
         return CustomizedSphinxFileOutput(destination_path=os.path.join(self.outdir, targetname),
@@ -290,8 +302,7 @@ class EnhancedLaTeXBuilder(LaTeXBuilder):
             doctree.settings.docname = docname
             doctree.settings.docclass = docclass
             docwriter.write(doctree, destination)
-            self.logger.info(
-                "[EnhancedLaTeXBuilder] done in '{}'".format(targetname))
+            self.logger.info("[EnhancedLaTeXBuilder] done in %r", targetname)
 
 
 def setup(app):

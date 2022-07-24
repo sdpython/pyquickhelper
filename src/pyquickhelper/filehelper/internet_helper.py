@@ -74,10 +74,10 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
                 f1.close()
             except urllib_error.HTTPError as e:
                 raise ReadUrlException(
-                    "Unable to fetch '{0}'".format(url)) from e
+                    f"Unable to fetch '{url}'") from e
             except IOError as e:
                 raise ReadUrlException(
-                    "Unable to download '{0}'".format(url)) from e
+                    f"Unable to download '{url}'") from e
         else:
             down = True
             newdate = False
@@ -105,7 +105,7 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
                     fu = urllib_request.urlopen(request)
                 except urllib_error.HTTPError as e:
                     raise ReadUrlException(
-                        "Unable to fetch '{0}'".format(url)) from e
+                        f"Unable to fetch '{url}'") from e
                 f = open(dest, format.replace("w", "a")    # pylint: disable=W1501
                          )  # pylint: disable=W1501
             else:
@@ -115,7 +115,7 @@ def download(url, path_download=".", outfile=None, fLOG=noLOG):
                     fu = urllib_request.urlopen(url)
                 except urllib_error.HTTPError as e:
                     raise ReadUrlException(
-                        "Unable to fetch '{0}'".format(url)) from e
+                        f"Unable to fetch '{url}'") from e
                 f = open(dest, format)
 
             open(nyet, "w").close()
@@ -154,7 +154,7 @@ def read_url(url, encoding=None):
         import urllib.parse as urlparse
         res = urlparse.urlparse(url)
         raise ReadUrlException(
-            "unable to open url '{0}' scheme: {1}\nexc: {2}".format(url, res, e))
+            f"unable to open url '{url}' scheme: {res}\nexc: {e}")
 
     if encoding is None:
         return content

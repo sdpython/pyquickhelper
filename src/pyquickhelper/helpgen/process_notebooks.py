@@ -62,14 +62,14 @@ def find_pdflatex(latex_path):
         if os.path.exists(lat):
             return lat
         raise FileNotFoundError(
-            "Unable to find pdflatex or xelatex in '{0}'".format(latex_path))
+            f"Unable to find pdflatex or xelatex in '{latex_path}'")
     if sys.platform.startswith("darwin"):  # pragma: no cover
         try:
             err = run_cmd("/Library/TeX/texbin/xelatex --help", wait=True)[1]
             if len(err) == 0:
                 return "/Library/TeX/texbin/xelatex"
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to run xelatex\n{0}".format(err))
+                f"Unable to run xelatex\n{err}")
         except Exception:
             return "/Library/TeX/texbin/pdflatex"
     try:
@@ -78,7 +78,7 @@ def find_pdflatex(latex_path):
             return "xelatex"
         else:
             raise FileNotFoundError(
-                "Unable to run xelatex\n{0}".format(err))
+                f"Unable to run xelatex\n{err}")
     except Exception:  # pragma: no cover
         return "pdflatex"
 
@@ -233,7 +233,7 @@ def _process_notebooks_in_private(fnbcexe, list_args, options_args):
             from nbconvert.nbconvertapp import main
             main(argv=list_args, **options_args)
             return "", ""
-        env = "\n".join("{0}={1}".format(k, v)
+        env = "\n".join(f"{k}={v}"
                         for k, v in sorted(os.environ.items()))
         raise RuntimeError(  # pragma: no cover
             "Notebook conversion failed.\nfnbcexe\n{}\noptions_args\n{}"
@@ -251,10 +251,9 @@ def _process_notebooks_in_private_cmd(fnbcexe, list_args, options_args, fLOG):
         if c[0] == '"' or c[-1] == '"' or ' ' not in c:
             res.append(c)
         else:
-            res.append('"{0}"'.format(c))
+            res.append(f'"{c}"')
     sargs = " ".join(res)
-    cmd = '"{0}" "{1}" {2}'.format(
-        sys.executable.replace("w.exe", ".exe"), this, sargs)
+    cmd = f"\"{sys.executable.replace('w.exe', '.exe')}\" \"{this}\" {sargs}"
     fLOG("[_process_notebooks_in_private_cmd]", cmd)
     return run_cmd(cmd, wait=True, fLOG=fLOG)
 
@@ -362,8 +361,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 if src not in copied_images:
                     dest = os.path.join(build, curfile)
                     shutil.copy(src, build)
-                    fLOG("[_process_notebooks_in] copy '{}' to '{}'.".format(
-                        src, build))
+                    fLOG(f"[_process_notebooks_in] copy '{src}' to '{build}'.")
                     copied_images[src] = dest
 
         # copy of the notebook into the build folder
@@ -383,8 +381,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
         nbout = os.path.split(notebook)[-1]
         if " " in nbout:
             raise HelpGenException(  # pragma: no cover
-                "spaces are not allowed in notebooks file names: "
-                "{0}".format(notebook))
+                f"spaces are not allowed in notebooks file names: {notebook}")
         nbout = os.path.splitext(nbout)[0]
         for format in formats:
 
@@ -446,7 +443,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         custom_config)
                 # title = os.path.splitext(
                 #     os.path.split(notebook)[-1])[0].replace("_", " ")
-                list_args.extend(['--config', '"%s"' % custom_config])
+                list_args.extend(['--config', f'"{custom_config}"'])
                 format = "latex"
                 compilation = True
                 thisfiles.append(os.path.splitext(outputfile)[0] + ".tex")
@@ -454,7 +451,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                 if not os.path.exists(custom_config):
                     raise FileNotFoundError(  # pragma: no cover
                         custom_config)
-                list_args.extend(['--config', '"%s"' % custom_config])
+                list_args.extend(['--config', f'"{custom_config}"'])
                 compilation = False
                 format = "latex"
             elif format in ("word", "docx"):
@@ -496,8 +493,8 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         list_args.extend(["--to", format,
                                           notebook if nb_slide is None else nb_slide])
                         fLOG(
-                            "[_process_notebooks_in] NBc* format='{}' args={}".format(format, list_args))
-                        fLOG("[_process_notebooks_in] cwd='{}'".format(os.getcwd()))
+                            f"[_process_notebooks_in] NBc* format='{format}' args={list_args}")
+                        fLOG(f"[_process_notebooks_in] cwd='{os.getcwd()}'")
 
                     c = " ".join(list_args)
                     out, err = _process_notebooks_in_private(
@@ -520,7 +517,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
 
                 if "raise ImportError" in err or "Unknown exporter" in err:
                     raise ImportError(
-                        "cmd: {0} {1}\n--ERR--\n{2}".format(fnbcexe, list_args, err))
+                        f"cmd: {fnbcexe} {list_args}\n--ERR--\n{err}")
                 if len(err) > 0:
                     if format in ("elatex", "latex"):
                         # There might be some errors because the latex script needs to be post-processed
@@ -537,7 +534,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         err = err.lower()
                         if "critical" in err or "bad config" in err:
                             raise HelpGenException(  # pragma: no cover
-                                "CMD:\n{0}\n[nberror]\n{1}".format(list_args, err))
+                                f"CMD:\n{list_args}\n[nberror]\n{err}")
             else:
                 # format ipynb
                 # we do nothing
@@ -598,7 +595,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         err = ""
                     if len(err) > 0:
                         raise HelpGenException(  # pragma: no cover
-                            "CMD:\n{0}\n[nberror]\n{1}\nOUT:\n{2}------".format(c, err, out))
+                            f"CMD:\n{c}\n[nberror]\n{err}\nOUT:\n{out}------")
                     f = os.path.join(build, nbout + ".pdf")
                     if not os.path.exists(f):  # pragma: no cover
                         # On Linux the parameter --output-directory is sometimes ignored.
@@ -616,7 +613,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                             msg = "Content of '{0}':\n{1}\n----\n'{2}' moved? {3}\nCMD:\n{4}".format(
                                 build, files, loc, moved, c)
                             raise HelpGenException(
-                                "Missing file: '{0}'\nCMD\n{4}nOUT:\n{2}\n[nberror]\n{1}\n-----\n{3}".format(f, err, out, msg, c))
+                                f"Missing file: '{f}'\nCMD\n{c}nOUT:\n{out}\n[nberror]\n{err}\n-----\n{msg}")
                     thisfiles.append(f)
                 else:
                     fLOG("[_process_notebooks_in] unable to find latex in", latex_path)
@@ -651,7 +648,7 @@ def _process_notebooks_in(notebooks, outfold, build, latex_path=None, pandoc_pat
                         _ for _ in lines if _ and "Could not find image `http" not in _]
                     if len(left) > 0:
                         raise HelpGenException(
-                            "issue with cmd: %s\n[nberror]\n%s" % (c, err))
+                            f"issue with cmd: {c}\n[nberror]\n{err}")
                     for _ in lines:
                         fLOG("[_process_notebooks_in] w, pandoc issue: {0}".format(
                             _.strip("\n\r")))
@@ -840,7 +837,7 @@ def add_link_to_notebook(file, nb, pdf, html, python, slides, exc=True,
             notebook_replacements=notebook_replacements)
         return res
     raise HelpGenException(  # pragma: no cover
-        "Unable to add a link to this extension: %r" % ext)
+        f"Unable to add a link to this extension: {ext!r}")
 
 
 def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout, snippet_folder=None, fLOG=None):
@@ -873,8 +870,8 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
     if custom_snippet is not None and os.path.exists(custom_snippet):
         # reading a custom snippet
         if fLOG:
-            fLOG("[build_thumbail_in_gallery] custom snippet '{0}'".format(
-                custom_snippet))
+            fLOG(
+                f"[build_thumbail_in_gallery] custom snippet '{custom_snippet}'")
         try:
             from PIL import Image
         except ImportError:  # pragma: no cover
@@ -884,7 +881,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
         # generating an image
         if fLOG:
             fLOG(
-                "[build_thumbail_in_gallery] build snippet from '{0}'".format(nbfile))
+                f"[build_thumbail_in_gallery] build snippet from '{nbfile}'")
         image = nb.get_thumbnail()
 
     if image is None:
@@ -892,7 +889,7 @@ def build_thumbail_in_gallery(nbfile, folder_snippet, relative, rst_link, layout
 
     if image is None:
         raise ValueError(  # pragma: no cover
-            "The snippet cannot be null, notebook='{0}'.".format(nbfile))
+            f"The snippet cannot be null, notebook='{nbfile}'.")
     name = os.path.splitext(os.path.split(nbfile)[-1])[0]
     name += ".thumb"
     full = os.path.join(folder_snippet, name)
@@ -995,7 +992,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
             fold, ".*[.]ipynb", neg_pattern=neg_pattern, fullname=True)[1]
         if len(nbs) == 0:
             raise FileNotFoundError(  # pragma: no cover
-                "Unable to find notebooks in folder '{0}'.".format(nbs))
+                f"Unable to find notebooks in folder '{nbs}'.")
         nbs = [(os.path.relpath(n, fold), n) for n in nbs]
 
     # Go through the list of notebooks.
@@ -1017,7 +1014,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
         ext = os.path.splitext(name)[-1]
         if ext != ".ipynb":
             raise ValueError(  # pragma: no cover
-                "One file is not a notebook: {0}".format(rst[-1][1]))
+                f"One file is not a notebook: {rst[-1][1]}")
         dirname, na = os.path.split(name)
         if dirname not in containers:
             containers[dirname] = []
@@ -1062,7 +1059,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
             try:
                 rows.extend(["", ".. _l-notebooks:", "", f.read(), ""])
             except UnicodeDecodeError as e:  # pragma: no cover
-                raise ValueError("Issue with file '{0}'".format(exp)) from e
+                raise ValueError(f"Issue with file '{exp}'") from e
     else:
         fLOG("[build_notebooks_gallery] not found", exp)
         rows.extend(["", ".. _l-notebooks:", "", "", "Notebooks Gallery",
@@ -1085,7 +1082,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
             rs = os.path.splitext(os.path.split(file)[-1])[0]
             fLOG("[build_notebooks_gallery] adding",
                  rs, " title ", titles.get(file, None))
-            rows.append("    notebooks/{0}".format(rs))
+            rows.append(f"    notebooks/{rs}")
         if layout == "table" and len(rst) > 0:
             rows.extend(["", "", ".. list-table::",
                          "    :header-rows: 0", "    :widths: 3 5 15", ""])
@@ -1131,8 +1128,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
                     r = build_thumbail_in_gallery(
                         nbf, folder, folder_index, link, layout)
                     rows.append(r)
-                fLOG("[build_notebooks_gallery] saw {0} files".format(
-                    len(stack_file)))
+                fLOG(f"[build_notebooks_gallery] saw {len(stack_file)} files")
                 stack_file = []
 
                 # It switches to the next gallery.
@@ -1159,7 +1155,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
                                 rows.extend(["", f.read(), ""])
                             except UnicodeDecodeError as e:  # pragma: no cover
                                 raise ValueError(
-                                    "Issue with file '{0}'".format(readme)) from e
+                                    f"Issue with file '{readme}'") from e
                     else:
                         fLOG("[build_notebooks_gallery] not found", readme)
                         rows.append("")
@@ -1180,7 +1176,7 @@ def build_notebooks_gallery(nbs, fileout, layout="classic", neg_pattern=None,
             # append a link to a notebook
             fLOG("[build_notebooks_gallery] adding",
                  rs0, " title ", titles.get(r0, None))
-            rows.append("    notebooks/{0}".format(rs0))
+            rows.append(f"    notebooks/{rs0}")
             stack_file.append(r0)
 
         if len(stack_file) > 0:
@@ -1226,7 +1222,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     from ..ipythonhelper import read_nb, notebook_coverage
     if dump is None:
         dump = os.path.normpath(os.path.join(os.path.dirname(fileout), "..", "..", "..", "..",
-                                             "_notebook_dumps", "notebook.{0}.txt".format(module_name)))
+                                             "_notebook_dumps", f"notebook.{module_name}.txt"))
     if not os.path.exists(dump):
         fLOG("[notebooks-coverage] No execution report about "
              "notebook at '{0}' (fileout='{1}')".format(dump,
@@ -1264,7 +1260,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     report["notebooks"] = report.apply(lambda row: ':ref:`{0} <{1}>`'.format(
         row["notebooks"], clean_link(row["last_name"])), axis=1)
     report["title"] = report["last_name"].apply(
-        lambda x: ':ref:`{0}`'.format(clean_link(x)))
+        lambda x: f':ref:`{clean_link(x)}`')
     rows = ["", ".. _l-notebooks-coverage:", "", "", "Notebooks Coverage",
             "==================", "", "Report on last executions.", ""]
 
@@ -1275,11 +1271,11 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
         cov = badge_notebook_coverage(report0, img)
         now = datetime.datetime.now()
         sdate = "%04d-%02d-%02d" % (now.year, now.month, now.day)
-        cpy = os.path.join(os.path.dirname(fileout), "nbcov-%s.png" % sdate)
+        cpy = os.path.join(os.path.dirname(fileout), f"nbcov-{sdate}.png")
         shutil.copy(img, cpy)
         badge = ["{0:0.00f}% {1}".format(
-            cov, sdate), "", ".. image:: {0}".format(os.path.split(cpy)[-1]), ""]
-        badge2 = ["", ".. image:: {0}".format(os.path.split(img)[-1]), ""]
+            cov, sdate), "", f".. image:: {os.path.split(cpy)[-1]}", ""]
+        badge2 = ["", f".. image:: {os.path.split(img)[-1]}", ""]
     else:
         badge = []
         badge2 = []
@@ -1289,9 +1285,9 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     report["date"] = report["date"].apply(
         lambda x: x.split()[0] if isinstance(x, str) else x)
     report["etime"] = report["etime"].apply(
-        lambda x: "%1.3f" % x if isinstance(x, float) else x)
+        lambda x: f"{x:1.3f}" if isinstance(x, float) else x)
     report["time"] = report["time"].apply(
-        lambda x: "%1.3f" % x if isinstance(x, float) else x)
+        lambda x: f"{x:1.3f}" if isinstance(x, float) else x)
 
     def int2str(x):
         if isnan(x):
@@ -1304,7 +1300,7 @@ def build_all_notebooks_coverage(nbs, fileout, module_name, dump=None, badge=Tru
     report["nbrun"] = report["nbrun"].apply(int2str)
     report["nbvalid"] = report["nbvalid"].apply(int2str)
     report["coverage"] = report["coverage"].apply(
-        lambda x: "{0}%".format(int(x * 100)) if isinstance(x, float) else "")
+        lambda x: f"{int(x * 100)}%" if isinstance(x, float) else "")
     report = report[['notebooks', 'title', 'date', 'success', 'etime',
                      'nbcell', 'nbrun', 'nbvalid', 'time', 'coverage']].copy()
     report.columns = ['name', 'title', 'last execution', 'success', 'time',

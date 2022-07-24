@@ -154,7 +154,7 @@ def repo_ls(full, commandline=True):
             return repo_ls(full, True)
     else:
         cmd = get_cmd_git()
-        cmd += " ls-tree -r HEAD \"%s\"" % full
+        cmd += f" ls-tree -r HEAD \"{full}\""
         out, err = run_cmd(cmd,
                            wait=True,
                            encerror="strict",
@@ -164,7 +164,7 @@ def repo_ls(full, commandline=True):
                            shell=sys.platform.startswith("win32"))
         if len(err) > 0:
             raise GitException(  # pragma: no cover
-                "Issue with path '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(full, out, err))
+                f"Issue with path '{full}'\n[OUT]\n{out}\n[ERR]\n{err}")
 
         res = [RepoFile(name=os.path.join(full, _.strip().split("\t")[-1]))
                for _ in out.split("\n") if len(_) > 0]
@@ -242,7 +242,7 @@ def get_file_details(name, path=None, commandline=True):
                            preprocess=False)
 
         if len(err) > 0:  # pragma: no cover
-            mes = "Problem with file '{0}'".format(os.path.join(path, name))
+            mes = f"Problem with file '{os.path.join(path, name)}'"
             raise GitException(
                 mes + "\n" +
                 err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" +
@@ -275,17 +275,17 @@ def get_file_details(name, path=None, commandline=True):
             se = _reg_insertion.findall(commit)
             if len(se) > 1:
                 raise Exception(  # pragma: no cover
-                    "A commit is wrong \n{0}".format(commit))
+                    f"A commit is wrong \n{commit}")
             inser = int(se[0]) if len(se) == 1 else 0
             de = _reg_deletion.findall(commit)
             if len(de) > 1:
                 raise Exception(  # pragma: no cover
-                    "A commit is wrong \n{0}".format(commit))
+                    f"A commit is wrong \n{commit}")
             delet = int(de[0]) if len(de) == 1 else 0
             bi = _reg_bytes.findall(commit)
             if len(bi) > 1:
                 raise Exception(  # pragma: no cover
-                    "A commit is wrong \n{0}".format(commit))
+                    f"A commit is wrong \n{commit}")
             bite = int(bi[0]) if len(bi) == 1 else 0
             com = commit.split("\n")[0].split()[1]
             rows.append((com, name.strip(), inser, delet, bite))
@@ -335,7 +335,7 @@ def get_file_details_all(path=None, commandline=True):
                            preprocess=False)
 
         if len(err) > 0:  # pragma: no cover
-            mes = "Problem with '{0}'".format(path)
+            mes = f"Problem with '{path}'"
             raise GitException(
                 mes + "\n" +
                 err + "\nCMD:\n" + cmd + "\nOUT:\n" + out + "\n[giterror]\n" +
@@ -502,7 +502,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
                            shell=sys.platform.startswith("win32"), preprocess=False)
 
         if len(err) > 0:  # pragma: no cover
-            mes = "Problem with file '{0}'".format(path)
+            mes = f"Problem with file '{path}'"
             raise GitException(mes + "\n" +
                                err + "\nCMD:\n" + cmd + "\nOUT:\n" + out +
                                "\n[giterror]\n" + err + "\nCMD:\n" + cmd)
@@ -516,7 +516,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
             out = by.decode("utf8")
 
         out = out.replace("\n\n", "\n")
-        out = "<xml>\n%s\n</xml>" % out
+        out = f"<xml>\n{out}\n</xml>"
         try:
             root = ET.fromstring(out)
         except ET.ParseError:
@@ -540,7 +540,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
                 root = ET.fromstring(out)
             except ET.ParseError as eee:  # pragma: no cover
                 raise GitException(
-                    "Unable to parse:\n{0}".format(out)) from eee
+                    f"Unable to parse:\n{out}") from eee
 
         res = []
         for i in root.iter('logentry'):
@@ -555,7 +555,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True, subset=None):
             if master.startswith("http"):
                 row.append(master + "/commit/" + hash)
             else:
-                row.append("{0}//{1}".format(master, hash))
+                row.append(f"{master}//{hash}")
             res.append(row)
         return res
 
@@ -590,7 +590,7 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
             cmd += ' git log --format="%h---%ci"'
 
             if path is not None:
-                cmd += " \"%s\"" % path
+                cmd += f" \"{path}\""
 
             try:
                 out, err = run_cmd(cmd, wait=True, encerror="strict",
@@ -600,16 +600,16 @@ def get_repo_version(path=None, commandline=True, usedate=False, log=False):
                                    log_error=False, shell=sys.platform.startswith("win32"))
             except Exception as e:
                 raise GitException(
-                    "Problem with subprocess. Path is '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err)) from e
+                    f"Problem with subprocess. Path is '{path}'\n[CMD]\n{cmd}") from e
 
             if len(err) > 0:
                 if log:
                     fLOG("Problem with file ", path, err)
                 if log:
-                    return "OUT\n{0}\n[giterror]{1}\nCMD:\n{2}".format(out, err, cmd)
+                    return f"OUT\n{out}\n[giterror]{err}\nCMD:\n{cmd}"
                 else:
                     raise GitException(
-                        "OUT\n{0}\n[giterror]{1}\nCMD:\n{2}".format(out, err, cmd))
+                        f"OUT\n{out}\n[giterror]{err}\nCMD:\n{cmd}")
 
             lines = out.split("\n")
             lines = [_.split("---") for _ in lines if len(_) > 0]
@@ -657,11 +657,11 @@ def get_master_location(path=None, commandline=True):
                                log_error=False, shell=sys.platform.startswith("win32"))
         except Exception as e:  # pragma: no cover
             raise GitException(
-                "Problem with subprocess. Path is '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err)) from e
+                f"Problem with subprocess. Path is '{path}'\n[CMD]\n{cmd}") from e
 
         if len(err) > 0:
             raise GitException(  # pragma: no cover
-                "Problem with path '{0}'\n[OUT]\n{1}\n[ERR]\n{2}".format(path, out, err))
+                f"Problem with path '{path}'\n[OUT]\n{out}\n[ERR]\n{err}")
         lines = out.split("\n")
         lines = [_ for _ in lines if len(_) > 0]
         res = lines[0]
@@ -695,7 +695,7 @@ def get_nb_commits(path=None, commandline=True):
         cmd += ' rev-list HEAD --count'
 
         if path is not None:
-            cmd += " \"%s\"" % path
+            cmd += f" \"{path}\""
 
         out, err = run_cmd(cmd,
                            wait=True,
@@ -708,7 +708,7 @@ def get_nb_commits(path=None, commandline=True):
 
         if len(err) > 0:
             raise GitException(  # pragma: no cover
-                "Unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
+                f"Unable to get commit number from path {path}\n[giterror]\n{err}\nCMD:\n{cmd}")
 
         lines = out.strip()
         try:
@@ -739,7 +739,7 @@ def get_file_last_modification(path, commandline=True):
     else:
         cmd = get_cmd_git()
         cmd += ' log -1 --format="%ad" --'
-        cmd += " \"%s\"" % path
+        cmd += f" \"{path}\""
 
         out, err = run_cmd(cmd,
                            wait=True,
@@ -752,7 +752,7 @@ def get_file_last_modification(path, commandline=True):
 
         if len(err) > 0:
             raise GitException(  # pragma: no cover
-                "Unable to get commit number from path {0}\n[giterror]\n{1}\nCMD:\n{2}".format(path, err, cmd))
+                f"Unable to get commit number from path {path}\n[giterror]\n{err}\nCMD:\n{cmd}")
 
         lines = out.strip("\n\r ")
         return lines
@@ -782,17 +782,16 @@ def clone(location, srv, group, project, username=None, password=None, fLOG=None
             clone("local_folder", "github.com", "sdpython", "pyquickhelper")
     """
     if username is not None:
-        address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
-                                                           password, srv, group, project)
+        address = f"https://{username}:{password}@{srv}/{group}/{project}.git"
     else:
-        address = "https://{0}/{1}/{2}.git".format(srv, group, project)
+        address = f"https://{srv}/{group}/{project}.git"
 
     cmd = get_cmd_git()
     cmd += " clone " + address + " " + location
     out, err = run_cmd(cmd, wait=True, fLOG=fLOG)
     if len(err) > 0 and "Cloning into" not in err and "Clonage dans" not in err:
         raise GitException(  # pragma: no cover
-            "Unable to clone {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
+            f"Unable to clone {address}\n[giterror]\n{err}\nCMD:\n{cmd}")
     return out, err
 
 
@@ -810,10 +809,9 @@ def rebase(location, srv, group, project, username=None, password=None, fLOG=Non
     @return                 output, error
     """
     if username is not None:
-        address = "https://{0}:{1}@{2}/{3}/{4}.git".format(username,
-                                                           password, srv, group, project)
+        address = f"https://{username}:{password}@{srv}/{group}/{project}.git"
     else:
-        address = "https://{0}/{1}/{2}.git".format(srv, group, project)
+        address = f"https://{srv}/{group}/{project}.git"
 
     cwd = os.getcwd()
     os.chdir(location)
@@ -823,5 +821,5 @@ def rebase(location, srv, group, project, username=None, password=None, fLOG=Non
     os.chdir(cwd)
     if len(err) > 0 and "-> FETCH_HEAD" not in err:
         raise GitException(  # pragma: no cover
-            "Unable to rebase {0}\n[giterror]\n{1}\nCMD:\n{2}".format(address, err, cmd))
+            f"Unable to rebase {address}\n[giterror]\n{err}\nCMD:\n{cmd}")
     return out, err

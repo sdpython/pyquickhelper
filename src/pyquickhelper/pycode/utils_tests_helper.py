@@ -61,7 +61,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
 
     if not final.startswith("temp_") and not final.startswith("temp2_"):
         raise NameError(  # pragma: no cover
-            "the folder '{0}' must begin with temp_".format(name))
+            f"the folder '{name}' must begin with temp_")
 
     local = os.path.join(
         os.path.normpath(os.path.abspath(os.path.dirname(thisfile))), name)
@@ -81,7 +81,7 @@ def get_temp_folder(thisfile, name=None, clean=True, create=True,
 
     if name == local:
         raise NameError(  # pragma: no cover
-            "The folder '{0}' must be relative, not absolute".format(name))
+            f"The folder '{name}' must be relative, not absolute")
 
     if not os.path.exists(local):
         if create:
@@ -140,7 +140,7 @@ class PEP8Exception(Exception):
 def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                complexity=-1, stop_after=100, fLOG=None,
                pylint_ignore=('C0103', 'C1801',
-                              'R0201', 'R1705',
+                              'R1705',
                               'W0108', 'W0613',
                               'W0107', 'C0415',
                               'C0209'),
@@ -197,7 +197,6 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     * *C0103*: variable name is not conform
     * *C0111*: missing function docstring
     * *C1801*: do not use `len(SEQUENCE)` to determine if a sequence is empty
-    * *R0201*: method could be a function
     * *R0205*: Class '?' inherits from object, can be safely removed from bases in python3 (pylint)
     * *R0901*: too many ancestors
     * *R0902*: too many instance attributes
@@ -237,8 +236,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                 else:
                     c = 1
                 if r is not None:
-                    buf.write("{0}:{1}:{4} F{2} {3}\n".format(
-                        fname, i + 1, name, r, c))
+                    buf.write(f"{fname}:{i + 1}:{c} F{name} {r}\n")
 
     def fkeep(s):
         if len(s) == 0:
@@ -258,7 +256,7 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         def check_lenght_line(fname, line):
             if len(line) > max_line_length and not line.lstrip().startswith('#'):
                 if ">`_" in line:
-                    return "line too long (link) {0} > {1}".format(len(line), max_line_length)
+                    return f"line too long (link) {len(line)} > {max_line_length}"
                 if ":math:`" in line:
                     return "line too long (:math:) {0} > {1}".format(  # pragma: no cover
                         len(line), max_line_length)
@@ -281,10 +279,10 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
         regneg_filter = None if neg_pattern is None else re.compile(
             neg_pattern)
     except re.error as e:  # pragma: no cover
-        raise ValueError("Unable to compile '{0}'".format(neg_pattern)) from e
+        raise ValueError(f"Unable to compile '{neg_pattern}'") from e
 
     # pycodestyle
-    fLOG("[check_pep8] code style on '{0}'".format(folder))
+    fLOG(f"[check_pep8] code style on '{folder}'")
     files_to_check = []
     skipped = []
     buf = StringIO()
@@ -338,13 +336,12 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
     if len(files_to_check) == 0:
         mes = skipped[0] if skipped else "-no skipped file-"
         raise FileNotFoundError(  # pragma: no cover
-            "No file found in '{0}'\n pattern='{1}'\nskipped='{2}'".format(
-                folder, pattern, mes))
+            f"No file found in '{folder}'\n pattern='{pattern}'\nskipped='{mes}'")
 
     # pylint
     if not run_lint:
         return "\n".join(lines)
-    fLOG("[check_pep8] pylint with {0} files".format(len(files_to_check)))
+    fLOG(f"[check_pep8] pylint with {len(files_to_check)} files")
     memout = sys.stdout
 
     try:
@@ -392,14 +389,14 @@ def check_pep8(folder, ignore=('E265', 'W504'), skip=None,
                         cop.append(name)
                         if run_cmd_filter is None or not run_cmd_filter(name):
                             myprint(
-                                "[check_pep8] lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
+                                f"[check_pep8] lint file {i + 1}/{len(files_to_check)} - '{name}'\n")
                             PyLinterRunV(cop, do_exit=False)
                         else:
                             # delayed import to speed up import time of pycode
                             from ..loghelper import run_cmd
                             # runs from command line
                             myprint(
-                                "[check_pep8] cmd-lint file {0}/{1} - '{2}'\n".format(i + 1, len(files_to_check), name))
+                                f"[check_pep8] cmd-lint file {i + 1}/{len(files_to_check)} - '{name}'\n")
                             cmd = "{0} -m pylint {1}".format(
                                 sys.executable, " ".join('"{0}"'.format(_) for _ in cop))
                             out = run_cmd(cmd, wait=True)[0]

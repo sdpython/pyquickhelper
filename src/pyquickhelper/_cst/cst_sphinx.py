@@ -260,7 +260,7 @@ def get_intersphinx_mapping():
         'pyquickhelper': (
             'http://www.xavierdupre.fr/app/pyquickhelper/helpsphinx/', None),
         'python': (
-            'https://docs.python.org/{.major}'.format(sys.version_info),
+            f'https://docs.python.org/{sys.version_info.major}',
             None),
         'scikit-learn': ('https://scikit-learn.org/stable/', None),
         'scipy': ('https://docs.scipy.org/doc/scipy/reference', None),

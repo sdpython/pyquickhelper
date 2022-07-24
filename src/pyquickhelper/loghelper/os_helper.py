@@ -15,10 +15,17 @@ def get_machine():
     ``HOSTNAME`` or ``NAME`` is available.
     Otherwise, you should use module ``platform``.
     """
-    name = os.environ.get("COMPUTERNAME",
-                          os.environ.get("HOSTNAME",
-                                         os.environ.get("NAME",
-                                                        os.environ.get("TRAVIS_OS_NAME", None))))
+    name = os.environ.get(
+        "COMPUTERNAME",
+        os.environ.get(
+            "HOSTNAME",
+            os.environ.get(
+                "NAME",
+                os.environ.get(
+                    "TRAVIS_OS_NAME",
+                    os.environ.get(
+                        "AGENT_MACHINENAME",
+                        None)))))
     if name is None:
         raise ValueError("Unable to find machine name in {0}".format(
             ",".join(sorted(os.environ.keys()))))
@@ -38,6 +45,5 @@ def get_user():
         "USER", os.environ.get("CIRCLE_USERNAME", None)))
     if name is None:
         raise ValueError(  # pragma: no cover
-            "Unable to find user name in {0}".format(
-                ",".join(sorted(os.environ.keys()))))
+            f"Unable to find user name in {','.join(sorted(os.environ.keys()))}")
     return name

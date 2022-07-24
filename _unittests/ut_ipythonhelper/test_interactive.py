@@ -25,7 +25,7 @@ class TestInteractive(ExtTestCase):
             sequence = ""
             a, b = 0, 1
             for i in range(N):
-                sequence += "{0} ".format(a)
+                sequence += f"{a} "
                 a, b = b, a + b
             return sequence
 

@@ -78,8 +78,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 "source", "gallery",
                 "python3_module_template.subproject2.exclude_from_code_coverage.NotImplementedClass.__init__.examples")
             if not os.path.exists(coucou):
-                fLOG("[ut] creating file '{0}'".format(coucou))
-                clog("[ut] creating file '{0}'".format(coucou))
+                fLOG(f"[ut] creating file '{coucou}'")
+                clog(f"[ut] creating file '{coucou}'")
                 dirname = os.path.dirname(coucou)
                 os.makedirs(dirname)
                 try:
@@ -87,10 +87,10 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                     open(coucou, "w").close()
                 except Exception as e:
                     warnings.warn(
-                        "Unable to create '{0}' due to '{1}'".format(coucou, e))
+                        f"Unable to create '{coucou}' due to '{e}'")
             else:
-                fLOG("[ut] file exists '{0}'".format(coucou))
-                clog("[ut] file exists '{0}'".format(coucou))
+                fLOG(f"[ut] file exists '{coucou}'")
+                clog(f"[ut] file exists '{coucou}'")
 
             # documentation
             fLOG("generate documentation", root)
@@ -102,7 +102,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 root, "_doc", "sphinxdoc", "source", "conf.py")
             if not os.path.exists(confpy):
                 raise FileNotFoundError(
-                    "Unable to find '{0}' and\n{1}".format(confpy, os.listdir(temp)))
+                    f"Unable to find '{confpy}' and\n{os.listdir(temp)}")
             with open(confpy, "r", encoding="utf8") as f:
                 lines = f.read().split("\n")
             fi = len(lines) - 1
@@ -110,8 +110,8 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 if line.startswith("sys."):
                     fi = i
                     break
-            addition = "sys.path.append(r'{0}')".format(pyq)
-            lines[fi] = "{0}\n{1}".format(addition, lines[fi])
+            addition = f"sys.path.append(r'{pyq}')"
+            lines[fi] = f"{addition}\n{lines[fi]}"
             with open(confpy, "w", encoding="utf8") as f:
                 f.write("\n".join(lines))
 
@@ -166,7 +166,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                     for w in ww:
                         if isinstance(w, dict):
                             rows = [
-                                "----"] + ["{0}={1}".format(k, v) for k, v in sorted(w.items())]
+                                "----"] + [f"{k}={v}" for k, v in sorted(w.items())]
                             sw = "\n".join(rows)
                         elif isinstance(w, warnings.WarningMessage):
                             rows = [
@@ -176,7 +176,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                             sw = str(w)
                         if "WARNING:" in sw and "ERROR/" in sw:
                             raise Exception(
-                                "A warning is not expected:\n{0}".format(sw))
+                                f"A warning is not expected:\n{sw}")
 
                 fLOG("[test_full_documentation] **********************************")
                 fLOG("[test_full_documentation] END")
@@ -281,12 +281,16 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                         logs = os.path.join(temp, "log_custom_000.txt")
                         with open(logs, "r", encoding='utf-8') as f:
                             content = f.read()
-                        found = os.listdir(os.path.dirname(r))
-                        found2 = os.listdir(os.path.dirname(
-                            r.replace("build", "source").replace("/html", "")))
+                        fo = os.path.dirname(r)
+                        found = os.listdir(fo)
+                        fo2 = fo.replace(
+                            "build", "source").replace("/html", "")
+                        found2 = os.listdir(os.path.dirname(fo2))
                         raise FileNotFoundError(
-                            "Unable to find '{0}' in\n{1}\n----\n{2}\n---LOGS--\n{3}".format(
-                                r, "\n".join(sorted(found)), "\n".join(sorted(found2)), content))
+                            "Unable to find '{}' in\n+{}\n{}\n----\n+{}\n{}"
+                            "\n---LOGS--\n{}".format(
+                                r, fo, "\n".join(sorted(found)),
+                                fo2, "\n".join(sorted(found2)), content))
 
                 history = os.path.join(
                     root, "_doc", "sphinxdoc", "build", "html", "HISTORY.html")
@@ -298,7 +302,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 tofind = 'python3_module_template'
                 if tofind not in content:
                     raise Exception(
-                        "Unable to find '{0}' in\n{1}".format(tofind, content))
+                        f"Unable to find '{tofind}' in\n{content}")
 
                 # notebook links
                 files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html",
@@ -308,12 +312,12 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                     with open(name, "r", encoding="utf-8") as f:
                         content = f.read()
                     if "https://unpkg.com/@jupyter-widgets/html-manager@%5E0.20.0/dist/embed-amd.js" in content:
-                        raise AssertionError("Absolute link in %r." % name)
+                        raise AssertionError(f"Absolute link in {name!r}.")
                     if "https://cdnjs.cloudflare" in content:
                         raise AssertionError(
-                            "Absolute cloudflare link in %r." % name)
+                            f"Absolute cloudflare link in {name!r}.")
                     if "reveal.js/dist" in content:
-                        raise AssertionError("Wrong link in slides %r." % name)
+                        raise AssertionError(f"Wrong link in slides {name!r}.")
 
             # final check
             logs = os.path.join(temp, "log_custom_000.txt")

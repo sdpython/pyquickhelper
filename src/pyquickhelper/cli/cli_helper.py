@@ -47,14 +47,12 @@ def clean_documentation_for_cli(doc, cleandoc):
                 return doc
             else:
                 raise ValueError(  # pragma: no cover
-                    "cleandoc='{0}' is not implemented, only 'epkg'.".format(
-                        cleandoc))
+                    f"cleandoc='{cleandoc}' is not implemented, only 'epkg'.")
         elif callable(cleandoc):
             return cleandoc(doc)
         else:
             raise ValueError(  # pragma: no cover
-                "cleandoc is not a string or a callable object but {0}".format(
-                    type(cleandoc)))
+                f"cleandoc is not a string or a callable object but {type(cleandoc)}")
 
 
 def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
@@ -98,8 +96,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
         for arg in fulldocinfo.args:
             if arg.name in docparams:
                 raise ValueError(  # pragma: no cover
-                    "Parameter '{0}' is documented twice.\n{1}".format(
-                        arg.name, docf))
+                    f"Parameter '{arg.name}' is documented twice.\n{docf}")
             docparams[arg.name] = arg.description
 
     # add arguments with the signature
@@ -118,7 +115,7 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
             continue
         if k not in docparams:
             raise ValueError(  # pragma: no cover
-                "Parameter '{0}' is not documented in\n{1}.".format(k, docf))
+                f"Parameter '{k}' is not documented in\n{docf}.")
         create_cli_argument(parser, p, docparams[k], names, positional)
 
     # end
@@ -148,7 +145,7 @@ def create_cli_argument(parser, param, doc, names, positional):
         typ = type(p.default)
     if typ is None:
         raise ValueError(  # pragma: no cover
-            "Unable to infer type of '{0}' ({1})".format(p.name, p))
+            f"Unable to infer type of '{p.name}' ({p})")
 
     if len(p.name) > 3:
         shortname = p.name[0]
@@ -163,7 +160,7 @@ def create_cli_argument(parser, param, doc, names, positional):
 
     if p.name in names:
         raise ValueError(  # pragma: no cover
-            "You should change the name of parameter '{0}'".format(p.name))
+            f"You should change the name of parameter '{p.name}'")
 
     if positional is not None and p.name in positional:
         pnames = [p.name]
@@ -254,7 +251,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
             exit_code = e.args[0]
             if exit_code != 0:
                 if fLOG:
-                    fLOG("Unable to parse argument due to '{0}':".format(e))
+                    fLOG(f"Unable to parse argument due to '{e}':")
                     if args:
                         fLOG("    ", " ".join(args))
                     fLOG("")
@@ -287,7 +284,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
                         fLOG(el)
                 elif isinstance(res, dict):
                     for k, v in sorted(res.items()):
-                        fLOG("{0}: {1}".format(k, v))
+                        fLOG(f"{k}: {v}")
             return res
     return None
 
@@ -393,11 +390,11 @@ def cli_main_helper(dfct, args, fLOG=print):
     if len(args) < 1:
         fLOG("Usage:")
         fLOG("")
-        fLOG("    python -m {0} <command>".format(modname))
+        fLOG(f"    python -m {modname} <command>")
         fLOG("")
         fLOG("To get help:")
         fLOG("")
-        fLOG("    python -m {0} <command> --help".format(modname))
+        fLOG(f"    python -m {modname} <command> --help")
         fLOG("")
         print_available()
         return None
@@ -416,7 +413,7 @@ def cli_main_helper(dfct, args, fLOG=print):
         elif cmd in ('--GUI', '-G', "--GUITEST"):
             return call_gui_function(dfct, fLOG=fLOG, utest=cmd == "--GUITEST")
         else:
-            fLOG("Command not found: '{0}'.".format(cmd))
+            fLOG(f"Command not found: '{cmd}'.")
             fLOG("")
             print_available()
             return None
@@ -466,7 +463,7 @@ def call_gui_function(dfct, fLOG=print, utest=False):
             first = v
             break
         modname = guess_module_name(first)
-        win = main_loop_functions(dfct, title="{0} command line".format(modname),
+        win = main_loop_functions(dfct, title=f"{modname} command line",
                                   mainloop=not utest)
         return win
     return None  # pragma: no cover

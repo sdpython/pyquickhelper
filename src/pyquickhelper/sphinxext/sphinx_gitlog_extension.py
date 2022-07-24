@@ -55,7 +55,7 @@ def gitlog_role(role, rawtext, text, lineno, inliner, options=None, content=None
         node['text'] = value
     else:
         raise ValueError(  # pragma: no cover
-            "Unable to interpret this instuction '{}'.".format(text))
+            f"Unable to interpret this instuction '{text}'.")
     return [node], []
 
 
@@ -120,8 +120,8 @@ def depart_gitlog_node(self, node):
     depart *gitlog_node* for format other than html
     """
     logger = getLogger("gitlog")
-    logger.warning("[depart_gitlog_node] output only available for HTML not for '{0}'".format(
-        type(self)))
+    logger.warning(
+        "[depart_gitlog_node] output only available for HTML not for %r", type(self))
 
 
 def setup(app):

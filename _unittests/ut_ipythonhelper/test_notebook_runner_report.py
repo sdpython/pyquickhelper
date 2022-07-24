@@ -19,7 +19,7 @@ class TestNotebookRunnerReport (unittest.TestCase):
             raise Exception("too few found notebooks")
 
         if cov.shape[0] != 16:
-            raise AssertionError("NB={0}\n----\n{1}".format(cov.shape, cov))
+            raise AssertionError(f"NB={cov.shape}\n----\n{cov}")
         self.assertIn("last_name", cov.columns)
         cols = ['notebooks', 'last_name', 'date', 'etime',
                 'nbcell', 'nbrun', 'nbvalid', 'success', 'time']

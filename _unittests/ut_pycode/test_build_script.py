@@ -55,7 +55,7 @@ class TestBuildScript(unittest.TestCase):
                 self.assertTrue(len(sc) > 0)
                 if "__" in sc:
                     raise Exception(
-                        "'__' in script\n{0}\n----------\n{1}".format(c, sc))
+                        f"'__' in script\n{c}\n----------\n{sc}")
 
             unit_test_folder = os.path.abspath(
                 os.path.join(os.path.dirname(__file__), ".."))

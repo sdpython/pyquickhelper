@@ -79,8 +79,8 @@ class SimpleImageDirective(Directive):
         if '://' in filename:
             logger = getLogger("simpleimage")  # pragma: no cover
             logger.warning(  # pragma: no cover
-                "[simpleimage] url detected '{0}' in docname '{1}' - line {2}"
-                ".".format(filename, docname, self.lineno))
+                "[simpleimage] url detected %r in docname %r - line %r"
+                ".", filename, docname, self.lineno)
             is_url = True
         else:
             is_url = False
@@ -89,15 +89,16 @@ class SimpleImageDirective(Directive):
         if convert:
             logger = getLogger("simpleimage")  # pragma: no cover
             logger.warning(  # pragma: no cover
-                "[simpleimage] convert into '{3}' not implemented for '{0}' in "
-                "docname '{1}' - line {2}.".format(
-                    filename, docname, self.lineno, convert))
+                "[simpleimage] convert into %r not implemented for %r in "
+                "docname %r - line %r.",
+                convert, filename, docname, self.lineno)
 
         download = self.options.get('download', None)
         if convert:
             logger = getLogger("simpleimage")
             logger.warning(  # pragma: no cover
-                "[simpleimage] download not implemented for '{0}' in docname '{1}' - line {2}.".format(filename, docname, self.lineno))
+                "[simpleimage] download not implemented for %r in docname %r - line %r.",
+                filename, docname, self.lineno)
 
         if not is_url:
             env.images_mapping.add_file('', filename)
@@ -123,8 +124,8 @@ class SimpleImageDirective(Directive):
             if abspath is None:
                 logger = getLogger("simpleimage")  # pragma: no cover
                 logger.warning(  # pragma: no cover
-                    "[simpleimage] Unable to find '{0}' in docname '{1}' - line {2} - srcdir='{3}'.".format(
-                        filename, docname, self.lineno, srcdir))
+                    "[simpleimage] Unable to find %r in docname %r - line %r - srcdir=%r.",
+                    filename, docname, self.lineno, srcdir)
         else:
             abspath = None
             relpath = None
@@ -188,20 +189,20 @@ def depart_simpleimage_node_html(self, node):
         target = node["target"]
         found = node["abspath"] is not None or node["is_url"]
         if not found:  # pragma: no cover
-            body = "<b>unable to find '{0}'</b>".format(filename)
+            body = f"<b>unable to find '{filename}'</b>"
             self.body.append(body)
         else:
             body = '<img src="{0}" {1} {2}/>'
-            width = ' width="{0}"'.format(width) if width else ""
-            height = ' height="{0}"'.format(height) if height else ""
+            width = f' width="{width}"' if width else ""
+            height = f' height="{height}"' if height else ""
             if width or height:
-                style = "{0}{1}".format(width, height)
+                style = f"{width}{height}"
             elif scale:
-                style = " width={0}%".format(scale)
-            alt = ' alt="{0}"'.format(escape(alt)) if alt else ""
+                style = f" width={scale}%"
+            alt = f' alt="{escape(alt)}"' if alt else ""
             body = body.format(filename, style, alt)
             if target:
-                body = '<a href="{0}">{1}</a>'.format(escape(target), body)
+                body = f'<a href="{escape(target)}">{body}</a>'
             self.body.append(body)
 
 
@@ -227,13 +228,13 @@ def depart_simpleimage_node_text(self, node):
         target = node["target"]
         found = node["abspath"] is not None or node["is_url"]
         if not found:  # pragma: no cover
-            body = "unable to find '{0}'".format(filename)
+            body = f"unable to find '{filename}'"
             self.body.append(body)
         else:
             body = '\nimage {0}{1}{2}: {3}{4}\n'
-            width = ' width="{0}"'.format(width) if width else ""
-            height = ' height="{0}"'.format(height) if height else ""
-            scale = ' scale="{0}"'.format(scale) if scale else ""
+            width = f' width="{width}"' if width else ""
+            height = f' height="{height}"' if height else ""
+            scale = f' scale="{scale}"' if scale else ""
             alt = ' alt="{0}"'.format(alt.replace('"', '\\"')) if alt else ""
             target = ' target="{0}"'.format(
                 target.replace('"', '\\"')) if target else ""
@@ -256,16 +257,16 @@ def depart_simpleimage_node_latex(self, node):
         full = os.path.join(node["relpath"], node['uri'])
         found = node['abspath'] is not None or node["is_url"]
         if not found:  # pragma: no cover
-            body = "\\textbf{{unable to find '{0}'}}".format(full)
+            body = f"\\textbf{{unable to find '{full}'}}"
             self.body.append(body)
         else:
             body = '\\includegraphics{0}{{{1}}}\n'
-            width = "width={0}".format(width) if width else ""
-            height = "height={0}".format(height) if height else ""
-            scale = "scale={0}".format(scale) if scale else ""
+            width = f"width={width}" if width else ""
+            height = f"height={height}" if height else ""
+            scale = f"scale={scale}" if scale else ""
             if width or height or scale:
                 dims = [_ for _ in [width, height, scale] if _]
-                style = "[{0}]".format(",".join(dims))
+                style = f"[{','.join(dims)}]"
             else:
                 style = ""
             alt = ' alt="{0}"'.format(alt.replace('"', '\\"')) if alt else ""
@@ -285,17 +286,17 @@ def depart_simpleimage_node_rst(self, node):
         filename = node["uri"]
         found = node["abspath"] is not None or node["is_url"]
         if not found:  # pragma: no cover
-            body = ".. simpleimage:: {0} [not found]".format(filename)
+            body = f".. simpleimage:: {filename} [not found]"
             self.add_text(body + self.nl)
         else:
             options = SimpleImageDirective.option_spec
-            body = ".. simpleimage:: {0}".format(filename)
+            body = f".. simpleimage:: {filename}"
             self.new_state(0)
             self.add_text(body + self.nl)
             for opt in options:
                 v = node.get(opt, None)
                 if v:
-                    self.add_text('    :{0}: {1}'.format(opt, v) + self.nl)
+                    self.add_text(f'    :{opt}: {v}' + self.nl)
             self.end_state(wrap=False)
 
 
@@ -310,17 +311,17 @@ def depart_simpleimage_node_md(self, node):
         filename = node["uri"]
         found = node["abspath"] is not None or node["is_url"]
         if not found:  # pragma: no cover
-            body = "[{0}](not found)".format(filename)
+            body = f"[{filename}](not found)"
             self.add_text(body + self.nl)
         else:
             alt = node.get("alt", "")
             uri = filename
             width = node.get('width', '').replace('px', '')
             height = node.get('height', '').replace('px', '')
-            style = " ={0}x{1}".format(width, height)
+            style = f" ={width}x{height}"
             if style == " =x":
                 style = ""
-            text = "![{0}]({1}{2})".format(alt, uri, style)
+            text = f"![{alt}]({uri}{style})"
             self.add_text(text)
 
 
