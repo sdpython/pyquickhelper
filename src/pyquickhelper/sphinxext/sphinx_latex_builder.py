@@ -36,7 +36,6 @@ class DummySphinxTheme:
 
     def __init__(self):
         self.toplevel_sectioning = "section"
-    
 
 
 class EnhancedLaTeXTranslator(LaTeXTranslator):
