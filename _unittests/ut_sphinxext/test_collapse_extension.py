@@ -2,12 +2,9 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 
@@ -26,8 +23,7 @@ class TestCollapseExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         temp = get_temp_folder(__file__, "temp_collapse")
 
@@ -92,8 +88,7 @@ class TestCollapseExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         # RST
         html = rst2html(content, writer="rst", keep_warnings=True)
@@ -127,8 +122,7 @@ class TestCollapseExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         # RST
         html = rst2html(content, writer="rst", keep_warnings=True)

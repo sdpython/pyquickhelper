@@ -2,14 +2,11 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import BlocRef, BlocRefList
 from pyquickhelper.sphinxext.sphinx_blocref_extension import blocref_node, visit_blocref_node, depart_blocref_node
@@ -17,21 +14,13 @@ from pyquickhelper.sphinxext.sphinx_blocref_extension import blocref_node, visit
 
 class TestBlocRefExtension(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse_blocref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("blocref", BlocRef)
         directives.register_directive("blocreflist", BlocRefList)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blocref_rst(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -49,8 +38,7 @@ class TestBlocRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("blocref", BlocRef, blocref_node,
                   visit_blocref_node, depart_blocref_node)]
@@ -77,12 +65,8 @@ class TestBlocRefExtension(unittest.TestCase):
         if "<SYSTEM MESSAGE" in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blocref_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -100,8 +84,7 @@ class TestBlocRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("blocref", BlocRef, blocref_node,
                   visit_blocref_node, depart_blocref_node)]
@@ -128,12 +111,8 @@ class TestBlocRefExtension(unittest.TestCase):
         if "<SYSTEM MESSAGE" in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blocref2(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -151,8 +130,7 @@ class TestBlocRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("blocref", BlocRef, blocref_node,
                   visit_blocref_node, depart_blocref_node)]
@@ -177,12 +155,8 @@ class TestBlocRefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blocreflist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -207,8 +181,7 @@ class TestBlocRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("blocref", BlocRef, blocref_node,
                   visit_blocref_node, depart_blocref_node)]

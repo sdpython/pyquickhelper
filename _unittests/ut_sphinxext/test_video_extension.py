@@ -2,7 +2,6 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-import sys
 import os
 import unittest
 import warnings
@@ -11,8 +10,6 @@ import shutil
 from platform import system
 from io import StringIO
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import VideoDirective
@@ -28,20 +25,10 @@ class TestVideoExtension(ExtTestCase):
         logger.disabled = True
 
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("video", VideoDirective)
 
     @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_video(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -58,8 +45,7 @@ class TestVideoExtension(ExtTestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         logger2 = logging.getLogger("video")
 
@@ -116,11 +102,6 @@ class TestVideoExtension(ExtTestCase):
 
     @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_html")
 
         src_ = self.setup_format(temp)
@@ -141,11 +122,6 @@ class TestVideoExtension(ExtTestCase):
 
     @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_rst(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_rst")
 
         src_ = self.setup_format(temp)
@@ -167,19 +143,11 @@ class TestVideoExtension(ExtTestCase):
 
     @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_latex(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_latex")
 
-        fLOG('custom app init')
         src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="latex")
-        fLOG('custom app build')
         app.build()
-        fLOG('custom app done')
 
         index = os.path.join(temp, "pyq-video.tex")
         self.assertExists(index)
@@ -196,19 +164,12 @@ class TestVideoExtension(ExtTestCase):
 
         if is_travis_or_appveyor() not in ('travis', 'appveyor'):
             latex = find_latex_path()
-            fLOG("latex-compile", latex)
             compile_latex_output_final(temp, latex, doall=True)
-            fLOG("compilatione done")
             index = os.path.join(temp, "pyq-video.pdf")
             self.assertExists(index)
 
     @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_sphinx_ext_video_text(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_sphinx_ext_video_text")
         src_ = self.setup_format(temp)
         app = CustomSphinxApp(src_, temp, buildername="text")
@@ -229,11 +190,6 @@ class TestVideoExtension(ExtTestCase):
 
     @unittest.skipIf(system() == "Darwin", reason="no end")
     def test_video_url(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -249,8 +205,7 @@ class TestVideoExtension(ExtTestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         logger2 = logging.getLogger("video")
 

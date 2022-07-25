@@ -7,8 +7,6 @@ import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_azure_macosx
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import RunPythonDirective
@@ -17,23 +15,14 @@ from pyquickhelper.sphinxext import RunPythonDirective
 class TestRunPythonExtensionImage(ExtTestCase):
 
     def test_post_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("runpython", RunPythonDirective)
 
-    @skipif_azure_macosx("Terminating app due to uncaught exception 'NSInvalidArgumentException'")
+    @skipif_azure_macosx("Terminating app due to uncaught exception "
+                         "'NSInvalidArgumentException'")
     def test_runpython_image(self):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -71,8 +60,7 @@ class TestRunPythonExtensionImage(ExtTestCase):
                         print(text)
 
                     """.replace("                    ", "").replace("__FOLD__", temp.replace("\\", "/"))
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]

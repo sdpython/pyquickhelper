@@ -2,15 +2,12 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-import sys
 import os
 import logging
 import unittest
 import warnings
 from io import StringIO
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
@@ -24,19 +21,9 @@ class TestImageExtension(ExtTestCase):
         logger.disabled = True
 
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("image", ImageDirective)
 
     def test_image(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -54,8 +41,7 @@ class TestImageExtension(ExtTestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         logger2 = logging.getLogger("video")
 
@@ -93,11 +79,6 @@ class TestImageExtension(ExtTestCase):
             f.write(html)
 
     def test_sphinx_ext_image_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_sphinx_ext_image_html")
         src_ = os.path.join(temp, "..", "data", "image")
 

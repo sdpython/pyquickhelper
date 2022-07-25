@@ -2,27 +2,22 @@
 @brief      test log(time=8s)
 @author     Xavier Dupre
 """
-import sys
 import os
 from io import StringIO
 import unittest
 import warnings
 import logging
 from sphinx.util.logging import getLogger
+from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.sphinxext.import_object_helper import import_object
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.loghelper import sys_path_append
 
 
-class TestDocAssert(unittest.TestCase):
+class TestDocAssert(ExtTestCase):
 
     def test_import_object(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         this = os.path.abspath(os.path.dirname(__file__))
         data = os.path.join(this, "datadoc")
         with sys_path_append(data):
@@ -31,11 +26,6 @@ class TestDocAssert(unittest.TestCase):
             self.assertTrue(obj(4, 5), 9)
 
     def test_docassert_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         logger1 = getLogger("MockSphinxApp")
         logger2 = getLogger("docassert")
 
@@ -79,10 +69,6 @@ class TestDocAssert(unittest.TestCase):
         self.assertTrue("<strong>a</strong>" in html)
 
     def test_docassert_html_bug(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         class MyStream:
             def __init__(self):
@@ -128,10 +114,6 @@ class TestDocAssert(unittest.TestCase):
             raise Exception("not the right warning")
 
     def test_docassert_html_method(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         class MyStream:
             def __init__(self):
@@ -180,10 +162,6 @@ class TestDocAssert(unittest.TestCase):
                 raise Exception(line)
 
     def test_docassert_html_init(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         class MyStream:
             def __init__(self):
@@ -231,10 +209,6 @@ class TestDocAssert(unittest.TestCase):
             raise Exception("not the right warning")
 
     def test_docassert_html_init2(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         class MyStream:
             def __init__(self):
@@ -282,10 +256,6 @@ class TestDocAssert(unittest.TestCase):
             raise Exception("not the right warning")
 
     def test_docassert_html_style(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
 
         class MyStream:
             def __init__(self):

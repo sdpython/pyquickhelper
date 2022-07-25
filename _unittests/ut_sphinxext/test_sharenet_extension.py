@@ -2,19 +2,16 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import ShareNetDirective
 
 
-class TestShareNetExtension(unittest.TestCase):
+class TestShareNetExtension(ExtTestCase):
 
     def test_post_parse_sn(self):
         directives.register_directive("sharenet", ShareNetDirective)
@@ -36,8 +33,7 @@ class TestShareNetExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
@@ -86,8 +82,7 @@ class TestShareNetExtension(unittest.TestCase):
 
                     abeforea :sharenet:`facebook-linkedin-twitter-20-body` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
@@ -128,8 +123,7 @@ class TestShareNetExtension(unittest.TestCase):
 
                     abeforea :sharenet:`facebook-linkedin-twitter-30-body` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,
@@ -154,8 +148,7 @@ class TestShareNetExtension(unittest.TestCase):
 
                     aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,

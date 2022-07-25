@@ -2,27 +2,17 @@
 @brief      test log(time=2s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
-from pyquickhelper.sphinxext.revealjs.directives import heading
-from pyquickhelper.sphinxext.revealjs.directives import RevealjsDirective
-from pyquickhelper.sphinxext.revealjs.directives import RvNoteDirective
-from pyquickhelper.sphinxext.revealjs.directives import RvSmallDirective
-from pyquickhelper.sphinxext.revealjs.directives import RvCodeDirective
-from pyquickhelper.sphinxext.revealjs.directives import visit_revealjs
-from pyquickhelper.sphinxext.revealjs import compat
-from pyquickhelper.sphinxext.revealjs.directives import depart_revealjs
-from pyquickhelper.sphinxext.revealjs.directives import visit_rv_code
-from pyquickhelper.sphinxext.revealjs.directives import depart_rv_code
-from pyquickhelper.sphinxext.revealjs.directives import visit_rv_small
-from pyquickhelper.sphinxext.revealjs.directives import depart_rv_small
-from pyquickhelper.sphinxext.revealjs.directives import visit_rv_note
-from pyquickhelper.sphinxext.revealjs.directives import depart_rv_note
-from pyquickhelper.sphinxext.revealjs.directives import setup
+from pyquickhelper.pycode import ExtTestCase
+from pyquickhelper.sphinxext.revealjs.directives import (
+    heading, RevealjsDirective, RvNoteDirective, RvSmallDirective,
+    RvCodeDirective, visit_revealjs, depart_revealjs,
+    visit_rv_code, depart_rv_code, visit_rv_small,
+    depart_rv_small, visit_rv_note, depart_rv_note,
+    setup)
 from pyquickhelper.sphinxext.revealjs import directives as d
+from pyquickhelper.sphinxext.revealjs import compat
 
 
 class DummyConfig(object):
@@ -42,7 +32,7 @@ class DummyConfig(object):
         return dict(msg=msg, line=line)
 
 
-class TestHeading(unittest.TestCase):
+class TestHeading(ExtTestCase):
 
     def _get_target(self):
         return heading
@@ -66,7 +56,7 @@ class TestHeading(unittest.TestCase):
             pass
 
 
-class TestRevealjsDirective(unittest.TestCase):
+class TestRevealjsDirective(ExtTestCase):
 
     def _get_target_class(self):
         return RevealjsDirective
@@ -80,6 +70,10 @@ class TestRevealjsDirective(unittest.TestCase):
         return DummyConfig(**config)
 
     def _get_params(self, **kwargs):
+        from docutils.statemachine import State, StateMachine
+        stm = StateMachine([], None)
+        stm.reporter = None
+        st = State(stm)
         params = dict(
             name='dummyname',
             arguments=['tell-k', 'test'],
@@ -88,8 +82,8 @@ class TestRevealjsDirective(unittest.TestCase):
             lineno=1,
             content_offset=1,
             block_text="",
-            state="",
-            state_machine="",
+            state=st,
+            state_machine=stm,
         )
         params.update(kwargs)
         return params
@@ -129,7 +123,7 @@ class TestRevealjsDirective(unittest.TestCase):
         self.assertEqual("title-heading", nodes[0]['title-heading'])
 
 
-class TestRvSmallDirective(unittest.TestCase):
+class TestRvSmallDirective(ExtTestCase):
 
     def _get_target_class(self):
         return RvSmallDirective
@@ -143,6 +137,10 @@ class TestRvSmallDirective(unittest.TestCase):
         return DummyConfig(**config)
 
     def _get_params(self, **kwargs):
+        from docutils.statemachine import State, StateMachine
+        stm = StateMachine([], None)
+        stm.reporter = None
+        st = State(stm)
         params = dict(
             name='dummyname',
             arguments='',
@@ -151,8 +149,8 @@ class TestRvSmallDirective(unittest.TestCase):
             lineno=1,
             content_offset=1,
             block_text="",
-            state="",
-            state_machine="",
+            state=st,
+            state_machine=stm,
         )
         params.update(kwargs)
         return params
@@ -174,7 +172,7 @@ class TestRvSmallDirective(unittest.TestCase):
         self.assertEqual('add-class', nodes[0]['classes'])
 
 
-class TestRvNoteDirective(unittest.TestCase):
+class TestRvNoteDirective(ExtTestCase):
 
     def _get_target_class(self):
         return RvNoteDirective
@@ -188,6 +186,10 @@ class TestRvNoteDirective(unittest.TestCase):
         return DummyConfig(**config)
 
     def _get_params(self, **kwargs):
+        from docutils.statemachine import State, StateMachine
+        stm = StateMachine([], None)
+        stm.reporter = None
+        st = State(stm)
         params = dict(
             name='dummyname',
             arguments='',
@@ -196,8 +198,8 @@ class TestRvNoteDirective(unittest.TestCase):
             lineno=1,
             content_offset=1,
             block_text="",
-            state="",
-            state_machine="",
+            state=st,
+            state_machine=stm,
         )
         params.update(kwargs)
         return params
@@ -219,7 +221,7 @@ class TestRvNoteDirective(unittest.TestCase):
         assert 'add-class' == nodes[0]['classes']
 
 
-class TestRvCodeDirective(unittest.TestCase):
+class TestRvCodeDirective(ExtTestCase):
 
     def _get_target_class(self):
         return RvCodeDirective
@@ -233,6 +235,10 @@ class TestRvCodeDirective(unittest.TestCase):
         return DummyConfig(**config)
 
     def _get_params(self, **kwargs):
+        from docutils.statemachine import State, StateMachine
+        stm = StateMachine([], None)
+        stm.reporter = None
+        st = State(stm)
         params = dict(
             name='dummyname',
             arguments='',
@@ -241,8 +247,8 @@ class TestRvCodeDirective(unittest.TestCase):
             lineno=1,
             content_offset=1,
             block_text="",
-            state="",
-            state_machine="",
+            state=st,
+            state_machine=stm,
         )
         params.update(kwargs)
         return params
@@ -255,7 +261,7 @@ class TestRvCodeDirective(unittest.TestCase):
         assert 1 == len(nodes)
 
 
-class TestVisitRevealjs(unittest.TestCase):
+class TestVisitRevealjs(ExtTestCase):
 
     def _get_target(self):
         return visit_revealjs
@@ -355,7 +361,7 @@ class TestVisitRevealjs(unittest.TestCase):
         ], dummyself.body.content)
 
 
-class TestDepartRevealjs(unittest.TestCase):
+class TestDepartRevealjs(ExtTestCase):
 
     def _get_target(self):
         return depart_revealjs
@@ -381,7 +387,7 @@ class TestDepartRevealjs(unittest.TestCase):
         assert '</section>\n' == dummyself.body.content[0]
 
 
-class TestVisitRvCode(unittest.TestCase):
+class TestVisitRvCode(ExtTestCase):
 
     def _get_target(self):
         return visit_rv_code
@@ -425,7 +431,7 @@ class TestVisitRvCode(unittest.TestCase):
         assert 'rawsource' == dummyself.body.content[2]
 
 
-class TestDepartRvCode(unittest.TestCase):
+class TestDepartRvCode(ExtTestCase):
 
     def _get_target(self):
         return depart_rv_code
@@ -453,7 +459,7 @@ class TestDepartRvCode(unittest.TestCase):
         self.assertEqual('</pre>\n', dummyself.body.content[1])
 
 
-class TestVisitRvSmall(unittest.TestCase):
+class TestVisitRvSmall(ExtTestCase):
 
     def _get_target(self):
         return visit_rv_small
@@ -496,7 +502,7 @@ class TestVisitRvSmall(unittest.TestCase):
         assert True is dummyself.first_last
 
 
-class TestDepartRvSmall(unittest.TestCase):
+class TestDepartRvSmall(ExtTestCase):
 
     def _get_target(self):
         return depart_rv_small
@@ -523,7 +529,7 @@ class TestDepartRvSmall(unittest.TestCase):
         assert '</small>\n' == dummyself.body.content[0]
 
 
-class TestVisitRvNote(unittest.TestCase):
+class TestVisitRvNote(ExtTestCase):
 
     def _get_target(self):
         return visit_rv_note
@@ -567,7 +573,7 @@ class TestVisitRvNote(unittest.TestCase):
         assert True is dummyself.first_last
 
 
-class TestDepartRvNote(unittest.TestCase):
+class TestDepartRvNote(ExtTestCase):
 
     def _get_target(self):
         return depart_rv_note
@@ -594,7 +600,7 @@ class TestDepartRvNote(unittest.TestCase):
         self.assertEqual('</aside>\n', dummyself.body.content[0])
 
 
-class TestSetup(unittest.TestCase):
+class TestSetup(ExtTestCase):
 
     def _get_target(self):
         return setup

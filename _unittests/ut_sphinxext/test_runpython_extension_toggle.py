@@ -2,38 +2,25 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import RunPythonDirective
 
 
-class TestRunPythonExtensionToggle(unittest.TestCase):
+class TestRunPythonExtensionToggle(ExtTestCase):
 
     def test_post_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("runpython", RunPythonDirective)
 
     def test_runpython_toggle(self):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -72,8 +59,7 @@ class TestRunPythonExtensionToggle(unittest.TestCase):
                         import sys
                         print(u"setsysvar: " + str(sys.__dict__.get('enable_disabled_documented_pieces_of_code', None)))
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]

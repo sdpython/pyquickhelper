@@ -2,38 +2,24 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import logging
 from io import StringIO
 from docutils.parsers.rst import directives
 from sphinx.util.logging import getLogger
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import YoutubeDirective
 from pyquickhelper.sphinxext.sphinx_youtube_extension import youtube_node, visit_youtube_node, depart_youtube_node
 
 
-class TestYoutubeExtension(unittest.TestCase):
+class TestYoutubeExtension(ExtTestCase):
 
     def test_post_parse_sn_youtube(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("youtube", YoutubeDirective)
 
     def test_youtube(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -48,8 +34,7 @@ class TestYoutubeExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("youtube", YoutubeDirective, youtube_node,
                   visit_youtube_node, depart_youtube_node)]
@@ -78,11 +63,6 @@ class TestYoutubeExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_youtube_size(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -98,8 +78,7 @@ class TestYoutubeExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("youtube", YoutubeDirective, youtube_node,
                   visit_youtube_node, depart_youtube_node)]
@@ -128,11 +107,6 @@ class TestYoutubeExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_youtube_size_nowarning(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -148,8 +122,7 @@ class TestYoutubeExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("youtube", YoutubeDirective, youtube_node,
                   visit_youtube_node, depart_youtube_node)]
@@ -165,11 +138,6 @@ class TestYoutubeExtension(unittest.TestCase):
         self.assertIn('<iframe src="https://www.youtube', cst)
 
     def test_youtube_size_warning(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -185,8 +153,7 @@ class TestYoutubeExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("youtube", YoutubeDirective, youtube_node,
                   visit_youtube_node, depart_youtube_node)]

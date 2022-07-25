@@ -2,35 +2,23 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import ExRef, ExRefList
-from pyquickhelper.sphinxext.sphinx_exref_extension import exref_node, visit_exref_node, depart_exref_node
+from pyquickhelper.sphinxext.sphinx_exref_extension import (
+    exref_node, visit_exref_node, depart_exref_node)
 
 
 class TestExRefExtension(ExtTestCase):
 
     def test_post_parse_exref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("exref", ExRef)
         directives.register_directive("exreflist", ExRefList)
 
     def test_exref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -48,8 +36,7 @@ class TestExRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("exref", ExRef, exref_node,
                   visit_exref_node, depart_exref_node)]
@@ -75,11 +62,6 @@ class TestExRefExtension(ExtTestCase):
             raise Exception(html)
 
     def test_exreflist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -103,8 +85,7 @@ class TestExRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("exref", ExRef, exref_node,
                   visit_exref_node, depart_exref_node)]
@@ -132,11 +113,6 @@ class TestExRefExtension(ExtTestCase):
             raise Exception(html)
 
     def test_exreflist_rst(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -160,8 +136,7 @@ class TestExRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("exref", ExRef, exref_node,
                   visit_exref_node, depart_exref_node)]

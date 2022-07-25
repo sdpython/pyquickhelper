@@ -2,14 +2,10 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import bigger_role
 from docutils.parsers.rst.roles import register_canonical_role
@@ -17,20 +13,12 @@ from docutils.parsers.rst.roles import register_canonical_role
 
 class TestBiggerExtension(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         register_canonical_role("bigger", bigger_role)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_bigger(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -45,8 +33,7 @@ class TestBiggerExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
@@ -80,12 +67,8 @@ class TestBiggerExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_bigger.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_bigger_inline(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -94,8 +77,7 @@ class TestBiggerExtension(unittest.TestCase):
 
                     abeforea :bigger:`facebook` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,

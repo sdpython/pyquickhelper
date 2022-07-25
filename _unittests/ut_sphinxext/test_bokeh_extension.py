@@ -2,24 +2,17 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-import sys
 import os
 import unittest
 import warnings
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 
 
 class TestBokehExtension(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_bokeh(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
         from pyquickhelper.sphinxext.bokeh.bokeh_plot import BokehPlotDirective
         self.assertTrue(BokehPlotDirective is not None)
@@ -47,8 +40,7 @@ class TestBokehExtension(unittest.TestCase):
                         show(p)
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,

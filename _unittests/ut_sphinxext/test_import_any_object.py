@@ -2,16 +2,16 @@
 @brief      test log(time=8s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
-
-from pyquickhelper.sphinxext.import_object_helper import import_any_object, import_object
+from pyquickhelper.sphinxext.import_object_helper import (
+    import_any_object, import_object)
+from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.loghelper import sys_path_append
 
 
-class TestImportAnyObject(unittest.TestCase):
+class TestImportAnyObject(ExtTestCase):
 
     def test_import_any_object(self):
         this = os.path.abspath(os.path.dirname(__file__))

@@ -2,36 +2,21 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import githublink_role
 from docutils.parsers.rst.roles import register_canonical_role
 
 
-class TestGitHubLinkExtension(unittest.TestCase):
+class TestGitHubLinkExtension(ExtTestCase):
 
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         register_canonical_role("githublink", githublink_role)
 
-    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -64,8 +49,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
@@ -108,13 +92,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink_function(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -143,8 +121,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         def processor(path, lineno):
             return f"[{path}:{lineno}]", "my_sources"
@@ -187,13 +164,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink_doc(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -206,8 +177,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
@@ -230,13 +200,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
-    @unittest.skipIf(sys.version_info[0] < 3, "does not work on Python 2")
     def test_githublink_binaries(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -255,8 +219,7 @@ class TestGitHubLinkExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,

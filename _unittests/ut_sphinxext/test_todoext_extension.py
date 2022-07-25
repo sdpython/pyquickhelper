@@ -2,36 +2,22 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import TodoExt, TodoExtList
 from pyquickhelper.sphinxext.sphinx_todoext_extension import todoext_node, visit_todoext_node, depart_todoext_node
 
 
-class TestTodoExtExtension(unittest.TestCase):
+class TestTodoExtExtension(ExtTestCase):
 
     def test_post_parse_sn_todoext(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("todoext", TodoExt)
         directives.register_directive("todoextlist", TodoExtList)
 
     def test_todoext(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -49,8 +35,7 @@ class TestTodoExtExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("todoext", TodoExt, todoext_node,
                   visit_todoext_node, depart_todoext_node)]
@@ -83,11 +68,6 @@ class TestTodoExtExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_todoextlist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -107,8 +87,7 @@ class TestTodoExtExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("todoext", TodoExt, todoext_node,
                   visit_todoext_node, depart_todoext_node)]
@@ -138,11 +117,6 @@ class TestTodoExtExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_todoext_done(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -161,8 +135,7 @@ class TestTodoExtExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("todoext", TodoExt, todoext_node,
                   visit_todoext_node, depart_todoext_node)]

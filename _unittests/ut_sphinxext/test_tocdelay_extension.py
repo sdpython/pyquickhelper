@@ -2,19 +2,17 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
 from sphinx.errors import ExtensionError
-from pyquickhelper.pycode import get_temp_folder, ignore_warnings
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings, ExtTestCase
 from pyquickhelper.helpgen import rst2html, rst2rst_folder
 from pyquickhelper.sphinxext import TocDelayDirective
 
 
-class TestTocDelayExtension(unittest.TestCase):
+class TestTocDelayExtension(ExtTestCase):
 
     def test_post_parse(self):
         directives.register_directive("tocdelay", TocDelayDirective)

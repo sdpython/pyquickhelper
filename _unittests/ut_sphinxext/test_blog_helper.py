@@ -2,15 +2,12 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.sphinxext import BlogPost, BlogPostList, BlogPostDirective
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import RunPythonDirective
@@ -18,6 +15,7 @@ from pyquickhelper.sphinxext import RunPythonDirective
 
 class TestBlogHelper(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse(self):
         directives.register_directive("blogpost", BlogPostDirective)
 
@@ -33,6 +31,7 @@ class TestBlogHelper(unittest.TestCase):
         self.assertEqual(
             p.Tag, "post-2015-04-04-anexampleofablogpostincludedinthedocumentation")
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_list(self):
         # the test will fail if you add a file in data/blog others
         # with rst files which is not a blog post
@@ -60,6 +59,7 @@ class TestBlogHelper(unittest.TestCase):
                     content = f.read()
                 self.assertIn('...', content)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_directive_with_rst2html(self):
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.join(path, "data", "2015-04-04_first_blogpost.rst")
@@ -77,6 +77,7 @@ class TestBlogHelper(unittest.TestCase):
             p2 = html.find(t2)
             fLOG("--------------ERRORS\n", html[p1:p2], "------------")
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_docutils(self):
         # from https://gist.github.com/mastbaum/2655700
         import docutils.core
@@ -129,6 +130,7 @@ class TestBlogHelper(unittest.TestCase):
         if "<!--foo-->" not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_newdirective_with_rst2html(self):
         """
         this test also test the extension runpython
@@ -155,8 +157,7 @@ class TestBlogHelper(unittest.TestCase):
 
                         print(u"this code shoud appear" + u"___")
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -179,6 +180,7 @@ class TestBlogHelper(unittest.TestCase):
                     f.write(html)
                 raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_newdirective_with_rst2html_bug(self):
         from docutils import nodes
 

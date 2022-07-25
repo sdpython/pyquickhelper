@@ -2,36 +2,22 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
 from datetime import datetime
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import gitlog_role
 from docutils.parsers.rst.roles import register_canonical_role
 
 
-class TestGitlogExtension(unittest.TestCase):
+class TestGitlogExtension(ExtTestCase):
 
     def test_post_parse_sn(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         register_canonical_role("gitlog", gitlog_role)
 
     def test_gitlog(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -46,8 +32,7 @@ class TestGitlogExtension(unittest.TestCase):
 
                     this code shoud appear
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
@@ -70,11 +55,6 @@ class TestGitlogExtension(unittest.TestCase):
             f.write(html)
 
     def test_gitlog_inline(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """

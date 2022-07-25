@@ -1259,8 +1259,11 @@ class _CustomSphinx(Sphinx):
         if name is None:
             raise ValueError(  # pragma: no cover
                 "Builder name cannot be None")
-
-        return self.registry.create_builder(self, name, env=self.env)
+        try:
+            return self.registry.create_builder(self, name, env=self.env)
+        except TypeError:
+            # old version of sphinx
+            return self.registry.create_builder(self, name)
 
     def _extended_init_(self):
         """

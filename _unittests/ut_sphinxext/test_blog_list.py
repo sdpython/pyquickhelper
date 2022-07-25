@@ -2,24 +2,18 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.loghelper import fLOG
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from pyquickhelper.sphinxext import BlogPostList, BlogPostDirective
 
 
-class TestBlogList(unittest.TestCase):
+class TestBlogList(ExtTestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blog_list(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("blogpost", BlogPostDirective)
 
         path = os.path.abspath(os.path.split(__file__)[0])

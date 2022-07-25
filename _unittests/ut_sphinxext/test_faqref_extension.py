@@ -2,36 +2,26 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import FaqRef, FaqRefList
-from pyquickhelper.sphinxext.sphinx_faqref_extension import faqref_node, visit_faqref_node, depart_faqref_node
+from pyquickhelper.sphinxext.sphinx_faqref_extension import (
+    faqref_node, visit_faqref_node, depart_faqref_node)
 
 
-class TestFaqRefExtension(unittest.TestCase):
+class TestFaqRefExtension(ExtTestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse_faqref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("faqref", FaqRef)
         directives.register_directive("faqreflist", FaqRefList)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_faqref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -49,8 +39,7 @@ class TestFaqRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("faqref", FaqRef, faqref_node,
                   visit_faqref_node, depart_faqref_node)]
@@ -75,12 +64,8 @@ class TestFaqRefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_faqreflist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -104,8 +89,7 @@ class TestFaqRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("faqref", FaqRef, faqref_node,
                   visit_faqref_node, depart_faqref_node)]

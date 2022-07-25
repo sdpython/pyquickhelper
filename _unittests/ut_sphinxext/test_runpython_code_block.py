@@ -2,13 +2,10 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.sphinxext.sphinx_runpython_extension import RunPythonDirective

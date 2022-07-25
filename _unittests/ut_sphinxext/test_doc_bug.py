@@ -2,25 +2,19 @@
 @brief      test log(time=8s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
-
 from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.pycode import get_temp_folder
 
 
-class TestDocBug(unittest.TestCase):
+class TestDocBug(ExtTestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_param_sphinx(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """

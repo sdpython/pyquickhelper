@@ -2,7 +2,6 @@
 @brief      test log(time=6s)
 @author     Xavier Dupre
 """
-import sys
 import os
 import unittest
 import warnings
@@ -10,7 +9,8 @@ import logging
 import shutil
 from io import StringIO
 from docutils.parsers.rst import directives
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor
+from pyquickhelper.pycode import (
+    get_temp_folder, ExtTestCase, is_travis_or_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import SimpleImageDirective
 from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
@@ -46,8 +46,7 @@ class TestSimpleImageExtension(ExtTestCase):
 
                     this code should appear
                     """.replace("                    ", "").format(img)
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         logger2 = logging.getLogger("video")
 

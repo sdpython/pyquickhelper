@@ -2,21 +2,17 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import RunPythonDirective
 from pyquickhelper.sphinxext import PostContentsDirective
 
 
-class TestPostContentsExtension(unittest.TestCase):
+class TestPostContentsExtension(ExtTestCase):
 
     content = """
                     Contents:
@@ -42,11 +38,6 @@ class TestPostContentsExtension(unittest.TestCase):
                     """.replace("                    ", "")
 
     def test_post_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("runpython", RunPythonDirective)
         directives.register_directive("postcontents", PostContentsDirective)
 
@@ -54,11 +45,6 @@ class TestPostContentsExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         content = TestPostContentsExtension.content
 
         rst = rst2html(content,  # fLOG=fLOG,
@@ -74,11 +60,6 @@ class TestPostContentsExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         content = TestPostContentsExtension.content.replace(
             "contents", "postcontents")
 
