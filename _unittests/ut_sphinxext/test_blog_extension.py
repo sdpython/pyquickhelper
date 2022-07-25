@@ -2,25 +2,25 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.helpgen import rst2html
-from pyquickhelper.sphinxext.sphinx_blog_extension import BlogPostDirective, BlogPostDirectiveAgg
-from pyquickhelper.sphinxext.sphinx_blog_extension import blogpost_node, visit_blogpost_node, depart_blogpost_node
-from pyquickhelper.sphinxext.sphinx_blog_extension import blogpostagg_node, visit_blogpostagg_node, depart_blogpostagg_node
+from pyquickhelper.sphinxext.sphinx_blog_extension import (
+    BlogPostDirective, BlogPostDirectiveAgg,
+    blogpost_node, visit_blogpost_node, depart_blogpost_node,
+    blogpostagg_node, visit_blogpostagg_node, depart_blogpostagg_node)
 
 
 class TestBlogExtension(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse_blog(self):
         directives.register_directive("blogpost", BlogPostDirective)
         directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blogpost(self):
 
         from docutils import nodes as skip_
@@ -42,8 +42,7 @@ class TestBlogExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("blogpost", BlogPostDirective, blogpost_node,
                   visit_blogpost_node, depart_blogpost_node)]
@@ -71,6 +70,7 @@ class TestBlogExtension(unittest.TestCase):
         self.assertIn('================', text)
         self.assertIn('after', text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_blogpost_agg(self):
 
         from docutils import nodes as skip_
@@ -93,8 +93,7 @@ class TestBlogExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("blogpostagg", BlogPostDirectiveAgg, blogpostagg_node,
                   visit_blogpostagg_node, depart_blogpostagg_node)]

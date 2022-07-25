@@ -9,8 +9,10 @@ import pandas
 import numpy
 from pyquickhelper.loghelper import sys_path_append
 from pyquickhelper.pycode import ExtTestCase
-from pyquickhelper.sphinxext.import_object_helper import import_object, import_any_object, import_path
-from pyquickhelper.sphinxext.sphinx_autosignature import enumerate_extract_signature, enumerate_cleaned_signature
+from pyquickhelper.sphinxext.import_object_helper import (
+    import_object, import_any_object, import_path)
+from pyquickhelper.sphinxext.sphinx_autosignature import (
+    enumerate_extract_signature, enumerate_cleaned_signature)
 from pyquickhelper.helpgen import rst2html
 
 

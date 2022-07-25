@@ -2,38 +2,25 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
 import warnings
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import RunPythonDirective
 
 
-class TestRunPythonExtension(unittest.TestCase):
+class TestRunPythonExtension(ExtTestCase):
 
     def test_post_parse(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("runpython", RunPythonDirective)
 
     def test_runpython(self):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -64,8 +51,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         import sys
                         print(u"setsysvar: " + str(sys.__dict__.get('enable_disabled_documented_pieces_of_code', None)))
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -96,11 +82,6 @@ class TestRunPythonExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
@@ -129,11 +110,6 @@ class TestRunPythonExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         if "enable_disabled_documented_pieces_of_code" in sys.__dict__:
@@ -168,11 +144,6 @@ class TestRunPythonExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -203,8 +174,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         import warnings
                         warnings.warn("deprecated", DeprecationWarning)
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -221,11 +191,6 @@ class TestRunPythonExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -255,8 +220,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         import warnings
                         warnings.warn("deprecated", DeprecationWarning)
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -273,11 +237,6 @@ class TestRunPythonExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -306,8 +265,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         import sys
                         print(u"setsysvar: " + str(sys.__dict__.get('enable_disabled_documented_pieces_of_code', None)))
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -337,11 +295,6 @@ class TestRunPythonExtension(unittest.TestCase):
         """
         this test also test the extension runpython
         """
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -373,8 +326,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         import sys
                         print(u"setsysvar: " + str(sys.__dict__.get('enable_disabled_documented_pieces_of_code', None)))
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -401,11 +353,6 @@ class TestRunPythonExtension(unittest.TestCase):
             raise Exception("this case shoud not be")
 
     def test_runpython_exception(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -435,8 +382,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         z = 1/0
                         print(u"this one should" + u" not")
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -458,11 +404,6 @@ class TestRunPythonExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_runpython_exception_assert(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -492,8 +433,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         z = 0.5 + 0.6
                         print(u"this one should" + u" not")
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]
@@ -519,8 +459,7 @@ class TestRunPythonExtension(unittest.TestCase):
 
                         z = 0.5 + 0.6
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         try:
             html = rst2html(content,  # fLOG=fLOG,
@@ -531,11 +470,6 @@ class TestRunPythonExtension(unittest.TestCase):
                 raise e
 
     def test_runpython_process_exception(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes
 
         class runpythonthis_node(nodes.Structural, nodes.Element):
@@ -567,8 +501,7 @@ class TestRunPythonExtension(unittest.TestCase):
                         z = 1/0
                         print(u"this one should" + u" not")
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("runpythonthis", RunPythonThisDirective, runpythonthis_node,
                   visit_rp_node, depart_rp_node)]

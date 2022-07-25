@@ -2,11 +2,8 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef
@@ -94,8 +91,7 @@ class TestLatexBuilder(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -152,8 +148,7 @@ class TestLatexBuilder(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -195,8 +190,7 @@ class TestLatexBuilder(ExtTestCase):
                         only for md
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -242,8 +236,7 @@ class TestLatexBuilder(ExtTestCase):
 
                     :py:class:`Renamed <pyquickhelper.sphinxext.sphinx_latex_builder.EnhancedLaTeXBuilder>`
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -308,8 +301,7 @@ class TestLatexBuilder(ExtTestCase):
                         jjjj
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
@@ -344,8 +336,7 @@ class TestLatexBuilder(ExtTestCase):
                     ******
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
@@ -374,8 +365,7 @@ class TestLatexBuilder(ExtTestCase):
                         :width: 59
                         :alt: alternative2
                     """.replace("                    ", "").format(img1, img2).replace("\\", "/")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
@@ -406,8 +396,7 @@ class TestLatexBuilder(ExtTestCase):
                         :width: 59
                         :alt: alternative2
                     """.replace("                    ", "").format(img1, img2).replace("\\", "/")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',

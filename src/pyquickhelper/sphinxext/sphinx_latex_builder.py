@@ -29,6 +29,15 @@ class CustomizedSphinxFileOutput(SphinxFileOutput):
         return res
 
 
+class DummySphinxTheme:
+    """
+    Dummy theme for sphinx.
+    """
+
+    def __init__(self):
+        self.toplevel_sectioning = "section"
+
+
 class EnhancedLaTeXTranslator(LaTeXTranslator):
     """
     Overwrites `LaTeXTranslator <https://github.com/sphinx-doc/sphinx/blob/master/sphinx/writers/latex.py#L451>`_
@@ -39,6 +48,8 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
         if not hasattr(builder, 'config'):
             raise TypeError(
                 f"Unexpected type for builder {type(builder)}")
+        if theme is None:
+            theme = DummySphinxTheme()
         try:
             # Sphinx>=5
             LaTeXTranslator.__init__(  # pylint: disable=E1120

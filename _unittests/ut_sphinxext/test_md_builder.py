@@ -2,19 +2,18 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef
-from pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
+from pyquickhelper.sphinxext.sphinx_cmdref_extension import (
+    cmdref_node, visit_cmdref_node, depart_cmdref_node)
 
 
 class TestMdBuilder(ExtTestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_builder(self):
         from docutils import nodes as skip_
 
@@ -34,8 +33,7 @@ class TestMdBuilder(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -79,6 +77,7 @@ class TestMdBuilder(ExtTestCase):
         if t1 in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_builder_sphinx(self):
         from docutils import nodes as skip_
 
@@ -104,8 +103,7 @@ class TestMdBuilder(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -138,6 +136,7 @@ class TestMdBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_builder_sphinx_table(self):
         from docutils import nodes as skip_
 
@@ -166,8 +165,7 @@ class TestMdBuilder(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -196,6 +194,7 @@ class TestMdBuilder(ExtTestCase):
         if len(spl) > 2:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_only(self):
         from docutils import nodes as skip_
 
@@ -212,8 +211,7 @@ class TestMdBuilder(ExtTestCase):
                         only for md
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -248,6 +246,7 @@ class TestMdBuilder(ExtTestCase):
         if t1 not in text:
             raise Exception(text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_reference(self):
         from docutils import nodes as skip_
 
@@ -259,8 +258,7 @@ class TestMdBuilder(ExtTestCase):
 
                     :py:class:`Renamed <pyquickhelper.sphinxext.sphinx_md_builder.MdBuilder>`
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -280,6 +278,7 @@ class TestMdBuilder(ExtTestCase):
         if t1 not in text:
             raise Exception(text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_reference2(self):
         from docutils import nodes as skip_
 
@@ -322,8 +321,7 @@ class TestMdBuilder(ExtTestCase):
                         jjjj
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="md", keep_warnings=False, layout='sphinx',
@@ -340,6 +338,7 @@ class TestMdBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:
             f.write(text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_title(self):
         from docutils import nodes as skip_
 
@@ -358,8 +357,7 @@ class TestMdBuilder(ExtTestCase):
                     ******
 
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="md", keep_warnings=False, layout='sphinx',
@@ -373,6 +371,7 @@ class TestMdBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_md_title.md"), "w", encoding="utf8") as f:
             f.write(text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_image(self):
 
         temp = get_temp_folder(__file__, "temp_md_image")
@@ -388,8 +387,7 @@ class TestMdBuilder(ExtTestCase):
                         :width: 200
                         :alt: alternative2
                     """.replace("                    ", "").format(img1, img2).replace("\\", "/")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="md", keep_warnings=False, layout='sphinx',
@@ -406,6 +404,7 @@ class TestMdBuilder(ExtTestCase):
         with open(os.path.join(temp, "md_image.md"), "w", encoding="utf8") as f:
             f.write(text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_md_image_target(self):
 
         temp = get_temp_folder(__file__, "temp_md_image_target")
@@ -417,8 +416,7 @@ class TestMdBuilder(ExtTestCase):
                         :width: 200
                         :alt: alternative1
                     """.replace("                    ", "").format(img1).replace("\\", "/")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="md", keep_warnings=False, layout='sphinx',

@@ -2,24 +2,17 @@
 @brief      test log(time=8s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from pyquickhelper.pycode import (
+    get_temp_folder, is_travis_or_appveyor, ignore_warnings)
 from pyquickhelper.helpgen import rst2html
 
 
 class TestRst2Html(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_png(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # It requires latex.
             return
@@ -41,12 +34,8 @@ class TestRst2Html(unittest.TestCase):
             f.write(text)
         self.assertTrue(len(text2) > len(text))
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_svg(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # It requires latex.
             return
@@ -66,12 +55,8 @@ class TestRst2Html(unittest.TestCase):
             f.write(text)
         self.assertTrue(len(text2) > len(text))
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_plot_rst(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_rst2html_plot_rst")
         rst = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "rstplot.rst")
@@ -90,12 +75,8 @@ class TestRst2Html(unittest.TestCase):
         with open(ji, "w", encoding="utf-8") as f:
             f.write(text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_plot_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         temp = get_temp_folder(__file__, "temp_rst2html_plot_html")
         rst = os.path.join(os.path.abspath(
             os.path.dirname(__file__)), "data", "rstplot.rst")

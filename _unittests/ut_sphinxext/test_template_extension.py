@@ -2,19 +2,15 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import python_link_doc
 
 
-class TestTemplateExtension(unittest.TestCase):
+class TestTemplateExtension(ExtTestCase):
 
     def test_python_link_doc(self):
         link = python_link_doc("os")
@@ -27,11 +23,6 @@ class TestTemplateExtension(unittest.TestCase):
             "`os.getcwd <https://docs.python.org/3/library/os.html#os.getcwd>`_")
 
     def test_tpl_inline(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -40,8 +31,7 @@ class TestTemplateExtension(unittest.TestCase):
 
                     abeforea :tpl:`onetmpl,p1='valstr',p2=4` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
@@ -65,11 +55,6 @@ class TestTemplateExtension(unittest.TestCase):
             f.write(html)
 
     def test_tpl_inline_url(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -78,8 +63,7 @@ class TestTemplateExtension(unittest.TestCase):
 
                     abeforea :tpl:`url,name='zoo',obj='boo'` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
@@ -113,11 +97,6 @@ class TestTemplateExtension(unittest.TestCase):
             f.write(html)
 
     def test_tpl_inline_function(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -126,8 +105,7 @@ class TestTemplateExtension(unittest.TestCase):
 
                     abeforea :tpl:`py,m='io'` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,

@@ -2,36 +2,23 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import NbRef, NbRefList
-from pyquickhelper.sphinxext.sphinx_nbref_extension import nbref_node, visit_nbref_node, depart_nbref_node
+from pyquickhelper.sphinxext.sphinx_nbref_extension import (
+    nbref_node, visit_nbref_node, depart_nbref_node)
 
 
-class TestNbRefExtension(unittest.TestCase):
+class TestNbRefExtension(ExtTestCase):
 
     def test_post_parse_nbref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("nbref", NbRef)
         directives.register_directive("nbreflist", NbRefList)
 
     def test_nbref(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -49,8 +36,7 @@ class TestNbRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("nbref", NbRef, nbref_node,
                   visit_nbref_node, depart_nbref_node)]
@@ -76,11 +62,6 @@ class TestNbRefExtension(unittest.TestCase):
             raise Exception(html)
 
     def test_nbreflist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -104,8 +85,7 @@ class TestNbRefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("nbref", NbRef, nbref_node,
                   visit_nbref_node, depart_nbref_node)]

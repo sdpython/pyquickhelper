@@ -2,20 +2,17 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import QuoteNode
 from pyquickhelper.sphinxext.sphinx_quote_extension import quote_node, visit_quote_node, depart_quote_node
 from pyquickhelper.sphinxext.sphinx_quote_extension import visit_quote_node_rst, depart_quote_node_rst
 
 
-class TestMathDefExtension(unittest.TestCase):
+class TestMathDefExtension(ExtTestCase):
 
     def test_post_parse_sn_todoext(self):
         directives.register_directive("quote", QuoteNode)
@@ -35,8 +32,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -98,8 +94,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -161,8 +156,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -225,8 +219,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -289,8 +282,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -353,8 +345,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -417,8 +408,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]
@@ -481,8 +471,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     next
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("quote", QuoteNode, quote_node,
                   visit_quote_node, depart_quote_node)]

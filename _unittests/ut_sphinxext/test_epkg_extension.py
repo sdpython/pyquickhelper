@@ -2,18 +2,15 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 import warnings
-
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.cli.cli_helper import clean_documentation_for_cli
 
 
-class TestEpkgExtension(unittest.TestCase):
+class TestEpkgExtension(ExtTestCase):
 
     def test_epkg_module(self):
         from docutils import nodes as skip_
@@ -24,8 +21,7 @@ class TestEpkgExtension(unittest.TestCase):
 
                     abeforea :epkg:`pandas` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
@@ -56,8 +52,7 @@ class TestEpkgExtension(unittest.TestCase):
 
                     abeforea :epkg:`pandas` aaftera
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
@@ -76,8 +71,7 @@ class TestEpkgExtension(unittest.TestCase):
 
                     7za :epkg:`7z` 7zb
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
@@ -122,8 +116,7 @@ class TestEpkgExtension(unittest.TestCase):
 
                     7za :epkg:`7z` 7zb
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         def pandas_link(input):
             return "MYA", "|".join(input.split(":"))
@@ -172,8 +165,7 @@ class TestEpkgExtension(unittest.TestCase):
 
                     7za :epkg:`7z` 7zb
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         class pandas_link:
             def __call__(self, input):
@@ -223,8 +215,7 @@ class TestEpkgExtension(unittest.TestCase):
 
                     7za :epkg:`7z` 7zb
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content, writer="custom", keep_warnings=True,
                         directives=None, layout="sphinx",
@@ -269,8 +260,7 @@ class TestEpkgExtension(unittest.TestCase):
                     `one link on two lines <http://first.part/
                     second part>`_.
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         html = rst2html(content,
                         writer="custom", keep_warnings=True,

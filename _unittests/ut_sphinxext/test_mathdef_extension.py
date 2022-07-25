@@ -2,36 +2,25 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
-from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, ignore_warnings
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import MathDef, MathDefList
-from pyquickhelper.sphinxext.sphinx_mathdef_extension import mathdef_node, visit_mathdef_node, depart_mathdef_node
+from pyquickhelper.sphinxext.sphinx_mathdef_extension import (
+    mathdef_node, visit_mathdef_node, depart_mathdef_node)
 
 
 class TestMathDefExtension(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse_sn_todoext(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         directives.register_directive("mathdef", MathDef)
         directives.register_directive("mathdeflist", MathDefList)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_mathdef(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -49,8 +38,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]
@@ -75,12 +63,8 @@ class TestMathDefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_mathdeflist(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -102,8 +86,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]
@@ -128,12 +111,8 @@ class TestMathDefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_mathdeflist_contents(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -156,8 +135,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]
@@ -182,12 +160,8 @@ class TestMathDefExtension(unittest.TestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_mathdeflist_contents_body_sphinx(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         from docutils import nodes as skip_
 
         content = """
@@ -216,8 +190,7 @@ class TestMathDefExtension(unittest.TestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("mathdef", MathDef, mathdef_node,
                   visit_mathdef_node, depart_mathdef_node)]

@@ -1,11 +1,9 @@
 """
 @brief      test log(time=3s)
 """
-import sys
 import os
 import unittest
 from docutils.parsers.rst import directives
-
 from pyquickhelper.pycode import get_temp_folder, ExtTestCase
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext.sphinx_ext_helper import get_index

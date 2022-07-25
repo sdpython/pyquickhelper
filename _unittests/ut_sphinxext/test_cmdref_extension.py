@@ -7,18 +7,23 @@ import os
 import unittest
 from docutils.parsers.rst import directives
 import pyquickhelper
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase, is_travis_or_appveyor, skipif_azure_macosx
+from pyquickhelper.pycode import (
+    get_temp_folder, ExtTestCase, is_travis_or_appveyor,
+    skipif_azure_macosx, ignore_warnings)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef, CmdRefList
-from pyquickhelper.sphinxext.sphinx_cmdref_extension import cmdref_node, visit_cmdref_node, depart_cmdref_node
+from pyquickhelper.sphinxext.sphinx_cmdref_extension import (
+    cmdref_node, visit_cmdref_node, depart_cmdref_node)
 
 
 class TestCmdRefExtension(ExtTestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_post_parse_cmdref(self):
         directives.register_directive("cmdref", CmdRef)
         directives.register_directive("cmdreflist", CmdRefList)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_cmdref(self):
         from docutils import nodes as skip_
 
@@ -38,8 +43,7 @@ class TestCmdRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -75,6 +79,7 @@ class TestCmdRefExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_cmdreflist(self):
         from docutils import nodes as skip_
 
@@ -100,8 +105,7 @@ class TestCmdRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -131,6 +135,7 @@ class TestCmdRefExtension(ExtTestCase):
         if 'freg0"></a>' in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_cmdref_rename(self):
         from docutils import nodes as skip_
 
@@ -150,8 +155,7 @@ class TestCmdRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -171,6 +175,7 @@ class TestCmdRefExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_cmdref_quote(self):
         from docutils import nodes as skip_
 
@@ -190,8 +195,7 @@ class TestCmdRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "")
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]
@@ -211,7 +215,9 @@ class TestCmdRefExtension(ExtTestCase):
         if t1 in html:
             raise Exception(html)
 
-    @skipif_azure_macosx("The Mac OS X backend will not be able to function correctly if Python is not installed as a framework.")
+    @skipif_azure_macosx("The Mac OS X backend will not be able to "
+                         "function correctly if Python is not installed as a framework.")
+    @ignore_warnings(PendingDeprecationWarning)
     def test_cmdref_module(self):
         """
         The test fails on MACOSX if it runs from a virtual envrionment.
@@ -245,8 +251,7 @@ class TestCmdRefExtension(ExtTestCase):
 
                     after
                     """.replace("                    ", "").format(path)
-        if sys.version_info[0] >= 3:
-            content = content.replace('u"', '"')
+        content = content.replace('u"', '"')
 
         tives = [("cmdref", CmdRef, cmdref_node,
                   visit_cmdref_node, depart_cmdref_node)]

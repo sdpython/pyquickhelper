@@ -2,26 +2,20 @@
 @brief      test log(time=4s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper.flog import fLOG
+from pyquickhelper.pycode import ExtTestCase
 from pyquickhelper.helpgen import rst2html
-from pyquickhelper.sphinxext import get_default_extensions, get_default_standard_extensions
+from pyquickhelper.sphinxext import (
+    get_default_extensions, get_default_standard_extensions)
 from pyquickhelper.helpgen.utils_sphinx_doc import private_migrating_doxygen_doc
-from pyquickhelper.helpgen._fake_function_to_documentation import f1, f2, f3, f4, f5, f6
+from pyquickhelper.helpgen._fake_function_to_documentation import (
+    f1, f2, f3, f4, f5, f6)
 
 
-class TestStyleDoc(unittest.TestCase):
+class TestStyleDoc(ExtTestCase):
 
     def test_docstyle(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         extensions = get_default_standard_extensions() + get_default_extensions()
         extensions = [_ for _ in extensions if "matplotlib" not in _ and
                       "images" not in _ and "IPython" not in _ and

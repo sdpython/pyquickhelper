@@ -460,7 +460,7 @@ class _MemoryBuilder:
     :epkg:`builderapi`.
     """
 
-    def _init(self, base_class, app):
+    def _init(self, base_class, app, env=None):
         """
         Constructs the builder.
         Most of the parameter are static members of the class and cannot
@@ -468,6 +468,7 @@ class _MemoryBuilder:
 
         :param base_class: base builder class
         :param app: :epkg:`Sphinx application`
+        :param env: Environment
         """
         if "IMPOSSIBLE:TOFIND" in app.srcdir:
             import sphinx.util.osutil
@@ -475,7 +476,11 @@ class _MemoryBuilder:
             sphinx.util.osutil.ensuredir = custom_ensuredir
             sphinx.builders.ensuredir = custom_ensuredir
 
-        base_class.__init__(self, app=app)
+        try:
+            base_class.__init__(self, app=app, env=env)
+        except TypeError:
+            # older version of sphinx
+            base_class.__init__(self, app=app)
         self.built_pages = {}
         self.base_class = base_class
 
@@ -670,7 +675,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, CustomSingleFileHTMLBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -678,7 +683,7 @@ class MemoryHTMLBuilder(_MemoryBuilder, CustomSingleFileHTMLBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, CustomSingleFileHTMLBuilder, app)
+        _MemoryBuilder._init(self, CustomSingleFileHTMLBuilder, app, env=env)
 
 
 class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
@@ -702,7 +707,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -710,7 +715,7 @@ class MemoryRSTBuilder(_MemoryBuilder, RstBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, RstBuilder, app)
+        _MemoryBuilder._init(self, RstBuilder, app, env=env)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -744,7 +749,7 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Construct the builder.
         Most of the parameter are static members of the class and cannot
@@ -752,7 +757,7 @@ class MemoryMDBuilder(_MemoryBuilder, MdBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, MdBuilder, app)
+        _MemoryBuilder._init(self, MdBuilder, app, env=env)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -785,7 +790,7 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Constructs the builder.
         Most of the parameter are static members of the class and cannot
@@ -793,7 +798,7 @@ class MemoryDocTreeBuilder(_MemoryBuilder, DocTreeBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, DocTreeBuilder, app)
+        _MemoryBuilder._init(self, DocTreeBuilder, app, env=env)
 
     def handle_page(self, pagename, addctx, templatename=None,
                     outfilename=None, event_arg=None):
@@ -827,7 +832,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
     supported_data_uri_images = True
     html_scaled_image_link = True
 
-    def __init__(self, app):  # pylint: disable=W0231
+    def __init__(self, app, env=None):  # pylint: disable=W0231
         """
         Constructs the builder.
         Most of the parameter are static members of the class and cannot
@@ -835,7 +840,7 @@ class MemoryLatexBuilder(_MemoryBuilder, EnhancedLaTeXBuilder):
 
         :param app: :epkg:`Sphinx application`
         """
-        _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app)
+        _MemoryBuilder._init(self, EnhancedLaTeXBuilder, app, env=env)
 
     def write_stylesheet(self):
         from sphinx.highlighting import PygmentsBridge
@@ -998,6 +1003,7 @@ class _CustomSphinx(Sphinx):
         self.project = None
         self.registry = SphinxComponentRegistry()
         self.post_transforms = []
+        self.pdb = False
 
         if doctreedir is None:
             doctreedir = "IMPOSSIBLE:TOFIND"
@@ -1257,8 +1263,11 @@ class _CustomSphinx(Sphinx):
         if name is None:
             raise ValueError(  # pragma: no cover
                 "Builder name cannot be None")
-
-        return self.registry.create_builder(self, name)
+        try:
+            return self.registry.create_builder(self, name, env=self.env)
+        except TypeError:
+            # old version of sphinx
+            return self.registry.create_builder(self, name)
 
     def _extended_init_(self):
         """
