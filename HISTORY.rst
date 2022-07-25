@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2022-07-22 - 0.00Mb
+current - 2022-07-25 - 0.00Mb
 =============================
+
+* #372: Adds missing argument env in dummy application sphinx builder (2022-07-25)
+
+1.11.3744 - 2022-07-22 - 2.20Mb
+===============================
 
 * #371: Improves logging calls (2022-07-20)
 * #370: Uses f strings (2022-07-19)
