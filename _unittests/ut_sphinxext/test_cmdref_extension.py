@@ -9,7 +9,7 @@ from docutils.parsers.rst import directives
 import pyquickhelper
 from pyquickhelper.pycode import (
     get_temp_folder, ExtTestCase, is_travis_or_appveyor,
-    skipif_azure_macosx)
+    skipif_azure_macosx, ignore_warnings)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef, CmdRefList
 from pyquickhelper.sphinxext.sphinx_cmdref_extension import (

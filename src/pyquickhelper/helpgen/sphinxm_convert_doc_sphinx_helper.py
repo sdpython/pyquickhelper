@@ -476,7 +476,11 @@ class _MemoryBuilder:
             sphinx.util.osutil.ensuredir = custom_ensuredir
             sphinx.builders.ensuredir = custom_ensuredir
 
-        base_class.__init__(self, app=app, env=env)
+        try:
+            base_class.__init__(self, app=app, env=env)
+        except TypeError:
+            # older version of sphinx
+            base_class.__init__(self, app=app)
         self.built_pages = {}
         self.base_class = base_class
 
