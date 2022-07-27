@@ -1217,13 +1217,20 @@ class _CustomSphinx(Sphinx):
 
         if not isinstance(self.env, _CustomBuildEnvironment):
             raise TypeError(  # pragma: no cover
-                f"self.env is not _CustomBuildEnvironment: '{type(self.env)}' buildername='{buildername}'")
+                f"self.env is not _CustomBuildEnvironment: {type(self.env)!r} "
+                f"buildername='{buildername}'")
 
         # addition
         self._extended_init_()
 
         # verification
         self._check_init_()
+
+    def _init_builder(self) -> None:
+        if not hasattr(self.builder, "env") or self.builder.env is None:
+            self.builder.set_environment(self.env)
+        self.builder.init()
+        self.events.emit('builder-inited')
 
     def _check_init_(self):
         pass
