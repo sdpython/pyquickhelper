@@ -319,8 +319,11 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
 
     env.temp_data["docname"] = document_name
     env.temp_data["source"] = document_name
-    mockapp.builder.env.temp_data["docname"] = document_name
-    mockapp.builder.env.temp_data["source"] = document_name
+    if mockapp.builder.env is None:
+        mockapp.builder.env = env
+    else:
+        mockapp.builder.env.temp_data["docname"] = document_name
+        mockapp.builder.env.temp_data["source"] = document_name
     settings_overrides["env"] = env
 
     lang = languages.get_language(language)
