@@ -477,3 +477,4 @@ def main_wrapper_tests(logfile, skip_list=None, processes=False, add_coverage=Fa
     for row in rows:
         fLOG(row)
         stdout_this.write(row + "\n")
+    return res

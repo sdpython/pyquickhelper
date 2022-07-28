@@ -419,7 +419,7 @@ def process_standard_options_for_setup(
 
     elif "unittests" in argv:
         skip_f = process_argv_for_unittest(argv, skip_function)
-        run_unittests_for_setup(
+        return run_unittests_for_setup(
             file_or_folder,
             coverage_options=coverage_options,
             coverage_exclude_lines=coverage_exclude_lines,
@@ -429,40 +429,36 @@ def process_standard_options_for_setup(
             filter_warning=filter_warning, dump_coverage=dump_coverage_fct(),
             add_coverage_folder=dump_coverage_fct(False),
             coverage_root=coverage_root, fLOG=fLOG)
-        return True
 
     elif "unittests_LONG" in argv:
         def skip_long(name, code, duration):
             return "test_LONG_" not in name
-        run_unittests_for_setup(
+        return run_unittests_for_setup(
             file_or_folder, skip_function=skip_long,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path,
             stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
-        return True
 
     elif "unittests_SKIP" in argv:
         def skip_skip(name, code, duration):
             return "test_SKIP_" not in name
-        run_unittests_for_setup(
+        return run_unittests_for_setup(
             file_or_folder, skip_function=skip_skip,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path,
             stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
-        return True
 
     elif "unittests_GUI" in argv:  # pragma: no cover
         def skip_skip(name, code, duration):
             return "test_GUI_" not in name
-        run_unittests_for_setup(
+        return run_unittests_for_setup(
             file_or_folder, skip_function=skip_skip,
             coverage_options=coverage_options, coverage_exclude_lines=coverage_exclude_lines,
             additional_ut_path=additional_ut_path,
             stdout=stdout, stderr=stderr, dump_coverage=dump_coverage_fct(),
             fLOG=fLOG)
-        return True
 
     elif "build_script" in argv:  # pragma: no cover
         # delayed import
@@ -813,13 +809,19 @@ def run_unittests_for_setup(file_or_folder, skip_function=None,
         dump_coverage = None
 
     logfile = os.path.join(funit, "unittests.out")
-    main_wrapper_tests(
+    res = main_wrapper_tests(
         logfile, add_coverage=cov, skip_function=skip_function,
         coverage_options=coverage_options,
-        coverage_exclude_lines=coverage_exclude_lines, additional_ut_path=additional_ut_path,
+        coverage_exclude_lines=coverage_exclude_lines,
+        additional_ut_path=additional_ut_path,
         covtoken=covtoken, stdout=stdout, stderr=stderr,
         filter_warning=filter_warning, dump_coverage=dump_coverage,
-        add_coverage_folder=add_coverage_folder, coverage_root=coverage_root, fLOG=fLOG)
+        add_coverage_folder=add_coverage_folder,
+        coverage_root=coverage_root, fLOG=fLOG)
+    if not isinstance(res, dict):
+        raise TypeError(  # pragma: no cover
+            f"Dictionary expected not {type(res)!r}.")
+    return res
 
 
 def copy27_for_setup(file_or_folder):  # pragma: no cover
