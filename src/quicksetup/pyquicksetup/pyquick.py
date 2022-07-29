@@ -249,7 +249,9 @@ class SetupCommandUnitTests(_SetupCommand):
             parameters['argv'].extend(['-e', f'"{self.e}"'])
         if self.g is not None:
             parameters['argv'].extend(['-g', f'"{self.g}"'])
-        process_standard_options_for_setup(**parameters)
+        res = process_standard_options_for_setup(**parameters)
+        if len(res['err']) > 0:
+            sys.exit(-1)
 
 
 class SetupCommandUnitTestGUI(_SetupCommand):
