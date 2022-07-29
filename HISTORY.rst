@@ -8,6 +8,11 @@ History
 current - 2022-07-29 - 0.00Mb
 =============================
 
+* #374: Improves unit test summary report (2022-07-29)
+
+1.11.3752 - 2022-07-29 - 1.99Mb
+===============================
+
 * #373: Improves results aftrer running the unit tests, calls sys.exit with a different code (2022-07-29)
 
 1.11.3747 - 2022-07-25 - 1.99Mb
