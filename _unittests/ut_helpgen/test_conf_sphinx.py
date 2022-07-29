@@ -2,25 +2,18 @@
 @brief      test log(time=8s)
 @author     Xavier Dupre
 """
-
-import sys
 import os
 import unittest
-
 import pyquickhelper
-from pyquickhelper.loghelper import fLOG
 from pyquickhelper.helpgen.default_conf import set_sphinx_variables
-from pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.pycode import (
+    is_travis_or_appveyor, ignore_warnings, ExtTestCase)
 
 
-class TestConfSphinx(unittest.TestCase):
+class TestConfSphinx(ExtTestCase):
 
-    @unittest.skipIf(sys.version_info[:2] < (3, 6), "Not supported in Python < (3, 6)")
+    @ignore_warnings(DeprecationWarning)
     def test_conf_sphinx(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         ff = os.path.abspath(os.path.dirname(__file__))
         ff = os.path.join(
             ff,
@@ -30,7 +23,7 @@ class TestConfSphinx(unittest.TestCase):
             "sphinxdoc",
             "source",
             "conf.py")
-        assert os.path.exists(ff)
+        self.assertExists(ff)
         import sphinx_rtd_theme as skip_
         d = {}
         try:
@@ -51,11 +44,10 @@ class TestConfSphinx(unittest.TestCase):
             raise e
 
         for k, v in sorted(d.items()):
-            fLOG(k, "\t=", v)
             if k == 'version':
                 self.assertEqual(v.split('.')[:2],
                                  pyquickhelper.__version__.split('.')[:2])
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
