@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2022-07-25 - 0.00Mb
+current - 2022-07-29 - 0.00Mb
 =============================
+
+* #373: Improves results aftrer running the unit tests, calls sys.exit with a different code (2022-07-29)
+
+1.11.3747 - 2022-07-25 - 1.99Mb
+===============================
 
 * #372: Adds missing argument env in dummy application sphinx builder (2022-07-25)
 
