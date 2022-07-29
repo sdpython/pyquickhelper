@@ -111,6 +111,9 @@ def evaluate_condition(cond, variables=None):
         for k, v in variables.items():
             rep = "${%s}" % k
             vv = f'"{v}"'
+            # This fix should be done in another way and extracting strings
+            # in the expression and check escape characters.
+            cond = cond.replace('"C:\\Py', '"C:\\\\Py')
             cond = cond.replace(rep, vv)
             cond = cond.replace(rep.upper(), vv)
     cond = cond.strip()
@@ -118,7 +121,8 @@ def evaluate_condition(cond, variables=None):
         e = eval(cond)
         return all(e)
     try:
-        return eval(cond)
+        ev = eval(cond)
+        return ev
     except SyntaxError as e:
         raise SyntaxError(
             f"Unable to interpret '{cond}'\nvariables: {variables}") from e
