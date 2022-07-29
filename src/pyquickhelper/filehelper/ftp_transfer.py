@@ -86,7 +86,11 @@ class TransferFTP:
                 import paramiko
                 import socket
                 sock = socket.socket()
-                sock.connect((site, 22))
+                try:
+                    sock.connect((site, 22))
+                except socket.gaierror as e:
+                    sock.close()
+                    raise e
                 trans = paramiko.transport.Transport(sock)
                 trans.start_client()
                 k = trans.get_remote_server_key()

@@ -240,8 +240,10 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
             if sin is not None and len(sin) > 0:
                 if change_path is not None:
                     os.chdir(current)  # pragma: no cover
-                raise Exception(
-                    "communicate should be True to send something on stdin")
+                pproc.__exit__(None, None, None)
+                raise RuntimeError(
+                    "Argument 'communicate' should be True to send "
+                    "something on stdin.")
             stdout, stderr = pproc.stdout, pproc.stderr
 
             begin = time.perf_counter()
@@ -315,7 +317,8 @@ def run_cmd(cmd, sin="", shell=sys.platform.startswith("win"), wait=False, log_e
                         warnings.warn(
                             "Unable to close stdout and sterr.", RuntimeWarning)
                     if catch_exit:
-                        mes = "SystemExit raised with error code {0}\nCMD:\n{1}\nCWD:\n{2}\n#---OUT---#\n{3}\n#---ERR---#\n{4}"
+                        mes = ("SystemExit raised with error code {0}\nCMD:\n{1}\n"
+                               "CWD:\n{2}\n#---OUT---#\n{3}\n#---ERR---#\n{4}")
                         raise RunCmdException(mes.format(
                             returnCode, cmd, os.getcwd(), "\n".join(out), "\n".join(err)))
                     raise subprocess.CalledProcessError(returnCode, cmd)
