@@ -16,7 +16,7 @@ Defines setup commands.
 import os
 import re
 import sys
-from distutils.core import Command
+from distutils.core import Command  # pylint: disable=W0402
 
 
 class _SetupCommand(Command):

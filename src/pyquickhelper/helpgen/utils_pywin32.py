@@ -19,7 +19,7 @@ def import_pywin32():  # pragma: no cover
             import os
             import sys
             import numpy
-            from distutils.sysconfig import get_python_lib
+            from distutils.sysconfig import get_python_lib  # pylint: disable=W0402
 
             paths = set([os.path.join(
                 os.path.split(sys.executable)[0], "Lib", "site-packages", "pywin32_system32"),

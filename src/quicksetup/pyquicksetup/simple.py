@@ -3,7 +3,7 @@ Defines additional setup commands.
 """
 import os
 import pprint
-from distutils.core import Command
+from distutils.core import Command  # pylint: disable=W0402
 
 
 class SetupCommandDisplay(Command):

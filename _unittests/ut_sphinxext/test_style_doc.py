@@ -48,12 +48,12 @@ class TestStyleDoc(ExtTestCase):
                                  layout="sphinx", extensions=extensions,
                                  external_docnames=external_docnames)
                 filt = list(filter(lambda s: s in text2, exps))
-                if len(filt) == 0:
-                    fLOG("\n---- ORIGINAL", i, "\n", funcs[i].__doc__,
-                         "\n---- RESULT", i, "\n", text,
-                         "\n**** CONVERTED\n", content,
-                         "\n**** FINAL", i, "\n", text2,
-                         "\n*************** END")
+                if len(filt) == 0 and __name__ == '__main__':
+                    print("\n---- ORIGINAL", i, "\n", funcs[i].__doc__,
+                          "\n---- RESULT", i, "\n", text,
+                          "\n**** CONVERTED\n", content,
+                          "\n**** FINAL", i, "\n", text2,
+                          "\n*************** END")
                 else:
                     rep = text2.strip("\n ")
                     if not rep.startswith(".."):
