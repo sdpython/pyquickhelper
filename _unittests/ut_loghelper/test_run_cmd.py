@@ -76,7 +76,7 @@ class TestRunCmd(unittest.TestCase):
         try:
             run_cmd(cmd, wait=True, communicate=False,
                     tell_if_no_output=600, fLOG=fLOG, sin="\n\n\n" * 100)
-        except Exception:
+        except Exception as e:
             pass
 
         out, err = run_cmd(cmd, wait=True, communicate=True,
@@ -86,4 +86,4 @@ class TestRunCmd(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
