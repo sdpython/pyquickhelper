@@ -134,7 +134,7 @@ def find_coverage_report(folder, exclude=None, filter_out='.*conda.*'):  # pragm
         if len(keep) == 0:
             continue
         mx = max(keep)
-        if regout is not None and regout.search(nn):
+        if isinstance(nn, str) and regout is not None and regout.search(nn):
             continue
         covs[sub] = (mx[-1], nn, cov)
     return covs
