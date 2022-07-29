@@ -414,6 +414,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         runner.stream.stream, StringIOAndFile) else None
 
     # run all tests
+    failed_test = []
     n_runs = 0
     last_s = None
     for i, s in enumerate(suite):
@@ -470,6 +471,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
             err = out.split("===========")
             err = err[-1]
             memout.write("\n")
+            failed_test[cut] = err
             try:
                 memout.write(err)
             except UnicodeDecodeError:
@@ -596,8 +598,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     fLOG("[main_run_test] END of unit tests")
     memout.write("[main_run_test] END of unit tests\n")
-
-    return dict(err=val, tests=keep)
+    return dict(err=val, tests=keep, failed=failed_test)
 
 
 def is_valid_error(error):

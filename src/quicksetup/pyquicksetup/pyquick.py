@@ -250,7 +250,15 @@ class SetupCommandUnitTests(_SetupCommand):
         if self.g is not None:
             parameters['argv'].extend(['-g', f'"{self.g}"'])
         res = process_standard_options_for_setup(**parameters)
-        if len(res['err']) > 0:
+        if len(res['failed']) > 0:
+            print('-----------------------------------------------')
+            for i, t in enumerate(sorted(res['failed'])):
+                print(f"FAILED {i + 1}/{len(res['failed'])}: {t}")
+            print('-----------------------------------------------')
+            for i, t in enumerate(sorted(res['failed'])):
+                print('------')
+                print(f"-- {i + 1}/{len(res['failed'])}: {t}")
+                print(res['failed'][t])
             sys.exit(-1)
 
 
