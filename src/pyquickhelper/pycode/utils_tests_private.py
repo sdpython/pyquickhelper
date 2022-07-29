@@ -414,7 +414,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         runner.stream.stream, StringIOAndFile) else None
 
     # run all tests
-    failed_test = []
+    failed_test = {}
     n_runs = 0
     last_s = None
     for i, s in enumerate(suite):

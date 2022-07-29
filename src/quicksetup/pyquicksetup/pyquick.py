@@ -251,12 +251,13 @@ class SetupCommandUnitTests(_SetupCommand):
             parameters['argv'].extend(['-g', f'"{self.g}"'])
         res = process_standard_options_for_setup(**parameters)
         if len(res['failed']) > 0:
-            print('-----------------------------------------------')
+            print('###############################################')
+            print('UNIT TEST SUMMARY')
             for i, t in enumerate(sorted(res['failed'])):
                 print(f"FAILED {i + 1}/{len(res['failed'])}: {t}")
-            print('-----------------------------------------------')
+            print('###############################################')
             for i, t in enumerate(sorted(res['failed'])):
-                print('------')
+                print('--------')
                 print(f"-- {i + 1}/{len(res['failed'])}: {t}")
                 print(res['failed'][t])
             sys.exit(-1)
