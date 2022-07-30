@@ -250,6 +250,12 @@ class SetupCommandUnitTests(_SetupCommand):
         if self.g is not None:
             parameters['argv'].extend(['-g', f'"{self.g}"'])
         res = process_standard_options_for_setup(**parameters)
+        if not isinstance(res, dict):
+            raise TypeError(
+                f"Unexpected type {type(res)}. pyquickhelper needs to be updated.")
+        if 'failed' not in res:
+            raise ValueError(
+                f"Missing key 'failed' in {list(res)}. pyquickhelper needs to be updated.")
         if len(res['failed']) > 0:
             print('###############################################')
             print('UNIT TEST SUMMARY')
