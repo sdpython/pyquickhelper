@@ -14,10 +14,12 @@ from pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 class TestNotebookConversion(ExtTestCase):
 
     def test_notebook(self):
-        self.a_te_st_notebook(1)
+        with self.subTest(iteration="1"):
+            self.a_te_st_notebook(1)
         # on the second run, the following error happens
         # jinja2.exceptions.TemplateNotFound: article
-        self.a_te_st_notebook(2)
+        with self.subTest(iteration="2"):
+            self.a_te_st_notebook(2)
 
     def a_te_st_notebook(self, iteration):
         path = os.path.abspath(os.path.split(__file__)[0])
@@ -90,4 +92,4 @@ class TestNotebookConversion(ExtTestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
