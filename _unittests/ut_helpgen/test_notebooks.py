@@ -1,5 +1,5 @@
 """
-@brief      test log(time=90s)
+@brief      test log(time=120s)
 @author     Xavier Dupre
 """
 
