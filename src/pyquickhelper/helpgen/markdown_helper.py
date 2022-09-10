@@ -13,7 +13,11 @@ def parse_markdown(text):
     @return
     """
     import mistune
-    markdown = mistune.Markdown()
+    try:
+        markdown = mistune.create_markdown(escape=False)
+    except TypeError:
+        # older version of mistune
+        markdown = mistune.Markdown()
     r = markdown(text)
     return r
 

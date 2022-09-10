@@ -6,30 +6,22 @@
 import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper.flog import fLOG
+from sphinx.deprecation import RemovedInSphinx70Warning
 from pyquickhelper.helpgen.markdown_helper import parse_markdown, yield_sphinx_only_markup_for_pipy
 from pyquickhelper.helpgen import rst2html
+from pyquickhelper.pycode import ignore_warnings
 
 
 class TestHelperMarkdown(unittest.TestCase):
 
+    @ignore_warnings(RemovedInSphinx70Warning)
     def test_parse_markdown(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         r = parse_markdown("**r**")
         if str(r).strip("\n\r ") != "<p><strong>r</strong></p>":
             raise Exception([str(r)])
 
+    @ignore_warnings(RemovedInSphinx70Warning)
     def test_parse_readme(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         fold = os.path.dirname(os.path.abspath(__file__))
         readme = os.path.join(fold, "..", "..", "README.rst")
         assert os.path.exists(readme)
@@ -48,15 +40,10 @@ class TestHelperMarkdown(unittest.TestCase):
         r = list(yield_sphinx_only_markup_for_pipy(spl))
         assert len(r) == len(spl)
 
+    @ignore_warnings(RemovedInSphinx70Warning)
     def test_parse_readme_cb(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         fold = os.path.dirname(os.path.abspath(__file__))
         readme = os.path.join(fold, "data", "README.rst")
-        fLOG(readme)
         assert os.path.exists(readme)
         with open(readme, "r", encoding="utf8") as f:
             content = f.read()

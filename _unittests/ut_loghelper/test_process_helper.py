@@ -6,16 +6,17 @@ import os
 import unittest
 import warnings
 from pyquickhelper.loghelper import run_cmd, reap_children, CustomLog
-from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from pyquickhelper.pycode import (
+    ExtTestCase, get_temp_folder, is_travis_or_appveyor)
 
 
-class TestProcessHelper(unittest.TestCase):
+class TestProcessHelper(ExtTestCase):
 
     def test_reap_children(self):
         if sys.platform.startswith("win"):
             cmd = "pause"
         else:
-            cmd = 'ls -la | less'
+            cmd = 'ls -la'
         temp = get_temp_folder(__file__, "temp_reap_children")
         clog = CustomLog(temp)
         proc, _ = run_cmd(cmd, wait=False, fLOG=clog)

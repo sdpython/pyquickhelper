@@ -1,5 +1,5 @@
 """
-@brief      test log(time=2s)
+@brief      test log(time=20s)
 @author     Xavier Dupre
 """
 
@@ -9,7 +9,6 @@ import unittest
 import warnings
 import datetime
 from io import StringIO
-
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper import TransferFTP, FolderTransferFTP, FileTreeNode
 from pyquickhelper.pycode import is_travis_or_appveyor, get_temp_folder, ExtTestCase
