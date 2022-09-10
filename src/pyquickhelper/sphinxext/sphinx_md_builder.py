@@ -915,7 +915,7 @@ class MdTranslator(TextTranslator, CommonSphinxWriterHelpers):
         rst = False
         html = False
         latex = False
-        if not(rst or html or latex or md):
+        if not (rst or html or latex or md):
             raise ValueError("One of them should be True")  # pragma: no cover
         try:
             ev = eval(expr)

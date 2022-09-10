@@ -76,7 +76,7 @@ class ExtTestCase(unittest.TestCase):
         """
         Checks that *x* is empty.
         """
-        if not((none_allowed and x is None) or (hasattr(x, "__len__") and len(x) == 0)):
+        if not ((none_allowed and x is None) or (hasattr(x, "__len__") and len(x) == 0)):
             if isinstance(x, (list, tuple, dict, set)):
                 end = min(5, len(x))
                 disp = "\n" + '\n'.join(map(str, x[:end]))

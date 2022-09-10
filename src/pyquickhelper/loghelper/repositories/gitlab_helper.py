@@ -66,7 +66,8 @@ class GitLabAPI:
         data = {"login": user, "password": password}
         url = f"{self.api_url}/Session"
         request = requests.post(url, data=data, verify=self.verify_ssl,
-                                headers={"connection": "close"})
+                                headers={"connection": "close"},
+                                timeout=10)
         if request.status_code == 201:
             self.token = json.loads(
                 request.content.decode("utf-8"))['private_token']
@@ -88,7 +89,8 @@ class GitLabAPI:
         data = {'page': page, 'per_page': per_page}
 
         request = requests.get(
-            self.api_url, params=data, headers=self.headers, verify=self.verify_ssl)
+            self.api_url, params=data, headers=self.headers, verify=self.verify_ssl,
+            timeout=10)
         if request.status_code == 200:
             return json.loads(request.content.decode("utf-8"))
         else:

@@ -114,7 +114,7 @@ class EnhancedLaTeXTranslator(LaTeXTranslator):
         rst = True
         html = False
         latex = False
-        if not(rst or html or latex or md):
+        if not (rst or html or latex or md):
             raise ValueError("One of them should be True")
         try:
             ev = eval(expr)

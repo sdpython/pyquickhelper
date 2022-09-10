@@ -56,7 +56,7 @@ def call_github_api(owner, repo, ask, auth=None, headers=None):
     if '...' in url:
         raise ValueError(  # pragma: no cover
             f"Unexpected url={url!r}, owner={owner!r}, auth={auth!r}, repo={repo!r}.")
-    response = requests.get(url, auth=auth, headers=headers)
+    response = requests.get(url, auth=auth, headers=headers, timeout=10)
     if response.status_code != 200:
         raise GitHubApiException(  # pragma: no cover
             response, url, owner=owner, repo=repo, ask=ask, auth=auth)
