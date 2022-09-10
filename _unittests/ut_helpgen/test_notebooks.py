@@ -6,8 +6,6 @@
 import sys
 import os
 import unittest
-
-from pyquickhelper.loghelper import fLOG
 from pyquickhelper.helpgen.sphinx_main import process_notebooks, build_notebooks_gallery
 from pyquickhelper.pycode import get_temp_folder
 from pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
@@ -16,15 +14,9 @@ from pyquickhelper.pycode import is_travis_or_appveyor, ExtTestCase
 class TestNotebookConversion(ExtTestCase):
 
     def test_notebook(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-        fLOG("---------------------------------------------------", 1)
         self.a_te_st_notebook(1)
         # on the second run, the following error happens
         # jinja2.exceptions.TemplateNotFound: article
-        fLOG("---------------------------------------------------", 2)
         self.a_te_st_notebook(2)
 
     def a_te_st_notebook(self, iteration):
@@ -70,7 +62,6 @@ class TestNotebookConversion(ExtTestCase):
         res = process_notebooks(
             nb, temp, temp, latex_path=p1, pandoc_path=p2, formats=formats)
         for _ in res:
-            fLOG(_)
             self.assertExists(_[0])
 
         fou = [os.path.split(_[0])[-1] for _ in res]
