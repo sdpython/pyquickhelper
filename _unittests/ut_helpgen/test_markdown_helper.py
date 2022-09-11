@@ -6,7 +6,10 @@
 import sys
 import os
 import unittest
-from sphinx.deprecation import RemovedInSphinx70Warning
+try:
+    from sphinx.deprecation import RemovedInSphinx70Warning
+except ImportError:
+    RemovedInSphinx70Warning = UserWarning
 from pyquickhelper.helpgen.markdown_helper import parse_markdown, yield_sphinx_only_markup_for_pipy
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.pycode import ignore_warnings
