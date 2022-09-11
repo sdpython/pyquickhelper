@@ -47,7 +47,7 @@ PyYAML
 scipy
 semantic_version
 setuptools
-Sphinx>=3.0
+Sphinx>=5.0
 sphinx-gallery
 sphinxcontrib-imagesvg
 sphinx_rtd_theme
