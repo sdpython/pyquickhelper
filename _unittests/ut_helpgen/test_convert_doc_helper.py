@@ -1,5 +1,5 @@
 """
-@brief      test log(time=2s)
+@brief      test log(time=10s)
 @author     Xavier Dupre
 
 For some reason, the test fails if it is run after another one:
@@ -11,7 +11,8 @@ import os
 import unittest
 from IPython.core.display import HTML
 import pandas
-from pyquickhelper.pycode import ExtTestCase
+from sphinx.deprecation import RemovedInSphinx60Warning
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings
 from pyquickhelper.helpgen.rst_converters import rst2html, docstring2html
 from pyquickhelper.pandashelper import df2rst
 
@@ -21,6 +22,7 @@ class TestConvertDocHelper(ExtTestCase):
     Tests function rst2html.
     """
 
+    @ignore_warnings((DeprecationWarning, RemovedInSphinx60Warning))
     def test_rst2html(self):
         rst = """
             run the server
@@ -68,6 +70,7 @@ class TestConvertDocHelper(ExtTestCase):
         if "</pre>" not in html:
             raise Exception(html)
 
+    @ignore_warnings((DeprecationWarning, RemovedInSphinx60Warning))
     def test_doctring2html(self):
         html = docstring2html(df2rst, "rawhtml")
         self.assertNotEmpty(html)
@@ -75,6 +78,7 @@ class TestConvertDocHelper(ExtTestCase):
         html = docstring2html(df2rst, "html")
         self.assertIsInstance(html, HTML)
 
+    @ignore_warnings((DeprecationWarning, RemovedInSphinx60Warning))
     def test_object(self):
 
         class AA:

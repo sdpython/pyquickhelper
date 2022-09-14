@@ -1,5 +1,5 @@
 """
-@brief      test log(time=5s)
+@brief      test log(time=8s)
 @author     Xavier Dupre
 """
 
@@ -8,7 +8,6 @@ import os
 import unittest
 import shutil
 import warnings
-from pyquickhelper.loghelper import fLOG
 from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor, ExtTestCase
 from pyquickhelper.helpgen import nb2slides, nb2html, nb2rst
 from pyquickhelper.ipythonhelper import read_nb
@@ -18,11 +17,6 @@ from pyquickhelper.filehelper.internet_helper import ReadUrlException
 class TestNotebookAPI(ExtTestCase):
 
     def test_convert_slides_api_html(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(
             os.path.join(
@@ -63,11 +57,6 @@ class TestNotebookAPI(ExtTestCase):
             self.assertExists(r)
 
     def test_convert_slides_api_rst(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
         if is_travis_or_appveyor() in ('travis', 'appveyor'):
             # no latex, no pandoc
             return

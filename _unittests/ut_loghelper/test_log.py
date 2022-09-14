@@ -21,20 +21,6 @@ from pyquickhelper.pycode import ExtTestCase
 
 class TestLog(ExtTestCase):
 
-    def test_random_curve(self):
-        fold = os.path.abspath(os.path.split(__file__)[0])
-        ld = os.path.join(fold, "temp_log.txt")
-        if os.path.exists(ld):
-            os.remove(ld)
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-        fLOG("message", "ok", option1="k", option2=2,
-             LogFile=os.path.join(fold, "temp_log.txt"))
-        if not os.path.exists(ld):
-            raise FileNotFoundError(os.path.join(fold, "temp_log.txt"))
-
     def test_import_problem(self):
         fLOG(
             __file__,

@@ -129,7 +129,7 @@ class _AdditionalVisitDepart:
         html = self.output_format == 'html'
         md = self.output_format == 'md'
         doctree = self.output_format in ('doctree', 'doctree.txt')
-        if not(rst or html or latex or md or doctree):
+        if not (rst or html or latex or md or doctree):
             raise ValueError(  # pragma: no cover
                 f"Unknown output format '{self.output_format}'.")
         try:

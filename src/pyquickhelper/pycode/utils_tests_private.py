@@ -380,8 +380,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
 
     # displays
     memout.write("[main_run_test] ---- JENKINS BEGIN UNIT TESTS ----")
-    memout.write(
-        f"[main_run_test] ---- BEGIN UNIT TEST for '{path_test}'")
+    memout.write(f"[main_run_test] ---- BEGIN UNIT TEST for {path_test!r}")
 
     # display all tests
     for i, s in enumerate(suite):

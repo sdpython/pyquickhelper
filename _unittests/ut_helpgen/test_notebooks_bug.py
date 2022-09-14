@@ -29,29 +29,6 @@ class TestNoteBooksBug(ExtTestCase):
         self.assertEqual(nb1, 0)
         self.assertTrue(nb > 0)
 
-    def test_notebook(self):
-        path = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.normpath(os.path.join(path, "notebooks"))
-        nbs = [os.path.join(fold, _)
-               for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["ipynb", "python", "rst", "pdf"]
-
-        temp = get_temp_folder(__file__, "temp_nb_bug")
-
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
-            return
-
-        res = process_notebooks(nbs, temp, temp, formats=formats)
-        for _ in res:
-            if not os.path.exists(_[0]):
-                raise Exception(_[0])
-
-        check = os.path.join(temp, "td1a_correction_session4.tex")
-        with open(check, "r", encoding="utf8") as f:
-            content = f.read()
-        if "\\section{" not in content:
-            raise Exception(content)
-
     def test_notebook_html(self):
         path = os.path.abspath(os.path.split(__file__)[0])
         fold = os.path.normpath(os.path.join(path, "notebooks"))
@@ -91,32 +68,6 @@ class TestNoteBooksBug(ExtTestCase):
         for check in checks:
             if not os.path.exists(check):
                 raise Exception(check)
-
-    def test_notebook_pdf(self):
-        path = os.path.abspath(os.path.split(__file__)[0])
-        fold = os.path.normpath(os.path.join(path, "notebooks"))
-        nbs = [os.path.join(fold, _)
-               for _ in os.listdir(fold) if ".ipynb" in _]
-        formats = ["latex", "pdf"]
-
-        temp = os.path.join(path, "temp_nb_bug_pdf")
-        if not os.path.exists(temp):
-            os.mkdir(temp)
-        for file in os.listdir(temp):
-            os.remove(os.path.join(temp, file))
-
-        if is_travis_or_appveyor() in ('travis', 'appveyor'):
-            return
-
-        res = process_notebooks(nbs, temp, temp, formats=formats)
-        for _ in res:
-            self.assertExists(_[0])
-
-        check = os.path.join(temp, "td1a_correction_session4.tex")
-        with open(check, "r", encoding="utf8") as f:
-            content = f.read()
-        if "\\section{" not in content:
-            raise Exception(content)
 
 
 if __name__ == "__main__":
