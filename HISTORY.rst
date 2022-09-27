@@ -5,8 +5,21 @@
 History
 =======
 
-current - 2022-07-29 - 0.00Mb
+current - 2022-09-27 - 0.00Mb
 =============================
+
+* #378: Removes dependency on sphinxcontrib.imagesvg (2022-09-27)
+* #377: Fixes failing unit tests (2022-09-15)
+* #376: Fixes bug when using new version of markdown (2022-09-14)
+
+1.11.3755 - 2022-07-30 - 1.99Mb
+===============================
+
+* #375: Reduces the number of warnings (2022-07-29)
+* #374: Improves unit test summary report (2022-07-29)
+
+1.11.3752 - 2022-07-29 - 1.99Mb
+===============================
 
 * #373: Improves results aftrer running the unit tests, calls sys.exit with a different code (2022-07-29)
 
