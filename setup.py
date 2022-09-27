@@ -143,7 +143,6 @@ setup(
             "semantic_version",
             "sphinx>=3.0",
             "sphinx-gallery",
-            "sphinxcontrib-imagesvg",
             "traitlets>=5.0",
         ],
     },
