@@ -49,7 +49,6 @@ semantic_version
 setuptools
 Sphinx>=5.0
 sphinx-gallery
-sphinxcontrib-imagesvg
 sphinx_rtd_theme
 tabulate
 tqdm

@@ -31,13 +31,14 @@ def download_revealjs(temp_folder=".", unzip_to=".", fLOG=print,
     reg = re.compile("href=\\\"(.*?[0-9.]+?[.]zip)\\\"")
     alls = reg.findall(page)
     if len(alls) == 0:
-        raise RuntimeError(  # pragma: no cover
-            f"Unable to find a link on a .zip file on page:\n{page}")
-
-    filename = alls[0].split("/")[-1]
-    filel = location.replace("releases", "").rstrip(
-        '/') + f"/archive/{filename}"
-    outfile = os.path.join(temp_folder, "reveal.js." + filename)
+        # Fall back to one release
+        filel = "https://github.com/hakimel/reveal.js/archive/refs/tags/4.3.1.zip"
+        outfile = os.path.join(temp_folder, "reveal.js.4.3.1.zip")
+    else:
+        filename = alls[0].split("/")[-1]
+        filel = location.replace("releases", "").rstrip(
+            '/') + f"/archive/{filename}"
+        outfile = os.path.join(temp_folder, "reveal.js." + filename)
     fLOG("download ", filel, "to", outfile)
     local = download(filel, temp_folder, fLOG=fLOG)
     fLOG("local file", local)

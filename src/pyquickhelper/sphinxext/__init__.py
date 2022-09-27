@@ -12,7 +12,6 @@
 import warnings
 from sphinx.ext.autodoc import setup as setup_autodoc
 from sphinx.ext.imgmath import setup as setup_imgmath
-from sphinxcontrib.imagesvg import setup as setup_imagesvg
 from sphinx.ext.graphviz import setup as setup_graphviz
 from sphinx.ext.todo import setup as setup_todo
 
@@ -124,7 +123,7 @@ def get_default_extensions(load_bokeh=False):
         # directives from sphinx
         setup_graphviz, setup_imgmath, setup_todo,
         # the rest of it
-        setup_autodoc, setup_imagesvg,
+        setup_autodoc,
         setup_plot, setup_image, setup_collapse, setup_gdot,
         setup_video, setup_simpleimage, setup_downloadlink,
         setup_quote, setup_gitlog]
@@ -155,7 +154,6 @@ def get_default_standard_extensions(use_mathjax=False):
         'sphinx.ext.mathjax' if use_mathjax else 'sphinx.ext.imgmath',
         'sphinx.ext.napoleon', 'sphinx.ext.todo',
         'jupyter_sphinx.execute',
-        'sphinxcontrib.imagesvg',
         'matplotlib.sphinxext.plot_directive',
     ]
 
