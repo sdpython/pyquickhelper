@@ -1,7 +1,7 @@
+# pylint: disable=W0101
 """
 @brief      test tree node (time=62s)
 """
-
 
 import sys
 import os
