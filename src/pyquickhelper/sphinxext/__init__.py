@@ -123,7 +123,7 @@ def get_default_extensions(load_bokeh=False):
         # directives from sphinx
         setup_graphviz, setup_imgmath, setup_todo,
         # the rest of it
-        setup_autodoc, setup_imagesvg,
+        setup_autodoc,
         setup_plot, setup_image, setup_collapse, setup_gdot,
         setup_video, setup_simpleimage, setup_downloadlink,
         setup_quote, setup_gitlog]
