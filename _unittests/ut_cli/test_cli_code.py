@@ -20,7 +20,7 @@ class TestCliCodeHelper(ExtTestCase):
         st = BufferedPrint()
         main(args=['code_stat', '-n', 'pyquickhelper'], fLOG=st.fprint)
         res = str(st)
-        self.assertIn("doc_code", res)
+        self.assertIn("value", res)
 
     def test_code_stat_pyq_file(self):
         temp = get_temp_folder(__file__, "temp_code_stat_pyq_file")
