@@ -31,6 +31,7 @@ def main(args, fLOG=print):
         from .filehelper.download_urls_helper import download_urls_in_folder_content
         from .cli.uvicorn_cli import uvicorn_app
         from .cli.profile_cli import profile_stat
+        from .cli.code_cli import code_stat
     except ImportError:  # pragma: no cover
         from pyquickhelper.cli.pyq_sync_cli import pyq_sync
         from pyquickhelper.cli.encryption_file_cli import encrypt_file, decrypt_file
@@ -49,6 +50,7 @@ def main(args, fLOG=print):
         from pyquickhelper.filehelper.download_urls_helper import download_urls_in_folder_content
         from pyquickhelper.cli.uvicorn_cli import uvicorn_app
         from pyquickhelper.cli.profile_cli import profile_stat
+        from pyquickhelper.cli.code_cli import code_stat
 
     fcts = dict(synchronize_folder=pyq_sync, encrypt_file=encrypt_file,
                 decrypt_file=decrypt_file, encrypt=encrypt,
@@ -61,7 +63,8 @@ def main(args, fLOG=print):
                 repeat_script=repeat_script,
                 ftp_upload=ftp_upload, set_password=set_password,
                 download_urls_in_folder_content=download_urls_in_folder_content,
-                uvicorn_app=uvicorn_app, profile_stat=profile_stat)
+                uvicorn_app=uvicorn_app, profile_stat=profile_stat,
+                code_stat=code_stat)
     return cli_main_helper(fcts, args=args, fLOG=fLOG)
 
 
