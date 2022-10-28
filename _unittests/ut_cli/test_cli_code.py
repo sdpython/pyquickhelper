@@ -3,7 +3,7 @@
 """
 import os
 import unittest
-from pyquickhelper.loghelper import fLOG, BufferedPrint
+from pyquickhelper.loghelper import BufferedPrint
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from pyquickhelper.__main__ import main
 
