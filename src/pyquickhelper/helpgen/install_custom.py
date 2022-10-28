@@ -99,11 +99,17 @@ def download_requirejs(to=".", fLOG=print,
     if location is None:
         from notebook import __file__ as local_location
         dirname = os.path.dirname(local_location)
-        location = os.path.join(
-            dirname, "static", "components", "requirejs", "require.js")
-        if not os.path.exists(location):
+        locations = [
+            os.path.join(
+                dirname, "static", "components", "requirejs", "require.js"),
+            os.path.join(
+                dirname, "..", "nbclassic", "static", "components", "requirejs",
+                "require.js")]
+        elocations = [loc for loc in locations if os.path.exists(loc)]
+        if len(elocations) == 0:
             raise FileNotFoundError(  # pragma: no cover
-                f"Unable to find requirejs in '{location}'")
+                f"Unable to find requirejs in '{locations}'")
+        location = elocations[0]
         shutil.copy(location, to)
         return [os.path.join(to, "require.js")]
     else:
