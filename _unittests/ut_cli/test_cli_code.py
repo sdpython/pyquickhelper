@@ -1,13 +1,8 @@
 """
 @brief      test tree node (time=7s)
 """
-
-import sys
 import os
 import unittest
-import warnings
-from io import StringIO
-
 from pyquickhelper.loghelper import fLOG, BufferedPrint
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
 from pyquickhelper.__main__ import main
@@ -33,7 +28,7 @@ class TestCliCodeHelper(ExtTestCase):
         st = BufferedPrint()
         main(args=['code_stat', '-n', 'pyquickhelper',
              '-o', name], fLOG=st.fprint)
-        res = str(st)
+        self.assertLess(len(str(st)), 10)
         self.assertExists(name)
 
 
