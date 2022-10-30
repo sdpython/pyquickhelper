@@ -4,10 +4,12 @@
 """
 
 import os
+import shutil
 from ..loghelper.flog import noLOG
 from .install_custom import download_revealjs, download_requirejs
 from ..filehelper import (
     synchronize_folder, change_file_status, download)
+from ..filehelper.internet_helper import ReadUrlException
 
 
 def install_javascript_tools(root, dest, fLOG=noLOG,
@@ -48,7 +50,12 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     # require.js
     expected = os.path.join(dest, "require.js")
     if not os.path.exists(expected):
-        one = download_requirejs(dest, fLOG=fLOG)
+        try:
+            one = download_requirejs(dest, fLOG=fLOG)
+        except ReadUrlException:
+            name = os.path.join(os.path.dirname(__file__), "require.js")
+            shutil.copy(name, expected)
+            one = [expected]
     else:
         one = [expected]
     lfiles.extend(one)
@@ -57,7 +64,12 @@ def install_javascript_tools(root, dest, fLOG=noLOG,
     expected = os.path.join(dest, "embed-amd.js")
     if not os.path.exists(expected):
         url = "https://unpkg.com/@jupyter-widgets/html-manager@0.20.0/dist/embed-amd.js"
-        one = [download(url, dest, fLOG=fLOG)]
+        try:
+            one = [download(url, dest, fLOG=fLOG)]
+        except ReadUrlException:
+            name = os.path.join(os.path.dirname(__file__), "embed-amd.js")
+            shutil.copy(name, expected)
+            one = [expected]
     else:
         one = [expected]
     lfiles.extend(one)
