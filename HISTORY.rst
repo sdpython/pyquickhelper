@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2022-09-27 - 0.00Mb
+current - 2022-10-30 - 0.00Mb
 =============================
+
+* #379: Implements a function to measure the documentation (2022-10-30)
+
+1.11.3762 - 2022-09-27 - 1.99Mb
+===============================
 
 * #378: Removes dependency on sphinxcontrib.imagesvg (2022-09-27)
 * #377: Fixes failing unit tests (2022-09-15)
@@ -15,12 +20,11 @@ current - 2022-09-27 - 0.00Mb
 1.11.3755 - 2022-07-30 - 1.99Mb
 ===============================
 
-* #375: Reduces the number of warnings (2022-07-29)
-* #374: Improves unit test summary report (2022-07-29)
-
 1.11.3752 - 2022-07-29 - 1.99Mb
 ===============================
 
+* #375: Reduces the number of warnings (2022-07-29)
+* #374: Improves unit test summary report (2022-07-29)
 * #373: Improves results aftrer running the unit tests, calls sys.exit with a different code (2022-07-29)
 
 1.11.3747 - 2022-07-25 - 1.99Mb
@@ -47,7 +51,7 @@ current - 2022-09-27 - 0.00Mb
 * #362: Simplifications (2022-03-14)
 * #361: Removes logging propagation when catching it for unittest (2022-02-13)
 
-1.11.3697 - 2022-01-07 - 2.20Mb
+1.11.3697 - 2022-01-07 - 2.12Mb
 ===============================
 
 * #360: Switches CI to python 3.10 (2021-12-30)
@@ -58,12 +62,12 @@ current - 2022-09-27 - 0.00Mb
 * #355: Adds function to concatenate images (2021-11-23)
 * #354: Changes to support main branch (2021-10-25)
 
-1.10.3653 - 2021-10-13 - 2.12Mb
+1.10.3653 - 2021-10-13 - 1.98Mb
 ===============================
 
 * #353: Fix import issue with py36, fix a infinite loop in profiling (2021-10-13)
 
-1.10.3651 - 2021-10-12 - 2.12Mb
+1.10.3651 - 2021-10-12 - 1.98Mb
 ===============================
 
 * #352: Implements new rendering for a profiling (2021-10-12)
@@ -74,7 +78,7 @@ current - 2022-09-27 - 0.00Mb
 * #347: Adds pseudo recursive getstate (2021-09-02)
 * #346: Adds functions to shorten big constant in unit tests (2021-08-18)
 
-1.10.3626 - 2021-08-15 - 1.98Mb
+1.10.3626 - 2021-08-15 - 2.11Mb
 ===============================
 
 * #345: Improves file comparison, add magic command codediff (2021-08-15)
