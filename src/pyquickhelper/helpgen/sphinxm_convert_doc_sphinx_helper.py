@@ -1483,7 +1483,8 @@ class _CustomSphinx(Sphinx):
         self._added_objects.append(('event', name))
         Sphinx.add_event(self, name)
 
-    def add_config_value(self, name, default, rebuild, types_=()):  # pylint: disable=W0221,W0237
+    def add_config_value(self, name, default, rebuild, types_=(), types=()):  # pylint: disable=W0221,W0237
+        types_ = types or types_
         self._added_objects.append(('config_value', name))
         Sphinx.add_config_value(self, name, default, rebuild, types_)
 

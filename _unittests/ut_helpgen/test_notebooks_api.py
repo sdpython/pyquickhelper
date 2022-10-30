@@ -34,7 +34,7 @@ class TestNotebookAPI(ExtTestCase):
         try:
             res = nb2slides(nbr, outfile)
         except ReadUrlException as e:
-            warnings.warn(e)
+            warnings.warn(str(e))
             return
         self.assertGreater(len(res), 1)
         for r in res:
