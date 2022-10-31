@@ -76,12 +76,10 @@ from ..sphinxext.sphinx_md_builder import setup as setup_md
 from ..sphinxext.sphinx_rst_builder import setup as setup_rst
 
 
-def get_default_extensions(load_bokeh=False):
+def get_default_extensions():
     """
     Returns a list of default extensions.
 
-    @param      load_bokeh  loads :epkg:`bokeh` extensions
-                            (can be disabled as it is quite slow)
     @return                 list of :epkg:`Sphinx` extensions
 
     The current list is:
@@ -127,15 +125,6 @@ def get_default_extensions(load_bokeh=False):
         setup_plot, setup_image, setup_collapse, setup_gdot,
         setup_video, setup_simpleimage, setup_downloadlink,
         setup_quote, setup_gitlog]
-
-    if load_bokeh:
-        try:
-            import bokeh  # pylint: disable=W0611
-            from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
-            default_setups.append(setup_bokeh)
-        except ImportError:  # pragma: no cover
-            # bokeh is not installed.
-            pass
 
     return [_.__module__ for _ in default_setups]
 

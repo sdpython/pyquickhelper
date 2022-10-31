@@ -282,12 +282,9 @@ log.txt
 _unittests/ut_helpgen/data/dump.notebook.pyquickhelper_bug.txt.csv
 _unittests/ut_sphinxext/data/video/jol/mur2.mp4
 _unittests/ut_sphinxext/data/video/jol/im/mur3.mp4
-_unittests/ut_sphinxext/bokeh_plot/*
-bokeh_plot/*.js
 _doc/notebooks/autosavetime2/*
 math/*.png
 math/*.svg
-_unittests/ut_module/bokeh_plot
 _doc/sphinxdoc/source/tutorial/oo.png
 IMPOSSIBLETOFIND
 _unittests/ut_cli/math/*.png

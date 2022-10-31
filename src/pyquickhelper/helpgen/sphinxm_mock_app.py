@@ -257,8 +257,7 @@ class MockSphinxApp:
 
     @staticmethod
     def create(writer="html", directives=None, confoverrides=None,
-               new_extensions=None, load_bokeh=False,
-               destination_path=None, fLOG=None):
+               new_extensions=None, destination_path=None, fLOG=None):
         """
         Creates a @see cl MockSphinxApp for :epkg:`Sphinx`.
 
@@ -266,8 +265,6 @@ class MockSphinxApp:
         @param      directives          new directives to add (see below)
         @param      confoverrides       initial options
         @param      new_extensions      additional extensions to setup
-        @param      load_bokeh          load :epkg:`bokeh` extension,
-                                        disabled by default as it is slow
         @param      destination_path    some extension requires it
         @param      fLOG                logging function
         @return                         mockapp, writer, list of added nodes
@@ -295,8 +292,7 @@ class MockSphinxApp:
             if confoverrides is None:
                 confoverrides = {}
             if "extensions" not in confoverrides:
-                confoverrides["extensions"] = get_default_extensions(
-                    load_bokeh=load_bokeh)
+                confoverrides["extensions"] = get_default_extensions()
 
             if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
                 app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,

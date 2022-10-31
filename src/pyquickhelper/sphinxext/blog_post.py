@@ -90,8 +90,7 @@ class BlogPost:
             if extensions is None:
                 # To avoid circular references.
                 from . import get_default_extensions
-                # By default, we do not load bokeh extension (slow).
-                extensions = get_default_extensions(load_bokeh=False)
+                extensions = get_default_extensions()
             overrides["extensions"] = extensions
 
         from ..helpgen.sphinxm_mock_app import MockSphinxApp

@@ -1,5 +1,4 @@
 autopep8
-bokeh
 cairosvg>=2.5.0
 cffi
 codecov

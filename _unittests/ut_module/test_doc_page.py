@@ -56,7 +56,6 @@ class TestDocPage(ExtTestCase):
         writer = 'html'
         ht = rst2html(content, writer=writer, layout="sphinx", keep_warnings=True,
                       imgmath_latex_preamble=preamble, outdir=temp,
-                      load_bokeh=True,
                       epkg_dictionary={'pep8': 'https://www.python.org/dev/peps/pep-0008/'})
         ht = ht.replace('src="_images/', 'src="')
         ht = ht.replace('/scripts\\bokeh', '../bokeh_plot\\bokeh')

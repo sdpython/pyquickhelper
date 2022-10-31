@@ -85,8 +85,7 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
              layout='docutils', document_name="<<string>>",
              external_docnames=None, filter_nodes=None,
              new_extensions=None, update_builder=None,
-             ret_doctree=False, load_bokeh=False,
-             destination=None, destination_path=None,
+             ret_doctree=False, destination=None, destination_path=None,
              **options):
     """
     Converts a string from :epkg:`RST`
@@ -112,8 +111,6 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
     @param      new_extensions      additional extension to setup
     @param      update_builder      update the builder after it is instantiated
     @param      ret_doctree         returns the doctree
-    @param      load_bokeh          load :epkg:`bokeh` extensions,
-                                    disabled by default as it takes a few seconds
     @param      destination         set a destination (requires for some extension)
     @param      destination_path    set a destination path (requires for some extension)
     @param      options             :epkg:`Sphinx` options see
@@ -261,24 +258,21 @@ def rst2html(s, fLOG=noLOG, writer="html", keep_warnings=False,
         mockapp, writer, title_names = MockSphinxApp.create(
             "sphinx", directives, confoverrides=defopt,
             new_extensions=new_extensions,
-            load_bokeh=load_bokeh, fLOG=fLOG,
-            destination_path=destination_path)
+            fLOG=fLOG, destination_path=destination_path)
         writer_name = "HTMLWriterWithCustomDirectives"
     elif writer in ("rst", "md", "latex", "elatex", 'text', 'doctree'):
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(
             writer, directives, confoverrides=defopt,
             new_extensions=new_extensions,
-            load_bokeh=load_bokeh, fLOG=fLOG,
-            destination_path=destination_path)
+            fLOG=fLOG, destination_path=destination_path)
     elif isinstance(writer, tuple):
         # We extect something like ("builder_name", builder_class)
         writer_name = writer
         mockapp, writer, title_names = MockSphinxApp.create(
             writer, directives, confoverrides=defopt,
             new_extensions=new_extensions,
-            load_bokeh=load_bokeh, fLOG=fLOG,
-            destination_path=destination_path)
+            fLOG=fLOG, destination_path=destination_path)
     else:
         raise ValueError(
             f"Unexpected writer '{writer}', should be 'rst' or 'html' or 'md' or 'elatex' or 'text'.")

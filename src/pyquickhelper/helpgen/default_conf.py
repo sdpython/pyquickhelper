@@ -737,17 +737,6 @@ def custom_setup(app, author):
             name = f'pyquickhelper.sphinxext.sphinx_{name}_extension'
         app.extensions[name] = Extension(name, ext.__module__, **meta)
 
-    try:
-        import bokeh
-        assert bokeh is not None
-        from ..sphinxext.bokeh.bokeh_plot import setup as setup_bokeh
-        setup_bokeh(app)
-        name = "pyquickhelper.sphinxext.bokeh.bokeh_plot"
-        app.extensions[name] = Extension(name, setup_bokeh.__module__)
-    except ImportError:  # pragma: no cover
-        # bokeh is not installed.
-        pass
-
     # from sphinx.util.texescape import tex_replacements
     # tex_replacements += [('oe', '\\oe '), ]
     app.add_js_file("require.js")
