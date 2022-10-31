@@ -2,11 +2,9 @@
 @file
 @brief Various function to install some application such as :epkg:`pandoc`.
 """
-from __future__ import print_function
 import re
 import os
 import shutil
-
 from ..filehelper import download, read_url
 from ..filehelper.internet_helper import ReadUrlException
 from ..filehelper.compression_helper import unzip_files
@@ -104,7 +102,8 @@ def download_requirejs(to=".", fLOG=print,
                 dirname, "static", "components", "requirejs", "require.js"),
             os.path.join(
                 dirname, "..", "nbclassic", "static", "components", "requirejs",
-                "require.js")]
+                "require.js"),
+            os.path.join(os.path.dirname(__file__), "require.js")]
         elocations = [loc for loc in locations if os.path.exists(loc)]
         if len(elocations) == 0:
             raise FileNotFoundError(  # pragma: no cover
