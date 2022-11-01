@@ -8,8 +8,7 @@ from docutils.parsers.rst.directives import directive as rst_directive
 from .sphinxm_convert_doc_sphinx_helper import (
     HTMLWriterWithCustomDirectives, _CustomSphinx,
     MDWriterWithCustomDirectives, RSTWriterWithCustomDirectives,
-    LatexWriterWithCustomDirectives, DocTreeWriterWithCustomDirectives
-)
+    LatexWriterWithCustomDirectives, DocTreeWriterWithCustomDirectives)
 from ..sphinxext import get_default_extensions
 
 
@@ -38,8 +37,7 @@ class MockSphinxApp:
                         "<class 'sphinx.ext.graphviz.graphviz'>": "graphviz",
                         "<class 'sphinx.ext.mathbase.math'>": "math",
                         "<class 'sphinx.ext.mathbase.displaymath'>": "displaymath",
-                        "<class 'sphinx.ext.mathbase.eqref'>": "eqref",
-                        }
+                        "<class 'sphinx.ext.mathbase.eqref'>": "eqref"}
 
         # delayed import to speed up import time
         from sphinx.config import Config
@@ -406,7 +404,7 @@ class MockSphinxApp:
                 fLOG("[MockSphinxApp] RST DIREC", res)
 
             class bb:
-                def info(*args, line=0):  # pylint: disable=E0211
+                def info(*args, line=0):  # pylint: disable=E0211,E0213
                     fLOG("[MockSphinxApp]   -- ", *args)
 
             class aa:
