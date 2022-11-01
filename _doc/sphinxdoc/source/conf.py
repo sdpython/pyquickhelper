@@ -20,7 +20,7 @@ set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2022,
                          'issue ')),
                      link_resolve="http://www.xavierdupre.fr/app/")
 
-extensions.append([
+extensions.extend([
     "bokeh.sphinxext.bokeh_autodoc",
     "bokeh.sphinxext.bokeh_dataframe",
     "bokeh.sphinxext.bokeh_color",
