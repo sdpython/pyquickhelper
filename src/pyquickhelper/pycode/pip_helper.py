@@ -50,6 +50,8 @@ class Distribution:
             except AttributeError as e:
                 if attr == 'project_name':
                     return getattr(self.__dict__['dist']._dist, 'name')
+                if attr == 'py_version':
+                    return getattr(self.__dict__['dist']._dist, 'version')
                 raise AttributeError(
                     f"Unable to find {attr!r} in {dir(self.__dict__['dist']._dist)}.") from e
         try:
