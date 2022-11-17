@@ -48,6 +48,8 @@ class Distribution:
             try:
                 return getattr(self.__dict__['dist']._dist, attr)
             except AttributeError as e:
+                if attr == 'project_name':
+                    return getattr(self.__dict__['dist']._dist, 'name')
                 raise AttributeError(
                     f"Unable to find {attr!r} in {dir(self.__dict__['dist']._dist)}.") from e
         try:

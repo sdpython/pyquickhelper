@@ -1,15 +1,11 @@
 """
 @brief      test log(time=1s)
-@author     Xavier Dupre
 """
-
 import sys
 import os
 import unittest
 import warnings
 import pandas
-
-from pyquickhelper.loghelper.flog import fLOG
 from pyquickhelper.helpgen.sphinx_main_helper import produce_code_graph_changes
 from pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 
@@ -17,21 +13,11 @@ from pyquickhelper.pycode import fix_tkinter_issues_virtualenv
 class TestGraphChanges (unittest.TestCase):
 
     def test_graph_changes(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
-
-        abc = fix_tkinter_issues_virtualenv()
-        for a in abc:
-            fLOG(a)
-
+        fix_tkinter_issues_virtualenv()
         path = os.path.abspath(os.path.split(__file__)[0])
         data = os.path.join(path, "data", "changes.txt")
         df = pandas.read_csv(data, sep="\t")
-        fLOG(type(df.loc[0, "date"]), df.loc[0, "date"])
         code = produce_code_graph_changes(df)
-        fLOG(code)
 
         enabled = True
         if enabled:
@@ -50,9 +36,8 @@ class TestGraphChanges (unittest.TestCase):
                   '2015-w08', '2015-w09', '2015-w10', '2015-w11', '2015-w12', '2015-w13', '2015-w14', '2015-w15',
                   '2015-w16', '2015-w17', '2015-w18', '2015-w19', '2015-w20']
             plt.close('all')
-            plt.style.use('ggplot')
             with warnings.catch_warnings():
-                warnings.simplefilter('ignore', DeprecationWarning)
+                warnings.simplefilter('ignore', (DeprecationWarning, UserWarning))
                 _, ax = plt.subplots(nrows=1, ncols=1, figsize=(10, 4))
                 ax.bar(x, y)
                 tig = ax.get_xticks()
@@ -70,10 +55,11 @@ class TestGraphChanges (unittest.TestCase):
             code = code.replace("plt.show", "#plt.show")
 
         obj = compile(code, "", "exec")
-        try:
-            exec(obj, globals(), locals())
-        except Exception as e:
-            raise Exception(f"unable to run code:\n{code}") from e
+        if sys.platform != "win32" and __name__ != "__main__":
+            try:
+                exec(obj, globals(), locals())
+            except Exception as e:
+                raise AssertionError(f"Unable to run code:\n{code}") from e
 
 
 if __name__ == "__main__":
