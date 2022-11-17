@@ -52,6 +52,8 @@ class Distribution:
                     return getattr(self.__dict__['dist']._dist, 'name')
                 if attr == 'py_version':
                     return getattr(self.__dict__['dist']._dist, 'version')
+                if attr == 'platform':
+                    return None
                 raise AttributeError(
                     f"Unable to find {attr!r} in {dir(self.__dict__['dist']._dist)} or "
                     f"{dir(self.__dict__['dist'])}.") from e
