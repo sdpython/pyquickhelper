@@ -17,6 +17,7 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
 
     @skipif_travis('graphviz is not installed')
     @skipif_circleci('graphviz is not installed')
+    @skipif_appveyor("Message: 'generated new fontManager'")
     def test_plot_graphviz(self):
         dot = dedent("""
         digraph D {
@@ -41,6 +42,7 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
 
     @skipif_travis('graphviz is not installed')
     @skipif_circleci('graphviz is not installed')
+    @skipif_appveyor("Message: 'generated new fontManager'")
     def test_plot_graphviz_temp(self):
         dot = dedent("""
         digraph D {
