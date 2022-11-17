@@ -11,7 +11,6 @@ from pyquickhelper.pycode import (
 from pyquickhelper.server.filestore_fastapi import (
     create_fast_api_app, fast_api_submit, fast_api_query,
     fast_api_content, _get_password, _post_request)
-from fastapi.testclient import TestClient  # pylint: disable=E0401
 from pyquickhelper.server.filestore_sqlite import SqlLite3FileStore
 
 
@@ -34,6 +33,7 @@ class TestfileStoreRest(ExtTestCase):
     @skipif_azure("There is no current event loop in thread")
     @skipif_circleci("There is no current event loop in thread")
     def test_file_store(self):
+        from fastapi.testclient import TestClient  # pylint: disable=E0401
         temp = get_temp_folder(__file__, "temp_file_storage_rest")
         name = os.path.join(temp, "filestore.db3")
         app = create_fast_api_app(name, "BBB")
@@ -116,6 +116,7 @@ class TestfileStoreRest(ExtTestCase):
     @skipif_azure("There is no current event loop in thread")
     @skipif_circleci("There is no current event loop in thread")
     def test_file_store_df(self):
+        from fastapi.testclient import TestClient  # pylint: disable=E0401
         temp = get_temp_folder(__file__, "temp_file_storage_rest_df")
         name = os.path.join(temp, "filestore.db3")
         app = create_fast_api_app(name, "BBB")

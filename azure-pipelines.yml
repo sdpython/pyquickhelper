@@ -5,7 +5,7 @@ jobs:
   strategy:
     matrix:
       Python310:
-        python.version: '3.10'
+        python.version: '3.11'
         sphinx.version: ''
         require.version: ''
       Python310-4:
@@ -71,7 +71,7 @@ jobs:
   strategy:
     matrix:
       Python310:
-        python.version: "3.10"
+        python.version: "3.11"
 
   steps:
   - task: UsePythonVersion@0
