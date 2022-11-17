@@ -7,11 +7,12 @@ import unittest
 import warnings
 import pandas
 from pyquickhelper.helpgen.sphinx_main_helper import produce_code_graph_changes
-from pyquickhelper.pycode import fix_tkinter_issues_virtualenv
+from pyquickhelper.pycode import fix_tkinter_issues_virtualenv, skipif_appveyor
 
 
 class TestGraphChanges (unittest.TestCase):
 
+    @skipif_appveyor("Message: 'generated new fontManager'")
     def test_graph_changes(self):
         fix_tkinter_issues_virtualenv()
         path = os.path.abspath(os.path.split(__file__)[0])
