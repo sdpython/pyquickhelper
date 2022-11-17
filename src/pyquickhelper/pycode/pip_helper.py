@@ -29,8 +29,6 @@ class PQPipError(Exception):
 class Distribution:
     """
     Common interface for old and recent pip packages.
-
-    .. versionadded:: 1.5
     """
 
     def __init__(self, dist):
@@ -47,8 +45,16 @@ class Distribution:
                     'py_version', 'platform', 'extras'}:
             if hasattr(self.__dict__['dist'], attr):
                 return getattr(self.__dict__['dist'], attr)
-            return getattr(self.__dict__['dist']._dist, attr)
-        return getattr(self.__dict__['dist'], attr)
+            try:
+                return getattr(self.__dict__['dist']._dist, attr)
+            except AttributeError as e:
+                raise AttributeError(
+                    f"Unable to find {attr!r} in {dir(self.__dict__['dist']._dist)}.") from e
+        try:
+            return getattr(self.__dict__['dist'], attr)
+        except AttributeError as e:
+            raise AttributeError(
+                f"Unable to find {attr!r} in {dir(self.__dict__['dist'])}.") from e
 
 
 def get_installed_distributions(local_only=True, skip=None,
@@ -69,8 +75,6 @@ def get_installed_distributions(local_only=True, skip=None,
         site directory.
     :param use_cmd: if True, use a different process (updated package list)
     :return: list of installed Distribution objects.
-
-    .. versionadded:: 1.5
     """
     if use_cmd:
         raise NotImplementedError(  # pragma: no cover

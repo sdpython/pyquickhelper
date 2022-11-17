@@ -33,8 +33,6 @@ class ProfileNode:
     :param nc2: number of calls 2
     :param tin: time spent in the function
     :param tout: time spent in the function and in the sub functions
-
-    .. versionadded:: 1.11
     """
 
     def __init__(self, filename, line, func_name, nc1, nc2, tin, tall):
@@ -489,9 +487,6 @@ def profile(fct, sort='cumulative', rootrem=None, as_df=False,
         for la in ax.get_xticklabels():
             la.set_horizontalalignment('right');
         plt.show()
-
-    .. versionchanged:: 1.11
-        Parameter *return_results* was added.
     """
     if pyinst_format is None:
         pr = cProfile.Profile(**kwargs)
@@ -643,8 +638,6 @@ def profile2graph(ps, clean_text=None, verbose=False, fLOG=None):
             root, nodes = profile2graph(ps, clean_text=lambda x: x.split('/')[-1])
             text = root.to_text()
             print(text)
-
-    .. versionadded:: 1.11
     """
     if clean_text is None:
         clean_text = lambda x: x

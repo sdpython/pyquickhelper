@@ -123,9 +123,6 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
 
         import pprint
         pprint.pprint(ext_locals)
-
-    .. versionchanged:: 1.9
-        Uses ``jupyter_sphinx>=0.2``.
     """
     # sphinx_gallery only supports matplotlib.use('agg')
     # and it must be done first.

@@ -2,8 +2,8 @@ image:
   - Visual Studio 2022
 environment:
   matrix:
-    - PYTHON: "C:\\Python311-x64"
-      PYTHON_VERSION: "3.11.x"
+    - PYTHON: "C:\\Python310-x64"
+      PYTHON_VERSION: "3.10.x"
       PYTHON_ARCH: "64"
 
 cache:

@@ -1,8 +1,6 @@
 """
 @file
 @brief Helpers around images.
-
-.. versionadded:: 1.9
 """
 import os
 import glob
@@ -75,8 +73,6 @@ def white_to_transparency(img, out_file=None):
     Code taken from `Using PIL to make all white pixels transparent?
     <https://stackoverflow.com/questions/765736/
     using-pil-to-make-all-white-pixels-transparent>`_.
-
-    .. versionadded:: 1.9
     """
     from PIL import Image
     if isinstance(img, str):

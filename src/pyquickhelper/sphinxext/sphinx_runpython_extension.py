@@ -95,9 +95,6 @@ def run_python_script(script, params=None, comment=None, setsysvar=None, process
 
     Section :ref:`l-image-rst-runpython` explains
     how to display an image with this directive.
-
-    .. versionchanged:: 1.9
-        Parameter *store_in_file* was added.
     """
     def warning_filter(warningout):
         if warningout in (None, ''):
@@ -387,9 +384,6 @@ class RunPythonDirective(Directive):
         :showcode:
 
         print("Hide or unhide this output.")
-
-    .. versionchanged:: 1.9
-        Options *store_in_file* was added.
     """
     required_arguments = 0
     optional_arguments = 0
