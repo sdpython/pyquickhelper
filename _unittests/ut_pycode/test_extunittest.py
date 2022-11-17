@@ -84,6 +84,24 @@ class TestExtTestCase(ExtTestCase):
         self.assertRaise(lambda: self.assertEqualArray(None, df),
                          AssertionError)
 
+    def test_arr_decimal(self):
+        from numpy import array
+        df = array([[0, 1], [1, 2.01]])
+        df1 = array([[0, 1], [1, 2]])
+        self.assertEqualArray(df, df1, decimal=1)
+
+    def test_arr_atol(self):
+        from numpy import array
+        df = array([[0.5, 1], [1, 2]])
+        df1 = array([[0, 1], [1, 2]])
+        self.assertEqualArray(df, df1, atol=0.5)
+
+    def test_arr_rtol(self):
+        from numpy import array
+        df = array([[0, 1], [1, 2.2]])
+        df1 = array([[0, 1], [1, 2]])
+        self.assertEqualArray(df, df1, rtol=0.11)
+
     def test_nan(self):
         from numpy import array, nan
         df = array([[nan, 1], [1, 2]])

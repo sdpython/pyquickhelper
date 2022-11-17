@@ -148,12 +148,15 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError("d1 is None, d2 is not")
         if d2 is None:
             raise AssertionError("d1 is not None, d2 is")
-        from numpy.testing import assert_almost_equal
-        import numpy
+        from numpy.testing import assert_almost_equal, assert_allclose
+        from numpy import squeeze
         if squeeze:
-            d1 = numpy.squeeze(d1)
-            d2 = numpy.squeeze(d2)
-        assert_almost_equal(d1, d2, **kwargs)
+            d1 = squeeze(d1)
+            d2 = squeeze(d2)
+        if 'decimal' in kwargs:
+            assert_almost_equal(d1, d2, **kwargs)
+        else:
+            assert_allclose(d1, d2, **kwargs)
 
     def assertHasNoNan(self, a):  # pylint: disable=W0221
         """
