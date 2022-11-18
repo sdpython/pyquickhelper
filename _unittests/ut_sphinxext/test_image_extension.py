@@ -8,7 +8,7 @@ import unittest
 import warnings
 from io import StringIO
 from docutils.parsers.rst import directives
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.helpgen.sphinxm_custom_app import CustomSphinxApp
 from pyquickhelper.sphinxext.sphinximages.sphinxtrib.images import ImageDirective
@@ -23,6 +23,7 @@ class TestImageExtension(ExtTestCase):
     def test_post_parse_sn(self):
         directives.register_directive("image", ImageDirective)
 
+    @skipif_appveyor("logging issue")
     def test_image(self):
         from docutils import nodes as skip_
 
@@ -78,6 +79,7 @@ class TestImageExtension(ExtTestCase):
         with open(os.path.join(temp, "out_image.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @skipif_appveyor("logging issue")
     def test_sphinx_ext_image_html(self):
         temp = get_temp_folder(__file__, "temp_sphinx_ext_image_html")
         src_ = os.path.join(temp, "..", "data", "image")
@@ -95,6 +97,7 @@ class TestImageExtension(ExtTestCase):
         img = os.path.join(temp, '_images', 'im.png')
         self.assertExists(img)
 
+    @skipif_appveyor("logging issue")
     def test_image_url(self):
         from docutils import nodes as skip_
 
@@ -139,6 +142,7 @@ class TestImageExtension(ExtTestCase):
         with open(os.path.join(temp, "out_image.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @skipif_appveyor("logging issue")
     def test_image_abspath(self):
         from docutils import nodes as skip_
 

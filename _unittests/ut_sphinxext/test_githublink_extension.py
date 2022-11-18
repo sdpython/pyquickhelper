@@ -5,7 +5,7 @@
 import os
 import unittest
 import warnings
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import githublink_role
 from docutils.parsers.rst.roles import register_canonical_role
@@ -16,6 +16,7 @@ class TestGitHubLinkExtension(ExtTestCase):
     def test_post_parse_sn(self):
         register_canonical_role("githublink", githublink_role)
 
+    @skipif_appveyor("logging issue")
     def test_githublink(self):
         from docutils import nodes as skip_
 
@@ -92,6 +93,7 @@ class TestGitHubLinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @skipif_appveyor("logging issue")
     def test_githublink_function(self):
         from docutils import nodes as skip_
 
@@ -164,6 +166,7 @@ class TestGitHubLinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @skipif_appveyor("logging issue")
     def test_githublink_doc(self):
         from docutils import nodes as skip_
 
@@ -200,6 +203,7 @@ class TestGitHubLinkExtension(ExtTestCase):
         with open(os.path.join(temp, "out_githublink.html"), "w", encoding="utf8") as f:
             f.write(html)
 
+    @skipif_appveyor("logging issue")
     def test_githublink_binaries(self):
         from docutils import nodes as skip_
 
