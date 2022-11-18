@@ -10,7 +10,8 @@ from pyquickhelper.pycode import (
     get_temp_folder, ignore_warnings, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import BlocRef, BlocRefList
-from pyquickhelper.sphinxext.sphinx_blocref_extension import blocref_node, visit_blocref_node, depart_blocref_node
+from pyquickhelper.sphinxext.sphinx_blocref_extension import (
+    blocref_node, visit_blocref_node, depart_blocref_node)
 
 
 class TestBlocRefExtension(unittest.TestCase):
@@ -21,6 +22,7 @@ class TestBlocRefExtension(unittest.TestCase):
         directives.register_directive("blocreflist", BlocRefList)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("logging error")
     def test_blocref_rst(self):
         from docutils import nodes as skip_
 

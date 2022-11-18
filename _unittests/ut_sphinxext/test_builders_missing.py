@@ -4,7 +4,7 @@
 """
 import os
 import unittest
-from pyquickhelper.pycode import ExtTestCase, ignore_warnings
+from pyquickhelper.pycode import ExtTestCase, ignore_warnings, skipif_appveyor
 from pyquickhelper.sphinxext.sphinx_doctree_builder import DocTreeTranslator
 from pyquickhelper.sphinxext.sphinx_latex_builder import EnhancedLaTeXTranslator
 from pyquickhelper.sphinxext.sphinx_md_builder import MdTranslator
@@ -14,6 +14,7 @@ from pyquickhelper.sphinxext.sphinx_rst_builder import RstTranslator
 class TestBuildersMissing(ExtTestCase):
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("logging error")
     def test_builders_missing(self):
         from docutils import nodes as skip_
         from sphinx.builders.latex.util import ExtBabel

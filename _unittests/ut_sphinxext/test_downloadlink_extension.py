@@ -6,7 +6,7 @@ import os
 import unittest
 import warnings
 import sphinx
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import process_downloadlink_role
 from pyquickhelper.texthelper import compare_module_version
@@ -26,6 +26,7 @@ class TestDownloadlinkExtension(ExtTestCase):
 
     @unittest.skipIf(compare_module_version(sphinx.__version__, '1.8') < 0,
                      reason="DownloadFiles not available in 1.7")
+    @skipif_appveyor("logging error")
     def test_downloadlink_rst(self):
         name = self.get_name()
         content = """
@@ -49,6 +50,7 @@ class TestDownloadlinkExtension(ExtTestCase):
 
     @unittest.skipIf(compare_module_version(sphinx.__version__, '1.8') < 0,
                      reason="DownloadFiles not available in 1.7")
+    @skipif_appveyor("logging error")
     def test_downloadlink_md(self):
         name = self.get_name()
         content = """
@@ -67,6 +69,7 @@ class TestDownloadlinkExtension(ExtTestCase):
 
     @unittest.skipIf(compare_module_version(sphinx.__version__, '1.8') < 0,
                      reason="DownloadFiles not available in 1.7")
+    @skipif_appveyor("logging error")
     def test_downloadlink_html(self):
         name = self.get_name()
         content = """
