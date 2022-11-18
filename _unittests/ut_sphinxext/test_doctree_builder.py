@@ -4,7 +4,8 @@
 """
 import os
 import unittest
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import (
+    get_temp_folder, ExtTestCase, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef
 from pyquickhelper.sphinxext.sphinx_cmdref_extension import (
@@ -13,6 +14,7 @@ from pyquickhelper.sphinxext.sphinx_cmdref_extension import (
 
 class TestDocTreeBuilder(ExtTestCase):
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_builder(self):
         from docutils import nodes as skip_
 
@@ -78,6 +80,7 @@ class TestDocTreeBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_builder_sphinx(self):
         from docutils import nodes as skip_
 
@@ -136,6 +139,7 @@ class TestDocTreeBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_builder_sphinx_table(self):
         from docutils import nodes as skip_
 
@@ -189,6 +193,7 @@ class TestDocTreeBuilder(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_only(self):
         from docutils import nodes as skip_
 
@@ -225,6 +230,7 @@ class TestDocTreeBuilder(ExtTestCase):
         if t1 not in text:
             raise Exception(text)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_reference(self):
         from docutils import nodes as skip_
 
@@ -256,6 +262,7 @@ class TestDocTreeBuilder(ExtTestCase):
         if t1 not in text:
             raise Exception(text)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_reference2(self):
         from docutils import nodes as skip_
 
@@ -311,6 +318,7 @@ class TestDocTreeBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_cmdref.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_image(self):
 
         temp = get_temp_folder(__file__, "temp_doctree_image")
@@ -345,6 +353,7 @@ class TestDocTreeBuilder(ExtTestCase):
         with open(os.path.join(temp, "out_image.doctree.txt"), "w", encoding="utf8") as f:
             f.write(text)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_doctree_image_target(self):
 
         temp = get_temp_folder(__file__, "temp_doctree_image_target")

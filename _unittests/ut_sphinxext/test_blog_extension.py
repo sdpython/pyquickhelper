@@ -5,7 +5,8 @@
 import os
 import unittest
 from docutils.parsers.rst import directives
-from pyquickhelper.pycode import get_temp_folder, ignore_warnings
+from pyquickhelper.pycode import (
+    get_temp_folder, ignore_warnings, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext.sphinx_blog_extension import (
     BlogPostDirective, BlogPostDirectiveAgg,
@@ -21,6 +22,7 @@ class TestBlogExtension(unittest.TestCase):
         directives.register_directive("blogpostagg", BlogPostDirectiveAgg)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_blogpost(self):
 
         from docutils import nodes as skip_
@@ -71,6 +73,7 @@ class TestBlogExtension(unittest.TestCase):
         self.assertIn('after', text)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_blogpost_agg(self):
 
         from docutils import nodes as skip_
