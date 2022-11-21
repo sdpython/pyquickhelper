@@ -5,12 +5,14 @@
 History
 =======
 
-current - 2022-10-30 - 0.00Mb
+current - 2022-11-21 - 0.00Mb
 =============================
 
+* #380: Calls assert_allclose in assertEqualArray (2022-11-21)
+* #381: Updates CI to python 3.11 (2022-11-21)
 * #379: Implements a function to measure the documentation (2022-10-30)
 
-1.11.3762 - 2022-09-27 - 1.99Mb
+1.11.3762 - 2022-09-27 - 2.12Mb
 ===============================
 
 * #378: Removes dependency on sphinxcontrib.imagesvg (2022-09-27)
