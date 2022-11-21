@@ -7,7 +7,8 @@ import unittest
 import warnings
 from docutils.parsers.rst import directives
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder, ignore_warnings
+from pyquickhelper.pycode import (
+    get_temp_folder, ignore_warnings, skipif_appveyor)
 from pyquickhelper.sphinxext import BlogPost, BlogPostList, BlogPostDirective
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import RunPythonDirective
@@ -32,6 +33,7 @@ class TestBlogHelper(unittest.TestCase):
             p.Tag, "post-2015-04-04-anexampleofablogpostincludedinthedocumentation")
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_post_list(self):
         # the test will fail if you add a file in data/blog others
         # with rst files which is not a blog post
@@ -60,6 +62,7 @@ class TestBlogHelper(unittest.TestCase):
                 self.assertIn('...', content)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_directive_with_rst2html(self):
         path = os.path.abspath(os.path.split(__file__)[0])
         file = os.path.join(path, "data", "2015-04-04_first_blogpost.rst")
@@ -78,6 +81,7 @@ class TestBlogHelper(unittest.TestCase):
             fLOG("--------------ERRORS\n", html[p1:p2], "------------")
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_docutils(self):
         # from https://gist.github.com/mastbaum/2655700
         import docutils.core
@@ -131,6 +135,7 @@ class TestBlogHelper(unittest.TestCase):
             raise Exception(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_newdirective_with_rst2html(self):
         """
         this test also test the extension runpython
@@ -181,6 +186,7 @@ class TestBlogHelper(unittest.TestCase):
                 raise Exception(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_newdirective_with_rst2html_bug(self):
         from docutils import nodes
 

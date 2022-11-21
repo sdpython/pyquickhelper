@@ -3,8 +3,6 @@
 @file
 @brief Defines a sphinx extension to show :epkg:`DOT` graph
 with :epkg:`viz.js` or :epkg:`graphviz`.
-
-.. versionadded:: 1.9
 """
 import os
 import logging

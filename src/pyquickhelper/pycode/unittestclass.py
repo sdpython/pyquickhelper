@@ -445,9 +445,6 @@ class ExtTestCase(unittest.TestCase):
         :param rootrem: root to remove in filenames
         :param return_results: return the results as well
         :return: statistics text dump
-
-        .. versionchanged:: 1.11
-            Parameter *return_results* was added.
         """
         return profile(fct, sort=sort, rootrem=rootrem,
                        return_results=return_results)
@@ -675,8 +672,6 @@ def unittest_require_at_least(mod, version, msg=""):
     @param      mod     module (the module must have an attribute ``__version__``)
     @param      version expected version or more recent
     @param      msg     message
-
-    .. versionadded:: 1.9
     """
     v = getattr(mod, '__version__', None)
     if v is None:

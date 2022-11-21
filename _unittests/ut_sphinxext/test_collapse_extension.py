@@ -5,12 +5,14 @@
 import os
 import unittest
 from docutils.parsers.rst import directives
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import (
+    get_temp_folder, ExtTestCase, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 
 
 class TestCollapseExtension(ExtTestCase):
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_collapse(self):
         from docutils import nodes as skip_
 
@@ -75,6 +77,7 @@ class TestCollapseExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_collapse_legend(self):
         from docutils import nodes as skip_
 
@@ -108,6 +111,7 @@ class TestCollapseExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_collapse_show(self):
         from docutils import nodes as skip_
 

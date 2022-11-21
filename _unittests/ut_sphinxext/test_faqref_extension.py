@@ -6,7 +6,8 @@ import os
 import unittest
 from docutils.parsers.rst import directives
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase, ignore_warnings
+from pyquickhelper.pycode import (
+    get_temp_folder, ExtTestCase, ignore_warnings, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import FaqRef, FaqRefList
 from pyquickhelper.sphinxext.sphinx_faqref_extension import (
@@ -21,6 +22,7 @@ class TestFaqRefExtension(ExtTestCase):
         directives.register_directive("faqreflist", FaqRefList)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("logging error")
     def test_faqref(self):
         from docutils import nodes as skip_
 
@@ -65,6 +67,7 @@ class TestFaqRefExtension(ExtTestCase):
             raise Exception(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("logging error")
     def test_faqreflist(self):
         from docutils import nodes as skip_
 

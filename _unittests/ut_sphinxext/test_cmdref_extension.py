@@ -9,7 +9,7 @@ from docutils.parsers.rst import directives
 import pyquickhelper
 from pyquickhelper.pycode import (
     get_temp_folder, ExtTestCase, is_travis_or_appveyor,
-    skipif_azure_macosx, ignore_warnings)
+    skipif_azure_macosx, ignore_warnings, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import CmdRef, CmdRefList
 from pyquickhelper.sphinxext.sphinx_cmdref_extension import (
@@ -24,6 +24,7 @@ class TestCmdRefExtension(ExtTestCase):
         directives.register_directive("cmdreflist", CmdRefList)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_cmdref(self):
         from docutils import nodes as skip_
 
@@ -80,6 +81,7 @@ class TestCmdRefExtension(ExtTestCase):
             raise Exception(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_cmdreflist(self):
         from docutils import nodes as skip_
 
@@ -136,6 +138,7 @@ class TestCmdRefExtension(ExtTestCase):
             raise Exception(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_cmdref_rename(self):
         from docutils import nodes as skip_
 
@@ -176,6 +179,7 @@ class TestCmdRefExtension(ExtTestCase):
             raise Exception(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_cmdref_quote(self):
         from docutils import nodes as skip_
 
@@ -218,6 +222,7 @@ class TestCmdRefExtension(ExtTestCase):
     @skipif_azure_macosx("The Mac OS X backend will not be able to "
                          "function correctly if Python is not installed as a framework.")
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_cmdref_module(self):
         """
         The test fails on MACOSX if it runs from a virtual envrionment.

@@ -5,7 +5,8 @@
 import os
 import unittest
 import warnings
-from pyquickhelper.pycode import get_temp_folder, ignore_warnings
+from pyquickhelper.pycode import (
+    get_temp_folder, ignore_warnings, skipif_appveyor)
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import bigger_role
 from docutils.parsers.rst.roles import register_canonical_role
@@ -18,6 +19,7 @@ class TestBiggerExtension(unittest.TestCase):
         register_canonical_role("bigger", bigger_role)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_bigger(self):
         from docutils import nodes as skip_
 
@@ -68,6 +70,7 @@ class TestBiggerExtension(unittest.TestCase):
             f.write(html)
 
     @ignore_warnings(PendingDeprecationWarning)
+    @skipif_appveyor("Message: 'Running Sphinx v5.3.0'")
     def test_bigger_inline(self):
         from docutils import nodes as skip_
 

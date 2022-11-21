@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: cimg/python:3.10.5
+      - image: cimg/python:3.11.0
     
     working_directory: ~/repo
     
@@ -18,8 +18,8 @@ jobs:
           name: Install pandoc
           command: |
                     sudo apt-get update 
-                    wget https://github.com/jgm/pandoc/releases/download/2.16.2/pandoc-2.16.2-1-amd64.deb
-                    sudo dpkg -i pandoc-2.16.2-1-amd64.deb
+                    wget https://github.com/jgm/pandoc/releases/download/2.19.2/pandoc-2.19.2-1-amd64.deb
+                    sudo dpkg -i pandoc-2.19.2-1-amd64.deb
           
       - run:
           name: Install tex (unstable)

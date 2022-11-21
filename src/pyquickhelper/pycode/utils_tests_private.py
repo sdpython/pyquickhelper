@@ -610,7 +610,9 @@ def is_valid_error(error):
     @param      error       text
     @return                 boolean
     """
-    lines = error.split('\n')
+    lines = error.strip("\n\r").replace("\r", "").split('\n')
+    if lines[0] == "--- Logging error ---":
+        return False
     lines = [
         line for line in lines if "No module named 'numpy.core._multiarray_umath'" not in line]
     error = "\n".join(lines)

@@ -78,9 +78,6 @@ def create_cli_parser(f, prog=None, layout="sphinx", skip_parameters=('fLOG',),
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
-
-    .. versionchanged:: 1.9
-        Parameters *cls*, *positional* were added.
     """
     # delayed import to speed up import.
     # from ..helpgen import docstring2html
@@ -134,9 +131,6 @@ def create_cli_argument(parser, param, doc, names, positional):
 
     If an annotation offers mutiple types,
     the first one will be used for the command line.
-
-    .. versionchanged:: 1.9
-        Parameter *positional* was added.
     """
     p = param
     if p.annotation and p.annotation != inspect._empty:
