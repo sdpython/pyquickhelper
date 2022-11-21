@@ -185,11 +185,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
 
             print(piv.to_markdown(index=False))
 
-    .. versionchanged:: 1.9
-        Nan value are replaced by empty string even if
-        *number_format* is not None.
-        Parameters *replacements*, *split_row*, *split_col_subsets*,
-        *split_col_common*, *filter_rows* were added.
+        Nan value are replaced by empty string even if *number_format* is not None.
     """
     if isinstance(df, str):
         import pandas  # pragma: no cover

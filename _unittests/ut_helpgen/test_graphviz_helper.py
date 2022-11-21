@@ -9,7 +9,8 @@ from textwrap import dedent
 import unittest
 
 from pyquickhelper.pycode import (
-    ExtTestCase, skipif_travis, skipif_circleci, get_temp_folder)
+    ExtTestCase, skipif_travis, skipif_circleci, skipif_appveyor,
+    get_temp_folder)
 from pyquickhelper.helpgen.graphviz_helper import plot_graphviz
 
 
@@ -17,6 +18,7 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
 
     @skipif_travis('graphviz is not installed')
     @skipif_circleci('graphviz is not installed')
+    @skipif_appveyor("Message: 'generated new fontManager'")
     def test_plot_graphviz(self):
         dot = dedent("""
         digraph D {
@@ -41,6 +43,7 @@ class TestHelpGenGraphvizHelper(ExtTestCase):
 
     @skipif_travis('graphviz is not installed')
     @skipif_circleci('graphviz is not installed')
+    @skipif_appveyor("Message: 'generated new fontManager'")
     def test_plot_graphviz_temp(self):
         dot = dedent("""
         digraph D {

@@ -7,7 +7,7 @@ import os
 import unittest
 
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder
+from pyquickhelper.pycode import get_temp_folder, skipif_appveyor
 from pyquickhelper.helpgen.sphinx_main_helper import format_history
 from pyquickhelper.helpgen import rst2html
 
@@ -135,6 +135,7 @@ class TestPaths(unittest.TestCase):
 
         self.assertEqual(content.strip(" \r\n\t"), expect.strip(" \r\n\t"))
 
+    @skipif_appveyor("Message: 'generated new fontManager'")
     def test_format_history_long(self):
         fLOG(
             __file__,

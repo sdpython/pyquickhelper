@@ -11,7 +11,7 @@ import warnings
 
 from pyquickhelper.loghelper import fLOG
 from pyquickhelper.ipythonhelper import find_notebook_kernel, install_jupyter_kernel, get_notebook_kernel, remove_kernel
-from pyquickhelper.pycode import is_travis_or_appveyor
+from pyquickhelper.pycode import is_travis_or_appveyor, skipif_appveyor
 
 
 class TestNotebookKernels(unittest.TestCase):
@@ -29,6 +29,7 @@ class TestNotebookKernels(unittest.TestCase):
             fLOG(k, type(v), v)
         self.assertTrue(kern in res)
 
+    @skipif_appveyor("Message: 'Installed kernelspec %s in %s'")
     def test_notebook_kernel_install(self):
         fLOG(
             __file__,

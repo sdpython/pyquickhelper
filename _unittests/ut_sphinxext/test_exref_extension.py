@@ -5,7 +5,7 @@
 import os
 import unittest
 from docutils.parsers.rst import directives
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import ExRef, ExRefList
 from pyquickhelper.sphinxext.sphinx_exref_extension import (
@@ -18,6 +18,7 @@ class TestExRefExtension(ExtTestCase):
         directives.register_directive("exref", ExRef)
         directives.register_directive("exreflist", ExRefList)
 
+    @skipif_appveyor("logging issue")
     def test_exref(self):
         from docutils import nodes as skip_
 
@@ -61,6 +62,7 @@ class TestExRefExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("logging issue")
     def test_exreflist(self):
         from docutils import nodes as skip_
 
@@ -112,6 +114,7 @@ class TestExRefExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("logging issue")
     def test_exreflist_rst(self):
         from docutils import nodes as skip_
 

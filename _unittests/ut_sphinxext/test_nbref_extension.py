@@ -5,7 +5,7 @@
 import os
 import unittest
 from docutils.parsers.rst import directives
-from pyquickhelper.pycode import get_temp_folder, ExtTestCase
+from pyquickhelper.pycode import get_temp_folder, ExtTestCase, skipif_appveyor
 from pyquickhelper.helpgen import rst2html
 from pyquickhelper.sphinxext import NbRef, NbRefList
 from pyquickhelper.sphinxext.sphinx_nbref_extension import (
@@ -18,6 +18,7 @@ class TestNbRefExtension(ExtTestCase):
         directives.register_directive("nbref", NbRef)
         directives.register_directive("nbreflist", NbRefList)
 
+    @skipif_appveyor("logging issue")
     def test_nbref(self):
         from docutils import nodes as skip_
 
@@ -61,6 +62,7 @@ class TestNbRefExtension(ExtTestCase):
         if t1 not in html:
             raise Exception(html)
 
+    @skipif_appveyor("logging issue")
     def test_nbreflist(self):
         from docutils import nodes as skip_
 
