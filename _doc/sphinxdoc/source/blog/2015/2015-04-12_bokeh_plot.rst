@@ -23,7 +23,7 @@
             x = [1, 2, 3, 4, 5]
             y = [6, 7, 6, 4, 5]
 
-            p = figure(title="example_bokeh", plot_width=300, plot_height=300)
+            p = figure(title="example_bokeh", width=300, height=300)
             p.line(x, y, line_width=2)
             p.circle(x, y, size=10, fill_color="white")
 
