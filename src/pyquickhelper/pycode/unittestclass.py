@@ -150,9 +150,8 @@ class ExtTestCase(unittest.TestCase):
             raise AssertionError("d1 is not None, d2 is")
         from numpy.testing import assert_almost_equal, assert_allclose
         from numpy import squeeze
-        if squeeze:
-            d1 = squeeze(d1)
-            d2 = squeeze(d2)
+        d1 = squeeze(d1)
+        d2 = squeeze(d2)
         if 'decimal' in kwargs:
             assert_almost_equal(d1, d2, **kwargs)
         else:
