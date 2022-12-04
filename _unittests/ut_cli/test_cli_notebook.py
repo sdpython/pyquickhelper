@@ -87,7 +87,7 @@ class TestProcessNotebook(ExtTestCase):
             outname = os.path.join(temp, "out_nb.ipynb")
             st = BufferedPrint()
             main(args=['run_notebook', '-f', source,
-                       '-o', outname], fLOG=st.fprint)
+                       '-o', outname, '--raise_exception', '0'], fLOG=st.fprint)
             res = str(st)
             self.assertExists(outname)
             source = outname
