@@ -8,9 +8,9 @@ import os
 def run_notebook(filename, profile_dir='', working_dir='',
                  skip_exceptions=False,
                  outfilename='', additional_path='',
-                 kernel_name="python", log_level="30",
+                 kernel_name="python", log_level=30,
                  startup_timeout=300,
-                 verbose=0, fLOG=print):
+                 verbose=0, raise_exception=True, fLOG=print):
     """
     Runs a notebook end to end,
     it is inspired from module `runipy <https://github.com/paulgb/runipy/>`_.
@@ -29,6 +29,7 @@ def run_notebook(filename, profile_dir='', working_dir='',
         see `wait_for_ready
         <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
     :param verbose: 0 for standard logging, 1 for more
+    :param raise_exception: raise an exception if a cell raises one
     :param fLOG: logging function
     :return: tuple (statistics, output)
 
@@ -51,12 +52,15 @@ def run_notebook(filename, profile_dir='', working_dir='',
         additional_path = None
     else:
         additional_path = additional_path.split(',')
-    return _run_notebook(filename, profile_dir=profile_dir, working_dir=working_dir,
-                         skip_exceptions=skip_exceptions, outfilename=outfilename,
-                         additional_path=additional_path, kernel_name=kernel_name,
-                         log_level=log_level, startup_timeout=int(
-                             startup_timeout),
-                         fLOG=fLOG, detailed_log=detailed_log)
+    log_level = int(log_level)
+    raise_exception = raise_exception in ('True', True, 1, '1', 'true')
+    return _run_notebook(
+        filename, profile_dir=profile_dir, working_dir=working_dir,
+        skip_exceptions=skip_exceptions, outfilename=outfilename,
+        additional_path=additional_path, kernel_name=kernel_name,
+        log_level=log_level, startup_timeout=int(startup_timeout),
+        fLOG=fLOG, detailed_log=detailed_log,
+        raise_exception=raise_exception)
 
 
 def convert_notebook(filename, outfold=None, build=None,

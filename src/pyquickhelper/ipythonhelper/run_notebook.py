@@ -68,7 +68,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
                  valid=None, clean_function=None, code_init=None,
                  fLOG=noLOG, kernel_name="python", log_level="30",
                  extended_args=None, cache_urls=None, replacements=None,
-                 detailed_log=None, startup_timeout=300):
+                 detailed_log=None, startup_timeout=30, raise_exception=False):
     """
     Runs a notebook end to end,
     it is inspired from module `runipy <https://github.com/paulgb/runipy/>`_.
@@ -98,6 +98,7 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
     @param      startup_timeout     wait for this long for the kernel to be ready,
                                     see `wait_for_ready
                                     <https://github.com/jupyter/jupyter_client/blob/master/jupyter_client/blocking/client.py#L84>`_
+    @param      raise_exception     raise an exception if a cell raises one
     @return                         tuple (statistics, output)
 
     @warning The function calls `basicConfig
@@ -151,24 +152,27 @@ def run_notebook(filename, profile_dir=None, working_dir=None, skip_exceptions=F
         fLOG(*args, **kwargs)
 
     try:
-        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
-                                   theNotebook=os.path.abspath(filename),
-                                   code_init=code_init, log_level=log_level,
-                                   extended_args=extended_args, kernel_name=kernel_name,
-                                   replacements=cached_rep, kernel=True, detailed_log=detailed_log,
-                                   startup_timeout=startup_timeout)
+        nb_runner = NotebookRunner(
+            nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
+            theNotebook=os.path.abspath(filename),
+            code_init=code_init, log_level=log_level,
+            extended_args=extended_args, kernel_name=kernel_name,
+            replacements=cached_rep, kernel=True, detailed_log=detailed_log,
+            startup_timeout=startup_timeout, raise_exception=raise_exception)
     except NotebookKernelError:  # pragma: no cover
         # It fails. We try again once.
-        nb_runner = NotebookRunner(nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
-                                   theNotebook=os.path.abspath(filename),
-                                   code_init=code_init, log_level=log_level,
-                                   extended_args=extended_args, kernel_name=kernel_name,
-                                   replacements=cached_rep, kernel=True, detailed_log=detailed_log,
-                                   startup_timeout=startup_timeout)
+        nb_runner = NotebookRunner(
+            nb, profile_dir, working_dir, fLOG=flogging, filename=filename,
+            theNotebook=os.path.abspath(filename),
+            code_init=code_init, log_level=log_level,
+            extended_args=extended_args, kernel_name=kernel_name,
+            replacements=cached_rep, kernel=True, detailed_log=detailed_log,
+            startup_timeout=startup_timeout, raise_exception=raise_exception)
 
     try:
-        stat = nb_runner.run_notebook(skip_exceptions=skip_exceptions, additional_path=additional_path,
-                                      valid=valid, clean_function=clean_function)
+        stat = nb_runner.run_notebook(
+            skip_exceptions=skip_exceptions, additional_path=additional_path,
+            valid=valid, clean_function=clean_function)
 
         if outfilename is not None:
             with open(outfilename, 'w', encoding=encoding) as f:
