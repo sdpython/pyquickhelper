@@ -82,7 +82,7 @@ class NotebookRunner(object):
                  comment="", fLOG=noLOG, theNotebook=None, code_init=None,
                  kernel_name="python", log_level="30", extended_args=None,
                  kernel=False, filename=None, replacements=None, detailed_log=None,
-                 startup_timeout=300):
+                 startup_timeout=300, raise_exception=False):
         """
         @param      nb              notebook as :epkg:`JSON`
         @param      profile_dir     profile directory
@@ -107,6 +107,7 @@ class NotebookRunner(object):
                                     see `wait_for_ready
                                     <https://github.com/jupyter/jupyter_client/blob/master/
                                     jupyter_client/blocking/client.py#L84>`_
+        @param      raise_exception raise an exception if a cell raises one
         """
         if kernel:
             try:
@@ -120,6 +121,7 @@ class NotebookRunner(object):
                     kernel_name=kernel_name) if kernel_name is not None else KernelManager()
         else:
             self.km = None
+        self.raise_exception = raise_exception
         self.detailed_log = detailed_log
         self.fLOG = fLOG
         self.theNotebook = theNotebook
@@ -365,6 +367,8 @@ class NotebookRunner(object):
                 tr = (["No traceback, available keys in reply['content']"] +
                       list(reply['content']))
             traceback_text = '\n'.join(tr)
+            if self.raise_exception:
+                raise NotebookError(traceback_text)
             self.fLOG("[nberror]\n", traceback_text)
             if self.detailed_log:
                 self.detailed_log(  # pragma: no cover
