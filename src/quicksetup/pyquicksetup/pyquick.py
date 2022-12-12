@@ -195,10 +195,12 @@ class SetupCommandSphinx(_SetupCommand):
 
     user_options = [
         ('layout=', None, 'format generation, default is html,rst.'),
+        ('nbformats=', None, 'format generation, default is ipynb,slides,html,python,rst,github'),
     ]
 
     def initialize_options(self):
         self.layout = "html,rst"
+        self.nbformats = "ipynb,slides,html,python,rst,github,pdf"
 
     def finalize_options(self):
         pass
@@ -208,6 +210,7 @@ class SetupCommandSphinx(_SetupCommand):
         parameters = self.get_parameters()
         parameters['argv'] = ['build_sphinx']
         parameters['layout'] = self.layout.split(',')
+        parameters['nbformats'] = self.nbformats.split(',')
         process_standard_options_for_setup(**parameters)
 
 
