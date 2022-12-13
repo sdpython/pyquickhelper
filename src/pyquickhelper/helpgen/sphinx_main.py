@@ -429,7 +429,8 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     ##############################
     # some checkings on the configuration
     ##############################
-    _check_sphinx_configuration(theconf, fLOG)
+    galleries = _check_sphinx_configuration(theconf, fLOG)
+    galleries = [os.path.relpath(g, start=root_source) for g in galleries]
 
     ##############################################################
     # Extracts variables from the configuration.
@@ -1083,6 +1084,26 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                         html_static_path, builddoc, copy_1to2=True, fLOG=fLOG)
                     fLOG("[generate_help_sphinx] javascript",
                          len(copy), "files copied")
+                    for gal in galleries:
+                        gal_src = os.path.join(html_static_path, "..", gal, "images")
+                        gal_dst = os.path.join(build_path, gal, "_images")
+                        if not os.path.exists(gal_dst):
+                            os.makedirs(gal_dst)
+                        fLOG("[generate_help_sphinx] copy images to ", gal_src, "to", gal_dst)
+                        copy = synchronize_folder(
+                            gal_src, gal_dst, copy_1to2=True, fLOG=fLOG)
+                        fLOG("[generate_help_sphinx] notebooks",
+                             len(copy), "files copied")
+
+                        gal_src = os.path.join(build_path, "_images", "math")
+                        gal_dst = os.path.join(build_path, gal, "_images", "math")
+                        if not os.path.exists(gal_dst):
+                            os.makedirs(gal_dst)
+                        fLOG("[generate_help_sphinx] copy images to ", gal_src, "to", gal_dst)
+                        copy = synchronize_folder(
+                            gal_src, gal_dst, copy_1to2=True, fLOG=fLOG)
+                        fLOG("[generate_help_sphinx] notebooks",
+                             len(copy), "files copied")
                 else:
                     fLOG(
                         "[generate_help_sphinx] [reveal.js] no need, no folder", builddoc)
@@ -1184,9 +1205,11 @@ def _check_sphinx_configuration(conf, fLOG):
     """
     Operates some verification on the configuration.
 
-    @param  conf        :epkg:`sphinx` configuration
-    @param  fLOG        logging function
+    :param conf: :epkg:`sphinx` configuration
+    :param fLOG: logging function
+    :return: list of gallery folders
     """
+    galleries = []
     clean_folders = []
     if hasattr(conf, "sphinx_gallery_conf"):
         sphinx_gallery_conf = conf.sphinx_gallery_conf
@@ -1194,7 +1217,8 @@ def _check_sphinx_configuration(conf, fLOG):
             add = "\nexamples_dirs={0}\ngallery_dirs={1}".format(
                 sphinx_gallery_conf["examples_dirs"], sphinx_gallery_conf["gallery_dirs"])
             raise ValueError(  # pragma: no cover
-                'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] do not have the same size.' + add)
+                'sphinx_gallery_conf["examples_dirs"] and sphinx_gallery_conf["gallery_dirs"] '
+                'do not have the same size.' + add)
         if len(sphinx_gallery_conf["examples_dirs"]) > 0:
             fLOG(
                 f"[sphinx-gallery] {len(sphinx_gallery_conf['examples_dirs'])} discovered")
@@ -1203,6 +1227,8 @@ def _check_sphinx_configuration(conf, fLOG):
                 fLOG(f"[sphinx-gallery]    src  '{a}'")
                 fLOG(f"[sphinx-gallery]    dest '{b}'")
                 clean_folders.append(a)
+        if len(sphinx_gallery_conf["gallery_dirs"]) > 0:
+            galleries.extend(sphinx_gallery_conf["gallery_dirs"])
     for cl in clean_folders:
         fLOG(f"[sphinx-gallery] clean '{cl}'")
         for temp in os.listdir(cl):  # pragma: no cover
@@ -1210,6 +1236,7 @@ def _check_sphinx_configuration(conf, fLOG):
                 aaa = os.path.join(cl, temp)
                 fLOG(f"[sphinx-gallery] remove '{cl}'")
                 remove_folder(aaa)
+    return galleries
 
 
 def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
