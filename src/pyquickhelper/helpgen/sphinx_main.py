@@ -1085,27 +1085,31 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                     fLOG("[generate_help_sphinx] javascript",
                          len(copy), "files copied")
                     for gal in galleries:
-                        gal_src = os.path.join(html_static_path, "..", gal, "images")
-                        gal_dst = os.path.join(build_path, gal, "_images")
-                        if not os.path.exists(gal_dst):
-                            os.makedirs(gal_dst)
-                        fLOG("[generate_help_sphinx] copy images to ", gal_src, "to", gal_dst)
-                        copy = synchronize_folder(
-                            gal_src, gal_dst, copy_1to2=True, fLOG=fLOG)
-                        fLOG("[generate_help_sphinx] notebooks",
-                             len(copy), "files copied")
-
-                        gal_src = os.path.join(build_path, "_images", "math")
-                        if os.path.exists(gal_src):
-                            gal_dst = os.path.join(build_path, gal, "_images", "math")
+                        gal_path = os.path.join(html_static_path, "..", gal)
+                        folders = ['.'] + [f for f in os.listdir(gal_path)
+                                           if os.path.isdir(f)]
+                        for fold in folders:
+                            gal_src = os.path.join(html_static_path, "..", gal, fold, "images")
+                            gal_dst = os.path.join(build_path, gal, fold, "_images")
                             if not os.path.exists(gal_dst):
                                 os.makedirs(gal_dst)
-                            fLOG(f"[generate_help_sphinx] copy images to "
-                                 f"{gal_src!r} to {gal_dst!r}")
+                            fLOG("[generate_help_sphinx] copy images to ", gal_src, "to", gal_dst)
                             copy = synchronize_folder(
                                 gal_src, gal_dst, copy_1to2=True, fLOG=fLOG)
-                        fLOG("[generate_help_sphinx] notebooks",
-                             len(copy), "files copied")
+                            fLOG("[generate_help_sphinx] notebooks",
+                                 len(copy), "files copied")
+
+                            gal_src = os.path.join(build_path, "_images", "math")
+                            if os.path.exists(gal_src):
+                                gal_dst = os.path.join(build_path, gal, "_images", "math")
+                                if not os.path.exists(gal_dst):
+                                    os.makedirs(gal_dst)
+                                fLOG(f"[generate_help_sphinx] copy images to "
+                                     f"{gal_src!r} to {gal_dst!r}")
+                                copy = synchronize_folder(
+                                    gal_src, gal_dst, copy_1to2=True, fLOG=fLOG)
+                            fLOG("[generate_help_sphinx] notebooks",
+                                 len(copy), "files copied")
                 else:
                     fLOG(
                         "[generate_help_sphinx] [reveal.js] no need, no folder", builddoc)
