@@ -346,6 +346,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     if not use_mathjax:  # pragma: no cover
         imgmath_latex, imgmath_dvipng, imgmath_dvisvgm = find_dvipng_path()
         imgmath_image_format = 'svg'
+        imgmath_embed = True
 
     if add_extensions is not None:  # pragma: no cover
         for a in add_extensions:
