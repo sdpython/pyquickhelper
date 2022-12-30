@@ -41,7 +41,7 @@ class TestRstBuilder(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_rst_builder")
         with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
@@ -211,7 +211,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
@@ -226,7 +226,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
@@ -258,7 +258,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True, layout='sphinx',
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
@@ -273,7 +273,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True, layout='sphinx',
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
@@ -329,7 +329,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')})
+                        extlinks={'issue': ('http://%s', '_issue_%s')})
 
         self.assertIn("*italic*", text)
         self.assertIn("* bul1", text)
@@ -366,7 +366,7 @@ class TestRstBuilder(ExtTestCase):
         try:
             text = rst2html(content,  # fLOG=fLOG,
                             writer="rst", keep_warnings=False, layout='sphinx',
-                            extlinks={'issue': ('http://%s', '_issue_')},
+                            extlinks={'issue': ('http://%s', '_issue_%s')},
                             directives=tives, rst_image_dest=temp)
         except Exception as e:
             raise Exception(
@@ -400,7 +400,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')})
+                        extlinks={'issue': ('http://%s', '_issue_%s')})
 
         text = text.replace("\r", "")
         self.assertIn('data/image/im.png', text)
@@ -425,7 +425,7 @@ class TestRstBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')},
+                        extlinks={'issue': ('http://%s', '_issue_%s')},
                         rst_image_dest=temp)
 
         text = text.replace("\r", "")

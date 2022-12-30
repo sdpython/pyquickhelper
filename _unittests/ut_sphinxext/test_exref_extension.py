@@ -44,7 +44,7 @@ class TestExRefExtension(ExtTestCase):
 
         html = rst2html(content,
                         writer="custom", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_exref")
         with open(os.path.join(temp, "out_exref.html"), "w", encoding="utf8") as f:

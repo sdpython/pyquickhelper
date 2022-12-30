@@ -44,7 +44,7 @@ class TestNbRefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_nbref")
         with open(os.path.join(temp, "out_nbref.html"), "w", encoding="utf8") as f:

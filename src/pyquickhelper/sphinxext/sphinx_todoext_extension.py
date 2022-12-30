@@ -74,7 +74,7 @@ class TodoExt(BaseAdmonition):
     If the option ``issue`` is filled, the configuration must contain a key in ``extlinks``:
 
         extlinks=dict(issue=('https://link/%s',
-                             'issue {0} on somewhere')))
+                             'issue %s on somewhere')))
     """
 
     node_class = todoext_node

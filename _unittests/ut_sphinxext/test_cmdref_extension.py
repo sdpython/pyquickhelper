@@ -51,7 +51,7 @@ class TestCmdRefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="custom", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_cmdref")
         with open(os.path.join(temp, "out_cmdref.html"), "w", encoding="utf8") as f:
@@ -165,7 +165,7 @@ class TestCmdRefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_cmdref_rename")
         with open(os.path.join(temp, "out_cmdref.rst"), "w", encoding="utf8") as f:
@@ -206,7 +206,7 @@ class TestCmdRefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_cmdref_rst")
         with open(os.path.join(temp, "out_cmdref_rst.html"), "w", encoding="utf8") as f:
@@ -263,7 +263,7 @@ class TestCmdRefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_cmdref_rst_module")
         with open(os.path.join(temp, "out_cmdref_rst.html"), "w", encoding="utf8") as f:

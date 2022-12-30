@@ -51,7 +51,7 @@ class TestBlogExtension(unittest.TestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         layout="sphinx", writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_blog_ext")
         with open(os.path.join(temp, "out_blog.html"), "w", encoding="utf8") as f:
@@ -62,7 +62,7 @@ class TestBlogExtension(unittest.TestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         layout="sphinx", writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "out_blog.rst"), "w", encoding="utf8") as f:
             f.write(text)
@@ -103,7 +103,7 @@ class TestBlogExtension(unittest.TestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         layout="sphinx", writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_blogagg_ext")
         with open(os.path.join(temp, "out_blog.html"), "w", encoding="utf8") as f:
@@ -113,7 +113,7 @@ class TestBlogExtension(unittest.TestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         layout="sphinx", writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "out_blog.rst"), "w", encoding="utf8") as f:
             f.write(text)

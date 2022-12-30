@@ -29,12 +29,13 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     :param year: year
     :param theme: theme to use
     :param theme_path: theme path (sets ``html_theme_path``)
-    :param ext_locals: context (see `locals <https://docs.python.org/2/library/functions.html#locals>`_)
+    :param ext_locals: context (see `locals
+        <https://docs.python.org/3/library/functions.html#locals>`_)
     :param add_extensions: additional extensions
     :param bootswatch_theme: for example, ``spacelab``, look at
         `spacelab <https://bootswatch.com/spacelab/>`_
-    :param bootswatch_navbar_links: see `sphinx-bootstrap-theme <https://ryan-roemer.github.io/
-        sphinx-bootstrap-theme/README.html>`_
+    :param bootswatch_navbar_links: see `sphinx-bootstrap-theme
+        <https://ryan-roemer.github.io/sphinx-bootstrap-theme/README.html>`_
     :param description_latex: description latex
     :param use_mathjax: set up the documentation to use mathjax,
         see `sphinx.ext.mathjax
@@ -46,8 +47,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
     :param enable_disabled_parts: @see fn remove_undesired_part_for_documentation
     :param sharepost: add share button to share blog post on usual networks
     :param custom_style: custom style sheet
-    :param extlinks: parameter `extlinks <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
-        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')}``
+    :param extlinks: parameter `extlinks
+        <https://www.sphinx-doc.org/en/master/ext/extlinks.html#confval-extlinks>`_,
+        example: ``{'issue': ('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue %s')}``
     :param github_user: git(hub) user
     :param github_repo: git(hub) project
     :param title: if not None, use *title* instead of *module_name* as a title
@@ -117,8 +119,9 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                              "pyquickhelper",  # replace by your module
                              "module_author", 2019,
                              "readable", alabaster.get_path(),
-                             ext_locals, extlinks=dict(
-                                 issue=('https://github.com/sdpython/module_name/issues/%s', 'issue')),
+                             ext_locals, extlinks=dict(issue=(
+                                 'https://github.com/sdpython/module_name/issues/%s',
+                                 'issue %s')),
                              title="module_name")
 
         import pprint
@@ -398,7 +401,7 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
                     \\newcommand{\\pa}[1]{\\left(#1\\right)}
                     \\newcommand{\\R}{\\mathbb{R}}
                     %% addition by pyquickhelper(2) %%
-                    """
+                    """.replace("                    ", "")
     # post processing of the full latex file
     # it should be a function, None by default
     custom_latex_processing = None

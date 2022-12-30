@@ -47,7 +47,7 @@ class TestBlocRefExtension(unittest.TestCase):
                   visit_blocref_node, depart_blocref_node)]
 
         html = rst2html(content, writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_blocref_rst")
         with open(os.path.join(temp, "out_blocref.html"), "w", encoding="utf8") as f:
@@ -94,7 +94,7 @@ class TestBlocRefExtension(unittest.TestCase):
                   visit_blocref_node, depart_blocref_node)]
 
         html = rst2html(content, writer="rst", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_blocref_html")
         with open(os.path.join(temp, "out_blocref.html"), "w", encoding="utf8") as f:
@@ -142,7 +142,7 @@ class TestBlocRefExtension(unittest.TestCase):
 
         html = rst2html(content, fLOG=fLOG,
                         writer="custom", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_blocref")
         with open(os.path.join(temp, "out_blocref.html"), "w", encoding="utf8") as f:

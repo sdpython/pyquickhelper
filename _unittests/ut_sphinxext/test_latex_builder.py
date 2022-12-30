@@ -37,7 +37,7 @@ class TestLatexBuilder(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_latex_builder")
         with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
@@ -197,7 +197,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
@@ -212,7 +212,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
@@ -243,7 +243,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=True, layout='sphinx',
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.tex"), "w", encoding="utf8") as f:
@@ -305,7 +305,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')})
+                        extlinks={'issue': ('http://%s', '_issue_%s')})
 
         self.assertIn("\\sphinxstyleemphasis{italic}", text)
         self.assertIn("bul1", text)
@@ -340,7 +340,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')})
+                        extlinks={'issue': ('http://%s', '_issue_%s')})
 
         self.assertIn("\\chapter{title2}", text)
         self.assertIn("\\section{title3}", text)
@@ -369,7 +369,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')},
+                        extlinks={'issue': ('http://%s', '_issue_%s')},
                         md_image_dest=temp)
 
         text = text.replace("\r", "")
@@ -400,7 +400,7 @@ class TestLatexBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="elatex", keep_warnings=False, layout='sphinx',
-                        extlinks={'issue': ('http://%s', '_issue_')},
+                        extlinks={'issue': ('http://%s', '_issue_%s')},
                         md_image_dest=temp, override_image_directive=True)
 
         text = text.replace("\r", "")

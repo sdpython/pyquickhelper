@@ -160,7 +160,9 @@ class TestPaths(unittest.TestCase):
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
                        directives=None, layout="sphinx",
-                       extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')))
+                       extlinks=dict(issue=(
+                           'https://github.com/sdpython/pyquickhelper/issues/%s',
+                           'issue %s')))
         self.assertTrue(rst is not None)
         for line in rst.split('\n'):
             if "<SYSTEM MESSAGE> for role ref when" not in line:
@@ -170,7 +172,9 @@ class TestPaths(unittest.TestCase):
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
                         directives=None, layout="sphinx",
-                        extlinks=dict(issue=('https://github.com/sdpython/pyquickhelper/issues/%s', 'issue ')))
+                        extlinks=dict(issue=(
+                            'https://github.com/sdpython/pyquickhelper/issues/%s',
+                            'issue %s')))
         self.assertTrue(html is not None)
         self.assertNotIn('`', html)
 

@@ -18,7 +18,7 @@ set_sphinx_variables(__file__, "pyquickhelper", "Xavier Dupré", 2022,
                      github_repo="https://github.com/sdpython/pyquickhelper.git",
                      extlinks=dict(issue=(
                          'https://github.com/sdpython/pyquickhelper/issues/%s',
-                         'issue ')),
+                         'issue %s')),
                      link_resolve="http://www.xavierdupre.fr/app/")
 
 extensions.extend([

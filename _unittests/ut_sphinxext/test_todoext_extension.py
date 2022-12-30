@@ -41,7 +41,7 @@ class TestTodoExtExtension(ExtTestCase):
                   visit_todoext_node, depart_todoext_node)]
 
         html = rst2html(content, writer="custom", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_todoext")
         with open(os.path.join(temp, "out_todoext.html"), "w", encoding="utf8") as f:
@@ -141,7 +141,7 @@ class TestTodoExtExtension(ExtTestCase):
                   visit_todoext_node, depart_todoext_node)]
 
         html = rst2html(content, writer="custom", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_todoext")
         with open(os.path.join(temp, "out_todoext.html"), "w", encoding="utf8") as f:

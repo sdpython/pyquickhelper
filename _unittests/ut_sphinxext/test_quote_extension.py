@@ -39,7 +39,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote", clean=False)
         with open(os.path.join(temp, "test_quote.html"), "w", encoding="utf8") as f:
@@ -60,7 +60,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -101,7 +101,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_manga", clean=False)
         with open(os.path.join(temp, "test_quote_manga.html"), "w", encoding="utf8") as f:
@@ -122,7 +122,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_manga.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -163,7 +163,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_film", clean=False)
         with open(os.path.join(temp, "test_quote_film.html"), "w", encoding="utf8") as f:
@@ -184,7 +184,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_film.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -226,7 +226,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_show", clean=False)
         with open(os.path.join(temp, "test_quote_show.html"), "w", encoding="utf8") as f:
@@ -247,7 +247,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_show.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -289,7 +289,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_comic", clean=False)
         with open(os.path.join(temp, "test_quote_comic.html"), "w", encoding="utf8") as f:
@@ -310,7 +310,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_comic.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -352,7 +352,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_disc", clean=False)
         with open(os.path.join(temp, "test_quote_disc.html"), "w", encoding="utf8") as f:
@@ -373,7 +373,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_disc.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -415,7 +415,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_ado", clean=False)
         with open(os.path.join(temp, "test_quote_ado.html"), "w", encoding="utf8") as f:
@@ -436,7 +436,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_ado.rst"), "w", encoding="utf8") as f:
             f.write(rst)
@@ -478,7 +478,7 @@ class TestMathDefExtension(ExtTestCase):
 
         html = rst2html(content,  # fLOG=fLOG,
                         writer="html", keep_warnings=True,
-                        directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_quote_child", clean=False)
         with open(os.path.join(temp, "test_quote_child.html"), "w", encoding="utf8") as f:
@@ -499,7 +499,7 @@ class TestMathDefExtension(ExtTestCase):
 
         rst = rst2html(content,  # fLOG=fLOG,
                        writer="rst", keep_warnings=True,
-                       directives=tives, extlinks={'issue': ('http://%s', '_issue_')})
+                       directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         with open(os.path.join(temp, "test_quote_child.rst"), "w", encoding="utf8") as f:
             f.write(rst)
