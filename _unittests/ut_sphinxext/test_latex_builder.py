@@ -170,7 +170,7 @@ class TestLatexBuilder(ExtTestCase):
         if t1 not in html.replace("\n", "") and t1b not in html.replace("\n", ""):
             raise Exception(html)
 
-        t1 = "\\begin{tabulary}{\\linewidth}[t]{|T|T|}"
+        t1 = "\\begin{tabulary}"
         if t1 not in html.replace("\n", ""):
             raise Exception(html)
 

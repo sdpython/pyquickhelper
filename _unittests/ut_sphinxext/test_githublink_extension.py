@@ -235,7 +235,7 @@ class TestGitHubLinkExtension(ExtTestCase):
         if t1 in html:
             raise Exception(html)
 
-        t1 = ".so"
+        t1 = '.so"'
         if t1 in html:
             raise Exception(html)
 
