@@ -218,7 +218,7 @@ class TestMdBuilder(ExtTestCase):
 
         text = rst2html(content,  # fLOG=fLOG,
                         writer="md", keep_warnings=True,
-                        directives=tives, {'issue': ('http://%s', '_issue_%s')})
+                        directives=tives, extlinks={'issue': ('http://%s', '_issue_%s')})
 
         temp = get_temp_folder(__file__, "temp_only")
         with open(os.path.join(temp, "out_cmdref.md"), "w", encoding="utf8") as f:

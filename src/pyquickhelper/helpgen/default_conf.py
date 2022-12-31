@@ -497,6 +497,12 @@ def set_sphinx_variables(fileconf, module_name, author, year, theme, theme_path,
             "github_version": branch,
             "collapse_navigation": True,
             "show_nav_level": 2,
+            "logo": {
+                "text": project_var_name,
+                "image_light": html_favicon,
+                "image_dark": html_favicon,
+                "alt_text": project_var_name,
+            },
         }
 
     # mapping
