@@ -5,11 +5,16 @@
 History
 =======
 
-current - 2022-11-21 - 0.00Mb
+current - 2023-01-01 - 0.00Mb
 =============================
 
-* #380: Calls assert_allclose in assertEqualArray (2022-11-21)
+* #382: Adds parameter raise_exception to stop the execution of a notebook (2022-12-05)
+
+1.11.3776 - 2022-11-21 - 2.99Mb
+===============================
+
 * #381: Updates CI to python 3.11 (2022-11-21)
+* #380: Calls assert_allclose in assertEqualArray (2022-11-21)
 * #379: Implements a function to measure the documentation (2022-10-30)
 
 1.11.3762 - 2022-09-27 - 2.12Mb
@@ -120,10 +125,6 @@ current - 2022-11-21 - 0.00Mb
 ===============================
 
 * #324: Fixes issue with jupyter-client-6.1.10 on Windows (2021-01-08)
-
-1.10.3495 - 2020-12-31 - 2.10Mb
-===============================
-
 * #314: fixes function _process_notebooks_in_private for newer version of nbconvert + missing file rst.tpl (2020-12-31)
 * #323: Add function assert_almost_equal_detailed with more feedback (2020-12-10)
 * #322: Implements function testlog to log information around a test function (2020-11-14)

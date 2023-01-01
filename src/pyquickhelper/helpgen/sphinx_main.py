@@ -1094,18 +1094,22 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                             gal_src = os.path.join(gal_path, fold, "images")
                             if not os.path.exists(gal_src):
                                 continue
-                            gal_dst = os.path.join(build_path, gal, fold, "_images")
+                            gal_dst = os.path.join(
+                                build_path, gal, fold, "_images")
                             if not os.path.exists(gal_dst):
                                 os.makedirs(gal_dst)
-                            fLOG("[generate_help_sphinx] copy images to ", gal_src, "to", gal_dst)
+                            fLOG("[generate_help_sphinx] copy images to ",
+                                 gal_src, "to", gal_dst)
                             copy = synchronize_folder(
                                 gal_src, gal_dst, copy_1to2=True, fLOG=fLOG)
                             fLOG("[generate_help_sphinx] notebooks",
                                  len(copy), "files copied")
 
-                            gal_src = os.path.join(build_path, "_images", "math")
+                            gal_src = os.path.join(
+                                build_path, "_images", "math")
                             if os.path.exists(gal_src):
-                                gal_dst = os.path.join(build_path, gal, "_images", "math")
+                                gal_dst = os.path.join(
+                                    build_path, gal, "_images", "math")
                                 if not os.path.exists(gal_dst):
                                     os.makedirs(gal_dst)
                                 fLOG(f"[generate_help_sphinx] copy images to "
