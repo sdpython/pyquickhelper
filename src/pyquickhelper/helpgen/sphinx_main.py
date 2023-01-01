@@ -1086,10 +1086,14 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
                          len(copy), "files copied")
                     for gal in galleries:
                         gal_path = os.path.join(html_static_path, "..", gal)
+                        if not os.path.exists(gal_path):
+                            continue
                         folders = ['.'] + [f for f in os.listdir(gal_path)
                                            if os.path.isdir(f)]
                         for fold in folders:
-                            gal_src = os.path.join(html_static_path, "..", gal, fold, "images")
+                            gal_src = os.path.join(gal_path, fold, "images")
+                            if not os.path.exists(gal_src):
+                                continue
                             gal_dst = os.path.join(build_path, gal, fold, "_images")
                             if not os.path.exists(gal_dst):
                                 os.makedirs(gal_dst)
