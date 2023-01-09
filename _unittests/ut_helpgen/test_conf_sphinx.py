@@ -24,7 +24,6 @@ class TestConfSphinx(ExtTestCase):
             "source",
             "conf.py")
         self.assertExists(ff)
-        import sphinx_rtd_theme as skip_
         d = {}
         try:
             set_sphinx_variables(
@@ -32,8 +31,8 @@ class TestConfSphinx(ExtTestCase):
                 "pyquickhelper",
                 "XD",
                 2014,
-                "sphinx_rtd_theme",
-                None,  # sphinx_rtd_theme.theme_path,
+                "alabaster",
+                None,  # alabaster.theme_path,
                 d,
                 use_mathjax=True)
         except FileNotFoundError as e:

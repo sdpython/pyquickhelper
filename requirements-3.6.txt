@@ -48,7 +48,6 @@ semantic_version
 setuptools
 Sphinx>=3.0
 sphinx-gallery
-sphinx_rtd_theme
 tabulate
 tqdm
 traitlets
