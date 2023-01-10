@@ -100,7 +100,7 @@ class BlogPost:
         app = MockSphinxApp.create(confoverrides=overrides)
         env = app[0].env
         config = env.config
-        
+
         if 'blog_background' not in config:
             raise AttributeError(  # pragma: no cover
                 "Unable to find 'blog_background' in config:\n{0}".format(
