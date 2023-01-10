@@ -507,7 +507,7 @@ class _MemoryBuilder:
         Overwrites *_write_serial* to avoid writing on disk.
         """
         from sphinx.util.logging import pending_warnings
-        from sphinx.util import status_iterator
+        from sphinx.util.display import status_iterator
         with pending_warnings():
             for docname in status_iterator(docnames, 'writing output... ', "darkgreen",
                                            len(docnames), self.app.verbosity):
