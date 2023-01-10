@@ -65,6 +65,7 @@ class SimpleImageDirective(Directive):
 
         @return      a list of nodes
         """
+        raise RuntimeError("STOP3")
         env = self.state.document.settings.env
         conf = env.app.config.simpleimages_config
         docname = None if env is None else env.docname

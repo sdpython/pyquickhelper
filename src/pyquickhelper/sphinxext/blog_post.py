@@ -83,8 +83,7 @@ class BlogPost:
         overrides.update({  # 'warning_stream': StringIO(),
             'out_blogpostlist': [],
             'out_runpythonlist': [],
-            'master_doc': 'stringblog'
-        })
+            'master_doc': 'stringblog'})
 
         if "extensions" not in overrides:
             if extensions is None:
@@ -334,8 +333,8 @@ class BlogPost:
                 last = rows_stack[-1]
                 if len(last) > 0:
                     last = last[-1]
-                if indent == indent2 and len(rs) == 0 and \
-                        last in {'.', ';', ',', ':', '!', '?'}:
+                if (indent == indent2 and len(rs) == 0 and
+                        last in {'.', ';', ',', ':', '!', '?'}):
                     return True
                 rows_stack.append(r)
             return False
@@ -345,20 +344,16 @@ class BlogPost:
             for i, r in enumerate(self.Content):
                 rows.append("    " + self._update_link(r))
                 if cut and can_cut(i, r, rows_stack):
-                    rows.append("")
-                    rows.append("    ...")
+                    rows.extend(["", "    ..."])
                     break
         else:
             for i, r in enumerate(self.Content):
                 rows.append("    " + r)
                 if cut and can_cut(i, r, rows_stack):
-                    rows.append("")
-                    rows.append("    ...")
+                    rows.extend(["", "    ..."])
                     break
 
-        rows.append("")
-        rows.append("")
-
+        rows.extend(["", ""])
         return "\n".join(rows)
 
     image_tag = ".. image:: "
@@ -379,5 +374,4 @@ class BlogPost:
                 return row
             row = f"{row[:i]}{self.Year}/{r2}"
             return row
-        else:
-            return row
+        return row

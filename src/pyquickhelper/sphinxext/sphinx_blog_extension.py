@@ -128,8 +128,9 @@ class BlogPostDirective(Directive):
             'lid': self.options.get("lid", self.options.get("label", None)),
         }
 
-        tag = BlogPost.build_tag(p["date"], p["title"]) if p[
-            'lid'] is None else p['lid']
+        tag = BlogPost.build_tag(
+            p["date"],
+            p["title"]) if p['lid'] is None else p['lid']
         targetnode = nodes.target(p['title'], '', ids=[tag])
         p["target"] = targetnode
         idbp = tag + "-container"
@@ -140,13 +141,21 @@ class BlogPostDirective(Directive):
             env.blogpost_all.append(p)
 
         # build node
-        node = self.__class__.blogpost_class(ids=[idbp], year=p["date"][:4],
-                                             rawfile=self.options.get(
-                                                 "rawfile", None),
-                                             linktitle=p["title"], lg=language_code,
-                                             blog_background=p["blog_background"])
-
-        return self.fill_node(node, env, tag, p, language_code, targetnode, sharepost)
+        if not docname:
+            raise RuntimeError(  # pragma: no cover
+                f'docname is missing in blogpost {docname}.')
+        node = self.__class__.blogpost_class(
+            ids=[idbp], year=p["date"][:4],
+            rawfile=self.options.get("rawfile", None),
+            linktitle=p["title"], lg=language_code,
+            blog_background=p["blog_background"])
+        node.source = docname
+        if not node.source:
+            raise RuntimeError(  # pragma: no cover
+                f'node.source is missing in blogpost '
+                f'{self.options.get("rawfile", None)}.')
+        return self.fill_node(node, env, tag, p, language_code,
+                              targetnode, sharepost)
 
     def fill_node(self, node, env, tag, p, language_code, targetnode, sharepost):
         """
