@@ -8,12 +8,14 @@ import os
 import unittest
 
 from pyquickhelper.loghelper.flog import fLOG
-from pyquickhelper.pycode import get_temp_folder, is_travis_or_appveyor
+from pyquickhelper.pycode import (
+    get_temp_folder, is_travis_or_appveyor, ignore_warnings)
 from pyquickhelper.helpgen import rst2html
 
 
 class TestRst2HtmlToc(unittest.TestCase):
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_toc(self):
         fLOG(
             __file__,
@@ -58,6 +60,7 @@ class TestRst2HtmlToc(unittest.TestCase):
             f.write(text)
         self.assertIn("* :ref:`title2`", text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_autoclass(self):
         fLOG(
             __file__,
@@ -89,6 +92,7 @@ class TestRst2HtmlToc(unittest.TestCase):
             f.write(text)
         self.assertIn("* ``:indent:<int>`` to indent the output", text)
 
+    @ignore_warnings(PendingDeprecationWarning)
     def test_rst2html_toctree(self):
         fLOG(
             __file__,
