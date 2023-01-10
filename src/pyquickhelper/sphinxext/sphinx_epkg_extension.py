@@ -112,6 +112,7 @@ def epkg_role(role, rawtext, text, lineno, inliner, options=None, content=None):
             "Unable to find module '{0}' in epkg_dictionary, existing={1}".format(
                 modname, ", ".join(sorted(epkg_dictionary.keys())), line=lineno))
         prb = inliner.problematic(rawtext, rawtext, msg)
+        raise RuntimeError(msg)
         return [prb], [msg]
 
     if len(spl) == 1:

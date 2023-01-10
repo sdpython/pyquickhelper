@@ -27,7 +27,7 @@ class BlogPost:
     """
 
     def __init__(self, filename, encoding='utf-8-sig', raise_exception=False,
-                 extensions=None, **kwargs_overrides):
+                 extensions=None, conf=None, **kwargs_overrides):
         """
         Creates an instance of a blog post from a file or a string.
 
@@ -39,6 +39,7 @@ class BlogPost:
             the content of the blog, if None, it will consider
             a default list (see @see cl BlogPost and
             @see fn get_default_extensions)
+        :param conf: existing configuration
         :param kwargs_overrides: additional parameters for :epkg:`sphinx`
 
         The constructor creates the following members:
@@ -77,7 +78,10 @@ class BlogPost:
         overrides["blog_background"] = True
         overrides["blog_background_page"] = False
         overrides["sharepost"] = None
-        overrides['epkg_dictionary'] = get_epkg_dictionary()
+        if conf is None or not getattr(conf, 'epkg_dictionary'):
+            overrides['epkg_dictionary'] = get_epkg_dictionary()
+        else:
+            overrides['epkg_dictionary'] = conf.epkg_dictionary
         overrides.update(kwargs_overrides)
 
         overrides.update({  # 'warning_stream': StringIO(),
@@ -96,7 +100,7 @@ class BlogPost:
         app = MockSphinxApp.create(confoverrides=overrides)
         env = app[0].env
         config = env.config
-
+        
         if 'blog_background' not in config:
             raise AttributeError(  # pragma: no cover
                 "Unable to find 'blog_background' in config:\n{0}".format(
@@ -107,9 +111,9 @@ class BlogPost:
                     "\n".join(sorted(config.values))))
         if 'epkg_dictionary' in config:
             if len(config.epkg_dictionary) > 0:
-                overrides['epkg_dictionary'] = config.epkg_dictionary
+                overrides['epkg_dictionary'].update(config.epkg_dictionary)
             else:
-                overrides['epkg_dictionary'] = get_epkg_dictionary()
+                overrides['epkg_dictionary'].update(get_epkg_dictionary())
 
         env.temp_data["docname"] = "stringblog"
         overrides["env"] = env
