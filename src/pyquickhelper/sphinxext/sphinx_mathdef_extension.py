@@ -259,7 +259,8 @@ class MathDefList(Directive):
             self.state.document.settings, "env") else None
         tag = self.options.get('tag', '').strip()
         contents = self.options.get(
-            'contents', False) in (True, "True", "true", 1, "1", "", None, "None")
+            'contents', False) in (True, "True", "true", 1,
+                                   "1", "", None, "None")
         if env is not None:
             targetid = f"indexmathelist-{env.new_serialno('indexmathelist')}"
             targetnode = nodes.target('', '', ids=[targetid])

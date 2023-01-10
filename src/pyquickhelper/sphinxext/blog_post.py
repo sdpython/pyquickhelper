@@ -27,7 +27,7 @@ class BlogPost:
     """
 
     def __init__(self, filename, encoding='utf-8-sig', raise_exception=False,
-                 extensions=None, **kwargs_overrides):
+                 extensions=None, conf=None, **kwargs_overrides):
         """
         Creates an instance of a blog post from a file or a string.
 
@@ -39,6 +39,7 @@ class BlogPost:
             the content of the blog, if None, it will consider
             a default list (see @see cl BlogPost and
             @see fn get_default_extensions)
+        :param conf: existing configuration
         :param kwargs_overrides: additional parameters for :epkg:`sphinx`
 
         The constructor creates the following members:
@@ -77,14 +78,16 @@ class BlogPost:
         overrides["blog_background"] = True
         overrides["blog_background_page"] = False
         overrides["sharepost"] = None
-        overrides['epkg_dictionary'] = get_epkg_dictionary()
+        if conf is None or not getattr(conf, 'epkg_dictionary'):
+            overrides['epkg_dictionary'] = get_epkg_dictionary()
+        else:
+            overrides['epkg_dictionary'] = conf.epkg_dictionary
         overrides.update(kwargs_overrides)
 
         overrides.update({  # 'warning_stream': StringIO(),
             'out_blogpostlist': [],
             'out_runpythonlist': [],
-            'master_doc': 'stringblog'
-        })
+            'master_doc': 'stringblog'})
 
         if "extensions" not in overrides:
             if extensions is None:
@@ -97,7 +100,7 @@ class BlogPost:
         app = MockSphinxApp.create(confoverrides=overrides)
         env = app[0].env
         config = env.config
-
+        
         if 'blog_background' not in config:
             raise AttributeError(  # pragma: no cover
                 "Unable to find 'blog_background' in config:\n{0}".format(
@@ -108,9 +111,9 @@ class BlogPost:
                     "\n".join(sorted(config.values))))
         if 'epkg_dictionary' in config:
             if len(config.epkg_dictionary) > 0:
-                overrides['epkg_dictionary'] = config.epkg_dictionary
+                overrides['epkg_dictionary'].update(config.epkg_dictionary)
             else:
-                overrides['epkg_dictionary'] = get_epkg_dictionary()
+                overrides['epkg_dictionary'].update(get_epkg_dictionary())
 
         env.temp_data["docname"] = "stringblog"
         overrides["env"] = env
@@ -334,8 +337,8 @@ class BlogPost:
                 last = rows_stack[-1]
                 if len(last) > 0:
                     last = last[-1]
-                if indent == indent2 and len(rs) == 0 and \
-                        last in {'.', ';', ',', ':', '!', '?'}:
+                if (indent == indent2 and len(rs) == 0 and
+                        last in {'.', ';', ',', ':', '!', '?'}):
                     return True
                 rows_stack.append(r)
             return False
@@ -345,20 +348,16 @@ class BlogPost:
             for i, r in enumerate(self.Content):
                 rows.append("    " + self._update_link(r))
                 if cut and can_cut(i, r, rows_stack):
-                    rows.append("")
-                    rows.append("    ...")
+                    rows.extend(["", "    ..."])
                     break
         else:
             for i, r in enumerate(self.Content):
                 rows.append("    " + r)
                 if cut and can_cut(i, r, rows_stack):
-                    rows.append("")
-                    rows.append("    ...")
+                    rows.extend(["", "    ..."])
                     break
 
-        rows.append("")
-        rows.append("")
-
+        rows.extend(["", ""])
         return "\n".join(rows)
 
     image_tag = ".. image:: "
@@ -379,5 +378,4 @@ class BlogPost:
                 return row
             row = f"{row[:i]}{self.Year}/{r2}"
             return row
-        else:
-            return row
+        return row

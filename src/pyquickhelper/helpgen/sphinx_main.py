@@ -637,14 +637,15 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
 
     if os.path.exists(blog_fold):
         fLOG("[generate_help_sphinx]    BlogPostList")
-        plist = BlogPostList(blog_fold, language=language, fLOG=fLOG)
+        plist = BlogPostList(blog_fold, language=language, fLOG=fLOG,
+                             conf=theconf)
         fLOG("[generate_help_sphinx]    BlogPostList.write_aggregated")
-        plist.write_aggregated(blog_fold,
-                               blog_title=theconf.__dict__.get(
-                                   "blog_title", project_var_name),
-                               blog_description=theconf.__dict__.get(
-                                   "blog_description", "blog associated to " + project_var_name),
-                               blog_root=theconf.__dict__.get("blog_root", "__BLOG_ROOT__"))
+        plist.write_aggregated(
+            blog_fold,
+            blog_title=theconf.__dict__.get("blog_title", project_var_name),
+            blog_description=theconf.__dict__.get(
+                "blog_description", "blog associated to " + project_var_name),
+            blog_root=theconf.__dict__.get("blog_root", "__BLOG_ROOT__"))
     else:
         plist = None
 

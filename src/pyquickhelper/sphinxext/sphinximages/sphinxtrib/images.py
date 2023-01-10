@@ -61,11 +61,10 @@ def directive_boolean(value):
         raise ValueError("No argument provided but required")
     if value.lower().strip() in ["yes", "1", 1, "true", "ok"]:
         return True
-    elif value.lower().strip() in ['no', '0', 0, 'false', 'none']:
+    if value.lower().strip() in ['no', '0', 0, 'false', 'none']:
         return False
-    else:
-        raise ValueError("Please use on of: yes, true, no, false. "
-                         "Do not use `{}` as boolean.".format(value))
+    raise ValueError("Please use on of: yes, true, no, false. "
+                     "Do not use `{}` as boolean.".format(value))
 
 
 def get_image_extension(uri):
@@ -110,7 +109,6 @@ class ImageDirective(Directive):
         'width': directives.length_or_percentage_or_unitless,
         'height': directives.length_or_unitless,
         'strech': directives.choice,
-
         'group': directives.unchanged,
         'class': directives.class_option,  # or str?
         'alt': directives.unchanged,
@@ -126,9 +124,9 @@ class ImageDirective(Directive):
         env = self.state.document.settings.env
         conf = env.app.config.images_config
 
-        # TODO get defaults from config
-        group = self.options.get('group',
-                                 conf['default_group'] if conf['default_group'] else uuid.uuid4())
+        group = self.options.get(
+            'group',
+            conf['default_group'] if conf['default_group'] else uuid.uuid4())
         classes = self.options.get('class', '')
         width = self.options.get('width', conf['default_image_width'])
         height = self.options.get('height', conf['default_image_height'])
@@ -139,12 +137,9 @@ class ImageDirective(Directive):
         align = self.options.get('align', '')
         show_caption = self.options.get('show_caption', False)
         legacy_classes = self.options.get('legacy_class', '')
-
-        # TODO get default from config
         download = self.options.get('download', conf['download'])
 
         # parse nested content
-        # TODO: something is broken here, not parsed as expected
         description = nodes.paragraph()
         content = nodes.paragraph()
         content += [nodes.Text(f"{x}") for x in self.content]
@@ -181,6 +176,7 @@ class ImageDirective(Directive):
 
         img['content'] = description.astext()
         img['target'] = target
+        img['source'] = "unknown-source"
 
         if title is None:
             img['title'] = ''
@@ -196,10 +192,10 @@ class ImageDirective(Directive):
         img['size'] = (width, height)
         img['width'] = width
         img['height'] = height
-        img['classes'] += classes
         img['alt'] = alt
         img['align'] = align
         img['download'] = download
+        img['classes'] += classes
         return [img]
 
     def is_remote(self, uri):
@@ -222,9 +218,8 @@ class ImageDirective(Directive):
             return False
         if '://' in uri:
             return True
-        raise ValueError('Image URI `{}` has to be local relative or '
-                         'absolute path to image, or remote address.'
-                         .format(uri))
+        raise ValueError(f'Image URI {uri!r} has to be local relative or '
+                         f'absolute path to image, or remote address.')
 
 
 def install_backend_static_files(app, env):
@@ -282,7 +277,6 @@ def download_images(app, env):
         dirn = os.path.dirname(dst)
         ensuredir(dirn)
         if not os.path.isfile(dst):
-
             logger.info('%r -> %r (downloading)', src, dst)
             with open(dst, 'wb') as f:
                 # TODO: apply reuqests_kwargs
@@ -333,13 +327,17 @@ def configure_backend(app):
                 return f(writer, node)
             return inner_wrapper
         signature = f'_{node.__name__}_{output_type}'
-        return (backend_method(getattr(backend, 'visit' + signature, getattr(backend, 'visit_' + node.__name__ + '_fallback'))),
-                backend_method(getattr(backend, 'depart' + signature, getattr(backend, 'depart_' + node.__name__ + '_fallback'))))
+        return (backend_method(getattr(backend, 'visit' + signature,
+                               getattr(backend, 'visit_' + node.__name__ + '_fallback'))),
+                backend_method(getattr(backend, 'depart' + signature,
+                               getattr(backend, 'depart_' + node.__name__ + '_fallback'))))
 
     # add new node to the stack
     # connect backend processing methods to this node
-    app.add_node(image_node, **{output_type: backend_methods(image_node, output_type)
-                                for output_type in ('html', 'latex', 'man', 'texinfo', 'text', 'epub')})
+    app.add_node(
+        image_node,
+        **{output_type: backend_methods(image_node, output_type)
+           for output_type in ('html', 'latex', 'man', 'texinfo', 'text', 'epub')})
 
     app.add_directive('thumbnail', ImageDirective)
     if config['override_image_directive']:
