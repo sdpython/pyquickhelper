@@ -15,7 +15,10 @@ import functools
 import logging
 import sphinx
 from sphinx.util.osutil import copyfile
-from sphinx.util.display import status_iterator
+try:
+    from sphinx.util.display import status_iterator
+except ImportError:
+    from sphinx.util import status_iterator
 from sphinx.util.console import brown
 try:
     from docutils.parsers.rst import Directive

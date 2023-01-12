@@ -10,7 +10,10 @@ from docutils import nodes
 from sphinx import addnodes
 from sphinx.environment.collectors import EnvironmentCollector
 from sphinx.util import ensuredir, copyfile
-from sphinx.util.display import status_iterator
+try:
+    from sphinx.util.display import status_iterator
+except ImportError:
+    from sphinx.util import status_iterator
 try:
     from sphinx.util import relative_path
 except ImportError:
