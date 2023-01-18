@@ -30,6 +30,8 @@ class TestPwdHelper(ExtTestCase):
         except Exception as e:
             if "Prompt dismissed" in str(e):
                 return
+            if "Inappropriate ioctl for device" in str(e):
+                return
             raise e
         pwd2 = get_password('pyq', 'jj', lib='keyring')
         self.assertEqual(pwd, pwd2)
