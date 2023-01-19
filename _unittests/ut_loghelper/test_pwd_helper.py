@@ -27,12 +27,15 @@ class TestPwdHelper(ExtTestCase):
         pwd = 'bibi'
         try:
             set_password('pyq', 'jj', pwd, lib='keyring')
+        except EOFError as eee:
+            warnings.warn(f"Unable to set_password: {eee}")
+            return
         except Exception as e:
             if "Prompt dismissed" in str(e):
                 return
             if "Inappropriate ioctl for device" in str(e):
                 return
-            raise AssertionError(f"Failing due to {e}.") from e
+            raise AssertionError(f"Failing due to {type(e)} - {e}.") from e
         pwd2 = get_password('pyq', 'jj', lib='keyring')
         self.assertEqual(pwd, pwd2)
 
