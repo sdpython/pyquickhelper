@@ -42,6 +42,8 @@ class TestNotebookExtensions(unittest.TestCase):
                 warnings.warn(
                     f"Unable to install jupyter extensions due to permissions errors: {e}")
                 return
+            except Exception as ee:
+                raise AssertionError(f"Fails due to {ee}.") from ee
             fLOG(out)
 
         fLOG("extension")

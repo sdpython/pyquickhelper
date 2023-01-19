@@ -32,7 +32,7 @@ class TestPwdHelper(ExtTestCase):
                 return
             if "Inappropriate ioctl for device" in str(e):
                 return
-            raise e
+            raise AssertionError(f"Failing due to {e}.") from e
         pwd2 = get_password('pyq', 'jj', lib='keyring')
         self.assertEqual(pwd, pwd2)
 
