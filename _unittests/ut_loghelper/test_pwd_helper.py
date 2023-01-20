@@ -4,7 +4,7 @@
 import sys
 import os
 import unittest
-
+import warnings
 from pyquickhelper.pycode import (
     ExtTestCase, skipif_appveyor, skipif_travis, skipif_circleci,
     skipif_azure)
