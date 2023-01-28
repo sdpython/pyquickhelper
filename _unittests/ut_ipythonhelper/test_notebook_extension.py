@@ -47,7 +47,8 @@ class TestNotebookExtensions(unittest.TestCase):
                     f"Unable to install jupyter extensions due to EOFError: {e}")
                 return
             except Exception as ee:
-                raise AssertionError(f"Fails due to {type(ee)} - {ee}.") from ee
+                raise AssertionError(
+                    f"Fails due to {type(ee)} - {ee}.") from ee
             fLOG(out)
 
         fLOG("extension")

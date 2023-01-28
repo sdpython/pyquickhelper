@@ -5,9 +5,11 @@
 History
 =======
 
-current - 2023-01-01 - 0.00Mb
+current - 2023-01-28 - 0.00Mb
 =============================
 
+* #384: Renames phdoc_static into _static (2023-01-28)
+* #383: Fixes attribute source missing for sphinx>6 (2023-01-10)
 * #382: Adds parameter raise_exception to stop the execution of a notebook (2022-12-05)
 
 1.11.3776 - 2022-11-21 - 2.99Mb
@@ -115,15 +117,7 @@ current - 2023-01-01 - 0.00Mb
 * #329: Fixes #328, improves links in notebooks (2021-02-13)
 * #328: Github link for notebooks is broken (2021-02-13)
 * #326: Add option CRB to put \r back in a file (2021-02-09)
-
-1.10.3519 - 2021-01-13 - 2.10Mb
-===============================
-
 * #325: Implements a scenario with keyrings.cryptfile for get_password, set_password (2021-01-10)
-
-1.10.3508 - 2021-01-08 - 2.10Mb
-===============================
-
 * #324: Fixes issue with jupyter-client-6.1.10 on Windows (2021-01-08)
 * #314: fixes function _process_notebooks_in_private for newer version of nbconvert + missing file rst.tpl (2020-12-31)
 * #323: Add function assert_almost_equal_detailed with more feedback (2020-12-10)
