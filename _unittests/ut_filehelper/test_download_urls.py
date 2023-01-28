@@ -4,7 +4,6 @@
 import os
 import unittest
 from pyquickhelper.pycode import ExtTestCase, get_temp_folder
-from pyquickhelper.loghelper import fLOG
 from pyquickhelper.filehelper.download_helper import (
     get_urls_content_timeout, local_url)
 from pyquickhelper.filehelper.download_urls_helper import download_urls_in_folder_content
@@ -18,18 +17,14 @@ class TestDownloadUrls(ExtTestCase):
             [], folder=None), ValueError)
 
     def test_download_urls(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         temp = get_temp_folder(__file__, 'temp_download_urls')
         urls = ['http://www.xavierdupre.fr',
                 'http://www.xavierdupre.fr']
-        get_urls_content_timeout(urls, folder=temp, fLOG=fLOG)
+        get_urls_content_timeout(urls, folder=temp)
         content = os.listdir(temp)
         self.assertEqual(
             set(content), set(['dd5ba53e5e4efe59f0ce3b0ef.bin', 'summary.csv']))
-        get_urls_content_timeout(urls, folder=temp, fLOG=fLOG)
+        get_urls_content_timeout(urls, folder=temp)
         content2 = os.listdir(temp)
         self.assertEqual(set(content), set(content2))
         self.assertRaise(lambda: local_url(urls[0]), FileNotFoundError)
@@ -40,10 +35,6 @@ class TestDownloadUrls(ExtTestCase):
         self.assertEqual(loc, u)
 
     def test_download_urls_in_folder_content(self):
-        fLOG(
-            __file__,
-            self._testMethodName,
-            OutputPrint=__name__ == "__main__")
         temp = get_temp_folder(
             __file__, 'temp_download_urls_in_folder_content')
         this = os.path.abspath(os.path.dirname(__file__))
@@ -53,8 +44,8 @@ class TestDownloadUrls(ExtTestCase):
         summary = os.path.join(temp, 'summary.csv')
         with open(summary, 'r', encoding='utf-8') as f:
             content = f.read()
-        self.assertIn('http://www.xavierdupre.fr', content)
+        self.assertIn('https://api.github.com/', str(content))
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
