@@ -19,7 +19,7 @@ class TestHelperHelpGen(ExtTestCase):
     def test_NbImage_url(self):
         r = NbImage(
             'https://github.com/sdpython/pyquickhelper/raw/master/'
-            '_doc/sphinxdoc/source/phdoc_static/project_ico.png')
+            '_doc/sphinxdoc/source/_static/project_ico.png')
         self.assertIsInstance(r, Image)
 
     def test_NbImage_multi(self):
@@ -29,9 +29,9 @@ class TestHelperHelpGen(ExtTestCase):
     def test_NbImage_url_multi(self):
         r = NbImage(
             'https://github.com/sdpython/pyquickhelper/raw/master/'
-            '_doc/sphinxdoc/source/phdoc_static/project_ico.png',
+            '_doc/sphinxdoc/source/_static/project_ico.png',
             'https://github.com/sdpython/pyquickhelper/raw/master/'
-            '_doc/sphinxdoc/source/phdoc_static/project_ico.png')
+            '_doc/sphinxdoc/source/_static/project_ico.png')
         self.assertIsInstance(r, Image)
 
 

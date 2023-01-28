@@ -250,7 +250,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
 
                 # reveal.js + images
                 rev = [os.path.join(root, "_doc", "sphinxdoc",
-                                    "source", "phdoc_static", "reveal.js")]
+                                    "source", "_static", "reveal.js")]
                 for r in rev:
                     if not os.path.exists(r):
                         raise FileNotFoundError(r)

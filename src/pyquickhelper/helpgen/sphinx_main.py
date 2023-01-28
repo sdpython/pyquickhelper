@@ -437,7 +437,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     # We store the html_static_path in html_static_paths for the base conf
     # We extract other information from the configuration
     ##############################################################
-    html_static_path = theconf.__dict__.get("html_static_path", "phdoc_static")
+    html_static_path = theconf.__dict__.get("html_static_path", "_static")
     if isinstance(html_static_path, list):
         html_static_path = html_static_path[0]
     html_static_path = os.path.join(root_source, html_static_path)
@@ -1310,7 +1310,7 @@ def _import_conf_extract_parameter(root, root_source, folds, build, newconf,
 
     # we store the html_static_path in html_static_paths
     html_static_path = thenewconf.__dict__.get(
-        "html_static_path", "phdoc_static")
+        "html_static_path", "_static")
     if isinstance(html_static_path, list):
         html_static_path = html_static_path[0]
     html_static_path = os.path.normpath(
