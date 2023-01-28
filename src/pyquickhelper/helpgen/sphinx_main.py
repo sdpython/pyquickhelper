@@ -443,7 +443,7 @@ def generate_help_sphinx(project_var_name, clean=False, root=".",
     html_static_path = os.path.join(root_source, html_static_path)
     if not os.path.exists(html_static_path):
         raise FileNotFoundError(  # pragma: no cover
-            "no static path:" + html_static_path)
+            f"no static path: {html_static_path!r}.")
     html_static_paths.append(html_static_path)
     build_paths.append(
         os.path.normpath(os.path.join(html_static_path, "..", "..", "build", "html")))
