@@ -263,7 +263,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 self.assertTrue('"slide"' in content)
 
                 # reveal.js + images
-                rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "phdoc_static", "reveal.js"),
+                rev = [os.path.join(root, "_doc", "sphinxdoc", "source", "_static", "reveal.js"),
                        os.path.join(root, "_doc", "sphinxdoc", "build",
                                     "html", "_downloads", "reveal.js"),
                        os.path.join(root, "_doc", "sphinxdoc", "build",

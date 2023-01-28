@@ -13,12 +13,14 @@ import pyquickhelper
 from pyquickhelper.loghelper.flog import fLOG, download
 from pyquickhelper.loghelper import CustomLog, sys_path_append
 from pyquickhelper.helpgen.sphinx_main import generate_help_sphinx
-from pyquickhelper.pycode import get_temp_folder, skipif_appveyor
+from pyquickhelper.pycode import (
+    get_temp_folder, skipif_appveyor, skipif_circleci)
 
 
 class TestSphinxMainDocumentation(unittest.TestCase):
 
     @skipif_appveyor("inkscape missing")
+    @skipif_circleci("too many download")
     def test_sphinx_main_documentation(self):
         fLOG(
             __file__,

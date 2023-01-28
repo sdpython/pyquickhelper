@@ -248,7 +248,7 @@ _doc/sphinxdoc/source/blog/*.rst
 _doc/sphinxdoc/source/blog/feed-icon*.png
 _doc/sphinxdoc/source/blog/rss.xml
 _doc/sphinxdoc/source/phdoc_templates/*.html
-_doc/sphinxdoc/source/phdoc_static/reveal.js/*
+_doc/sphinxdoc/source/_static/reveal.js/*
 _doc/notebooks/.ipynb_checkpoints/*
 dist_module27/*
 auto_*.bat
@@ -263,7 +263,7 @@ _doc/notebooks/notebooks2.7z
 _doc/notebooks/listfiles7z.txt
 _doc/notebooks/notebooks.zip
 _doc/notebooks/notebooks2.zip
-_doc/sphinxdoc/source/phdoc_static/require.js
+_doc/sphinxdoc/source/_static/require.js
 _unittests/ut_cli/crypt_map.txt
 _unittests/ut_cli/crypt_status.txt
 crypt_status.txt
@@ -312,6 +312,6 @@ _unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/blog/rss.xml
 _unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/filechanges.rst
 _unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/index_*.rst
 _unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/LICENSE.txt
-_unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/phdoc_static
+_unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/_static
 _unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/README.rst
 _unittests/ut_helpgen/data_project/pp/_doc/sphinxdoc/source/python3_module_template
