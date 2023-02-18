@@ -29,7 +29,7 @@ class TestNotebookGalleryBug(unittest.TestCase):
             text = f.read()
 
         if "GitHub/pyquickhelper" in text.replace("\\", "/"):
-            raise Exception(text)
+            raise AssertionError(text)
         return text
 
     def test_notebook_gallery_classic(self):
@@ -42,10 +42,10 @@ class TestNotebookGalleryBug(unittest.TestCase):
         self.assertIn(".. toctree::", text)
         spl = text.split(":hidden:")
         if len(spl) > 2:
-            raise Exception(text)
+            raise AssertionError(text)
         spl = text.split("using_qgrid_with_jsdf")
         if len(spl) != 3:
-            raise Exception(text)
+            raise AssertionError(text)
 
     def test_notebook_gallery_table(self):
         fLOG(
@@ -55,12 +55,12 @@ class TestNotebookGalleryBug(unittest.TestCase):
 
         text = self.a_test_notebook_gallery_bug('table')
         if ":hidden:" not in text:
-            raise Exception(text)
+            raise AssertionError(text)
         if ".. raw:: html" in text:
-            raise Exception(text)
+            raise AssertionError(text)
         spl = text.split("using_qgrid_with_jsdf")
         if len(spl) != 4:
-            raise Exception(text)
+            raise AssertionError(text)
 
 
 if __name__ == "__main__":

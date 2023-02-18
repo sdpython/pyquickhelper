@@ -68,7 +68,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         res = migrating_doxygen_doc(com, "docstring")
         doc = res[1]
         if "@param" in doc:
-            raise Exception(doc)
+            raise AssertionError(doc)
 
         sig = """
                 def synchronize_folder(p1,
@@ -80,7 +80,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         res = migrating_doxygen_doc(com, "docstring")
         doc = res[1]
         if "@param" in doc:
-            raise Exception(doc)
+            raise AssertionError(doc)
 
         sig = """
                 def synchronize_folder(p1: str,
@@ -91,7 +91,7 @@ class TestSphinxDoc2Issue (unittest.TestCase):
         res = migrating_doxygen_doc(com, "docstring")
         doc = res[1]
         if "@param" in doc:
-            raise Exception(doc)
+            raise AssertionError(doc)
 
 
 if __name__ == "__main__":

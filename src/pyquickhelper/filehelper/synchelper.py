@@ -439,7 +439,7 @@ def synchronize_folder(p1: str, p2: str, hash_size=1024 ** 2, repo1=False, repo2
                         file, n1._size, n2._size, n1._date, n2._date, op))
                 report["issue"] += 1
                 # n1.copy_to(f2)
-                # raise Exception ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
+                # raise RuntimeError ("size are different for file %s (%d != %d) (op %s)" % (file, n1._size, n2._size, op))
 
     if status is not None:
         status.save_dates(file_date)
@@ -465,7 +465,7 @@ def remove_folder(top, remove_also_top=True, raise_exception=True):
                                      --> list of tuple ( (name, "file" or "dir") )
     """
     if top in {"", "C:", "c:", "C:\\", "c:\\", "d:", "D:", "D:\\", "d:\\"}:
-        raise Exception(  # pragma: no cover
+        raise RuntimeError(  # pragma: no cover
             "top is a root (c: for example), this is not safe")
 
     res = []

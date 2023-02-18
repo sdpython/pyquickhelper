@@ -29,9 +29,9 @@ class TestNotebookGallery(ExtTestCase):
             text = f.read()
 
         if "GitHub/pyquickhelper" in text.replace("\\", "/"):
-            raise Exception(text)
+            raise AssertionError(text)
         if "Compter les occurences de nombres dans une liste" not in text:
-            raise Exception(text)
+            raise AssertionError(text)
         return text
 
     def test_notebook_gallery_classic(self):
@@ -44,10 +44,10 @@ class TestNotebookGallery(ExtTestCase):
         self.assertIn(".. toctree::", text)
         spl = text.split(":hidden:")
         if len(spl) > 2:
-            raise Exception(text)
+            raise AssertionError(text)
         spl = text.split("notebooks/td2a_eco_competition_modeles_logistiques")
         if len(spl) != 3:
-            raise Exception(text)
+            raise AssertionError(text)
 
     def test_notebook_gallery_table(self):
         fLOG(
@@ -57,12 +57,12 @@ class TestNotebookGallery(ExtTestCase):
 
         text = self.a_test_notebook_gallery('table')
         if ":hidden:" not in text:
-            raise Exception(text)
+            raise AssertionError(text)
         if ".. raw:: html" in text:
-            raise Exception(text)
+            raise AssertionError(text)
         spl = text.split("notebooks/td2a_eco_competition_modeles_logistiques")
         if len(spl) != 4:
-            raise Exception(text)
+            raise AssertionError(text)
 
 
 if __name__ == "__main__":

@@ -32,7 +32,7 @@ class TestSphinxDoc (unittest.TestCase):
             return
 
         if isinstance(ver, int) and ver <= 3:
-            raise Exception("version should be > 100 : " + str(ver))
+            raise AssertionError("version should be > 100 : " + str(ver))
 
     def test_svn_logs(self):
         fLOG(
@@ -79,7 +79,7 @@ class TestSphinxDoc (unittest.TestCase):
         assert "pass" in newc
         assert ":param" in newc
         if "@param" in snewc:
-            raise Exception(snewc)
+            raise AssertionError(snewc)
         assert "docrows" in stats
 
     def test_sphinx_doc_all(self):
@@ -122,7 +122,7 @@ class TestSphinxDoc (unittest.TestCase):
                                 sys.path.insert(0,path)
                                 import rpy2
                             """.replace("                            ", ""))
-                    raise Exception(
+                    raise AssertionError(
                         "error\n" +
                         "\n".join(message) +
                         "\n" +
@@ -167,10 +167,10 @@ class TestSphinxDoc (unittest.TestCase):
             fLOG("issue (2) with ", i)
         if len(nb) != 0:
             fLOG("***** issues ", "\n".join(nb))
-            raise Exception("issue:\n" + "\n".join(nb))
+            raise AssertionError("issue:\n" + "\n".join(nb))
         if len(issue) != 0:
             fLOG("***** issues ", "\n".join(issue))
-            raise Exception("issue:\n" + "\n".join(issue))
+            raise AssertionError("issue:\n" + "\n".join(issue))
 
 
 if __name__ == "__main__":

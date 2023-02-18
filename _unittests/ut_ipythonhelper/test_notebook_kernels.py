@@ -51,7 +51,7 @@ class TestNotebookKernels(unittest.TestCase):
             return
         fLOG("i", loc)
         if kern not in loc:
-            raise Exception(
+            raise AssertionError(
                 f"do not match '{kern}' not in '{loc}'")
         self.assertTrue(os.path.exists(loc))
         res = get_notebook_kernel(kern)

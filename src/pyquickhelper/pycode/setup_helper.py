@@ -542,7 +542,7 @@ def process_standard_options_for_setup(
         url = f"http://localhost:{port}/"
         content = get_url_content_timeout(url, timeout=5)
         if content is None or len(content) == 0:
-            raise Exception("test failed for url: " + url)
+            raise RuntimeError("test failed for url: " + url)
         print(content)
         return True
 
@@ -622,7 +622,7 @@ def write_version_for_setup(file_or_folder, exc=False, module_name=None):
             raise e
         return None
     if version in ["0", 0, None]:
-        raise Exception(  # pragma: no cover
+        raise RuntimeError(  # pragma: no cover
             f"issue with version {version}")
 
     # write version number

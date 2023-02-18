@@ -133,7 +133,7 @@ class MathDef(BaseAdmonition):
             label_number = number_format.format(
                 number=number, first_letter=first_letter)
         except ValueError as e:  # pragma: no cover
-            raise Exception(
+            raise RuntimeError(
                 f"Unable to interpret format '{number_format}'.") from e
 
         # title
@@ -165,7 +165,7 @@ class MathDef(BaseAdmonition):
             try:
                 self.state.add_target(targetid, '', targetnode, lineno)
             except Exception as e:  # pragma: no cover
-                raise Exception(
+                raise RuntimeError(
                     "Issue in\n  File '{0}', line {1}\ntid={2}\ntnode={3}".format(
                         None if env is None else env.docname, lineno,
                         targetid, targetnode)) from e

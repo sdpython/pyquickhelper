@@ -173,7 +173,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
                         else:
                             sw = str(w)
                         if "WARNING:" in sw and "ERROR/" in sw:
-                            raise Exception(
+                            raise AssertionError(
                                 f"A warning is not expected:\n{sw}")
 
                 fLOG("[test_full_documentation] **********************************")
@@ -185,11 +185,11 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
                     if not line.strip():
                         continue
                     if "[docassert]" in line:
-                        raise Exception(line)
+                        raise AssertionError(line)
                     if "[tocdelay]" in line:
                         fLOG("   ", line)
                     if '[tocdelay] ERROR' in line:
-                        raise Exception(line)
+                        raise AssertionError(line)
 
                 # we clean
                 if "pyquickhelper" in sys.modules:
@@ -208,7 +208,7 @@ class TestSphinxFullDocumentationModuleTemplateRst(unittest.TestCase):
                     '<2016/2016-06-11_blogpost_with_label>', content)
                 spl = content.split("2016-06")
                 if len(spl) <= 2:
-                    raise Exception("Two expected:\n" + content)
+                    raise AssertionError("Two expected:\n" + content)
 
                 # checkings
                 files = [os.path.join(root, "_doc", "sphinxdoc",

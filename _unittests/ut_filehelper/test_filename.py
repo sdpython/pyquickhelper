@@ -29,7 +29,7 @@ class TestFilename(unittest.TestCase):
 
         for p in pos:
             if not is_file_string(p):
-                raise Exception(p)
+                raise AssertionError(p)
 
         neg = ["h\ng",
                "r\tr",
@@ -37,7 +37,7 @@ class TestFilename(unittest.TestCase):
 
         for p in neg:
             if is_file_string(p):
-                raise Exception(p)
+                raise AssertionError(p)
 
 
 if __name__ == "__main__":

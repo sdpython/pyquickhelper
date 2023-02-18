@@ -59,7 +59,7 @@ class TestNoteBooksBugRst(ExtTestCase):
         clog("final read", name)
         exp = "<#Animated-output>`"
         if exp in content or exp.lower() not in content:
-            raise Exception(content)
+            raise AssertionError(content)
         clog("done")
 
 

@@ -166,7 +166,7 @@ class TestModuleC(ExtTestCase):
         if "error" in out or "error" in err:
             out_ = out.replace("-Werror=format-security", "")
             if "error" in out_:
-                raise Exception(
+                raise AssertionError(
                     f"Unable to compile\n--OUT--\n{out}\n--ERR--\n{err}")
         if sys.platform == "win32":
             name = "stdchelper_demo.cp%d%d-win_amd64.pyd" % sys.version_info[:2]

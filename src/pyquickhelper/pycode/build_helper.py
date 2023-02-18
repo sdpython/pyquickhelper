@@ -366,7 +366,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
         script = "\n".join(
             [windows_prefix, '\n%pythonexe% %current%setup.py history\n'])
     else:
-        raise Exception("unable to interpret command: " + command)
+        raise RuntimeError("unable to interpret command: " + command)
 
     # additional paths
     if "__ADDITIONAL_LOCAL_PATH__" in script:
@@ -387,7 +387,7 @@ def get_extra_script_command(command, module, requirements, port=8067, blog_list
 
     # common post-processing
     if script is None:
-        raise Exception("unexpected command: " + command)
+        raise RuntimeError("unexpected command: " + command)
     return private_script_replacements(script, module, requirements, port, default_engine_paths=default_engine_paths)
 
 

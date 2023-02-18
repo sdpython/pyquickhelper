@@ -69,7 +69,7 @@ class TestSynchoHash(ExtTestCase):
                                filter_copy=filter_copy, file_date=file_date)
 
         if len(a) not in [6, 7, 8, 9]:
-            raise Exception(
+            raise AssertionError(
                 "2 or 3 expected but got {}:\n{}".format(
                     len(a), "\n".join([str(_) for _ in a])))
         self.assertEqual(a[0][0], ">+")

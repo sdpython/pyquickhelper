@@ -50,7 +50,7 @@ class FilesStatus:
                             raise ValueError(  # pragma: no cover
                                 "expecting a filename and a date on this line: " + _)
                     except Exception as e:
-                        raise Exception(  # pragma: no cover
+                        raise RuntimeError(  # pragma: no cover
                             f"issue with line:\n  {_} -- {spl}") from e
 
         # contains all file to update

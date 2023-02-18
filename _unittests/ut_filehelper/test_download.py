@@ -30,7 +30,7 @@ class TestDownload (ExtTestCase):
         fLOG(f)
         self.assertTrue(os.path.exists(f))
         if not f.endswith("ftplib.html"):
-            raise Exception(f)
+            raise AssertionError(f)
 
         out1 = os.path.join(fold, "try.html.gz")
         gzip_files(out1, [f], fLOG=fLOG)

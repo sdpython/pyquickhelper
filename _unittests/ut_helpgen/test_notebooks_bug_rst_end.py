@@ -58,7 +58,7 @@ class TestNoteBooksBugRstEnd(ExtTestCase):
         clog("final read", name)
         exp = "%decrypt_file"
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
         clog("done")
 
 

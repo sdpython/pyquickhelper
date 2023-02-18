@@ -46,7 +46,7 @@ class TestNoteBooksBugUtf8(ExtTestCase):
             content = f.read()
         exp = "textquestiondown"
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
 
 
 if __name__ == "__main__":

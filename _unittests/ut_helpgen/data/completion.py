@@ -566,7 +566,7 @@ class CompletionTrieNode(object):
                         sug.stat.mks2i_ = self.mks_iter
                         update += 1
                 else:
-                    raise Exception("this case should not happen")
+                    raise AssertionError("this case should not happen")
 
             # this is not a leave so it does not appear in the list of completions
             # but we need to update mks for these strings, we assume it just

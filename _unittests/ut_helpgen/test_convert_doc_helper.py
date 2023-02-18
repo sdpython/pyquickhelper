@@ -63,11 +63,11 @@ class TestConvertDocHelper(ExtTestCase):
         html = rst2html(rst)
         self.assertNotEmpty(html)
         if ".. endexample." in html:
-            raise Exception(html)
+            raise AssertionError(html)
         if ".. example" in html:
-            raise Exception(html)
+            raise AssertionError(html)
         if "</pre>" not in html:
-            raise Exception(html)
+            raise AssertionError(html)
 
     @ignore_warnings((DeprecationWarning, ))
     def test_doctring2html(self):

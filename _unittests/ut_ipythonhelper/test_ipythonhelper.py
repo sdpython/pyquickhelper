@@ -83,7 +83,7 @@ class TestAutoCompletion(ExtTestCase):
         self.assertEqual(cl.Context, {"x": 3, "y": 4})
         res = cl.get_args('this.py -n x+y', pa)
         if res.n != 7:
-            raise Exception(f"res.n == {res.n}\nres={res}")
+            raise AssertionError(f"res.n == {res.n}\nres={res}")
 
 
 if __name__ == "__main__":

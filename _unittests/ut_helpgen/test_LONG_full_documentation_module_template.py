@@ -175,7 +175,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                         else:
                             sw = str(w)
                         if "WARNING:" in sw and "ERROR/" in sw:
-                            raise Exception(
+                            raise AssertionError(
                                 f"A warning is not expected:\n{sw}")
 
                 fLOG("[test_full_documentation] **********************************")
@@ -187,11 +187,11 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                     if not line.strip():
                         continue
                     if "[docassert]" in line:
-                        raise Exception(line)
+                        raise AssertionError(line)
                     if "[tocdelay]" in line:
                         fLOG("   ", line)
                     if '[tocdelay] ERROR' in line:
-                        raise Exception(line)
+                        raise AssertionError(line)
                     if '[downloadlink]' in line:
                         fLOG(line)
 
@@ -212,7 +212,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                     '"2016/2016-06-11_blogpost_with_label.html"', content)
                 spl = content.split("2016-06")
                 if len(spl) <= 2:
-                    raise Exception("Two expected:\n" + content)
+                    raise AssertionError("Two expected:\n" + content)
 
                 # checkings
                 files = [os.path.join(root, "_doc", "sphinxdoc", "build", "html", "index.html"),
@@ -245,7 +245,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 with open(fhtml, "r", encoding="utf8") as f:
                     content = f.read()
                 if '<td><p><a class="reference internal" href="index_ext-tohelp.html#ext-tohelp"><span class="std std-ref">ext-tohelp</span></a></p></td>' not in content:
-                    raise Exception(content)
+                    raise AssertionError(content)
 
                 # checks some links were processed
                 fhtml = os.path.join(temp, "python3_module_template-master",
@@ -253,7 +253,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
                 with open(fhtml, "r", encoding="utf8") as f:
                     content = f.read()
                 if '<img alt="_images/custom_notebooks.thumb.png" src="_images/custom_notebooks.thumb.png" />' not in content:
-                    raise Exception(content)
+                    raise AssertionError(content)
 
                 # checks slideshow was added
                 fhtml = os.path.join(temp, "python3_module_template-master",
@@ -301,7 +301,7 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
 
                 tofind = 'python3_module_template'
                 if tofind not in content:
-                    raise Exception(
+                    raise AssertionError(
                         f"Unable to find '{tofind}' in\n{content}")
 
                 # notebook links
@@ -324,11 +324,11 @@ class TestSphinxFullDocumentationModuleTemplate(unittest.TestCase):
             with open(logs, "r", encoding='utf-8') as f:
                 content = f.read()
             if "[downloadlink] node" not in content:
-                raise Exception(content)
+                raise AssertionError(content)
             if "[downloadlink] HTML" not in content:
-                raise Exception(content)
+                raise AssertionError(content)
             if "[downloadlink] copy" not in content:
-                raise Exception(content)
+                raise AssertionError(content)
 
 
 if __name__ == "__main__":

@@ -71,7 +71,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
                 warnings.warn(
                     "Cannot fix matplotlib display because it was already imported.", UserWarning)
                 if exc:
-                    raise Exception(
+                    raise RuntimeError(
                         "Cannot fix matplotlib display because it was already imported.")
 
         if "TCL_LIBRARY" not in os.environ:
@@ -123,7 +123,7 @@ def fix_tkinter_issues_virtualenv(exc=True, fLOG=None):
                 warnings.warn(  # pragma: no cover
                     "Cannot fix matplotlib display because it was already imported.", UserWarning)
                 if exc:
-                    raise Exception(  # pragma: no cover
+                    raise RuntimeError(  # pragma: no cover
                         "Cannot fix matplotlib display because it was already imported.")
             import matplotlib as mpl
             mpl.use('Agg')

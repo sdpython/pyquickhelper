@@ -90,9 +90,9 @@ def decode_outerr(outerr, encoding, encerror, msg):
             return out
         except Exception as e:  # pragma: no cover
             out = outerr.decode(encoding, errors='ignore')
-            raise Exception("issue with cmd (" + encoding + "):" +
+            raise RuntimeError("issue with cmd (" + encoding + "):" +
                             typstr(msg) + "\n" + typstr(exu) + "\n-----\n" + out) from e
-    raise Exception(  # pragma: no cover
+    raise RuntimeError(  # pragma: no cover
         "complete issue with cmd:" + typstr(msg))
 
 

@@ -95,7 +95,7 @@ def repo_ls(full, commandline=True):  # pragma: no cover
                                    encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
                 if len(err) > 0:
                     fLOG("problem with file ", full, err)
-                    raise Exception(err)
+                    raise RuntimeError(err)
 
                 def cleanf(s):
                     if clean is None:
@@ -106,7 +106,7 @@ def repo_ls(full, commandline=True):  # pragma: no cover
                        for _ in out.split("\n") if len(_) > 0]
                 return res
             else:
-                raise Exception("problem with file " + full) from e
+                raise RuntimeError("problem with file " + full) from e
     else:
         if "@" in full:
             clean = full
@@ -120,11 +120,11 @@ def repo_ls(full, commandline=True):  # pragma: no cover
                                encerror="strict",
                                encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
         except Exception as e:
-            raise Exception("issue with file or folder " + full) from e
+            raise RuntimeError("issue with file or folder " + full) from e
 
         if len(err) > 0:
             fLOG("problem with file ", full, err)
-            raise Exception(err)
+            raise RuntimeError(err)
 
         def cleanf(s):
             if clean is None:
@@ -236,7 +236,7 @@ def get_repo_log(path=None, file_detail=False, commandline=True):  # pragma: no 
                            encoding=sys.stdout.encoding if sys.stdout is not None else "utf8")
         if len(err) > 0:
             fLOG("problem with file ", path, err)
-            raise Exception(err)
+            raise RuntimeError(err)
 
         root = ET.fromstring(out)
         res = []
@@ -327,7 +327,7 @@ def get_repo_version(path=None, commandline=True, log=False):  # pragma: no cove
             if log:
                 return f"OUT\n{out}\n[svnerror]{err}\nCMD:\n{cmd}"
             else:
-                raise Exception(err)
+                raise RuntimeError(err)
         lines = out.split("\n")
         lines = [_ for _ in lines if "Revision" in _]
         lines = lines[0].split(":")
@@ -336,7 +336,7 @@ def get_repo_version(path=None, commandline=True, log=False):  # pragma: no cove
         if len(res) == 0:
             o, e = run_cmd("svn help", wait=True, log_error=False)
             if len(o) < 3:
-                raise Exception(
+                raise RuntimeError(
                     "the command 'svn help' should return something")
 
         return int(res)

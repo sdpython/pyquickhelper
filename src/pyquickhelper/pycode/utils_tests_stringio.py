@@ -66,7 +66,7 @@ class StringIOAndFile(StringIO):
         @param      name        name
         """
         if self.to is not None:
-            raise Exception(  # pragma: no cover
+            raise RuntimeError(  # pragma: no cover
                 f"A test has not finished: '{self.to}'")
         if name is None:
             raise ValueError(  # pragma: no cover

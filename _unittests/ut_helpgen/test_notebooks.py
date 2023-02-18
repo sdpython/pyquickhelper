@@ -71,11 +71,11 @@ class TestNotebookConversion(ExtTestCase):
         fou = list(sorted(set(fou)))
         exp = list(sorted(set(exp)))
         if len(fou) < len(exp):
-            raise Exception("length {0} != {1}\n{2}\n---\n{3}".format(len(fou), len(exp),
+            raise AssertionError("length {0} != {1}\n{2}\n---\n{3}".format(len(fou), len(exp),
                                                                       "\n".join(fou), "\n".join(exp)))
         for i, j in zip(exp, fou):
             if i != j:
-                raise Exception(
+                raise AssertionError(
                     f"{i} != {j}\nfou=\n{str(fou)}\nexp=\n{str(exp)}")
 
         file = os.path.join(temp, "all_notebooks.rst")
@@ -86,9 +86,9 @@ class TestNotebookConversion(ExtTestCase):
         with open(os.path.join(temp, "example_pyquickhelper.rst"), "r", encoding="utf8") as f:
             text = f.read()
         if "from pyquickhelper.loghelper import fLOG\n    fLOG(OutputPrint=False)  # by default" not in text:
-            raise Exception(text)
+            raise AssertionError(text)
         if ".. contents::" not in text:
-            raise Exception(text)
+            raise AssertionError(text)
 
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@ class TestPyqSyncCli(unittest.TestCase):
 
         r = rows[0][0]
         if not r.startswith("usage: synchronize_folder"):
-            raise Exception(r)
+            raise RuntimeError(r)
 
     def test_clean_documentation_for_cli(self):
         fLOG(

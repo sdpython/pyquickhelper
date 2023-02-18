@@ -41,7 +41,7 @@ class TestVisualDiff(unittest.TestCase):
             content = f.read()
 
         if '"diff' + 'view.js"' in content:
-            raise Exception("no related path:\n##\n" + content + "\n##")
+            raise AssertionError("no related path:\n##\n" + content + "\n##")
         assert "<body>" in content
         assert "<html>" in content
         assert '<div id="diffoutput"> </div>' in content

@@ -56,7 +56,7 @@ def read_csv(filepath_or_buffer, compression=None, fvalid=None, **params):
                         end = min(len(lines), 5)
                         mes = "Parsing errors in '{0}', first lines:\n{1}".format(
                             name, "\n".join(lines[:end]))
-                        raise Exception(mes) from e
+                        raise RuntimeError(mes) from e
                     res[name] = df
             return res if len(res) > 1 else list(res.values())[0]
     else:

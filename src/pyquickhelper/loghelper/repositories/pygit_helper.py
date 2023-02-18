@@ -274,17 +274,17 @@ def get_file_details(name, path=None, commandline=True):
         for commit in commits:
             se = _reg_insertion.findall(commit)
             if len(se) > 1:
-                raise Exception(  # pragma: no cover
+                raise RuntimeError(  # pragma: no cover
                     f"A commit is wrong \n{commit}")
             inser = int(se[0]) if len(se) == 1 else 0
             de = _reg_deletion.findall(commit)
             if len(de) > 1:
-                raise Exception(  # pragma: no cover
+                raise RuntimeError(  # pragma: no cover
                     f"A commit is wrong \n{commit}")
             delet = int(de[0]) if len(de) == 1 else 0
             bi = _reg_bytes.findall(commit)
             if len(bi) > 1:
-                raise Exception(  # pragma: no cover
+                raise RuntimeError(  # pragma: no cover
                     f"A commit is wrong \n{commit}")
             bite = int(bi[0]) if len(bi) == 1 else 0
             com = commit.split("\n")[0].split()[1]

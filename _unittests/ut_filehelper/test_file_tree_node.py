@@ -28,7 +28,7 @@ class TestFileNodeTree(ExtTestCase):
         ftn = FileTreeNode(folder, log=True, log1=True,
                            filter=filter)
         if len(ftn) == 2:
-            raise Exception(f"{len(ftn)}")
+            raise AssertionError(f"{len(ftn)}")
         nb = 0
         nrst = 0
         for f in ftn:
@@ -63,7 +63,7 @@ class TestFileNodeTree(ExtTestCase):
                         for line in lines:
                             if "from ." in line and "import" in line:
                                 doc = "\n-------------DOC--------\n" + doc
-                                raise Exception(
+                                raise AssertionError(
                                     "{0}\nLINE:\n{1}\n-------CONT---------:\n{2}{3}".format(
                                         f.fullname, line, cont2, doc))
 

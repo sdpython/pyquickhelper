@@ -80,7 +80,7 @@ class TestSphinxDoc2(ExtTestCase):
 
         self.assertEqual(ty.get("property", 0), 1)
         if ty.get("staticmethod", 0) != 1:
-            raise Exception(f"{str(ty)}")
+            raise AssertionError(f"{str(ty)}")
         self.assertGreater(ty["method"], 1)
 
 

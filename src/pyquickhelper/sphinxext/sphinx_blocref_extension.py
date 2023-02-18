@@ -203,8 +203,8 @@ class BlocRef(BaseAdmonition):
                 self.state.add_target(targetid, '', targetnode, lineno)
             except Exception as e:  # pragma: no cover
                 mes = "Issue in \n  File '{0}', line {1}\ntitle={2}\ntag={3}\ntargetid={4}"
-                raise Exception(mes.format(docname, lineno,
-                                           title, breftag, targetid)) from e
+                raise RuntimeError(mes.format(docname, lineno,
+                                              title, breftag, targetid)) from e
 
             # index node
             index = self.options.get('index', None)

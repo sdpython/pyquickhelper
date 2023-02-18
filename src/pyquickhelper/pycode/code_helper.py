@@ -36,7 +36,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                         lines = f.readlines()
                     encoding = "utf-8"
                 except Exception:
-                    raise Exception(
+                    raise RuntimeError(
                         f"unable to load file {filename} due to unicode errors") from e
             initial_content = "".join(lines)
         else:
@@ -52,7 +52,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                         lines = f.readlines()
                     encoding = None
                 except Exception:
-                    raise Exception(
+                    raise RuntimeError(
                         f"unable to load file {filename} due to unicode errors") from e
             initial_content = "".join(lines)
 
@@ -66,7 +66,7 @@ def remove_extra_spaces_and_pep8(filename, apply_pep8=True, aggressive=False, is
                 try:
                     lines = f.readlines()
                 except UnicodeDecodeError as e:  # pragma: no cover
-                    raise Exception("unable to read: " + filename) from e
+                    raise RuntimeError("unable to read: " + filename) from e
             encoding = "utf8"
         else:
             encoding = None

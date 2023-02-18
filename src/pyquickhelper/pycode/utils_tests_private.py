@@ -206,7 +206,7 @@ def import_files(li, additional_ut_path=None, fLOG=noLOG):
                 try:
                     exec(cp, globals(), loc)
                 except Exception as e:  # pragma: no cover
-                    raise Exception(
+                    raise RuntimeError(
                         f"Unable to execute code '{code}'") from e
                 t = loc["t"]
                 testsuite.addTest(t)
@@ -334,7 +334,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
         s = list(set(duplicate))
         s.sort()
         mes = "\n".join(str(_) for _ in s)
-        raise Exception("Duplicated test files were detected:\n" + mes)
+        raise RuntimeError("Duplicated test files were detected:\n" + mes)
 
     # check existing
     if len(co) == 0:
@@ -397,7 +397,7 @@ def main_run_test(runner, path_test=None, limit_max=1e9, log=False, skip=-1, ski
                 continue
 
         if cut not in duration:
-            raise Exception("[{0}] not found in\n{1}".format(
+            raise RuntimeError("[{0}] not found in\n{1}".format(
                 cut, "\n".join(sorted(duration.keys()))))
         dur = duration[cut]
         zzz = "\ntest % 3d (%04ds), %s" % (i + 1, dur, cut)

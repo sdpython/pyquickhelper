@@ -43,7 +43,7 @@ class TestNotebookReportCoverageBug(unittest.TestCase):
         note = df.notebooks.dropna()
         if note.shape[0] < df.shape[0]:
             fLOG(df)
-            raise Exception(f"nan values: {note.shape[0]} < {df.shape[0]}")
+            raise AssertionError(f"nan values: {note.shape[0]} < {df.shape[0]}")
         self.assertTrue(note.shape[0] > 0)
 
 

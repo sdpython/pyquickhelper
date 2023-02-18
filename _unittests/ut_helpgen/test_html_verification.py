@@ -29,7 +29,7 @@ class TestHtmlVerification(unittest.TestCase):
                 if ok in e[1]:
                     nb += 1
         if nb != 1 or len(errors) != 1:
-            raise Exception("nb={0}, len={1}\n".format(
+            raise AssertionError("nb={0}, len={1}\n".format(
                 nb, len(errors)) + "\n".join(str(_) for _ in errors))
 
 

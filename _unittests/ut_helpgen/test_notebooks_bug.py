@@ -44,7 +44,7 @@ class TestNoteBooksBug(ExtTestCase):
         res = process_notebooks(nbs, temp, temp, formats=formats)
         for _ in res:
             if not os.path.exists(_[0]):
-                raise Exception(_[0])
+                raise AssertionError(_[0])
 
     def test_notebook_slides(self):
         path = os.path.abspath(os.path.split(__file__)[0])
@@ -61,13 +61,13 @@ class TestNoteBooksBug(ExtTestCase):
         res = process_notebooks(nbs, temp, temp, formats=formats)
         for _ in res:
             if not os.path.exists(_[0]):
-                raise Exception(_[0])
+                raise AssertionError(_[0])
 
         checks = [os.path.join(temp, "reveal.js"),
                   os.path.join(temp, "require.js")]
         for check in checks:
             if not os.path.exists(check):
-                raise Exception(check)
+                raise AssertionError(check)
 
 
 if __name__ == "__main__":

@@ -30,7 +30,7 @@ class TestMagicCrypt(unittest.TestCase):
         cmd = f"this dest {password}"
         fLOG("**", cmd)
         if os.path.exists(dest):
-            raise Exception(dest)
+            raise AssertionError(dest)
         mg.add_context({"this": this, "dest": dest})
         res = mg.encrypt_file(cmd)
         fLOG(res)

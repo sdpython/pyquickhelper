@@ -37,7 +37,7 @@ class TestNoteBooksBugRstAudio(ExtTestCase):
         clog("final read", name)
         exp = ".. raw:: html"
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
         clog("done")
 
 

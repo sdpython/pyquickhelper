@@ -50,7 +50,7 @@ class TestNoteBooksBugVideo(ExtTestCase):
         clog("final read", name)
         exp = ".. raw:: html"
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
 
         clog("done")
         name = os.path.join(temp, "video_notebook.tex")
@@ -60,7 +60,7 @@ class TestNoteBooksBugVideo(ExtTestCase):
         clog("final read", name)
         exp = "<moviepy.video.io.html\\_tools.HTML2 object>"
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
 
 
 if __name__ == "__main__":

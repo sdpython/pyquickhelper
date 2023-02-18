@@ -122,7 +122,7 @@ class TestCompressHelper(unittest.TestCase):
         self.assertEqual(len(res), 1)
         s = res[0].replace("\\", "/")
         if not s.endswith("_unittests/ut_filehelper/temp_compress_7zip2/ftplib.html"):
-            raise Exception(res[0])
+            raise RuntimeError(res[0])
 
     @skipif_travis('rar not installed')
     @skipif_appveyor('rar not installed')
@@ -145,7 +145,7 @@ class TestCompressHelper(unittest.TestCase):
             raise TypeError(type(res[0]))
         res[0] = res[0].replace("\\", "/")
         if not res[0].endswith("ut_filehelper/temp_compress_rar/stest1.txt"):
-            raise Exception(res[0])
+            raise RuntimeError(res[0])
 
     def test_uncompress_tar(self):
         fLOG(
@@ -164,7 +164,7 @@ class TestCompressHelper(unittest.TestCase):
             raise TypeError(type(res[0]))
         res[-1] = res[-1].replace("\\", "/")
         if not res[-1].endswith("ut_filehelper/temp_compress_tar/pystrat2048-0.1/setup.py"):
-            raise Exception(res[-1])
+            raise AssertionError(res[-1])
 
 
 if __name__ == "__main__":

@@ -231,7 +231,7 @@ def call_cli_function(f, args=None, parser=None, fLOG=print, skip_parameters=('f
 
                 r = rows[0][0]
                 if not r.startswith("usage: mycommand_line ..."):
-                    raise Exception(r)
+                    raise RuntimeError(r)
     """
     if parser is None:
         parser = create_cli_parser(f, prog=prog, skip_parameters=skip_parameters,

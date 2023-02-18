@@ -43,7 +43,7 @@ class TestNoteBooksBugRaw(ExtTestCase):
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
         if "\\begin{verbatim" not in content:
-            raise Exception(content)
+            raise AssertionError(content)
 
 
 if __name__ == "__main__":

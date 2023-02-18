@@ -33,7 +33,7 @@ class TestRst2HtmlBug(unittest.TestCase):
 
         text = rst2html(content, writer="rst", layout="sphinx")
         if "(`original entry <#indexfaqref-faqexample20>`_ : <string>, line 2)" not in text:
-            raise Exception(text)
+            raise AssertionError(text)
 
 
 if __name__ == "__main__":

@@ -46,7 +46,7 @@ class TestNoteBooksBugPython(ExtTestCase):
             content = f.read()
         exp = "# -*- coding: utf-8 -*-"
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
 
 
 if __name__ == "__main__":

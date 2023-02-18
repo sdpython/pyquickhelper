@@ -28,7 +28,7 @@ class TestWinZipFile(unittest.TestCase):
                 self.assertIn("/", name.filename)
                 c = f.read(name.filename)
                 if len(c) == 0 and not name.filename.endswith("/") and "__init__" not in name.filename:
-                    raise Exception(f"empty file '{name.filename}'")
+                    raise AssertionError(f"empty file '{name.filename}'")
                 nb += 1
         self.assertTrue(nb > 0)
 

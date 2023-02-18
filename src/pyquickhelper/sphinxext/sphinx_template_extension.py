@@ -118,7 +118,7 @@ def tpl_role(role, rawtext, text, lineno, inliner, options=None, content=None):
     try:
         val_context = eval(code)
     except Exception as e:  # pragma: no cover
-        raise Exception(  # pragma: no cover
+        raise RuntimeError(  # pragma: no cover
             f"Unable to compile '''{code}'''") from e
 
     if isinstance(tpl_content, str):

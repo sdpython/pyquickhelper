@@ -290,7 +290,7 @@ def df2rst(df, add_line=True, align="l", column_size=None, index=False,
             try:
                 return f"**{x}**"
             except Exception as e:  # pragma: no cover
-                raise Exception(
+                raise RuntimeError(
                     f"Unable to boldify type {type(x)}") from e
 
         try:

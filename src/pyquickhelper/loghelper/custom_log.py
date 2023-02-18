@@ -104,7 +104,7 @@ class CustomLog:
                 try:
                     return str(s)
                 except Exception as e:  # pragma: no cover
-                    raise Exception(
+                    raise RuntimeError(
                         f"Unable to convert s into string: type(s)={type(s)!r}") from e
 
             message = (str(dt).split(".", maxsplit=1)[0] + " " +

@@ -35,7 +35,7 @@ class TestTransferFTPTrue(ExtTestCase):
                 zoo = []
                 for k, v in sorted(os.environ.items()):
                     zoo.append(f"{k}={v}")
-                raise Exception("user password is empty, prefix='{0}', username='{1}'\n{2}".format(
+                raise AssertionError("user password is empty, prefix='{0}', username='{1}'\n{2}".format(
                     prefix, get_user(), "\n".join(zoo)))
             return None
 

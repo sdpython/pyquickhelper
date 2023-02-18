@@ -41,7 +41,7 @@ class TestNoteBooksBugSlides(ExtTestCase):
             content = f.read()
         exp = "is one if the most mature and complete library using javascript."
         if exp not in content:
-            raise Exception(content)
+            raise AssertionError(content)
 
 
 if __name__ == "__main__":

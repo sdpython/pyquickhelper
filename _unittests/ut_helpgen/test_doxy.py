@@ -41,7 +41,7 @@ class TestDoxy (unittest.TestCase):
             if r.strip() == "::":
                 st = len(r) - len(r.lstrip())
                 if st != mi:
-                    raise Exception("bad indentation:\n" + "\n".join(res))
+                    raise AssertionError("bad indentation:\n" + "\n".join(res))
 
 
 if __name__ == "__main__":

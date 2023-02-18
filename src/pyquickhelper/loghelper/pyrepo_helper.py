@@ -41,7 +41,7 @@ class SourceRepository:
                         location, commandline=self.commandline, log=False)
                     self.module = GIT
                 except Exception as e:
-                    raise Exception(
+                    raise RuntimeError(
                         f"Unable to guess source repository type for location '{location}'. Error: '{e}'.")
             else:
                 self.module = SVN

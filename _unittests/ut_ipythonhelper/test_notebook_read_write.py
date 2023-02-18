@@ -42,10 +42,10 @@ class TestNotebookReadWrite (unittest.TestCase):
             for i, cc in enumerate(zip(l1, l2)):
                 a, b = cc
                 if a.strip(" \n") != b.strip(" \n"):
-                    raise Exception(
+                    raise AssertionError(
                         f"difference at line {i}\n1: [{a}]-[{type(a)}]\n2: [{b}]-[{type(b)}]")
             if len(l1) != len(l2):
-                raise Exception("different length")
+                raise AssertionError("different length")
 
     def test_notebook_to_python(self):
         fLOG(

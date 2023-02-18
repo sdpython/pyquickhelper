@@ -276,7 +276,7 @@ def fLOGFormat(sep, *args, **kwargs):
                     return pprint.pformat(s)
                 return typstr(s)
             except Exception as e:  # pragma: no cover
-                raise Exception(  # pragma: no cover
+                raise RuntimeError(  # pragma: no cover
                     "unable to convert s into string: type(s)=" + str(type(s))) from e
 
         message = (str(dt).split(".", maxsplit=1)[0] + " " +
@@ -514,7 +514,7 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
                     "by filling outfile" % len(file.infolist()))
             fLOG("[loghelper.flog] unzip file (multiple) ", filename)
             #message = "\n".join ([ fi.filename for fi in file.infolist() ] )
-            #raise Exception.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
+            #raise RuntimeError.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
             folder = os.path.split(filename)[0]
             todo = 0
             _zip7_path = r"c:\Program Files\7-Zip"
@@ -813,7 +813,7 @@ def removedirs(folder, silent=False, use_command_line=False):
         else:
             out, err = run_cmd("rm -Rf " + folder, wait=True)
         if len(err) > 0:  # pragma: no cover
-            raise Exception(f"Unable to remove '{folder}'\n{err}")
+            raise RuntimeError(f"Unable to remove '{folder}'\n{err}")
         return out
 
     file, rep = [], []

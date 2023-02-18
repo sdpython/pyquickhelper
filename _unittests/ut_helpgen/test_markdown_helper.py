@@ -21,7 +21,7 @@ class TestHelperMarkdown(unittest.TestCase):
     def test_parse_markdown(self):
         r = parse_markdown("**r**")
         if str(r).strip("\n\r ") != "<p><strong>r</strong></p>":
-            raise Exception([str(r)])
+            raise AssertionError([str(r)])
 
     @ignore_warnings(RemovedInSphinx70Warning)
     def test_parse_readme(self):
@@ -34,7 +34,7 @@ class TestHelperMarkdown(unittest.TestCase):
         if "<p>.. _l-README:</p>" not in str(r):
             m = [ord(c) for c in content]
             m = ",".join(str(_) for _ in m[:20])
-            raise Exception(f"IN\n{m}\nOUT:{str(r)}")
+            raise AssertionError(f"IN\n{m}\nOUT:{str(r)}")
 
         ht = rst2html(content)
         # fLOG(ht)
@@ -54,7 +54,7 @@ class TestHelperMarkdown(unittest.TestCase):
         if "<p>.. _l-README:</p>" not in str(r):
             m = [ord(c) for c in content]
             m = ",".join(str(_) for _ in m[:20])
-            raise Exception(f"IN\n{m}\nOUT:{str(r)}")
+            raise AssertionError(f"IN\n{m}\nOUT:{str(r)}")
 
         ht = rst2html(content)
         # fLOG(ht)

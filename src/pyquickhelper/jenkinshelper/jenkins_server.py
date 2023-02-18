@@ -871,7 +871,7 @@ class JenkinsExt(jenkins.Jenkins):
                     au = _file_creation.replace("__FILENAME__", scr["name"]) \
                                        .replace("__CONTENT__", scr["content"])
                     if "__" in au:
-                        raise Exception(
+                        raise RuntimeError(
                             f"Unable to fully replace expected string in:\n{au}")
                     before.append(au)
                 del job_options['scripts']
@@ -893,7 +893,7 @@ class JenkinsExt(jenkins.Jenkins):
 
         # location
         if location is not None and "<--" in location:
-            raise Exception(  # pragma: no cover
+            raise RuntimeError(  # pragma: no cover
                 "this should not happen")
         location = "" if location is None else f"<customWorkspace>{location}</customWorkspace>"
 

@@ -1265,7 +1265,7 @@ def process_copy_images(folder_source, folder_images):
                 with open(fn, "r") as f:
                     content = f.read()
             except Exception:
-                raise Exception(f"Issue with file '{fn}'") from e
+                raise RuntimeError(f"Issue with file '{fn}'") from e
 
         lines = content.split("\n")
         for line in lines:

@@ -34,11 +34,11 @@ class TestParserFromFunction(unittest.TestCase):
         doc = pars.format_help()
         if ":param" in doc:
             # doctree was not cleaned.
-            raise Exception(doc)
+            raise RuntimeError(doc)
         if "-h, --help" not in doc:
-            raise Exception(doc)
+            raise RuntimeError(doc)
         if "-b BSTRING, --bstring BSTRING" not in doc:
-            raise Exception(doc)
+            raise RuntimeError(doc)
         # fLOG(doc)
 
     def test_parser_from_function_call(self):

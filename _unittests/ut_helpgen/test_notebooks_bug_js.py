@@ -28,18 +28,18 @@ class TestNoteBooksBugJs(ExtTestCase):
         res = process_notebooks(nbs, temp, temp, formats=formats)
         for _ in res:
             if not os.path.exists(_[0]):
-                raise Exception(_[0])
+                raise AssertionError(_[0])
 
         check = os.path.join(temp, "using_qgrid_with_jsdf.tex")
         with open(check, "r", encoding="utf8") as f:
             content = f.read()
         if "\\section{" not in content:
-            raise Exception(content)
+            raise AssertionError(content)
         checks = [os.path.join(temp, "reveal.js"),
                   os.path.join(temp, "require.js")]
         for check in checks:
             if not os.path.exists(check):
-                raise Exception(check)
+                raise AssertionError(check)
 
 
 if __name__ == "__main__":

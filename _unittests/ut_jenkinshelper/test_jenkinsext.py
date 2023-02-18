@@ -85,7 +85,7 @@ class TestJenkinsExt(ExtTestCase):
                                            upstreams=["pyquickhelper"],
                                            location=r"/home/username/jenkins/",
                                            scheduler="H H(13-14) * * *")
-            raise Exception("should not happen")
+            raise RuntimeError("should not happen")
         except JenkinsExtException:
             pass
 

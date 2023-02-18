@@ -43,7 +43,7 @@ class TestNotebookReportBadge(unittest.TestCase):
             with open(exp, "rb") as f:
                 c2 = f.read()
             if c1 != c2:
-                raise Exception(
+                raise AssertionError(
                     f"Difference in '{img}' and '{exp}'")
 
 
