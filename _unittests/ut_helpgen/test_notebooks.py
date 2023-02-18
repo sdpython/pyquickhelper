@@ -71,8 +71,9 @@ class TestNotebookConversion(ExtTestCase):
         fou = list(sorted(set(fou)))
         exp = list(sorted(set(exp)))
         if len(fou) < len(exp):
-            raise AssertionError("length {0} != {1}\n{2}\n---\n{3}".format(len(fou), len(exp),
-                                                                      "\n".join(fou), "\n".join(exp)))
+            raise AssertionError(
+                "length {0} != {1}\n{2}\n---\n{3}".format(
+                    len(fou), len(exp), "\n".join(fou), "\n".join(exp)))
         for i, j in zip(exp, fou):
             if i != j:
                 raise AssertionError(
