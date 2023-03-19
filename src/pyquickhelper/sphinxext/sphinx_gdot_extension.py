@@ -316,7 +316,7 @@ def copy_js_files(app):
         else:
             logger.warning("[gdot] jyquickhelper not installed, falling back to "
                            "%r", GDotDirective._default_url)
-            
+
             file_dest = os.path.join(destf, "require.js")
             content = get_url_content_timeout(
                 GDotDirective._default_url, output=file_dest, raise_exception=False)
