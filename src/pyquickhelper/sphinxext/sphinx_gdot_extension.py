@@ -105,7 +105,9 @@ class GDotDirective(Directive):
         'process': directives.unchanged,
     }
 
-    _default_url = "http://www.xavierdupre.fr/js/vizjs/viz.js"
+    _default_url = (
+        "https://github.com/sdpython/jyquickhelper/raw/master/src/"
+        "jyquickhelper/js/vizjs/viz.js")
 
     def run(self):
         """
@@ -131,8 +133,8 @@ class GDotDirective(Directive):
             except ImportError:
                 url = GDotDirective._default_url
                 logger = logging.getLogger("gdot")
-                logger.warning("[gdot] jyquickhelper not installed, falling back to "
-                               "%r", url)
+                logger.warning(
+                    "[gdot] jyquickhelper not installed, falling back to %r", url)
 
         info = get_env_state_info(self)
         docname = info['docname']
@@ -170,8 +172,9 @@ class GDotDirective(Directive):
             if script:
                 spl = content.split(script)
                 if len(spl) > 2:
-                    raise RuntimeError("'{}' indicates the beginning of the graph "
-                                       "but there are many in\n{}".format(script, content))
+                    raise RuntimeError(
+                        "'{}' indicates the beginning of the graph "
+                        "but there are many in\n{}".format(script, content))
                 content = spl[-1]
 
         node = gdot_node(format=format, code=content, url=url,
@@ -225,7 +228,8 @@ def visit_gdot_node_html_svg(self, node):
         "__URL__", node['url'])
 
     self.body.append(content)
-    self.body.append("<script>{0}{1}{0}</script>{0}".format("\n", script))
+    self.body.append(
+        '<script src="_static/require.js"></script><script>{0}{1}{0}</script>{0}'.format("\n", script))
 
 
 def depart_gdot_node_html_svg(self, node):
@@ -260,6 +264,8 @@ def depart_gdot_node_html(self, node):
 
 
 def copy_js_files(app):
+    from ..helpgen.install_custom import download_requirejs
+    from ..filehelper.download_helper import get_url_content_timeout
     try:
         import jyquickhelper
         local = True
@@ -267,49 +273,73 @@ def copy_js_files(app):
         local = False
 
     logger = logging.getLogger("gdot")
-    if local:
-        path = os.path.join(os.path.dirname(
-            jyquickhelper.__file__), "js", "vizjs", "viz.js")
-        if os.path.exists(path):
-            # We copy the file to static path.
-            dest = app.config.html_static_path
-            if isinstance(dest, list) and len(dest) > 0:
-                dest = dest[0]
-            else:
-                dest = None
-
-            srcdir = app.builder.srcdir
-            if "IMPOSSIBLE:TOFIND" not in srcdir:
-                if not os.path.exists(srcdir):
-                    raise FileNotFoundError(
-                        f"Source file is wrong '{srcdir}'.")
-
-                if dest is not None:
-                    destf = os.path.join(os.path.abspath(srcdir), dest)
-                    if os.path.exists(destf):
-                        dest = os.path.join(destf, 'viz.js')
-                        try:
-                            shutil.copy(path, dest)
-                            logger.info("[gdot] copy %r to %r.", path, dest)
-                        except PermissionError as e:  # pragma: no cover
-                            logger.warning("[gdot] permission error: %r, "
-                                           "unable to use local viz.js.", e)
-
-                        if not os.path.exists(dest):
-                            logger.warning("[gdot] unable to copy=%r, "
-                                           "unable to use local viz.js.", dest)
-                    else:
-                        logger.warning("[gdot] destination folder=%r does not exists, "
-                                       "unable to use local viz.js.", destf)
-                else:
-                    logger.warning("[gdot] unable to locate html_static_path=%r, "
-                                   "unable to use local viz.js.", app.config.html_static_path)
-        else:
-            logger.warning(
-                "[gdot] jyquickhelper needs to be update, unable to find %r.", path)
+    dest = app.config.html_static_path
+    if isinstance(dest, list) and len(dest) > 0:
+        dest = dest[0]
     else:
-        logger.warning("[gdot] jyquickhelper not installed, falling back to "
-                       "%r", GDotDirective._default_url)
+        logger.warning("[gdot] unable to locate 'html_static_path' (%r), "
+                       "unable to use local viz.js.",
+                       app.config.html_static_path)
+        return
+
+    srcdir = app.builder.srcdir
+    if "IMPOSSIBLE:TOFIND" not in srcdir:
+        if not os.path.exists(srcdir):
+            raise FileNotFoundError(
+                f"Source file is wrong '{srcdir}'.")
+
+    destf = os.path.join(os.path.abspath(srcdir), dest)
+    if not os.path.exists(destf):
+        logger.warning("[gdot] destination folder %r does not exists, "
+                       "unable to use local viz.js.", destf)
+        return
+
+    # viz.js
+    file_dest = os.path.join(destf, "viz.js")
+    if os.path.exists(file_dest):
+        logger.info("[gdot] %r already installed.", file_dest)
+    else:
+        if local:
+            path = os.path.join(os.path.dirname(
+                jyquickhelper.__file__), "js", "vizjs", "viz.js")
+            if os.path.exists(path):
+                # We copy the file to static path.
+                try:
+                    shutil.copy(path, file_dest)
+                    logger.info("[gdot] copy %r to %r.", path, file_dest)
+                except PermissionError as e:  # pragma: no cover
+                    logger.warning("[gdot] permission error: %r, "
+                                   "unable to use local viz.js.", e)
+            else:
+                logger.warning(
+                    "[gdot] jyquickhelper needs to be update, unable to find %r.", path)
+        else:
+            logger.warning("[gdot] jyquickhelper not installed, falling back to "
+                           "%r", GDotDirective._default_url)
+
+            file_dest = os.path.join(destf, "require.js")
+            content = get_url_content_timeout(
+                GDotDirective._default_url, output=file_dest, raise_exception=False)
+            if content is None:
+                logger.warning("[gdot] unable to download: %r to %r",
+                               GDotDirective._default_url, file_dest)
+            else:
+                logger.info("[gdot] copy %r to %r.", path, file_dest)
+
+    # require.js
+    file_dest = os.path.join(destf, "require.js")
+    if os.path.exists(file_dest):
+        logger.info("[gdot] %r already installed.", file_dest)
+    else:
+        download_requirejs(destf, fLOG=lambda *args, **kwargs: None)
+
+    if os.path.exists(file_dest):
+        # It adds <script async="defer" src="_static/require.js"></script>
+        # at the bottom of the file. It needs to be at the beginning.
+        # app.add_js_file("require.js", priority=200)
+        logger.info("[gdot] %r installed.", file_dest)
+    else:
+        logger.warning("[gdot] %r not installed.", file_dest)
 
 
 def setup(app):
