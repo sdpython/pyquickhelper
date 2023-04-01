@@ -227,9 +227,39 @@ def visit_gdot_node_html_svg(self, node):
     """.replace('__ID__', nid).replace('__DOT__', process(node['code'])).replace(
         "__URL__", node['url'])
 
+    # find the path
+    source = self.document.attributes["source"]
+    folder = os.path.dirname(source)
+    # from_ = self.builder.get_target_uri(source)
+    # req = self.builder.get_target_uri("_static/require.js")
+    # rel = self.builder.get_relative_uri(from_, req)
+    
+    while not os.path.exists(os.path.join(folder, "conf.py")):
+        cts = set(os.listdir(folder))
+        if "conf.py" in cts:
+            break
+        exts = {os.path.splitext(name)[-1] for name in cts}
+        if ".rst" not in exts:
+            folder = None
+            break
+        folder = os.path.split(folder)[0]
+
     self.body.append(content)
-    self.body.append(
-        '<script src="_static/require.js"></script><script>{0}{1}{0}</script>{0}'.format("\n", script))
+    if folder is None:
+        self.body.append(
+            '<script src="_static/require.js"></script><script>'
+            '{0}{1}{0}</script>{0}'.format("\n", script))
+    else:
+        current = os.path.dirname(source)
+        rel = os.path.relpath(current, folder)
+        if rel not in {"", "."}:
+            rel = rel.replace("\\", "/")
+            rel = f"{'/'.join(['..'] * len(rel.split('/')))}/"
+        else:
+            rel = ""
+        self.body.append(
+            '<script src="{2}_static/require.js"></script><script>'
+            '{0}{1}{0}</script>{0}'.format("\n", script, rel))
 
 
 def depart_gdot_node_html_svg(self, node):
