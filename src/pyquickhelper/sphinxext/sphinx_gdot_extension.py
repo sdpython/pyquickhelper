@@ -233,16 +233,19 @@ def visit_gdot_node_html_svg(self, node):
     # from_ = self.builder.get_target_uri(source)
     # req = self.builder.get_target_uri("_static/require.js")
     # rel = self.builder.get_relative_uri(from_, req)
-    
-    while not os.path.exists(os.path.join(folder, "conf.py")):
-        cts = set(os.listdir(folder))
-        if "conf.py" in cts:
-            break
-        exts = {os.path.splitext(name)[-1] for name in cts}
-        if ".rst" not in exts:
-            folder = None
-            break
-        folder = os.path.split(folder)[0]
+
+    if os.path.exists(folder):
+        while not os.path.exists(os.path.join(folder, "conf.py")):
+            cts = set(os.listdir(folder))
+            if "conf.py" in cts:
+                break
+            exts = {os.path.splitext(name)[-1] for name in cts}
+            if ".rst" not in exts:
+                folder = None
+                break
+            folder = os.path.split(folder)[0]
+    else:
+        folder = None
 
     self.body.append(content)
     if folder is None:
