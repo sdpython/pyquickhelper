@@ -359,9 +359,11 @@ class ExtTestCase(unittest.TestCase):
         try:
             unittest.TestCase.assertNotEqual(self, a, b)
         except ValueError as e:
-            if "Can only compare identically-labeled DataFrame objects" in str(e) or \
-               "The truth value of a DataFrame is ambiguous." in str(e) or \
-               "The truth value of an array with more than one element is ambiguous." in str(e):
+            se = str(e)
+            if ("Can only compare identically-labeled" in se or
+                    "The truth value of a DataFrame is ambiguous." in se or
+                    ("The truth value of an array with more "
+                     "than one element is ambiguous.") in se):
                 with warnings.catch_warnings():
                     warnings.filterwarnings("ignore", category=ImportWarning)
                     import pandas
