@@ -19,7 +19,7 @@ class TestPy3to2Bug(unittest.TestCase):
             self._testMethodName,
             OutputPrint=__name__ == "__main__")
 
-        #temp = get_temp_folder(__file__, "temp_py3to2_bug")
+        # temp = get_temp_folder(__file__, "temp_py3to2_bug")
         root = os.path.abspath(os.path.dirname(__file__))
         file = os.path.normpath(
             os.path.join(root, "data", "2test_download_pip.py"))

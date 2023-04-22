@@ -25,8 +25,8 @@ class TestNotebookSlides(unittest.TestCase):
         nb = read_nb(nbfile, kernel=False)
         for i, cell in enumerate(nb.iter_cells()):
             ls = nb.cell_height(cell)
-            #fLOG(i,"-",nb.cell_type(cell), l)
-            #if l > 400: fLOG(cell)
+            # fLOG(i,"-",nb.cell_type(cell), l)
+            # if l > 400: fLOG(cell)
             assert ls > 0
 
         new_tags = nb.add_tag_slide()

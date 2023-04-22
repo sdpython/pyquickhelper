@@ -51,7 +51,7 @@ class TestSphinxDocFull (ExtTestCase):
         fLOG("end of prepare_file_for_sphinx_help_generation")
 
         files = [
-            #os.path.join(temp, "index_ext-tohelp.rst"),
+            # os.path.join(temp, "index_ext-tohelp.rst"),
             os.path.join(temp, "index_function.rst"),
             os.path.join(temp, "glossary.rst"),
             os.path.join(temp, "index_class.rst"),

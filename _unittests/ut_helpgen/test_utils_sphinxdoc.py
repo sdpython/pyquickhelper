@@ -162,7 +162,7 @@ class TestSphinxDoc (unittest.TestCase):
 
         for i in issue:
             fLOG("issue (1) with ", i)
-            #utils_sphinx_doc.migrating_doxygen_doc(content, i)
+            # utils_sphinx_doc.migrating_doxygen_doc(content, i)
         for i in nb:
             fLOG("issue (2) with ", i)
         if len(nb) != 0:

@@ -33,7 +33,7 @@ class TestLog(ExtTestCase):
                     for k in keys:
                         if sys.modules[k] is None:
                             print("None ", k)
-                #raise Exception ("shit")
+                # raise Exception ("shit")
 
     def test_cmd(self):
         fLOG(
