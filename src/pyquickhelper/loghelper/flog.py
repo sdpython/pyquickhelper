@@ -513,8 +513,8 @@ def _check_zip_file(filename, path_unzip, outfile, flatten=True, fLOG=noLOG):
                     "the archive contains %d files and not one as you expected "
                     "by filling outfile" % len(file.infolist()))
             fLOG("[loghelper.flog] unzip file (multiple) ", filename)
-            #message = "\n".join ([ fi.filename for fi in file.infolist() ] )
-            #raise RuntimeError.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
+            # message = "\n".join ([ fi.filename for fi in file.infolist() ] )
+            # raise RuntimeError.YstException("ColumnInfoSet.load_from_file: file %s contains no file or more than one file\n" + message)
             folder = os.path.split(filename)[0]
             todo = 0
             _zip7_path = r"c:\Program Files\7-Zip"

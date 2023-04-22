@@ -5,8 +5,13 @@
 History
 =======
 
-current - 2023-01-28 - 0.00Mb
+current - 2023-04-23 - 0.00Mb
 =============================
+
+* #385: Fixes gdot extension with missing javascript dependencies (2023-03-19)
+
+1.12.3806 - 2023-01-29 - 2.99Mb
+===============================
 
 * #384: Renames phdoc_static into _static (2023-01-28)
 * #383: Fixes attribute source missing for sphinx>6 (2023-01-10)
@@ -103,10 +108,6 @@ current - 2023-01-28 - 0.00Mb
 * #339: Enables support for Sphinx 4.0 (2021-05-10)
 * #338: Adds a command in the setup to check url in the code or documentation (2021-05-10)
 * #337: Adds function to easily store and retrieve dataframe through a REST API (2021-04-17)
-
-1.10.3585 - 2021-04-11 - 2.18Mb
-===============================
-
 * #336: Refactors setup.py, moves setup command to pyquicksetup (2021-04-10)
 * #335: Adds class to store files with sqlite3, access with FastAPI (2021-04-06)
 * #334: Renames serverdoc into server (2021-04-04)

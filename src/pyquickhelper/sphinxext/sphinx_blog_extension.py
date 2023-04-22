@@ -493,7 +493,7 @@ def setup(app):
 
     app.add_directive('blogpost', BlogPostDirective)
     app.add_directive('blogpostagg', BlogPostDirectiveAgg)
-    #app.add_directive('blogpostlist', BlogPostListDirective)
-    #app.connect('doctree-resolved', process_blogpost_nodes)
-    #app.connect('env-purge-doc', purge_blogpost)
+    # app.add_directive('blogpostlist', BlogPostListDirective)
+    # app.connect('doctree-resolved', process_blogpost_nodes)
+    # app.connect('env-purge-doc', purge_blogpost)
     return {'version': sphinx.__display_version__, 'parallel_read_safe': True}

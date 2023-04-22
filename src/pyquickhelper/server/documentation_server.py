@@ -328,7 +328,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
             self.wfile.write(anys)
         else:
             if script_python:
-                #any = self.process_scripts(any, params)
+                # any = self.process_scripts(any, params)
                 raise NotImplementedError(  # pragma: no cover
                     "unable to execute a python script")
             text = anys.encode("utf-8")
@@ -372,7 +372,7 @@ class DocumentationHandler(BaseHTTPRequestHandler):
                 self.LOG("can't serve", cpath)
                 self.LOG("with params", params)
                 self.send_response(404)
-                #raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
+                # raise KeyError("unable to find a mapping associated to: " + project + "\nURL:\n" + url + "\nPARAMS:\n" + str(params))
 
             elif value == "shut://":  # pragma: no cover
                 self.LOG("call shutdown")
@@ -454,8 +454,8 @@ class DocumentationHandler(BaseHTTPRequestHandler):
         @param      content     page content
         @return                 modified content
         """
-        #content = content.replace(' src="',' src="' + project + '/')
-        #content = content.replace(' href="',' href="' + project + '/')
+        # content = content.replace(' src="',' src="' + project + '/')
+        # content = content.replace(' href="',' href="' + project + '/')
         return content
 
     @staticmethod

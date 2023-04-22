@@ -68,9 +68,9 @@ class RepoFile:
 
         if hasattr(self, "name"):
             if '"' in self.name:  # pylint: disable=E0203
-                #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
+                # defa = sys.stdout.encoding if sys.stdout != None else "utf8"
                 self.name = self.name.replace('"', "")
-                #self.name = self.name.encode(defa).decode("utf-8")
+                # self.name = self.name.encode(defa).decode("utf-8")
             if "\\303" in self.name or "\\302" in self.name or "\\342" in self.name:
                 # don't know yet how to avoid that
                 name0 = self.name

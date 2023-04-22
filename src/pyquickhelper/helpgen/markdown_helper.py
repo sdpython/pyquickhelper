@@ -42,7 +42,7 @@ def yield_sphinx_only_markup_for_pipy(lines):
         #        :foo:`bar`   --> foo(``bar``)
         #        :a:foo:`bar` XXX afoo(``bar``)
         #
-        #(r'(:(\w+))?:(\w+):`([^`]*)`', r'\2\3(``\4``)'),
+        # (r'(:(\w+))?:(\w+):`([^`]*)`', r'\2\3(``\4``)'),
         (':(\\w+):`([^`]*)`', '\\1(``\\2``)'),
 
         # Sphinx-only Directives.

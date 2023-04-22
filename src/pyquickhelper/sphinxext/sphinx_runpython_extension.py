@@ -16,6 +16,7 @@ from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
+from sphinx.util.logging import warning
 from ..loghelper.flog import run_cmd
 from ..texthelper.texts_language import TITLES
 from ..pycode.code_helper import remove_extra_spaces_and_pep8
@@ -535,8 +536,8 @@ class RunPythonDirective(Directive):
                 else:
                     comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                         docname, lineno)
-                raise ValueError(
-                    f"Pep8 issue with\n'{docname}'\n---SCRIPT---\n{script}") from e
+                warning(
+                    f"Pep8 ({e}) issue with {docname!r}\n---SCRIPT---\n{script}")
 
         # if an exception is raised, the documentation should report a warning
         # return [document.reporter.warning('messagr', line=self.lineno)]

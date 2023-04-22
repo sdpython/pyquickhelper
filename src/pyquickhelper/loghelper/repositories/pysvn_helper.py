@@ -48,9 +48,9 @@ class RepoFile:  # pragma: no cover
             self.__dict__[k] = v
 
         if hasattr(self, "name") and '"' in self.name:  # pylint: disable=E0203
-            #defa = sys.stdout.encoding if sys.stdout != None else "utf8"
+            # defa = sys.stdout.encoding if sys.stdout != None else "utf8"
             self.name = self.name.replace('"', "")
-            #self.name = self.name.encode(defa).decode("utf-8")
+            # self.name = self.name.encode(defa).decode("utf-8")
 
     def __str__(self):
         """
