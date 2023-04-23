@@ -357,7 +357,8 @@ def copy_js_files(app):
                 logger.warning("[gdot] unable to download: %r to %r",
                                GDotDirective._default_url, file_dest)
             else:
-                logger.info("[gdot] copy %r to %r.", path, file_dest)
+                logger.info("[gdot] download %r to %r.",
+                    GDotDirective._default_url, file_dest)
 
     # require.js
     file_dest = os.path.join(destf, "require.js")
