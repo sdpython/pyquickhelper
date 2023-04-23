@@ -16,7 +16,7 @@ from docutils import nodes, core
 from docutils.parsers.rst import Directive, directives
 from docutils.statemachine import StringList
 from sphinx.util.nodes import nested_parse_with_titles
-from sphinx.util.logging import warning
+from sphinx.util import logging
 from ..loghelper.flog import run_cmd
 from ..texthelper.texts_language import TITLES
 from ..pycode.code_helper import remove_extra_spaces_and_pep8
@@ -531,12 +531,13 @@ class RunPythonDirective(Directive):
                 script_disp = remove_extra_spaces_and_pep8(
                     script_disp, is_string=True)
             except Exception as e:  # pragma: no cover
+                logger = logging.getLogger(__name__)
                 if '.' in docname:
                     comment = f'  File "{docname}", line {lineno}'
                 else:
                     comment = '  File "{0}.rst", line {1}\n  File "{0}.py", line {1}\n'.format(
                         docname, lineno)
-                warning(
+                logger.warning(
                     f"Pep8 ({e}) issue with {docname!r}\n---SCRIPT---\n{script}")
 
         # if an exception is raised, the documentation should report a warning
