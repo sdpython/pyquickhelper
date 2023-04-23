@@ -8,6 +8,9 @@ History
 current - 2023-04-24 - 0.00Mb
 =============================
 
+1.12.3819 - 2023-04-23 - 3.13Mb
+===============================
+
 * #386: Avoids run_python to stop on PEP8 error (2023-04-23)
 * #385: Fixes gdot extension with missing javascript dependencies (2023-03-19)
 
