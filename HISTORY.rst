@@ -5,9 +5,10 @@
 History
 =======
 
-current - 2023-04-23 - 0.00Mb
+current - 2023-04-24 - 0.00Mb
 =============================
 
+* #386: Avoids run_python to stop on PEP8 error (2023-04-23)
 * #385: Fixes gdot extension with missing javascript dependencies (2023-03-19)
 
 1.12.3806 - 2023-01-29 - 2.99Mb
