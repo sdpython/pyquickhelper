@@ -19,7 +19,6 @@ from sphinx.environment import BuildEnvironment
 from sphinx.errors import ExtensionError
 from sphinx.ext.extlinks import setup_link_roles
 from sphinx.transforms import SphinxTransformer
-from sphinx.util.docutils import is_html5_writer_available
 from sphinx.writers.html import HTMLWriter
 from sphinx.util.build_phase import BuildPhase
 from sphinx.util.logging import prefixed_warnings
@@ -44,6 +43,11 @@ def _get_LaTeXTranslator():
         from sphinx.writers.latex import LaTeXTranslator
     return LaTeXTranslator
 
+try:
+    from sphinx.util.docutils import is_html5_writer_available
+except ImportError:
+    def is_html5_writer_available():
+        return True
 
 if is_html5_writer_available():
     from sphinx.writers.html5 import HTML5Translator as HTMLTranslator
@@ -1211,10 +1215,13 @@ class _CustomSphinx(Sphinx):
 
         # create the project
         self.project = Project(self.srcdir, self.config.source_suffix)
-        # create the builder, initializes _MemoryBuilder
-        self.builder = self.create_builder(buildername)
         # set up the build environment
         self._init_env(freshenv)
+        assert self.env is not None
+        # create the builder, initializes _MemoryBuilder
+        self.builder = self.create_builder(buildername)
+        # build environment post-initialisation, after creating the builder
+        self._post_init_env()
         # set up the builder
         self._init_builder()
 
@@ -1243,10 +1250,14 @@ class _CustomSphinx(Sphinx):
         filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
         if freshenv or not os.path.exists(filename):
             self.env = _CustomBuildEnvironment(self)
+            self._fresh_env_used = True
             self.env.setup(self)
-            if self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND":
+            if (self.srcdir is not None and self.srcdir != "IMPOSSIBLE:TOFIND" and
+                    self.builder is not None):
                 self.env.find_files(self.config, self.builder)
-        elif "IMPOSSIBLE:TOFIND" not in self.doctreedir:  # pragma: no cover
+            return self.env
+
+        if "IMPOSSIBLE:TOFIND" not in self.doctreedir:  # pragma: no cover
             from sphinx.application import ENV_PICKLE_FILENAME
             filename = os.path.join(self.doctreedir, ENV_PICKLE_FILENAME)
             try:
@@ -1255,13 +1266,17 @@ class _CustomSphinx(Sphinx):
                     self.env = pickle.load(f)
                     self.env.setup(self)
                 self.info('done')
+                return self.env
             except Exception as err:
                 self.info('failed: %r', err)
-                self._init_env(freshenv=True)
-        elif self.env is None:  # pragma: no cover
+                return self._init_env(freshenv=True)
+
+        if self.env is None:  # pragma: no cover
             self.env = _CustomBuildEnvironment(self)
             if hasattr(self.env, 'setup'):
                 self.env.setup(self)
+            return self.env
+
         if not hasattr(self.env, 'project') or self.env.project is None:
             raise AttributeError(  # pragma: no cover
                 "self.env.project is not initialized.")
