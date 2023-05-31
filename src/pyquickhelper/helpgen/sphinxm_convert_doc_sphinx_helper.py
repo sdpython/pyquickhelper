@@ -43,6 +43,7 @@ def _get_LaTeXTranslator():
         from sphinx.writers.latex import LaTeXTranslator
     return LaTeXTranslator
 
+
 try:
     from sphinx.util.docutils import is_html5_writer_available
 except ImportError:
