@@ -294,9 +294,8 @@ class MockSphinxApp:
 
             if writer in ("sphinx", "custom", "HTMLWriterWithCustomDirectives", "html"):
                 app = _CustomSphinx(srcdir=None, confdir=None, outdir=destination_path,
-                                    doctreedir=None,
-                                    buildername='memoryhtml', confoverrides=confoverrides,
-                                    new_extensions=new_extensions)
+                                    doctreedir=None, buildername='memoryhtml',
+                                    confoverrides=confoverrides, new_extensions=new_extensions)
                 writer = HTMLWriterWithCustomDirectives(
                     builder=app.builder, app=app)
                 mockapp = MockSphinxApp(writer, writer.app, confoverrides=confoverrides,

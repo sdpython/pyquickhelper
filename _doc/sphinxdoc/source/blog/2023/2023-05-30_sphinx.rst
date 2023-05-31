@@ -1,0 +1,10 @@
+
+.. blogpost::
+    :title: Sphinx
+    :keywords: sphinx
+    :date: 2023-05-30
+    :categories: package
+
+    Sphinx constantly changed its API. I played a lot with it more
+    than five years ago to automate many things and it now fails
+    because I started to use the internal API...
