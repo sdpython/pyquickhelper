@@ -1221,7 +1221,8 @@ class _CustomSphinx(Sphinx):
         # create the builder, initializes _MemoryBuilder
         self.builder = self.create_builder(buildername)
         # build environment post-initialisation, after creating the builder
-        self._post_init_env()
+        if hasattr(self, "_post_init_env"):
+            self._post_init_env()
         # set up the builder
         self._init_builder()
 
