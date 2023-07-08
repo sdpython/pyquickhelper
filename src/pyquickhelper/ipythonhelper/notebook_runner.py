@@ -1222,7 +1222,7 @@ class NotebookRunner(object):
         height_sc = int(round(scale * height_in))
 
         # resize the image and center
-        img.thumbnail((width_sc, height_sc), Image.ANTIALIAS)
+        img.thumbnail((width_sc, height_sc), Image.LANCZOS)
         thumb = Image.new('RGB', (max_width, max_height), (255, 255, 255))
         pos_insert = ((max_width - width_sc) // 2,
                       (max_height - height_sc) // 2)
