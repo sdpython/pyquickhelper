@@ -85,6 +85,7 @@ def verification_html_file(item, fLOG=noLOG):
     content = content.replace("_#!#_LINES_#_", "\n")
     lines = content.split("\n")
     reg = re.compile("([.][.] _[-a-z_A-Z0-9][:.])")
+    exceptions = ['<script>document.write(`<img src="']
 
     errors = []
     for i, line in enumerate(lines):
@@ -92,6 +93,14 @@ def verification_html_file(item, fLOG=noLOG):
             # no need to go further
             # the source takes place after this substring
             break
+        found_one = False
+        for exc in exceptions:
+            if exc in line:
+                found_one = True
+                break
+        if found_one:
+            continue
+
         if ":ref:`" in line and ":ref:`{ref_name}`" not in line:
             errors.append((i, "wrong :ref:` in " + line.strip("\n\r ")))
         if ":func:`" in line:
