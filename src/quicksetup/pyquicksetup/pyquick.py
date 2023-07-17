@@ -201,7 +201,8 @@ class SetupCommandSphinx(_SetupCommand):
 
     def initialize_options(self):
         self.layout = "html,rst"
-        self.nbformats = "ipynb,slides,html,python,rst,github,pdf"
+        # self.nbformats = "ipynb,slides,html,python,rst,github,pdf"
+        self.nbformats = "ipynb,html,python,rst,github"
 
     def finalize_options(self):
         pass
